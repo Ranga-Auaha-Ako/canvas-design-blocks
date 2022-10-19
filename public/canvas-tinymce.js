@@ -157,3 +157,5 @@ const canvasSettings = {
   validate: true,
   visual: true,
 };
+
+tinymce.init(canvasSettings);
