@@ -1,14 +1,12 @@
-# Svelte + Vite
+# Canvas Grid Builder
 
-This template should help get you started developing with Svelte in Vite.
+Quickly create and edit grid layouts for your Canvas pages. Hooks into the TinyMCE Editor, and can be installed as a Tampermonkey script or directly into your installation of Canvas as a theme.
+
+This project is still under active developement, and is not yet ready for production use. Please feel free to contribute to the project, or to submit issues.
 
 ## Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
-
-## Need an official Svelte framework?
-
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
 
 ## Technical considerations
 
@@ -43,6 +41,6 @@ If you have state that's important to retain within a component, consider creati
 ```js
 // store.js
 // An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+import { writable } from "svelte/store";
+export default writable(0);
 ```
