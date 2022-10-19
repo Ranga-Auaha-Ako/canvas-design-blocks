@@ -9,5 +9,5 @@ COPY . .
 RUN yarn build
 
 FROM nginx as prod
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 EXPOSE 80
