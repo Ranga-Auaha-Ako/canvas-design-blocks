@@ -4,6 +4,20 @@ Quickly create and edit grid layouts for your Canvas pages. Hooks into the TinyM
 
 This project is still under active developement, and is not yet ready for production use. Please feel free to contribute to the project, or to submit issues.
 
+## Installation
+
+### Tampermonkey
+
+1. Install the Tampermonkey extension for your browser
+2. Install the Canvas Grid Builder script from [here](#) (link coming soon)
+3. Open a Canvas page, and click the "Grid Builder" button in the TinyMCE editor
+
+### Canvas Theme
+
+1. Download the latest release from [here](#) (link coming soon)
+2. Install the theme into your Canvas instance.
+3. Open a Canvas page, and click the "Grid Builder" button in the TinyMCE editor
+
 ## Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
