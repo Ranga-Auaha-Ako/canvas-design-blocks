@@ -45,9 +45,6 @@ export default class implements Readable<Row[]> {
       this._isInitialized.set(true);
       return;
     }
-    // Dev stuff
-    this.initialize();
-    this.addRow(rowTemplates["1/2 + 1/2"]);
   }
 
   public initialize() {
