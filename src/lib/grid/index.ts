@@ -85,7 +85,15 @@ export default class implements Readable<Row[]> {
   public bindEvents() {
     this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
     this.editor.dom.bind(this.gridRoot, "click", (e) => {
+      if (!(e.target === this.gridRoot)) return;
       this.state.editorVisible.set(true);
+      const changeHandler = (e2) => {
+        if (e2.element !== this.gridRoot) this.state.editorVisible.set(false);
+        this.editor.off("NodeChange", changeHandler);
+        this.editor.off("blur", changeHandler);
+      };
+      this.editor.once("NodeChange", changeHandler);
+      this.editor.once("blur", changeHandler);
     });
   }
 

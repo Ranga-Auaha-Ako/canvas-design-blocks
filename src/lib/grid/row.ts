@@ -2,8 +2,12 @@ import { derived, get, Writable, writable } from "svelte/store";
 import GridManager from ".";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
+import { nanoid } from "nanoid";
+import confirmDialog from "../confirmDialog";
 
 export default class Row {
+  public readonly id = nanoid();
+
   public static create(
     gridManager: GridManager,
     layout: RowLayout = rowTemplates["1"],
@@ -11,6 +15,7 @@ export default class Row {
   ) {
     const newNode = gridManager.editor.dom.create("div", {
       class: "grid-row",
+      "data-cgb-row-id": `cgb-row-${nanoid()}`,
     });
     if (insertAfter) {
       gridManager.editor.dom.insertAfter(newNode, insertAfter);
@@ -45,17 +50,52 @@ export default class Row {
     this.setLayout(layout);
   }
 
-  setLayout(layout: RowLayout) {
+  async setLayout(layout: RowLayout) {
     const columns = get(this.columns);
+    // Find out if we need to delete any
+    const toDelete = columns.length - layout.cols.length;
+    if (toDelete > 0) {
+      const userConfirm = await confirmDialog(
+        this.gridManager.editor,
+        "Update Layout",
+        "This row has content in it that will be deleted by removing columns! Are you sure you want to change to this layout?",
+        "Yes, change layout"
+      );
+      if (!userConfirm) {
+        return false;
+      }
+    }
     for (let i = 0; i < layout.cols.length; i++) {
       if (i > columns.length - 1)
         columns.push(Column.create(this, layout.cols[i]));
       else columns[i].width.set(layout.cols[i]);
     }
+    this.columns.set(columns);
     // If there are more columns than the new layout, delete them
-    while (columns.length > layout.cols.length) {
-      columns[columns.length - 1].delete();
+    for (let i = 0; i < toDelete; i++) {
+      this.deleteCol(columns.length - 1 - i);
     }
+  }
+
+  async delete() {
+    if (!this.gridManager.editor.dom.isEmpty(this.node)) {
+      const userConfirm = await confirmDialog(this.gridManager.editor);
+      if (!userConfirm) {
+        console.log("Cancelled!");
+        return false;
+      }
+    }
+    this.gridManager.editor.dom.remove(this.node);
+    this.gridManager.rows.update((rows) =>
+      rows.filter((r) => r.id !== this.id)
+    );
+    return true;
+  }
+
+  deleteCol(column: number | Column) {
+    if (typeof column === "number") column = get(this.columns)[column];
+    this.gridManager.editor.dom.remove(column.node);
+    this.columns.update((columns) => columns.filter((c) => c !== column));
   }
 
   updateCol(content: Element, col = 0, replaceContents = false) {

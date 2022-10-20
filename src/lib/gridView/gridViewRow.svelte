@@ -1,7 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import { append } from "svelte/internal";
   import { Writable } from "svelte/store";
+  import { fade, slide } from "svelte/transition";
   import Row from "../grid/row";
+  import GridAddButton from "./gridAddButton.svelte";
+  import GridLayouts from "./gridLayouts.svelte";
   import GridViewColumn from "./gridViewColumn.svelte";
 
   export let showPrependButton = true;
@@ -10,22 +14,55 @@
   export let row: Row;
   $: columns = row.columns;
 
+  let showLayoutPicker = false;
+  let showButtons = false;
+  let prependPicking = false;
+  let appendPicking = false;
+
   const dispatch = createEventDispatcher();
 </script>
 
-<div class="gridViewRow">
-  {#if showPrependButton}
-    <div class="actions prepend">
-      <button on:click={() => dispatch("addRow", { offset: 0 })}>+</button>
+<div
+  class="gridViewRow"
+  transition:slide
+  on:click={() => (showLayoutPicker = !showLayoutPicker)}
+  on:mouseover={() => (showButtons = true)}
+  on:focus={() => (showButtons = true)}
+  on:mouseout={() => (showButtons = false)}
+  on:blur={() => (showButtons = false)}
+>
+  {#if (showButtons && showPrependButton) || prependPicking}
+    <div class="actions prepend" transition:fade>
+      <GridAddButton on:addRow bind:expanded={prependPicking} />
     </div>
   {/if}
   {#each $columns as column}
     <GridViewColumn {column} />
   {/each}
-  {#if showAppendButton}
-    <div class="actions append">
-      <button on:click={() => dispatch("addRow", { offset: 1 })}>+</button>
+  {#if showButtons}
+    <div class="row-delete" transition:fade>
+      <button
+        class="cgb-delete-row"
+        on:click|stopPropagation={() => {
+          row.delete();
+        }}
+      >
+        <i class="icon-Line icon-trash " aria-hidden="true" />
+      </button>
     </div>
+  {/if}
+  {#if (showButtons && showAppendButton) || appendPicking}
+    <div class="actions append" transition:fade>
+      <GridAddButton on:addRow append={true} bind:expanded={appendPicking} />
+    </div>
+  {/if}
+  {#if showLayoutPicker}
+    <GridLayouts
+      on:cancel={() => {
+        showLayoutPicker = false;
+      }}
+      on:add={(e) => dispatch("setLayout", { template: e.detail })}
+    />
   {/if}
 </div>
 
@@ -38,14 +75,21 @@
     &.append {
       @apply -bottom-2.5;
     }
-    & button {
-      @apply left-0 right-0 mx-auto h-5 w-5;
-      @apply leading-none flex items-center justify-center align-middle;
-      @apply rounded-full border-0 bg-uni-blue shadow text-white;
-    }
   }
   .gridViewRow {
     @apply flex relative gap-2;
-    @apply bg-slate-200 p-2 rounded-lg;
+    @apply bg-slate-200 p-2 rounded cursor-pointer;
+  }
+
+  .row-delete {
+    @apply absolute -right-1 top-0 bottom-0 h-full flex items-center;
+    & button {
+      @apply h-7 w-7;
+      @apply rounded-full  border-none outline outline-1 transition;
+      @apply text-uni-color-red outline-uni-color-red bg-white;
+      &:hover {
+        @apply bg-uni-color-red text-white;
+      }
+    }
   }
 </style>

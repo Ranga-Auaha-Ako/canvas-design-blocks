@@ -42,11 +42,12 @@ export default class Column {
         `col-xs-${width.xs} col-sm-${width.sm} col-md-${width.md} col-lg-${width.lg}`
       );
     });
-  }
-  delete() {
-    this.gridManager.editor.dom.remove(this.node);
-    // this.row.columns.update((columns) =>
-    //   columns.filter((column) => column !== this)
-    // );
+    // Bind to clicks and move the focus
+    this.gridManager.editor.dom.bind(this.node, "click", () => {
+      //Move selection if we need to
+      if (!this.node.contains(this.gridManager.editor.selection.getNode())) {
+        this.gridManager.editor.selection.select(this.innerNode);
+      }
+    });
   }
 }

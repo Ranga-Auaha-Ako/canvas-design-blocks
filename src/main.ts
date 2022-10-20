@@ -21,7 +21,7 @@ const loadApp = () => {
   // // Build DIV to contain app
   const svelteHolder = document.createElement("div");
   svelteHolder.style.display = "contents";
-  // Annoyingly, we need to prevent some propogation of events to the rest of the app.
+  // Annoyingly, we might need to prevent some propogation of events to the rest of the app.
   ["click", "submit", "touchend", "mouseup"].forEach((e) =>
     svelteHolder.addEventListener(e, preventBubble)
   );
@@ -35,12 +35,17 @@ const loadApp = () => {
   });
   // Add button to open grid editor
   const button = document.createElement("button");
-  button.classList.add("btn", "btn-primary");
+  button.classList.add("btn", "btn-primary", "pull-right");
   button.innerText = "Open Grid Editor";
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (e) => {
     showSidebar.update((v) => !v);
   });
-  document.querySelector("#main")?.insertAdjacentElement("beforeend", button);
+  ["click", "submit", "touchend", "mouseup"].forEach((e) =>
+    button.addEventListener(e, preventBubble)
+  );
+  document
+    .querySelector(".edit-header")
+    ?.insertAdjacentElement("beforeend", button);
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");
   editorStyles.innerHTML = tinyMCEStyles;

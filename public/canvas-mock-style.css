@@ -1,62 +1,62 @@
 :root {
-    --ic-brand-primary-darkened-5: #004276;
---ic-brand-primary-darkened-10: #003F70;
---ic-brand-primary-darkened-15: #003B6A;
---ic-brand-primary-lightened-5: #0C4E82;
---ic-brand-primary-lightened-10: #195789;
---ic-brand-primary-lightened-15: #26608F;
---ic-brand-button--primary-bgd-darkened-5: #004276;
---ic-brand-button--primary-bgd-darkened-15: #003B6A;
---ic-brand-button--secondary-bgd-darkened-5: #2B3942;
---ic-brand-button--secondary-bgd-darkened-15: #27333B;
---ic-brand-font-color-dark-lightened-15: #4C5860;
---ic-brand-font-color-dark-lightened-28: #677179;
---ic-link-color-darkened-10: #003F70;
---ic-link-color-lightened-10: #195789;
---ic-brand-primary: #00457c;
---ic-brand-font-color-dark: #2D3B45;
---ic-link-color: #00457c;
---ic-brand-button--primary-bgd: var(--ic-brand-primary);
---ic-brand-button--primary-text: #ffffff;
---ic-brand-button--secondary-bgd: #2D3B45;
---ic-brand-button--secondary-text: #ffffff;
---ic-brand-global-nav-bgd: #00457c;
---ic-brand-global-nav-ic-icon-svg-fill: #ffffff;
---ic-brand-global-nav-ic-icon-svg-fill--active: var(--ic-brand-primary);
---ic-brand-global-nav-menu-item__text-color: #ffffff;
---ic-brand-global-nav-menu-item__text-color--active: var(--ic-link-color);
---ic-brand-global-nav-avatar-border: #ffffff;
---ic-brand-global-nav-menu-item__badge-bgd: #ffffff;
---ic-brand-global-nav-menu-item__badge-bgd--active: var(--ic-brand-primary);
---ic-brand-global-nav-menu-item__badge-text: #000000;
---ic-brand-global-nav-menu-item__badge-text--active: #ffffff;
---ic-brand-global-nav-logo-bgd: #00457c;
---ic-brand-header-image: url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_61990000000000001/attachments/8770431/UoA%20Logo%20White%20RGB%20Stacked%20200.png');
---ic-brand-mobile-global-nav-logo: url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg');
---ic-brand-watermark: ;
---ic-brand-watermark-opacity: 1;
---ic-brand-favicon: url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico');
---ic-brand-apple-touch-icon: url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png');
---ic-brand-msapplication-tile-color: var(--ic-brand-primary);
---ic-brand-msapplication-tile-square: url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png');
---ic-brand-msapplication-tile-wide: url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png');
---ic-brand-right-sidebar-logo: ;
---ic-brand-Login-body-bgd-color: #394B58;
---ic-brand-Login-body-bgd-image: ;
---ic-brand-Login-body-bgd-shadow-color: #2D3B45;
---ic-brand-Login-logo: url('https://du11hjcvx0uqb.cloudfront.net/dist/images/login/canvas-logo-5617606953.svg');
---ic-brand-Login-Content-bgd-color: none;
---ic-brand-Login-Content-border-color: none;
---ic-brand-Login-Content-inner-bgd: none;
---ic-brand-Login-Content-inner-border: none;
---ic-brand-Login-Content-inner-body-bgd: none;
---ic-brand-Login-Content-inner-body-border: none;
---ic-brand-Login-Content-label-text-color: #ffffff;
---ic-brand-Login-Content-password-text-color: #fffffe;
---ic-brand-Login-footer-link-color: #ffffff;
---ic-brand-Login-footer-link-color-hover: #ffffff;
---ic-brand-Login-instructure-logo: #ffffff;
-  }
+  --ic-brand-primary-darkened-5: #004276;
+  --ic-brand-primary-darkened-10: #003f70;
+  --ic-brand-primary-darkened-15: #003b6a;
+  --ic-brand-primary-lightened-5: #0c4e82;
+  --ic-brand-primary-lightened-10: #195789;
+  --ic-brand-primary-lightened-15: #26608f;
+  --ic-brand-button--primary-bgd-darkened-5: #004276;
+  --ic-brand-button--primary-bgd-darkened-15: #003b6a;
+  --ic-brand-button--secondary-bgd-darkened-5: #2b3942;
+  --ic-brand-button--secondary-bgd-darkened-15: #27333b;
+  --ic-brand-font-color-dark-lightened-15: #4c5860;
+  --ic-brand-font-color-dark-lightened-28: #677179;
+  --ic-link-color-darkened-10: #003f70;
+  --ic-link-color-lightened-10: #195789;
+  --ic-brand-primary: #00457c;
+  --ic-brand-font-color-dark: #2d3b45;
+  --ic-link-color: #00457c;
+  --ic-brand-button--primary-bgd: var(--ic-brand-primary);
+  --ic-brand-button--primary-text: #ffffff;
+  --ic-brand-button--secondary-bgd: #2d3b45;
+  --ic-brand-button--secondary-text: #ffffff;
+  --ic-brand-global-nav-bgd: #00457c;
+  --ic-brand-global-nav-ic-icon-svg-fill: #ffffff;
+  --ic-brand-global-nav-ic-icon-svg-fill--active: var(--ic-brand-primary);
+  --ic-brand-global-nav-menu-item__text-color: #ffffff;
+  --ic-brand-global-nav-menu-item__text-color--active: var(--ic-link-color);
+  --ic-brand-global-nav-avatar-border: #ffffff;
+  --ic-brand-global-nav-menu-item__badge-bgd: #ffffff;
+  --ic-brand-global-nav-menu-item__badge-bgd--active: var(--ic-brand-primary);
+  --ic-brand-global-nav-menu-item__badge-text: #000000;
+  --ic-brand-global-nav-menu-item__badge-text--active: #ffffff;
+  --ic-brand-global-nav-logo-bgd: #00457c;
+  --ic-brand-header-image: url("https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_61990000000000001/attachments/8770431/UoA%20Logo%20White%20RGB%20Stacked%20200.png");
+  --ic-brand-mobile-global-nav-logo: url("https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg");
+  --ic-brand-watermark: ;
+  --ic-brand-watermark-opacity: 1;
+  --ic-brand-favicon: url("https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico");
+  --ic-brand-apple-touch-icon: url("https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png");
+  --ic-brand-msapplication-tile-color: var(--ic-brand-primary);
+  --ic-brand-msapplication-tile-square: url("https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png");
+  --ic-brand-msapplication-tile-wide: url("https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png");
+  --ic-brand-right-sidebar-logo: ;
+  --ic-brand-Login-body-bgd-color: #394b58;
+  --ic-brand-Login-body-bgd-image: ;
+  --ic-brand-Login-body-bgd-shadow-color: #2d3b45;
+  --ic-brand-Login-logo: url("https://du11hjcvx0uqb.cloudfront.net/dist/images/login/canvas-logo-5617606953.svg");
+  --ic-brand-Login-Content-bgd-color: none;
+  --ic-brand-Login-Content-border-color: none;
+  --ic-brand-Login-Content-inner-bgd: none;
+  --ic-brand-Login-Content-inner-border: none;
+  --ic-brand-Login-Content-inner-body-bgd: none;
+  --ic-brand-Login-Content-inner-body-border: none;
+  --ic-brand-Login-Content-label-text-color: #ffffff;
+  --ic-brand-Login-Content-password-text-color: #fffffe;
+  --ic-brand-Login-footer-link-color: #ffffff;
+  --ic-brand-Login-footer-link-color-hover: #ffffff;
+  --ic-brand-Login-instructure-logo: #ffffff;
+}
 
 body {
   margin: 0;
@@ -778,7 +778,6 @@ textarea {
   box-shadow: 0 1px 2px rgba(45, 59, 69, 0.2);
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
-
   background-size: 12px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev .ui-icon {
@@ -801,10 +800,8 @@ textarea {
   background-color: #f2f2f2;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
-
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
-
 }
 .ui-datepicker td span,
 .ui-datepicker td a {
@@ -6381,7 +6378,6 @@ a.file {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.pdf {
   background-repeat: no-repeat;
@@ -6389,7 +6385,6 @@ a.pdf {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.image {
   background-repeat: no-repeat;
@@ -6397,7 +6392,6 @@ a.image {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.spreadsheet {
   background-repeat: no-repeat;
@@ -6405,7 +6399,6 @@ a.spreadsheet {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.xls {
   background-repeat: no-repeat;
@@ -6413,7 +6406,6 @@ a.xls {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.word,
 a.doc {
@@ -6422,7 +6414,6 @@ a.doc {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.ppt {
   background-repeat: no-repeat;
@@ -6430,7 +6421,6 @@ a.ppt {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.zip {
   background-repeat: no-repeat;
@@ -6438,7 +6428,6 @@ a.zip {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.html {
   background-repeat: no-repeat;
@@ -6446,7 +6435,6 @@ a.html {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.code {
   background-repeat: no-repeat;
@@ -6454,7 +6442,6 @@ a.code {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.text {
   background-repeat: no-repeat;
@@ -6462,7 +6449,6 @@ a.text {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.audio {
   background-repeat: no-repeat;
@@ -6470,7 +6456,6 @@ a.audio {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.video {
   background-repeat: no-repeat;
@@ -6478,7 +6463,6 @@ a.video {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.flash {
   background-repeat: no-repeat;
@@ -6486,7 +6470,6 @@ a.flash {
   font-size: 12px;
   font-size: 0.75rem;
   padding: 1px 0 2px 20px;
-
 }
 a.no-underline,
 a.no-underline:hover,
@@ -6505,13 +6488,10 @@ a.no-underline:focus {
   height: 16px;
 }
 .atr-reply {
-
 }
 .atr-edit {
-
 }
 .atr-delete {
-
 }
 .tooltip {
   position: relative;
@@ -7044,10 +7024,8 @@ a.external .ui-icon-extlink {
 }
 @font-face {
   font-family: "InstructureIcons-Line";
-  src: url("/dist/fonts/instructure_icons/Line/InstructureIcons-Line-91381e69a6.woff2")
-      format("woff2"),
-    url("/dist/fonts/instructure_icons/Line/InstructureIcons-Line-b8af67ff06.woff")
-      format("woff");
+  src: url("InstructureIcons-Line.woff2") format("woff2"),
+    url("InstructureIcons-Line.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -9626,12 +9604,10 @@ a:focus > [id^="MathJax"] {
   display: inline-block;
 }
 input[type="text"].loading {
-
   background-position: 98% center;
 }
 .loadingIndicator,
 .paginatedLoadingIndicator {
-
   background-position: center center;
   height: 20px;
 }
@@ -12263,7 +12239,6 @@ body.embedded #modal-box {
   (min-device-pixel-ratio: 1.5),
   (min-resolution: 1.5dppx) {
   #footer .footer-logo {
-
   }
 }
 div.content_notice {
@@ -14743,7 +14718,6 @@ ul.group_list {
   height: 100%;
   border: none;
   background-size: cover;
-
 }
 #wizard_box.wizard-box--course * {
   box-sizing: border-box;
@@ -14912,7 +14886,6 @@ ul.group_list {
   .wizard_options_list
   .option.completed
   a.header {
-
 }
 #wizard_box.wizard-box--course
   .wizard_content
@@ -18716,7 +18689,6 @@ a.menu_tray_tool_link img.icon {
 .mini_calendar .day:hover,
 .mini_calendar .day.related,
 .mini_calendar .day.drop_target {
-
 }
 .mini_calendar .day.drop_target {
   background-color: #aaa;
