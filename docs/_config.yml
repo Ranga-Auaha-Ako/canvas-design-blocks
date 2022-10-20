@@ -3,4 +3,4 @@ title: Canvas TinyMCE Grid plugin
 description: A small TinyMCE plugin to add easy to use grid functionality to Canvas's Rich Text Editor.
 show_downloads: true
 github:
-  userscript_url: https://raw.githubusercontent.com/Ranga-Auaha-Ako/tiny-canvas-grid/master/Canvas Tinymce Patch.user.js
+  userscript_url: https://gridbuilder.test.raa.amazon.auckland.ac.nz/canvas-grid.user.js
