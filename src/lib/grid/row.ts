@@ -53,8 +53,11 @@ export default class Row {
   async setLayout(layout: RowLayout) {
     const columns = get(this.columns);
     // Find out if we need to delete any
-    const toDelete = columns.length - layout.cols.length;
-    if (toDelete > 0) {
+    const toDelete = columns.slice(layout.cols.length);
+    const colsWithContent = toDelete.filter(
+      (c) => !c.gridManager.editor.dom.isEmpty(c.node)
+    );
+    if (colsWithContent.length) {
       const userConfirm = await confirmDialog(
         this.gridManager.editor,
         "Update Layout",
@@ -72,9 +75,9 @@ export default class Row {
     }
     this.columns.set(columns);
     // If there are more columns than the new layout, delete them
-    for (let i = 0; i < toDelete; i++) {
-      this.deleteCol(columns.length - 1 - i);
-    }
+    toDelete.forEach((col) => {
+      this.deleteCol(col);
+    });
   }
 
   async delete() {

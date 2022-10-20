@@ -26,8 +26,10 @@
       class="Button Button--icon-action"
       on:click={() => {
         $show = false;
-      }}>&times;</button
+      }}
     >
+      <i class="icon-Line icon-x" aria-hidden="true" />
+    </button>
   </div>
   <h3>Canvas Grid Editor</h3>
   <hr />
@@ -73,7 +75,7 @@
 
 <style lang="postcss">
   .close {
-    @apply absolute top-0 right-0 p-8;
+    @apply absolute top-0 right-0 m-8;
   }
   .sidebar-container {
     --sidebar-width: 26rem;

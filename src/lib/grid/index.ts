@@ -87,13 +87,18 @@ export default class implements Readable<Row[]> {
     this.editor.dom.bind(this.gridRoot, "click", (e) => {
       if (!(e.target === this.gridRoot)) return;
       this.state.editorVisible.set(true);
-      const changeHandler = (e2) => {
-        if (e2.element !== this.gridRoot) this.state.editorVisible.set(false);
-        this.editor.off("NodeChange", changeHandler);
-        this.editor.off("blur", changeHandler);
+      const changeHandler = (e2: any) => {
+        if (
+          e2.element !== this.gridRoot
+          // && !e2.element.closest(".canvas-grid-container")
+        ) {
+          this.state.editorVisible.set(false);
+          this.editor.off("NodeChange", changeHandler);
+          // this.editor.off("blur", changeHandler);
+        }
       };
       this.editor.once("NodeChange", changeHandler);
-      this.editor.once("blur", changeHandler);
+      // this.editor.once("blur", changeHandler);
     });
   }
 
