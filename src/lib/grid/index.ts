@@ -89,8 +89,9 @@ export default class implements Readable<Row[]> {
       this.state.editorVisible.set(true);
       const changeHandler = (e2: any) => {
         if (
-          e2.element !== this.gridRoot
-          // && !e2.element.closest(".canvas-grid-container")
+          e2.element !== this.gridRoot &&
+          e2.element.tagName !== "BODY" && //Fix for Firefox
+          !e2.element.closest(".canvas-grid-container")
         ) {
           this.state.editorVisible.set(false);
           this.editor.off("NodeChange", changeHandler);
