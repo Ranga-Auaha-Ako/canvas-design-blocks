@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Grid Builder (Staging)
 // @namespace    https://raa.auckland.ac.nz
-// @version      0.1
+// @version      0.2
 // @description  Adds Canvas Grid from the development instance to Canvas;;
 // @author       Zac M-W, Ranga Auaha Ako
 // @match        https://*.instructure.com/courses/*/pages/*/edit
