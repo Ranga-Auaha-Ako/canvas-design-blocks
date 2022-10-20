@@ -1,32 +1,52 @@
 import { Writable, writable } from "svelte/store";
+import type GridManager from ".";
 import Row from "./row";
-import { ColumnLayout } from "./rowLayouts";
+import { ColumnLayout, gridSize } from "./rowLayouts";
 
 export default class Column {
-  public node: Element;
-  public row: Row;
   public width: Writable<Required<ColumnLayout>>;
 
-  constructor(row: Row, width: Required<ColumnLayout>) {
-    this.row = row;
-    this.node = this.row.gridManager.editor.dom.create("div", {
+  static create(row: Row, width: Required<ColumnLayout>) {
+    const node = row.gridManager.editor.dom.create("div", {
       class: "col",
     });
-    this.row.gridManager.editor.dom.add(this.row.node, this.node);
-    this.row.gridManager.editor.dom.add(this.node, "p", {}, "<br/>");
+    row.gridManager.editor.dom.add(row.node, node);
+    const innerNode = row.gridManager.editor.dom.add(node, "div", {
+      contenteditable: true,
+      class: "cgb-col-inner",
+    });
+    return new Column(row.gridManager, width, node, innerNode);
+  }
+
+  static import(
+    gridManager: GridManager,
+    node: Element,
+    width: Required<ColumnLayout>
+  ) {
+    const innerNode = node.children[0];
+    gridManager.editor.dom.setAttrib(innerNode, "contenteditable", "true");
+    return new Column(gridManager, width, node, innerNode);
+  }
+
+  constructor(
+    public gridManager: GridManager,
+    width: Required<ColumnLayout>,
+    public node: Element,
+    public innerNode: Element
+  ) {
     this.width = writable(width);
     this.width.subscribe((width) => {
-      this.row.gridManager.editor.dom.removeAllAttribs(this.node);
-      this.row.gridManager.editor.dom.addClass(
+      this.gridManager.editor.dom.removeAllAttribs(this.node);
+      this.gridManager.editor.dom.addClass(
         this.node,
         `col-xs-${width.xs} col-sm-${width.sm} col-md-${width.md} col-lg-${width.lg}`
       );
     });
   }
   delete() {
-    this.row.gridManager.editor.dom.remove(this.node);
-    this.row.columns.update((columns) =>
-      columns.filter((column) => column !== this)
-    );
+    this.gridManager.editor.dom.remove(this.node);
+    // this.row.columns.update((columns) =>
+    //   columns.filter((column) => column !== this)
+    // );
   }
 }

@@ -10,5 +10,11 @@
     "strict": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
-  }
+  },
+  "exclude": [
+    "./dist/**/*",
+    "./public/**/*",
+    "./node_modules/**/*",
+    "./postcss.config.js"
+  ]
 }

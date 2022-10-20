@@ -1,4 +1,4 @@
-type gridSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type gridSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
 export interface ColumnLayout {
   xs: gridSize;
@@ -18,12 +18,33 @@ export class RowLayout {
       return { xs, sm, md, lg };
     });
   }
+  public static getLayout(columnNodes: Element[]): RowLayout {
+    const cols = columnNodes.map((node) => {
+      const sizes = ["xs", "sm", "md", "lg"];
+      return sizes.reduce((acc, size) => {
+        const className = Array.from(node.classList).find((c) =>
+          c.startsWith(`col-${size}-`)
+        );
+        if (size === "xs" && !className)
+          throw new Error("Can't determine col size");
+        if (className)
+          acc[size as keyof ColumnLayout] = parseInt(
+            className.split("-")[2]
+          ) as gridSize;
+        return acc;
+      }, {} as ColumnLayout);
+    });
+    return new RowLayout(cols);
+  }
 }
 
 export const rowTemplates = {
   // Equal Widths
   "1": new RowLayout([{ xs: 12 }]),
-  "1/2 + 1/2": new RowLayout([{ xs: 6 }, { xs: 6 }]),
+  "1/2 + 1/2": new RowLayout([
+    { sm: 6, xs: 12 },
+    { sm: 6, xs: 12 },
+  ]),
   "1/3 + 1/3 + 1/3": new RowLayout([
     { xs: 4, md: 12 },
     { xs: 4, md: 12 },

@@ -13,42 +13,84 @@ import { RowLayout, rowTemplates } from "./rowLayouts";
 
 export default class implements Readable<Row[]> {
   public editor: Editor;
-  private _isInitialized = writable(false);
-  public isInitialized = derived(this._isInitialized, (v) => v);
+  private _isGrid = writable(false);
+  public isGrid = derived(this._isGrid, (v) => v);
   public gridRoot: Element;
 
   private _start: Element;
 
   public rows: Writable<Row[]> = writable([]);
 
-  constructor() {
+  constructor(public state: { editorVisible: Writable<boolean> }) {
     this.editor = window.tinymce.activeEditor;
     const root = this.editor.dom.getRoot();
-    if (root.children[0].classList.contains("canvas-grid-editor")) {
-      // Detect if grid already exists by checking top level element
-      this.gridRoot = root.children[0];
-      this._isInitialized.set(true);
-      this._start = this.gridRoot.children[0];
+    // Three situations might occur:
+    // -------- No need to make a new grid:
+    //   1. Page has already been converted to grid
+    // -------- Need to make a new grid:
+    //   2. Page is empty (we can safely add the grid to the page)
+    //   3. Page has content which can be converted to grid
+
+    // 1. Page has already been converted to grid
+    const foundGridRoot = Array.from(root.children).find((e) =>
+      e.classList.contains("canvas-grid-editor")
+    );
+    if (foundGridRoot) {
+      this.gridRoot = foundGridRoot;
+      const foundStart = Array.from(this.gridRoot.children).find((e) =>
+        e.classList.contains("cge-start")
+      );
+      if (!foundStart)
+        throw new Error("Grid root does not contain start element");
+      this._isGrid.set(true);
+      this._start = foundStart; // Should be a hidden div
+      // Get rows
+      const rows = Array.from(this.gridRoot.children).filter((e) =>
+        e.classList.contains("grid-row")
+      );
+      this.rows.set(rows.map((row) => Row.import(this, row)));
+      this.bindEvents();
       return;
     }
-    // Grid doesn't exist already, create it
+    // -------- Need to make a new grid:
     this.gridRoot = this.editor.dom.create("div", {
       class: "canvas-grid-editor",
     });
-    this._start = this.editor.dom.add(this.gridRoot, "div", {
-      class: "cge-start",
-      style: "display: none;",
-    });
+    this._start = this.editor.dom.add(
+      this.gridRoot,
+      "div",
+      {
+        class: "cge-start",
+        style: "display: none;",
+      },
+      `--Canvas Grid Builder Markup v1.0--`
+    );
+    this.bindEvents();
+    // 2. Page is empty (we can safely add the grid to the page)
     if (this.editor.dom.isEmpty(root)) {
-      // If root is empty, append grid and call it done.
+      // Clear any empty paragraphs
+      this.editor.dom.remove(Array.from(root.children));
+      // Add grid DOM to root
       this.editor.dom.add(root, this.gridRoot);
-      this._isInitialized.set(true);
+      this._isGrid.set(true);
+      // Add a row to start
+      this.addRow(rowTemplates["1"]);
       return;
     }
+    // 3. Page has content which can be converted to grid
+    //  - In this case, we need to ask the user if they want to convert the page.
+    //  - Wait for MakeGrid to be called.
   }
 
-  public initialize() {
-    if (get(this.isInitialized)) return;
+  public bindEvents() {
+    this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
+    this.editor.dom.bind(this.gridRoot, "click", (e) => {
+      this.state.editorVisible.set(true);
+    });
+  }
+
+  public makeGrid() {
+    if (get(this.isGrid)) return;
     // Get contents of root and move it into grid
     const root = this.editor.dom.getRoot();
     const rootChildren = Array.from(root.children);
@@ -60,18 +102,18 @@ export default class implements Readable<Row[]> {
     });
     // Append grid to root
     this.editor.dom.add(root, this.gridRoot);
-    this._isInitialized.set(true);
+    this._isGrid.set(true);
     console.log("Grid initialized");
   }
 
   public addRow(layout?: RowLayout, index?: number) {
     let row: Row;
-    if (index === undefined) row = new Row(this, layout);
+    if (index === undefined) row = Row.create(this, layout);
     else {
       let insertAfter;
       if (index === 0) insertAfter = this._start;
       else insertAfter = this.gridRoot.children[index];
-      row = new Row(this, layout, insertAfter);
+      row = Row.create(this, layout, insertAfter);
     }
     this.rows.update((rows) => {
       if (index === undefined) rows.push(row);

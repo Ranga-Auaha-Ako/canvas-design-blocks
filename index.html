@@ -37,6 +37,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Canvas: Mock Environment</title>
   </head>
+
   <body class="primary-nav-expanded course-menu-expanded pages edit">
     <!-- Fake a Canvas LMS layout -->
     <div class="page-mock">
@@ -118,7 +119,20 @@
                   <div class="canvas-rce__skins--root rce-wrapper">
                     <div>
                       <textarea id="tinyCanvas">
-                        Hi! This is a simulation of the Canvas Rich Content Editor. It's not a perfect recreation but allows testing of many of the important functions.
+                        <div class="canvas-grid-editor">
+                          <div class="cge-start" style="display: none;">
+                            --Canvas Grid Builder--
+                          </div>
+                          <div class="grid-row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                              <div class="cgb-col-inner">
+                                <p>
+                                  Hi! This is a simulation of the Canvas Rich Content Editor. It's not a perfect recreation but allows testing of many of the important functions.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </textarea>
                       <!-- Sample starting content -->
                     </div>

@@ -158,4 +158,5 @@ const canvasSettings = {
   visual: true,
 };
 
+// @ts-ignore
 tinymce.init(canvasSettings);

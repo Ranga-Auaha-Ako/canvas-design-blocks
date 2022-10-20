@@ -47,25 +47,6 @@ const loadApp = () => {
   window.tinymce.activeEditor
     .getBody()
     .insertAdjacentElement("beforebegin", editorStyles);
-
-  // Prevent TinyMCE from deleting our columns and rows
-  window.tinymce.activeEditor.on("keydown", function (e) {
-    //prevent empty panels
-    if (e.key === "Backspace" || e.key === "Delete") {
-      try {
-        var elem = window.tinymce.activeEditor.selection.getNode()
-          .parentNode as HTMLElement; //current caret node
-        if (
-          elem &&
-          elem.closest(".canvas-grid-editor") &&
-          elem.textContent?.length == 0
-        ) {
-          e.preventDefault();
-          return false;
-        }
-      } catch (e) {}
-    }
-  });
 };
 
 window.addEventListener("load", loadApp);
