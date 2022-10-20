@@ -111,7 +111,7 @@ export default class implements Readable<Row[]> {
     // Add row
     const row = this.addRow(rowTemplates["1"]);
     rootChildren.forEach((child) => {
-      row.updateCol(child, 0, true);
+      row.updateCol(child, 0, false);
     });
     // Append grid to root
     this.editor.dom.add(root, this.gridRoot);

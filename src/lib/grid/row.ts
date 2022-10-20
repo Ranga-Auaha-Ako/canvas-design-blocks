@@ -104,11 +104,11 @@ export default class Row {
   updateCol(content: Element, col = 0, replaceContents = false) {
     const columns = get(this.columns);
     if (replaceContents) {
-      const existingChildren = Array.from(columns[col].node.children);
+      const existingChildren = Array.from(columns[col].innerNode.children);
       existingChildren.forEach((child) => {
         this.gridManager.editor.dom.remove(child);
       });
     }
-    this.gridManager.editor.dom.add(columns[col].node, content);
+    this.gridManager.editor.dom.add(columns[col].innerNode, content);
   }
 }
