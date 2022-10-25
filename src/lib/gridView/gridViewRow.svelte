@@ -22,9 +22,9 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<div
+<button
   class="gridViewRow"
-  transition:slide
+  transition:slide|local
   on:click={() => (showLayoutPicker = !showLayoutPicker)}
   on:mouseover={() => (showButtons = true)}
   on:focus={() => (showButtons = true)}
@@ -64,7 +64,7 @@
       on:add={(e) => dispatch("setLayout", { template: e.detail })}
     />
   {/if}
-</div>
+</button>
 
 <style lang="postcss">
   .actions {
@@ -78,7 +78,7 @@
   }
   .gridViewRow {
     @apply flex relative gap-2;
-    @apply bg-slate-200 p-2 rounded cursor-pointer;
+    @apply cursor-pointer p-0 border-0 bg-transparent;
   }
 
   .row-delete {

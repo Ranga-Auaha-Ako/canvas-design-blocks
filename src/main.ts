@@ -3,6 +3,8 @@ import { writable } from "svelte/store";
 import "./app.postcss";
 import tinyMCEStyles from "./lib/tinymce.postcss?inline";
 import App from "./App.svelte";
+import GridManager, { stateObject } from "./lib/grid/gridManager";
+import Grid from "./lib/grid";
 
 const preventBubble = (e: Event) => {
   e.preventDefault();
@@ -10,7 +12,10 @@ const preventBubble = (e: Event) => {
   return false;
 };
 
-let showSidebar = writable(false);
+const state: stateObject = {
+  selectedGrid: writable(null),
+  showInterface: writable(false),
+};
 
 const loadApp = () => {
   if (!window.tinymce?.activeEditor) {
@@ -28,24 +33,28 @@ const loadApp = () => {
   svelteHolder.id = "canvas-grid-container";
   // Append app after body
   document.body.insertAdjacentElement("beforeend", svelteHolder);
+  // Create Grid Manager
+  const grids = new GridManager(state);
   // Create app
   const app = new App({
     target: svelteHolder,
-    props: { show: showSidebar },
+    props: { state, grids },
   });
   // Add button to open grid editor
-  const button = document.createElement("button");
-  button.classList.add("btn", "btn-primary", "pull-right");
-  button.innerText = "Open Grid Editor";
-  button.addEventListener("click", (e) => {
-    showSidebar.update((v) => !v);
+  const openButton = document.createElement("button");
+  openButton.classList.add("btn", "btn-primary", "pull-right");
+  openButton.style.marginLeft = "0.2rem";
+  openButton.innerText = "Open Grid Editor";
+  openButton.addEventListener("click", (e) => {
+    state.showInterface.set(true);
+    // grids.add(Grid.create(grids.state), true);
   });
   ["click", "submit", "touchend", "mouseup"].forEach((e) =>
-    button.addEventListener(e, preventBubble)
+    openButton.addEventListener(e, preventBubble)
   );
   document
     .querySelector(".edit-header")
-    ?.insertAdjacentElement("beforeend", button);
+    ?.insertAdjacentElement("beforeend", openButton);
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");
   editorStyles.innerHTML = tinyMCEStyles;

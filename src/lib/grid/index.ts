@@ -10,54 +10,26 @@ import type { Writable, Readable } from "svelte/store";
 import type { Editor } from "tinymce";
 import Row from "./row";
 import { RowLayout, rowTemplates } from "./rowLayouts";
+import { nanoid } from "nanoid";
+import { stateObject } from "./gridManager";
 
-export default class implements Readable<Row[]> {
-  public editor: Editor;
-  private _isGrid = writable(false);
-  public isGrid = derived(this._isGrid, (v) => v);
-  public gridRoot: Element;
-
-  private _start: Element;
-
+export class Grid implements Readable<Row[]> {
+  public readonly id = nanoid();
   public rows: Writable<Row[]> = writable([]);
 
-  constructor(public state: { editorVisible: Writable<boolean> }) {
-    this.editor = window.tinymce.activeEditor;
-    const root = this.editor.dom.getRoot();
-    // Three situations might occur:
-    // -------- No need to make a new grid:
-    //   1. Page has already been converted to grid
-    // -------- Need to make a new grid:
-    //   2. Page is empty (we can safely add the grid to the page)
-    //   3. Page has content which can be converted to grid
+  private _start: HTMLElement;
 
-    // 1. Page has already been converted to grid
-    const foundGridRoot = Array.from(root.children).find((e) =>
-      e.classList.contains("canvas-grid-editor")
-    );
-    if (foundGridRoot) {
-      this.gridRoot = foundGridRoot;
-      const foundStart = Array.from(this.gridRoot.children).find((e) =>
-        e.classList.contains("cge-start")
-      );
-      if (!foundStart)
-        throw new Error("Grid root does not contain start element");
-      this._isGrid.set(true);
-      this._start = foundStart; // Should be a hidden div
-      // Get rows
-      const rows = Array.from(this.gridRoot.children).filter((e) =>
-        e.classList.contains("grid-row")
-      );
-      this.rows.set(rows.map((row) => Row.import(this, row)));
-      this.bindEvents();
-      return;
-    }
-    // -------- Need to make a new grid:
-    this.gridRoot = this.editor.dom.create("div", {
+  public static create(
+    state: stateObject,
+    editor: Editor = window.tinymce.activeEditor,
+    atCursor = false
+  ) {
+    // Creates a new grid at the specified location
+    const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
     });
-    this._start = this.editor.dom.add(
-      this.gridRoot,
+    const _start = editor.dom.add(
+      gridRoot,
       "div",
       {
         class: "cge-start",
@@ -65,59 +37,100 @@ export default class implements Readable<Row[]> {
       },
       `--Canvas Grid Builder Markup v1.0--`
     );
+    // Add grid to page
+    if (atCursor) {
+      const inGrid = editor.selection.getNode().closest(".canvas-grid-editor");
+      if (inGrid) {
+        editor.dom.insertAfter(gridRoot, inGrid);
+      } else {
+        editor.dom.add(editor.selection.getNode(), gridRoot);
+      }
+    } else editor.dom.add(editor.dom.getRoot(), gridRoot);
+    // Create grid instance
+    return new this(state, editor, gridRoot);
+  }
+
+  public static import(
+    state: stateObject,
+    editor: Editor = window.tinymce.activeEditor,
+    gridRoot: HTMLElement
+  ) {
+    const grid = new this(state, editor, gridRoot);
+    // Get rows
+    const rows = Array.from(gridRoot.children).filter((e) =>
+      e.classList.contains("grid-row")
+    ) as HTMLElement[];
+    const rowInsts = rows.map((row) => Row.import(grid, row));
+    grid.rows.set(rowInsts);
+    return grid;
+  }
+
+  constructor(
+    public state: stateObject,
+    public editor: Editor = window.tinymce.activeEditor,
+    public gridRoot: HTMLElement,
+    rows: Row[] = []
+  ) {
+    // If ID Already set, use that instead of generating a new one
+    if (this.gridRoot.dataset.cgeId) this.id = this.gridRoot.dataset.cgeId;
+    // Find start element
+    const foundStart = Array.from(gridRoot.children).find((e) =>
+      e.classList.contains("cge-start")
+    ) as HTMLElement | undefined;
+    if (!foundStart)
+      throw new Error("Grid root does not contain start element");
+    this._start = foundStart; // Should be a hidden div
+    // Set up rows
+    if (rows.length) this.rows.set(rows);
+    else this.addRow(rowTemplates["1"]);
+    // Bind events to grid
     this.bindEvents();
-    // 2. Page is empty (we can safely add the grid to the page)
-    if (this.editor.dom.isEmpty(root)) {
-      // Clear any empty paragraphs
-      this.editor.dom.remove(Array.from(root.children));
-      // Add grid DOM to root
-      this.editor.dom.add(root, this.gridRoot);
-      this._isGrid.set(true);
-      // Add a row to start
-      this.addRow(rowTemplates["1"]);
-      return;
-    }
-    // 3. Page has content which can be converted to grid
-    //  - In this case, we need to ask the user if they want to convert the page.
-    //  - Wait for MakeGrid to be called.
+    // Set ID of grid
+    this.gridRoot.dataset.cgeId = this.id;
   }
 
   public bindEvents() {
-    this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
     this.editor.dom.bind(this.gridRoot, "click", (e) => {
       if (!(e.target === this.gridRoot)) return;
-      this.state.editorVisible.set(true);
+      this.state.showInterface.set(true);
       const changeHandler = (e2: any) => {
         if (
           e2.element !== this.gridRoot &&
           e2.element.tagName !== "BODY" && //Fix for Firefox
-          !e2.element.closest(".canvas-grid-container")
+          !e2.element.closest(".canvas-grid-editor")
         ) {
-          this.state.editorVisible.set(false);
+          this.state.showInterface.set(false);
           this.editor.off("NodeChange", changeHandler);
-          // this.editor.off("blur", changeHandler);
         }
       };
-      this.editor.once("NodeChange", changeHandler);
-      // this.editor.once("blur", changeHandler);
+      this.editor.on("NodeChange", changeHandler);
+      e.preventDefault();
+      return false;
     });
+    // Prevent accidental deletion of grid
+    this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
+    // Mutation observer to delete other times grid is being removed
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.removedNodes.length) {
+          mutation.removedNodes.forEach((node) => {
+            if (node.contains(this.gridRoot)) {
+              this.destroy();
+            }
+          });
+        }
+      });
+    });
+
+    if (this.gridRoot.parentElement)
+      observer.observe(this.gridRoot.parentElement, { childList: true });
   }
 
-  public makeGrid() {
-    if (get(this.isGrid)) return;
-    // Get contents of root and move it into grid
-    const root = this.editor.dom.getRoot();
-    const rootChildren = Array.from(root.children);
-    this.editor.dom.remove(rootChildren);
-    // Add row
-    const row = this.addRow(rowTemplates["1"]);
-    rootChildren.forEach((child) => {
-      row.updateCol(child, 0, false);
+  public destroy() {
+    this.rows.update((row) => {
+      row.forEach((r) => r.delete(true));
+      return [];
     });
-    // Append grid to root
-    this.editor.dom.add(root, this.gridRoot);
-    this._isGrid.set(true);
-    console.log("Grid initialized");
   }
 
   public addRow(layout?: RowLayout, index?: number) {
@@ -139,3 +152,5 @@ export default class implements Readable<Row[]> {
 
   public subscribe = this.rows.subscribe;
 }
+
+export default Grid;

@@ -1,26 +1,30 @@
 <script lang="ts">
   import { getContext } from "svelte";
+  import { debug } from "svelte/internal";
   import { get } from "svelte/store";
-  import GridManager from "../grid";
+  import { fade } from "svelte/transition";
+  import Grid from "../grid";
   import { RowLayout, rowTemplates } from "../grid/rowLayouts";
+  import GridLayouts from "./gridLayouts.svelte";
 
-  const gridManager: GridManager = getContext("gridManager");
+  export let grid: Grid;
+
   import GridViewRow from "./gridViewRow.svelte";
 
   const addRow = (index: number, template: RowLayout) => {
-    gridManager.addRow(template, index);
+    grid.addRow(template, index);
   };
 
   const setRowLayout = (index: number, template: RowLayout) => {
-    get(gridManager)[index].setLayout(template);
+    get(grid)[index].setLayout(template);
   };
 </script>
 
 <div class="gridView">
-  {#each $gridManager as row, i (row.id)}
+  {#each $grid as row, i (row.id)}
     <GridViewRow
       {row}
-      showAppendButton={i == $gridManager.length - 1}
+      showAppendButton={i == $grid.length - 1}
       on:addRow={(e) => {
         addRow(i + (e.detail.offset || 0), e.detail.template);
       }}
@@ -33,6 +37,7 @@
 
 <style lang="postcss">
   .gridView {
-    @apply flex flex-col gap-2 relative;
+    @apply flex flex-col gap-2 relative p-2 m-2;
+    @apply bg-slate-200 rounded;
   }
 </style>

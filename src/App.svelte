@@ -1,92 +1,131 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { writable } from "svelte/store";
-  import GridManager from "./lib/grid";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { Writable, writable } from "svelte/store";
+  import Grid from "./lib/grid";
   import { setContext } from "svelte";
   import GridView from "./lib/gridView/gridView.svelte";
   import GridLayouts from "./lib/gridView/gridLayouts.svelte";
-  import { fade } from "svelte/transition";
+  import { fade, fly, slide } from "svelte/transition";
+  import GridManager, { stateObject } from "./lib/grid/gridManager";
+  import { clickOutside } from "svelte-use-click-outside";
 
-  export let show = writable(false);
+  export let state: stateObject = {
+    showInterface: writable(false),
+  };
 
-  const gridManager = new GridManager({ editorVisible: show });
-  setContext("gridManager", gridManager);
+  export let grids = new GridManager(state);
+
+  setContext("grids", grids);
+
+  $: showInterface = state.showInterface;
+
+  onMount(() => {
+    // Two situations might occur:
+    // -------- No need to make a new grid:
+    //   1. Page already has a grid
+    // -------- Need to make a new grid:
+    //   2. Page is empty (auto-init grid)
+    //   3. Page has content. We can add a grid at the cursor position when asked
+    const editor = window.tinymce.activeEditor;
+    // If page is empty, we can auto-init a grid
+    if (editor.dom.isEmpty(editor.dom.getRoot())) {
+      grids.add(Grid.create(grids.state));
+    } else {
+      // Attempt to import any existing grids
+      grids.importAll();
+    }
+  });
 
   const dispatch = createEventDispatcher();
 
   let showRowMenu = false;
 
-  $: hasGrid = gridManager.isGrid;
-  $: rows = gridManager.rows;
+  $: hasGrid = $grids.length > 0;
 </script>
 
-<div class="sidebar-container" class:active={$show}>
-  <div class="close">
-    <button
-      class="Button Button--icon-action"
-      on:click={() => {
-        $show = false;
-      }}
-    >
-      <i class="icon-Line icon-x" aria-hidden="true" />
-    </button>
-  </div>
-  <h3>Canvas Grid Editor</h3>
-  <hr />
-  {#if !$hasGrid}
-    <p>
-      Welcome to the new Canvas Grid Editor. To begin, click the button below to
-      convert this page to be used with the editor.
-    </p>
-    <button
-      class="btn btn-primary"
-      on:click={() => {
-        gridManager.makeGrid();
-      }}>Create Grid</button
-    >
-  {:else if $rows.length === 0}
-    <div class="no-rows" transition:fade>
-      <p>You have no rows in your grid. Click the button below to add a row.</p>
+<div
+  class="sidebar-container"
+  class:active={$showInterface}
+  use:clickOutside={() => {
+    state.showInterface.set(false);
+  }}
+>
+  <div class="header">
+    <div class="close">
       <button
-        class="btn btn-primary"
+        class="Button Button--icon-action"
         on:click={() => {
-          showRowMenu = true;
+          $showInterface = false;
         }}
       >
-        Add Row
+        <i class="icon-Line icon-x" aria-hidden="true" />
       </button>
-      {#if showRowMenu}
-        <GridLayouts
-          on:add={(e) => {
-            gridManager.addRow(e.detail);
-            showRowMenu = false;
-          }}
-          on:cancel={() => {
-            showRowMenu = false;
-          }}
-        />
-      {/if}
     </div>
-  {:else}
-    <h4>Your page layout:</h4>
-    <GridView />
-  {/if}
+    <h3>Canvas Grid Builder</h3>
+  </div>
+  <div class="grid-details" transition:fade>
+    <p>
+      Welcome to the new Canvas Grid Editor. To begin, select an existing grid
+      on the page by clicking the outline, or click the button below to create a
+      grid.
+    </p>
+    <div class="existing-grids">
+      {#each $grids as grid, idx (grid.id)}
+        <GridView {grid} />
+        {#if idx < $grids.length - 1}
+          <span class="space-inbetween">&ctdot;</span>
+        {/if}
+      {/each}
+    </div>
+    <button
+      class="Button Button--primary"
+      on:click={() => {
+        grids.add(Grid.create(grids.state, undefined, true), true);
+      }}>Create Grid</button
+    >
+  </div>
 </div>
 
 <style lang="postcss">
-  .close {
-    @apply absolute top-0 right-0 m-8;
-  }
   .sidebar-container {
     --sidebar-width: 26rem;
     @apply fixed w-full h-full border-uni-blue top-0 right-0 transition duration-300;
     @apply z-50 bg-white;
     @apply p-4 px-8;
     @apply border-0 border-solid border-l-2;
+    @apply grid gap-4;
+    @apply overflow-y-auto max-h-screen box-border;
+    grid-template-areas: "header" "content";
+    grid-template-rows: auto 1fr;
     max-width: var(--sidebar-width);
     transform: translateX(100%);
+    & .header {
+      grid-area: header;
+      @apply grid items-center gap-3;
+      @apply border-solid border-0 border-b border-uni-gray-200;
+      grid-template-areas: "back title close" "hr hr hr";
+      grid-template-columns: auto 1fr auto;
+      & h3 {
+        grid-area: title;
+      }
+      & .close {
+        grid-area: close;
+      }
+      & .back {
+        grid-area: back;
+      }
+    }
+    & .grid-details {
+      grid-area: content;
+    }
     &.active {
       transform: translateX(0);
+    }
+    & .existing-grids {
+      @apply flex flex-col;
+      & .space-inbetween {
+        @apply text-center text-gray-400 font-bold leading-none m-0 select-none;
+      }
     }
   }
   .no-rows {

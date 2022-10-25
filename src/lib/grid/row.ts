@@ -1,5 +1,5 @@
 import { derived, get, Writable, writable } from "svelte/store";
-import GridManager from ".";
+import Grid from ".";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
@@ -9,24 +9,24 @@ export default class Row {
   public readonly id = nanoid();
 
   public static create(
-    gridManager: GridManager,
+    grid: Grid,
     layout: RowLayout = rowTemplates["1"],
     insertAfter?: Element
   ) {
-    const newNode = gridManager.editor.dom.create("div", {
+    const newNode = grid.editor.dom.create("div", {
       class: "grid-row",
-      "data-cgb-row-id": `cgb-row-${nanoid()}`,
+      // "data-cgb-row-id": `${nanoid()}`,
     });
     if (insertAfter) {
-      gridManager.editor.dom.insertAfter(newNode, insertAfter);
-      return new Row(gridManager, layout, newNode);
+      grid.editor.dom.insertAfter(newNode, insertAfter);
+      return new Row(grid, layout, newNode);
     } else {
-      gridManager.editor.dom.add(gridManager.gridRoot, newNode);
-      return new Row(gridManager, layout, newNode);
+      grid.editor.dom.add(grid.gridRoot, newNode);
+      return new Row(grid, layout, newNode);
     }
   }
 
-  public static import(gridManager: GridManager, node: Element) {
+  public static import(gridManager: Grid, node: Element) {
     // Get Row Layout
     const columnNodes = Array.from(node.children).filter((e) =>
       Array.from(e.classList).find((c) => c.startsWith("col-"))
@@ -40,13 +40,11 @@ export default class Row {
   }
 
   constructor(
-    public gridManager: GridManager,
+    public gridManager: Grid,
     layout: RowLayout,
     public node: Element,
     public columns: Writable<Column[]> = writable([])
   ) {
-    this.gridManager = gridManager;
-    this.node = node;
     this.setLayout(layout);
   }
 
@@ -80,9 +78,10 @@ export default class Row {
     });
   }
 
-  async delete() {
+  async delete(force = false) {
     if (!this.gridManager.editor.dom.isEmpty(this.node)) {
-      const userConfirm = await confirmDialog(this.gridManager.editor);
+      const userConfirm =
+        force || (await confirmDialog(this.gridManager.editor));
       if (!userConfirm) {
         console.log("Cancelled!");
         return false;

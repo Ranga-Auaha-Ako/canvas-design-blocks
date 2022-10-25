@@ -1,5 +1,5 @@
 import { Writable, writable } from "svelte/store";
-import type GridManager from ".";
+import type Grid from ".";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
 
@@ -18,18 +18,14 @@ export default class Column {
     return new Column(row.gridManager, width, node, innerNode);
   }
 
-  static import(
-    gridManager: GridManager,
-    node: Element,
-    width: Required<ColumnLayout>
-  ) {
+  static import(grid: Grid, node: Element, width: Required<ColumnLayout>) {
     const innerNode = node.children[0];
-    gridManager.editor.dom.setAttrib(innerNode, "contenteditable", "true");
-    return new Column(gridManager, width, node, innerNode);
+    grid.editor.dom.setAttrib(innerNode, "contenteditable", "true");
+    return new Column(grid, width, node, innerNode);
   }
 
   constructor(
-    public gridManager: GridManager,
+    public gridManager: Grid,
     width: Required<ColumnLayout>,
     public node: Element,
     public innerNode: Element
@@ -45,7 +41,17 @@ export default class Column {
     // Bind to clicks and move the focus
     this.gridManager.editor.dom.bind(this.node, "click", () => {
       //Move selection if we need to
-      if (!this.node.contains(this.gridManager.editor.selection.getNode())) {
+      if (
+        !this.innerNode.contains(this.gridManager.editor.selection.getNode())
+      ) {
+        if (!this.node.contains(this.innerNode)) {
+          // Re-add it if it was deleted
+          // Remove bogus nodes
+          this.gridManager.editor.dom.remove(
+            Array.from(this.node.querySelectorAll(":scope *[data-mce-bogus]"))
+          );
+          this.gridManager.editor.dom.add(this.node, this.innerNode);
+        }
         this.gridManager.editor.selection.select(this.innerNode);
       }
     });

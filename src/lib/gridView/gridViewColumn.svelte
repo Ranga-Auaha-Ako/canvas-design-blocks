@@ -10,7 +10,7 @@
   class="gridViewCol"
   style={`--gridViewColWidth:${($width.lg / 12) * 100}%;`}
 >
-  {$width.lg}
+  {Math.round(($width.lg / 12) * 100)}%
 </div>
 
 <style lang="postcss">

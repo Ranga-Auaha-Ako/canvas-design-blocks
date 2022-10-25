@@ -8,15 +8,14 @@
 
 <div
   class="layoutList"
-  in:slide
+  in:slide|local
   out:fade
   use:clickOutside={() => dispatch("cancel")}
 >
   {#each Object.entries(rowTemplates) as [name, template]}
-    <div
+    <button
       class="layout"
       title={name}
-      role="button"
       tabindex="0"
       on:click={(e) => dispatch("add", template)}
     >
@@ -26,7 +25,7 @@
           style={`--gridViewColWidth:${(col.lg / 12) * 100}%;`}
         />
       {/each}
-    </div>
+    </button>
   {/each}
 </div>
 
@@ -36,7 +35,7 @@
     @apply bg-white p-2 rounded shadow-lg border-2 border-solid border-uni-blue-light;
     @nest & .layout {
       @apply relative;
-      @apply bg-slate-100 p-2 rounded;
+      @apply bg-slate-100 p-2 rounded border-0;
       @apply flex gap-2;
       @apply cursor-pointer transition;
       &:hover {

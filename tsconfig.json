@@ -15,6 +15,7 @@
     "./dist/**/*",
     "./public/**/*",
     "./node_modules/**/*",
-    "./postcss.config.js"
+    "./*.config.js",
+    "./*.config.cjs"
   ]
 }
