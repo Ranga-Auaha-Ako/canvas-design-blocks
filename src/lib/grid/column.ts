@@ -8,7 +8,7 @@ export default class Column {
 
   static create(row: Row, width: Required<ColumnLayout>) {
     const node = row.gridManager.editor.dom.create("div", {
-      class: "col",
+      class: "cgb-col",
     });
     row.gridManager.editor.dom.add(row.node, node);
     const innerNode = row.gridManager.editor.dom.add(node, "div", {
@@ -35,7 +35,7 @@ export default class Column {
       this.gridManager.editor.dom.removeAllAttribs(this.node);
       this.gridManager.editor.dom.addClass(
         this.node,
-        `col-xs-${width.xs} col-sm-${width.sm} col-md-${width.md} col-lg-${width.lg}`
+        `cgb-col col-xs-${width.xs} col-sm-${width.sm} col-md-${width.md} col-lg-${width.lg}`
       );
     });
     // Bind to clicks and move the focus

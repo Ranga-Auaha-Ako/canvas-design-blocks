@@ -30,9 +30,6 @@
     // If page is empty, we can auto-init a grid
     if (editor.dom.isEmpty(editor.dom.getRoot())) {
       grids.add(Grid.create(grids.state));
-    } else {
-      // Attempt to import any existing grids
-      grids.importAll();
     }
   });
 

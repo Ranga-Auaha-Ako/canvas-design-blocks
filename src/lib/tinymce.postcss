@@ -13,7 +13,8 @@
   }
   & .grid-row {
     @apply flex gap-3;
-    & [class=^="col-"] {
+    & [class=^="col-"],
+    & .cgb-col {
       @apply p-3 outline-dashed outline-2 outline-gray-200 bg-white cursor-text;
       @apply transition duration-300;
       transition-property: outline;

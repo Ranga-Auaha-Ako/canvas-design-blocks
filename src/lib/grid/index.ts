@@ -55,7 +55,7 @@ export class Grid implements Readable<Row[]> {
     editor: Editor = window.tinymce.activeEditor,
     gridRoot: HTMLElement
   ) {
-    const grid = new this(state, editor, gridRoot);
+    const grid = new this(state, editor, gridRoot, []);
     // Get rows
     const rows = Array.from(gridRoot.children).filter((e) =>
       e.classList.contains("grid-row")
@@ -69,7 +69,7 @@ export class Grid implements Readable<Row[]> {
     public state: stateObject,
     public editor: Editor = window.tinymce.activeEditor,
     public gridRoot: HTMLElement,
-    rows: Row[] = []
+    rows?: Row[]
   ) {
     // If ID Already set, use that instead of generating a new one
     if (this.gridRoot.dataset.cgeId) this.id = this.gridRoot.dataset.cgeId;
@@ -81,7 +81,7 @@ export class Grid implements Readable<Row[]> {
       throw new Error("Grid root does not contain start element");
     this._start = foundStart; // Should be a hidden div
     // Set up rows
-    if (rows.length) this.rows.set(rows);
+    if (rows) this.rows.set(rows);
     else this.addRow(rowTemplates["1"]);
     // Bind events to grid
     this.bindEvents();
@@ -91,7 +91,7 @@ export class Grid implements Readable<Row[]> {
 
   public bindEvents() {
     this.editor.dom.bind(this.gridRoot, "click", (e) => {
-      if (!(e.target === this.gridRoot)) return;
+      if (e.target.closest(".cgb-col")) return;
       this.state.showInterface.set(true);
       const changeHandler = (e2: any) => {
         if (
@@ -109,21 +109,6 @@ export class Grid implements Readable<Row[]> {
     });
     // Prevent accidental deletion of grid
     this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
-    // Mutation observer to delete other times grid is being removed
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.removedNodes.length) {
-          mutation.removedNodes.forEach((node) => {
-            if (node.contains(this.gridRoot)) {
-              this.destroy();
-            }
-          });
-        }
-      });
-    });
-
-    if (this.gridRoot.parentElement)
-      observer.observe(this.gridRoot.parentElement, { childList: true });
   }
 
   public destroy() {
