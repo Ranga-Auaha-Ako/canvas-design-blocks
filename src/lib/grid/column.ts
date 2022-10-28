@@ -52,7 +52,7 @@ export default class Column {
           );
           this.gridManager.editor.dom.add(this.node, this.innerNode);
         }
-        this.gridManager.editor.selection.select(this.innerNode);
+        this.gridManager.editor.selection.setCursorLocation(this.innerNode, 0);
       }
     });
   }
