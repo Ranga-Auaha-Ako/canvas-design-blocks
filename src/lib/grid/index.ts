@@ -105,6 +105,7 @@ export class Grid implements Readable<Row[]> {
       };
       this.editor.on("NodeChange", changeHandler);
       e.preventDefault();
+      e.stopPropagation();
       return false;
     });
     // Prevent accidental deletion of grid

@@ -44,7 +44,7 @@
   class="sidebar-container"
   class:active={$showInterface}
   use:clickOutside={() => {
-    state.showInterface.set(false);
+    if ($showInterface) state.showInterface.set(false);
   }}
 >
   <div class="header">
