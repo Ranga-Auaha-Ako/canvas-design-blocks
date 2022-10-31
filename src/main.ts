@@ -5,31 +5,41 @@ import tinyMCEStyles from "./lib/tinymce.postcss?inline";
 import App from "./App.svelte";
 import GridManager, { stateObject } from "./lib/grid/gridManager";
 import Grid from "./lib/grid";
+import type { Editor } from "tinymce";
 
-const preventBubble = (e: Event) => {
-  e.preventDefault();
-  e.stopPropagation();
-  return false;
+const preventBubble = (elem: Element) => {
+  ["click", "submit", "touchend", "mouseup"].forEach((evt) =>
+    elem.addEventListener(evt, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    })
+  );
 };
 
 const state: stateObject = {
-  selectedGrid: writable(null),
   showInterface: writable(false),
 };
 
-const loadApp = () => {
+export const loadApp = () => {
+  console.log("Loading Canvas Grid Editor");
   if (!window.tinymce?.activeEditor) {
     // Try again once there is an active editor
-    // Could also be init
-    window.tinymce.on("activate", loadApp);
+    window.tinymce.on("AddEditor", ({ editor }: { editor: Editor }) => {
+      editor.on("init", () => {
+        loadApp();
+      });
+    });
+    console.log("No active editor, waiting for one");
+    return;
+  } else {
+    console.log("Active editor found");
   }
   // // Build DIV to contain app
   const svelteHolder = document.createElement("div");
   svelteHolder.style.display = "contents";
   // Annoyingly, we might need to prevent some propogation of events to the rest of the app.
-  ["click", "submit", "touchend", "mouseup"].forEach((e) =>
-    svelteHolder.addEventListener(e, preventBubble)
-  );
+  preventBubble(svelteHolder);
   svelteHolder.id = "canvas-grid-container";
   // Append app after body
   document.body.insertAdjacentElement("beforeend", svelteHolder);
@@ -47,11 +57,8 @@ const loadApp = () => {
   openButton.innerText = "Open Grid Editor";
   openButton.addEventListener("click", (e) => {
     state.showInterface.set(true);
-    // grids.add(Grid.create(grids.state), true);
   });
-  ["click", "submit", "touchend", "mouseup"].forEach((e) =>
-    openButton.addEventListener(e, preventBubble)
-  );
+  preventBubble(openButton);
   document
     .querySelector(".edit-header")
     ?.insertAdjacentElement("beforeend", openButton);
@@ -63,4 +70,9 @@ const loadApp = () => {
     .insertAdjacentElement("beforebegin", editorStyles);
 };
 
-window.addEventListener("load", loadApp);
+// Load the app only on certain pages
+const loc = window.location.pathname;
+console.log(loc);
+if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
+  window.addEventListener("load", loadApp);
+}

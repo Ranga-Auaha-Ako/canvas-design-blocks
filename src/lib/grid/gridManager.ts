@@ -119,6 +119,11 @@ export default class GridManager implements Writable<Grid[]> {
 
     // Import any new grids
     this.importAll();
+
+    // Ensure all grids have the correct number of columns
+    get(this._grids).forEach((g) => {
+      g.checkLayout();
+    });
   }
 
   public watchEditor() {

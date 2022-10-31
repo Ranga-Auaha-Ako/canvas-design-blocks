@@ -41,14 +41,16 @@ export default class Row {
 
   constructor(
     public gridManager: Grid,
-    layout: RowLayout,
+    public layout: RowLayout,
     public node: Element,
     public columns: Writable<Column[]> = writable([])
   ) {
+    console.log(layout);
     this.setLayout(layout);
   }
 
   async setLayout(layout: RowLayout) {
+    this.layout = layout;
     const columns = get(this.columns);
     // Find out if we need to delete any
     const toDelete = columns.slice(layout.cols.length);
@@ -76,6 +78,33 @@ export default class Row {
     toDelete.forEach((col) => {
       this.deleteCol(col);
     });
+  }
+
+  async checkLayout(addCol = false) {
+    if (addCol) {
+      const leftoverCols = get(this.columns).reduce(
+        (acc, col) => {
+          const widths = get(col.width);
+          return {
+            xs: Math.min(0, acc.xs - widths.xs) as gridSize,
+            sm: Math.min(0, acc.sm - widths.sm) as gridSize,
+            md: Math.min(0, acc.md - widths.md) as gridSize,
+            lg: Math.min(0, acc.lg - widths.lg) as gridSize,
+          };
+        },
+        {
+          xs: 12 as gridSize,
+          sm: 12 as gridSize,
+          md: 12 as gridSize,
+          lg: 12 as gridSize,
+        } as Required<ColumnLayout>
+      );
+      if (Object.values(leftoverCols).some((v) => v > 0)) {
+        // We have space left over, so we need to add a column
+        this.layout.cols.push(leftoverCols);
+      }
+    }
+    this.setLayout(this.layout);
   }
 
   async delete(force = false) {

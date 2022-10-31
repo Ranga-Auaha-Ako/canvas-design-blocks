@@ -144,7 +144,11 @@
         </div>
       </main>
     </div>
-    <script type="module" src="/canvas-grid.js"></script>
+    <script type="module">
+      import { loadApp } from "/canvas-grid.js";
+      // Force the editor to load
+      window.addEventListener("load", loadApp);
+    </script>
     <link href="/style.css" rel="stylesheet" />
   </body>
 </html>

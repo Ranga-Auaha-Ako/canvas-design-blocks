@@ -135,6 +135,17 @@ export class Grid implements Readable<Row[]> {
     return row;
   }
 
+  public checkLayout() {
+    console.log("Checking layout");
+    // Check if all rows have the layouts they should, updating if not
+    this.rows.update((rows) => {
+      rows.forEach((row) => {
+        row.checkLayout();
+      });
+      return rows;
+    });
+  }
+
   public subscribe = this.rows.subscribe;
 }
 

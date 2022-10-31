@@ -24,13 +24,13 @@
     // -------- No need to make a new grid:
     //   1. Page already has a grid
     // -------- Need to make a new grid:
-    //   2. Page is empty (auto-init grid)
+    //   X (NOT IN USE). Page is empty (auto-init grid)
     //   3. Page has content. We can add a grid at the cursor position when asked
     const editor = window.tinymce.activeEditor;
-    // If page is empty, we can auto-init a grid
-    if (editor.dom.isEmpty(editor.dom.getRoot())) {
-      grids.add(Grid.create(grids.state));
-    }
+    // // If page is empty, we can auto-init a grid
+    // if (editor.dom.isEmpty(editor.dom.getRoot())) {
+    //   grids.add(Grid.create(grids.state));
+    // }
   });
 
   const dispatch = createEventDispatcher();

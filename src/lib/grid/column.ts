@@ -19,7 +19,15 @@ export default class Column {
   }
 
   static import(grid: Grid, node: Element, width: Required<ColumnLayout>) {
-    const innerNode = node.children[0];
+    let innerNode = node.querySelector(":scope > .cgb-col-inner");
+    if (!innerNode) {
+      console.error("Column node has no inner node");
+      innerNode = grid.editor.dom.create("div", {
+        contenteditable: true,
+        class: "cgb-col-inner",
+      });
+      grid.editor.dom.add(node, innerNode);
+    }
     grid.editor.dom.setAttrib(innerNode, "contenteditable", "true");
     return new Column(grid, width, node, innerNode);
   }
@@ -38,6 +46,13 @@ export default class Column {
         `cgb-col col-xs-${width.xs} col-sm-${width.sm} col-md-${width.md} col-lg-${width.lg}`
       );
     });
+    // If the column is empty, add a hidden placeholder (TinyMCE will remove it on save otherwise)
+    if (this.gridManager.editor.dom.isEmpty(this.innerNode)) {
+      this.gridManager.editor.dom.add(this.innerNode, "p", {
+        class: "cgb-empty-placeholder",
+        style: "display: none",
+      });
+    }
     // Bind to clicks and move the focus
     this.gridManager.editor.dom.bind(this.node, "click", () => {
       //Move selection if we need to
