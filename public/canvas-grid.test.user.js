@@ -11,8 +11,19 @@
 // ==/UserScript==
 
 (function () {
-  GM_addElement("script", {
-    src: "http://localhost:5173/src/main.ts",
-    type: "module",
-  });
+  if (false) {
+    GM_addElement("script", {
+      src: "http://localhost:4173/canvas-grid.umd.cjs",
+      type: "text/javascript",
+    });
+    GM_addElement("link", {
+      href: "http://localhost:4173/style.css",
+      rel: "stylesheet",
+    });
+  } else {
+    GM_addElement("script", {
+      src: "http://localhost:5173/src/main.ts",
+      type: "module",
+    });
+  }
 })();
