@@ -1,12 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { Writable, writable } from "svelte/store";
-  import Grid from "./lib/grid";
+  import Grid from "$lib/grid";
   import { setContext } from "svelte";
-  import GridView from "./lib/gridView/gridView.svelte";
-  import GridLayouts from "./lib/gridView/gridLayouts.svelte";
+  import GridView from "$lib/components/sidebar/gridView/gridView.svelte";
   import { fade, fly, slide } from "svelte/transition";
-  import GridManager, { stateObject } from "./lib/grid/gridManager";
+  import GridManager, { stateObject } from "$lib/grid/gridManager";
   import { clickOutside } from "svelte-use-click-outside";
 
   export let state: stateObject = {

@@ -3,7 +3,7 @@ import Grid from ".";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
-import confirmDialog from "../confirmDialog";
+import confirmDialog from "$lib/util/confirmDialog";
 
 export default class Row {
   public readonly id = nanoid();
@@ -26,7 +26,7 @@ export default class Row {
     }
   }
 
-  public static import(gridManager: Grid, node: Element) {
+  public static import(gridManager: Grid, node: HTMLElement) {
     // Get Row Layout
     const columnNodes = Array.from(node.children).filter((e) =>
       Array.from(e.classList).find((c) => c.startsWith("col-"))
@@ -42,7 +42,7 @@ export default class Row {
   constructor(
     public gridManager: Grid,
     public layout: RowLayout,
-    public node: Element,
+    public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
     console.log(layout);

@@ -3,9 +3,10 @@
   import { debug } from "svelte/internal";
   import { get } from "svelte/store";
   import { fade } from "svelte/transition";
-  import Grid from "../grid";
-  import { RowLayout, rowTemplates } from "../grid/rowLayouts";
+  import Grid from "$lib/grid";
+  import { RowLayout, rowTemplates } from "$lib/grid/rowLayouts";
   import GridLayouts from "./gridLayouts.svelte";
+  import Portal from "$lib/portal/portal.svelte";
 
   export let grid: Grid;
 

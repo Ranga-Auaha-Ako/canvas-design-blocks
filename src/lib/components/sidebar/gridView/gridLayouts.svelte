@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rowTemplates } from "../grid/rowLayouts";
+  import { rowTemplates } from "$lib/grid/rowLayouts";
   import { createEventDispatcher } from "svelte";
   import { fade, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
