@@ -12,7 +12,7 @@
 
 (function () {
   GM_addElement("script", {
-    src: "https://gridbuilder-beta.c.raa.amazon.auckland.ac.nz/canvas-grid.umd.cjs",
+    src: "http://canvas-grid-beta.c.raa.amazon.auckland.ac.nz/canvas-grid.umd.cjs",
     type: "text/javascript",
   });
 })();
