@@ -18,8 +18,10 @@ export default class Column {
     return new Column(row.gridManager, width, node, innerNode);
   }
 
-  static import(grid: Grid, node: Element, width: Required<ColumnLayout>) {
-    let innerNode = node.querySelector(":scope > .cgb-col-inner");
+  static import(grid: Grid, node: HTMLElement, width: Required<ColumnLayout>) {
+    let innerNode: HTMLElement | null = node.querySelector(
+      ":scope > .cgb-col-inner"
+    );
     if (!innerNode) {
       console.error("Column node has no inner node");
       innerNode = grid.editor.dom.create("div", {
@@ -35,8 +37,8 @@ export default class Column {
   constructor(
     public gridManager: Grid,
     width: Required<ColumnLayout>,
-    public node: Element,
-    public innerNode: Element
+    public node: HTMLElement,
+    public innerNode: HTMLElement
   ) {
     this.width = writable(width);
     this.width.subscribe((width) => {
@@ -48,10 +50,16 @@ export default class Column {
     });
     // If the column is empty, add a hidden placeholder (TinyMCE will remove it on save otherwise)
     if (this.gridManager.editor.dom.isEmpty(this.innerNode)) {
-      this.gridManager.editor.dom.add(this.innerNode, "p", {
-        class: "cgb-empty-placeholder",
-        style: "display: none",
-      });
+      this.gridManager.editor.dom.add(
+        this.innerNode,
+        "div",
+        {
+          class: "cgb-empty-placeholder",
+          style: "display: none",
+          contenteditable: false,
+        },
+        "&nbsp;"
+      );
     }
     // Bind to clicks and move the focus
     this.gridManager.editor.dom.bind(this.node, "click", () => {

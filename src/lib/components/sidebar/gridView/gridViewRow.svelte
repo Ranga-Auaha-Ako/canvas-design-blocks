@@ -26,7 +26,6 @@
   class="gridViewRow"
   transition:slide|local
   contenteditable="false"
-  data-mce-bogus="1"
   on:click={() => (showLayoutPicker = !showLayoutPicker)}
   on:mouseover={() => (showButtons = true)}
   on:focus={() => (showButtons = true)}

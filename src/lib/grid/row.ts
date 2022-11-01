@@ -4,6 +4,7 @@ import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
 import confirmDialog from "$lib/util/confirmDialog";
+import deriveWindow from "$lib/util/deriveWindow";
 
 export default class Row {
   public readonly id = nanoid();
@@ -28,9 +29,9 @@ export default class Row {
 
   public static import(gridManager: Grid, node: HTMLElement) {
     // Get Row Layout
-    const columnNodes = Array.from(node.children).filter((e) =>
-      Array.from(e.classList).find((c) => c.startsWith("col-"))
-    );
+    const columnNodes: HTMLElement[] = (
+      Array.from(node.children) as HTMLElement[]
+    ).filter((e) => Array.from(e.classList).find((c) => c.startsWith("col-")));
     const rowLayout = RowLayout.getLayout(columnNodes);
     const columns = columnNodes.map((colNode, index) => {
       return Column.import(gridManager, colNode, rowLayout.cols[index]);
@@ -50,13 +51,10 @@ export default class Row {
   }
 
   async setLayout(layout: RowLayout) {
-    this.layout = layout;
     const columns = get(this.columns);
     // Find out if we need to delete any
     const toDelete = columns.slice(layout.cols.length);
-    const colsWithContent = toDelete.filter(
-      (c) => !c.gridManager.editor.dom.isEmpty(c.node)
-    );
+    const colsWithContent = toDelete.filter((c) => c.innerNode.innerText);
     if (colsWithContent.length) {
       const userConfirm = await confirmDialog(
         this.gridManager.editor,
@@ -78,6 +76,7 @@ export default class Row {
     toDelete.forEach((col) => {
       this.deleteCol(col);
     });
+    this.layout = layout;
   }
 
   async checkLayout(addCol = false) {
