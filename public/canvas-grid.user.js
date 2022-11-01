@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Grid Builder (Staging)
 // @namespace    https://raa.auckland.ac.nz
-// @version      0.3
+// @version      0.4
 // @description  Adds Canvas Grid from the development instance to Canvas;;
 // @author       Zac M-W, Ranga Auaha Ako
 // @match        https://*.instructure.com/*
@@ -14,9 +14,5 @@
   GM_addElement("script", {
     src: "https://gridbuilder.test.raa.amazon.auckland.ac.nz/canvas-grid.umd.cjs",
     type: "text/javascript",
-  });
-  GM_addElement("link", {
-    href: "https://gridbuilder.test.raa.amazon.auckland.ac.nz/style.css",
-    rel: "stylesheet",
   });
 })();

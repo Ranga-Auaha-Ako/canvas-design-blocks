@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Canvas Grid Builder (Test)
+// @name         Canvas Grid Builder (Staging)
 // @namespace    https://raa.auckland.ac.nz
-// @version      0.1
+// @version      0.4
 // @description  Adds Canvas Grid from the development instance to Canvas;;
 // @author       Zac M-W, Ranga Auaha Ako
 // @match        https://*.instructure.com/*
@@ -11,15 +11,8 @@
 // ==/UserScript==
 
 (function () {
-  if (false) {
-    GM_addElement("script", {
-      src: "http://localhost:4173/canvas-grid.umd.cjs",
-      type: "text/javascript",
-    });
-  } else {
-    GM_addElement("script", {
-      src: "http://localhost:5173/src/main.ts",
-      type: "module",
-    });
-  }
+  GM_addElement("script", {
+    src: "https://gridbuilder-beta.c.raa.amazon.auckland.ac.nz/canvas-grid.umd.cjs",
+    type: "text/javascript",
+  });
 })();
