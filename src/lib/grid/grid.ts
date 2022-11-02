@@ -15,6 +15,7 @@ import { stateObject } from "./gridManager";
 
 export class Grid implements Readable<Row[]> {
   public readonly id = nanoid();
+  public readonly selected: Writable<boolean | string> = writable(false);
   public rows: Writable<Row[]> = writable([]);
 
   private _start: HTMLElement;
@@ -71,8 +72,9 @@ export class Grid implements Readable<Row[]> {
     public gridRoot: HTMLElement,
     rows?: Row[]
   ) {
-    // If ID Already set, use that instead of generating a new one
-    if (this.gridRoot.dataset.cgeId) this.id = this.gridRoot.dataset.cgeId;
+    // Don't do this - duplicate grids might have duplicate IDS so always safer to make a new one
+    // // If ID Already set, use that instead of generating a new one
+    // if (this.gridRoot.dataset.cgeId) this.id = this.gridRoot.dataset.cgeId;
     // Find start element
     const foundStart = Array.from(gridRoot.children).find((e) =>
       e.classList.contains("cge-start")
@@ -90,24 +92,24 @@ export class Grid implements Readable<Row[]> {
   }
 
   public bindEvents() {
-    this.editor.dom.bind(this.gridRoot, "click", (e) => {
-      if (e.target.closest(".cgb-col")) return;
-      this.state.showInterface.set(true);
-      const changeHandler = (e2: any) => {
-        if (
-          e2.element !== this.gridRoot &&
-          e2.element.tagName !== "BODY" && //Fix for Firefox
-          !e2.element.closest(".canvas-grid-editor")
-        ) {
-          this.state.showInterface.set(false);
-          this.editor.off("NodeChange", changeHandler);
+    // Monitor the active row
+    this.editor.on("nodeChange", ({ element }: { element: HTMLElement }) => {
+      const rowNode = element.closest(".grid-row");
+      if (rowNode) {
+        const row = get(this.rows).find((r) => r.node === rowNode);
+        if (row) {
+          this.selected.set(row.id);
+          return;
         }
-      };
-      this.editor.on("NodeChange", changeHandler);
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
+      } else {
+        if (element === this.gridRoot) {
+          this.selected.set(true);
+          return;
+        }
+      }
+      this.selected.set(false);
     });
+
     // Prevent accidental deletion of grid
     this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
   }
@@ -134,17 +136,6 @@ export class Grid implements Readable<Row[]> {
       return rows;
     });
     return row;
-  }
-
-  public checkLayout() {
-    console.log("Checking layout");
-    // Check if all rows have the layouts they should, updating if not
-    this.rows.update((rows) => {
-      rows.forEach((row) => {
-        row.checkLayout();
-      });
-      return rows;
-    });
   }
 
   public subscribe = this.rows.subscribe;

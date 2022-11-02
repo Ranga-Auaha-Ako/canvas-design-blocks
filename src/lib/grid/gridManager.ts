@@ -8,37 +8,30 @@ import {
 } from "svelte/store";
 import type { Writable, Readable } from "svelte/store";
 import Row from "./row";
-import Grid from "./index";
+import Grid from "./grid";
 import type { Editor } from "tinymce";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
 }
 
-export default class GridManager implements Writable<Grid[]> {
+export class GridManager implements Writable<Grid[]> {
   private _grids: Writable<Grid[]> = writable([]);
   // public readonly selectedGrid;
 
   public set = this._grids.set;
   public update = this._grids.update;
   public subscribe = this._grids.subscribe;
-  public startedWatching = false; // Only start watching for grid changes once we have a grid
   constructor(
     public readonly state: stateObject,
     public readonly editor = window.tinymce.activeEditor
   ) {
-    // this.selectedGrid = derived(
-    //   [this._grids, this.state.selectedGrid],
-    //   ([$grids, $selectedGrid]) => {
-    //     return $grids.find((g) => g.id === $selectedGrid);
-    //   }
-    // );
     this.importAll();
+
+    this.watchEditor();
+
     this._grids.subscribe((grids) => {
-      if (!this.startedWatching && grids.length) {
-        this.startedWatching = true;
-        this.watchEditor();
-      }
+      console.log("Grids updated", grids);
     });
   }
   public add(grid: Grid | Grid[], select = false) {
@@ -82,29 +75,38 @@ export default class GridManager implements Writable<Grid[]> {
   public findGrids(returnAll = false) {
     const root = this.editor.dom.getRoot();
     // Filter to only elements we haven't already discovered
+    const existingIDs = get(this._grids).map((g) => g.id);
     return Array.from(root.querySelectorAll(".canvas-grid-editor")).filter(
       (e) => {
         // Discard TinyMCE Fake Elements
         if (e.closest("[data-mce-bogus]")) return false;
         if (returnAll) return true;
+        // Get ID
         const id = (e as HTMLElement)?.dataset.cgeId;
+        // No ID Means the grid is untracked - we need to track it
         if (!id) return true;
-        return !this.get(id);
+        // If we have an ID, check if we are already tracking it
+        const foundIndex = existingIDs.indexOf(id);
+        if (foundIndex === -1) return true;
+        // We are already tracking it. Any more grids with this ID are duplicates and should be imported with a new ID;
+        existingIDs.splice(foundIndex, 1);
+        return false;
       }
     ) as HTMLElement[];
   }
 
   public importAll() {
-    const newGrids = this.findGrids().map((grid) =>
-      Grid.import(this.state, this.editor, grid)
-    );
-    this.add(newGrids);
+    const newGrids = this.findGrids().map((grid) => {
+      console.log("Importing grid", grid);
+      return Grid.import(this.state, this.editor, grid);
+    });
+    if (newGrids.length) this.add(newGrids);
   }
 
   public checkGrids() {
     // Check to see if our internal representation of grids matches the DOM
     // If not, update our internal representation
-    console.log("Checking grids");
+    // console.log("Checking grids");
 
     // Disconnect any deleted grids
     const gridIds = this.findGrids(true).map((g) => g.dataset.cgeId);
@@ -113,40 +115,41 @@ export default class GridManager implements Writable<Grid[]> {
       (id) => !gridIds.includes(id)
     );
     deletedGridIds.forEach((id) => {
+      console.log("Removing grid", id);
       const grid = this.get(id);
       if (grid) grid.destroy();
     });
 
+    // Check existing grids for changes
+    const nodeUpdated = get(this._grids).filter((g) => {
+      if (!g.editor.getDoc().contains(g.gridRoot)) {
+        console.log("Grid no longer in DOM, removing", g.id);
+        g.destroy();
+        return true;
+      }
+      return false;
+    });
+    if (nodeUpdated.length)
+      this._grids.update((grids) =>
+        grids.filter((g) => !nodeUpdated.includes(g))
+      );
+
     // Import any new grids
     this.importAll();
-
-    // Ensure all grids have the correct number of columns
-    get(this._grids).forEach((g) => {
-      g.checkLayout();
-    });
   }
 
   public watchEditor() {
+    console.log("Watching editor", this.editor.getBody());
     // Keep an eye on TinyMCE in case operations within the tool cause the "real" grids to be removed, added, moved, or otherwise modified.
 
     // Events where we know to check for changes
-    const potentialChangeEvents = ["Undo", "Redo"];
+    const potentialChangeEvents = ["Undo", "Redo", "BeforeAddUndo"];
     potentialChangeEvents.forEach((evtName) => {
       this.editor.on(evtName, (e) => {
         this.checkGrids();
       });
     });
-    // Watch DOM state for changes
-    // Mutation observer to delete other times a grid is being removed
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.removedNodes.length) {
-          // Check to see if any of the removed nodes are grids
-          this.checkGrids();
-        }
-      });
-    });
-
-    observer.observe(this.editor.getBody(), { childList: true });
   }
 }
+
+export default GridManager;
