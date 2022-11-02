@@ -1,14 +1,37 @@
 <script lang="ts">
   import { rowTemplates } from "$lib/grid/rowLayouts";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { fade, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { clickOutside } from "svelte-use-click-outside";
+  import deriveWindow from "$lib/util/deriveWindow";
+
+  // Source: https://stackoverflow.com/a/63424528/3902950
+  const smartSlide = (node: Element) => {
+    const { top, left, bottom, right } = node.getBoundingClientRect();
+    const hostWindow = deriveWindow(node);
+    if (
+      hostWindow &&
+      (node instanceof hostWindow.HTMLElement || node instanceof HTMLElement)
+    ) {
+      const toBottom = hostWindow.innerHeight - bottom;
+      const toRight = hostWindow.innerWidth - right;
+      console.log(top, left, bottom, right);
+      // debugger;
+      if (toBottom < 0) {
+        node.style.top = `${toBottom}px`;
+      }
+      if (toRight < 0) {
+        node.style.left = `${toRight}px`;
+      }
+    }
+    return slide(node);
+  };
 </script>
 
 <div
   class="layoutList"
-  in:slide|local
+  in:smartSlide|local
   out:fade
   use:clickOutside={() => dispatch("cancel")}
 >

@@ -1,7 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { append } from "svelte/internal";
-  import { Writable } from "svelte/store";
   import { fade, slide } from "svelte/transition";
   import Row from "$lib/grid/row";
   import GridAddButton from "./gridAddButton.svelte";

@@ -7,6 +7,7 @@ import "./app.postcss";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import Sidebar from "./entrypoints/Sidebar.svelte";
+import EditorApp from "./entrypoints/Editor.svelte";
 
 const state: stateObject = {
   showInterface: writable(false),
@@ -52,6 +53,15 @@ const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
   });
 };
 
+const loadEditor = (editor: Editor, props?: EditorApp["$$prop_def"]) => {
+  const target = editor.getBody();
+  if (!target) return;
+  return new EditorApp({
+    target,
+    props,
+  });
+};
+
 export const loadApp = async () => {
   // Get TinyMCE Editor
   const editor = await getEditor();
@@ -65,17 +75,17 @@ export const loadApp = async () => {
   // Add button to open grid editor
   loadToolbar({ state });
 
+  // Load editor (inject live interface into TinyMCE iframe)
+  loadEditor(editor, { state, grids });
+
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");
   editorStyles.innerHTML = tinyMCEStyles;
-  window.tinymce.activeEditor
-    .getBody()
-    .insertAdjacentElement("beforebegin", editorStyles);
+  editor.getBody().insertAdjacentElement("beforebegin", editorStyles);
 };
 
 // Load the app only on certain pages
 const loc = window.location.pathname;
-console.log(loc);
 if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
   window.addEventListener("load", loadApp);
 }

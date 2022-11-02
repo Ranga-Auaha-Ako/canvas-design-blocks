@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { Writable, writable } from "svelte/store";
-  import Grid from "$lib/grid";
+  import Grid from "$lib/grid/grid";
   import { setContext } from "svelte";
   import GridView from "$lib/components/sidebar/gridView/gridView.svelte";
   import { fade, fly, slide } from "svelte/transition";

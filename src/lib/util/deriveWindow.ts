@@ -1,4 +1,4 @@
-export const deriveWindow = (elm: HTMLElement | null) => {
+export const deriveWindow = (elm: Element | null) => {
   return elm?.ownerDocument?.defaultView || false;
 };
 
