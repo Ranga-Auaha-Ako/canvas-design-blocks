@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "Node",
-    "target": "ESNext",
+    "target": "ES6",
     "module": "ESNext",
     /**
      * svelte-preprocess cannot figure out whether you have

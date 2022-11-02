@@ -36,7 +36,7 @@ const loadSidebar = (props: Sidebar["$$prop_def"]) => {
   div.dataset.mceBogus = "1";
   div.id = "canvas-grid-container";
   document.body.insertAdjacentElement("beforeend", div);
-  preventBubble(div);
+  preventBubble(div, true);
   // Create app
   return new Sidebar({
     target: div,

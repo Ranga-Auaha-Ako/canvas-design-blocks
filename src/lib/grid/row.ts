@@ -9,6 +9,9 @@ import deriveWindow from "$lib/util/deriveWindow";
 export default class Row {
   public readonly id = nanoid();
   public readonly selected = writable(false);
+  get index() {
+    return get(this.parentGrid).findIndex((r) => r.id === this.id);
+  }
 
   public static create(
     grid: Grid,

@@ -45,8 +45,6 @@ export class GridManager implements Writable<Grid[]> {
     } else {
       this.update((grids) => [...grids, grid]);
       grid.subscribe(this.cleanGrids);
-      // if (select) this.state.selectedGrid.set(grid.id);
-      this.state.showInterface.set(true);
     }
   }
   public cleanGrids = () => {
@@ -147,6 +145,15 @@ export class GridManager implements Writable<Grid[]> {
     potentialChangeEvents.forEach((evtName) => {
       this.editor.on(evtName, (e) => {
         this.checkGrids();
+      });
+    });
+
+    // Events where we need to hide the interface
+    const hideInterfaceEvents = ["dragstart"];
+    hideInterfaceEvents.forEach((evtName) => {
+      this.editor.on(evtName, (e) => {
+        this.state.showInterface.set(false);
+        get(this._grids).forEach((g) => g.selected.set(false));
       });
     });
   }

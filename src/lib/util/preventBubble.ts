@@ -1,15 +1,17 @@
-export const preventBubble = (elem: Element) => {
-  [
-    "click",
-    "submit",
-    "touchend",
-    "mouseup",
-    "dragover",
-    "dragenter",
-    "dragend",
-    "drag",
-    "drop",
-  ].forEach((evt) =>
+export const preventBubble = (elem: Element, all = false) => {
+  let events = ["click", "submit", "touchstart", "mousedown"];
+  if (all)
+    events.push(
+      "touchend",
+      "mouseup",
+      "dragover",
+      "dragenter",
+      "dragend",
+      "drag",
+      "drop"
+    );
+
+  events.forEach((evt) =>
     elem.addEventListener(evt, (e) => {
       e.preventDefault();
       e.stopPropagation();

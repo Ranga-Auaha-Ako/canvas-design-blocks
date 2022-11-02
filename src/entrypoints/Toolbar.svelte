@@ -11,7 +11,7 @@
   let container: Element;
 
   onMount(() => {
-    preventBubble(container);
+    preventBubble(container, true);
   });
 </script>
 
