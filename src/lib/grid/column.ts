@@ -75,7 +75,7 @@ export default class Column {
           );
           this.parentGrid.editor.dom.add(this.node, this.innerNode);
         }
-        this.parentGrid.editor.selection.setCursorLocation(this.innerNode, 0);
+        this.parentGrid.editor.selection.setCursorLocation(this.innerNode, 1);
       }
     });
   }
