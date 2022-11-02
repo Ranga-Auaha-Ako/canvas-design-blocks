@@ -25,6 +25,7 @@ export class Grid implements Readable<Row[]> {
     editor: Editor = window.tinymce.activeEditor,
     atCursor = false
   ) {
+    debugger;
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
@@ -40,11 +41,14 @@ export class Grid implements Readable<Row[]> {
     );
     // Add grid to page
     if (atCursor) {
-      const inGrid = editor.selection.getNode().closest(".canvas-grid-editor");
+      const insertNode = editor.selection.getNode();
+      const inGrid = insertNode.closest(".canvas-grid-editor");
       if (inGrid) {
         editor.dom.insertAfter(gridRoot, inGrid);
+      } else if (!editor.dom.isBlock(insertNode)) {
+        editor.dom.insertAfter(gridRoot, insertNode);
       } else {
-        editor.dom.add(editor.selection.getNode(), gridRoot);
+        editor.dom.add(insertNode, gridRoot);
       }
     } else editor.dom.add(editor.dom.getRoot(), gridRoot);
     // Create grid instance
