@@ -8,6 +8,8 @@
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
   import Row from "$lib/grid/row";
+  import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
+  import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
 
   export let row: Row;
 
@@ -90,7 +92,7 @@
             on:click={() => addRow(row.index)}
             transition:fade
           >
-            &#8593;
+            <ArrowOpenUp />
           </button>
           <button
             title="Add Row Below"
@@ -98,7 +100,7 @@
             on:click={() => addRow(row.index + 1)}
             transition:fade
           >
-            &#8595;
+            <ArrowOpenDown />
           </button>
         </div>
       {/if}
@@ -147,10 +149,10 @@
   }
 
   .addRowSelect {
-    @apply flex items-center;
     @apply menu;
+    @apply flex items-center absolute;
     @apply bg-uni-blue-light;
-    @apply left-0 right-0 mx-auto w-fit;
+    @apply left-0 right-0 top-6 mt-0.5 mx-auto w-fit;
   }
 
   .layoutConfig {
@@ -163,9 +165,13 @@
 
   button {
     @apply bg-transparent text-white border-0 transition;
+    @apply flex items-center justify-center;
     & .active,
     &:hover {
       transform: scale(1.25);
+    }
+    & :global(svg) {
+      @apply w-3 h-3 fill-current;
     }
   }
 </style>
