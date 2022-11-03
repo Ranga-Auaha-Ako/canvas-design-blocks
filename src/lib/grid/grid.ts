@@ -12,6 +12,7 @@ import Row from "./row";
 import { RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
 import { stateObject } from "./gridManager";
+import confirmDialog from "$lib/util/confirmDialog";
 
 export class Grid implements Readable<Row[]> {
   public readonly id = nanoid();
@@ -115,6 +116,43 @@ export class Grid implements Readable<Row[]> {
 
     // Prevent accidental deletion of grid
     this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
+    this.gridRoot.parentElement?.addEventListener(
+      "keydown",
+      (e) => {
+        if (e.key === "Backspace" || e.key === "Delete") {
+          let willDeleteElem = false;
+          const selectNode = this.editor.selection.getNode() as HTMLElement;
+          if (e.key === "Backspace") {
+            if (
+              selectNode.dataset.mceCaret === "after" &&
+              selectNode.previousSibling === this.gridRoot
+            )
+              willDeleteElem = true;
+          } else {
+            if (
+              selectNode.dataset.mceCaret === "before" &&
+              selectNode.nextSibling === this.gridRoot
+            )
+              willDeleteElem = true;
+          }
+          if (get(this.selected) === true || willDeleteElem) {
+            e.preventDefault();
+            e.stopPropagation();
+            confirmDialog(
+              this.editor,
+              "Delete Grid?",
+              "Are you sure you want to delete this grid?"
+            ).then((confirm) => {
+              if (confirm) this.destroy();
+            });
+            return false;
+          }
+        }
+      },
+      {
+        capture: true,
+      }
+    );
   }
 
   public destroy() {
