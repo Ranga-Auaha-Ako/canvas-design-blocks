@@ -49,7 +49,14 @@ export default class Column {
       );
     });
     // If the column is empty, add a hidden placeholder (TinyMCE will remove it on save otherwise)
+    if (this.innerNode.innerHTML === "") {
+      console.log("added P");
+      this.parentGrid.editor.dom.add(this.innerNode, "br", {
+        "data-mce-bogus": "1",
+      });
+    }
     if (this.parentGrid.editor.dom.isEmpty(this.innerNode)) {
+      console.log("added placeholder");
       this.parentGrid.editor.dom.add(
         this.innerNode,
         "div",
@@ -73,9 +80,10 @@ export default class Column {
           this.parentGrid.editor.dom.remove(
             Array.from(this.node.querySelectorAll(":scope *[data-mce-bogus]"))
           );
+          console.log("added");
           this.parentGrid.editor.dom.add(this.node, this.innerNode);
         }
-        this.parentGrid.editor.selection.setCursorLocation(this.innerNode, 1);
+        this.parentGrid.editor.selection.setCursorLocation(this.innerNode, 0);
       }
     });
   }
