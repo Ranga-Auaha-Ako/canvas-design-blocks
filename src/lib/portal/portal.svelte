@@ -1,8 +1,10 @@
 <script context="module" lang="ts">
   import { tick } from "svelte";
+  // License: MIT
+  // Derived from: https://github.com/romkor/svelte-portal
 
-  // Source: https://stackoverflow.com/a/20532809/3902950
   const deriveWindow = (elm: HTMLElement | null) => {
+    // Source: https://stackoverflow.com/a/20532809/3902950
     return elm?.ownerDocument?.defaultView || false;
   };
 
