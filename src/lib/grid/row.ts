@@ -82,7 +82,11 @@ export default class Row {
   }
 
   async delete(force = false) {
-    if (get(this.columns).find((c) => c.innerNode.innerText)) {
+    if (
+      get(this.columns).find(
+        (c) => c.innerNode.innerText.replace(/[\n\s]+/m, "") // Discard newlines and whitespace
+      )
+    ) {
       const userConfirm =
         force || (await confirmDialog(this.parentGrid.editor));
       if (!userConfirm) {
