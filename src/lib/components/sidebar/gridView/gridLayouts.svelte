@@ -16,8 +16,7 @@
     ) {
       const toBottom = hostWindow.innerHeight - bottom;
       const toRight = hostWindow.innerWidth - right;
-      console.log(top, left, bottom, right);
-      // debugger;
+
       if (toBottom < 0) {
         node.style.top = `${toBottom}px`;
       }
