@@ -25,7 +25,6 @@ export class Grid implements Readable<Row[]> {
     editor: Editor = window.tinymce.activeEditor,
     atCursor = false
   ) {
-    debugger;
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",

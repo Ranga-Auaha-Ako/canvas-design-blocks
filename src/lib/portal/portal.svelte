@@ -39,7 +39,6 @@
         if (tWindow && target instanceof tWindow.HTMLElement) {
           targetEl = target;
         } else {
-          debugger;
           throw new TypeError(
             `Unknown portal target type: ${
               target === null ? "null" : typeof target
