@@ -74,7 +74,12 @@
           {/if}
         {/each}
       {:else}
-        <p>No grids found on this page.</p>
+        <div class="noGrids">
+          <p>
+            No grids found on this page. To create a grid, click the button
+            below.
+          </p>
+        </div>
       {/if}
     </div>
     <button
@@ -122,6 +127,9 @@
 
       & .existing-grids {
         @apply flex flex-col w-full;
+        & .noGrids {
+          @apply md:p-10 p-4 bg-gray-100 border-solid border-2 border-gray-300 rounded italic text-center;
+        }
         & .space-inbetween {
           @apply text-center text-gray-400 font-bold leading-none m-0 select-none;
         }
