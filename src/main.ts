@@ -45,7 +45,7 @@ const loadSidebar = (props: Sidebar["$$prop_def"]) => {
 };
 
 const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
-  const target = document.querySelector(".edit-header");
+  const target = document.body;
   if (!target) return;
   return new Toolbar({
     target,

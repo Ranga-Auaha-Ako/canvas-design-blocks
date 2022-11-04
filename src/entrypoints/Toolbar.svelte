@@ -17,24 +17,22 @@
   });
 </script>
 
-<Portal>
-  <div bind:this={container} class="cgb-toolbar">
-    <button
-      class="cgb-openButton"
-      on:click={() => {
-        $open = true;
-        dispatch("open");
-      }}
-    >
-      <img src={IconWhite} alt="" />
-      <div class="details">Grids</div>
-    </button>
-  </div>
-</Portal>
+<div bind:this={container} class="cgb-toolbar">
+  <button
+    class="cgb-openButton"
+    on:click={() => {
+      $open = true;
+      dispatch("open");
+    }}
+  >
+    <img src={IconWhite} alt="" />
+    <div class="details">Grids</div>
+  </button>
+</div>
 
 <style lang="postcss">
   .cgb-toolbar {
-    @apply fixed top-12 z-40 overflow-clip;
+    @apply fixed top-4 z-40 overflow-clip;
     @apply flex flex-row items-center justify-center;
     @apply rounded-l shadow-md w-10 bg-uni-blue;
     @apply -right-6 pr-6 transition-all;
