@@ -40,6 +40,7 @@
 <div bind:this={container} class="cgb-toolbar" style:top={`${$editorOffset}px`}>
   <button
     class="cgb-openButton"
+    title="Canvas Grid Builder"
     on:click={() => {
       $open = true;
       dispatch("open");
