@@ -4,20 +4,40 @@
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg";
+  import { writable } from "svelte/store";
   const dispatch = createEventDispatcher();
 
   export let state: stateObject;
 
   $: open = state.showInterface;
 
-  let container: Element;
+  let container: HTMLElement;
+
+  const editorOffset = writable(0);
+
+  const getEditorOffset = () => {
+    const editor = window.tinymce.activeEditor;
+    const editorContainer = editor.getContainer();
+    const offset = editorContainer.getBoundingClientRect();
+    editorOffset.set(offset.top - 40);
+  };
+  window.addEventListener("resize", () =>
+    debounceToolbarRepos(getEditorOffset, 100)
+  );
 
   onMount(() => {
     preventBubble(container, true);
+    getEditorOffset();
   });
+
+  let timer: any;
+  function debounceToolbarRepos(func: Function, amount: number) {
+    clearTimeout(timer);
+    timer = setTimeout(func, amount);
+  }
 </script>
 
-<div bind:this={container} class="cgb-toolbar">
+<div bind:this={container} class="cgb-toolbar" style:top={`${$editorOffset}px`}>
   <button
     class="cgb-openButton"
     on:click={() => {
@@ -35,7 +55,8 @@
     @apply fixed top-4 z-40 overflow-clip;
     @apply flex flex-row items-center justify-center;
     @apply rounded-l shadow-md w-10 bg-uni-blue;
-    @apply -right-6 pr-6 transition-all;
+    @apply -right-6 pr-6 transition;
+    transition-property: right;
     &:hover {
       @apply right-0;
     }
