@@ -94,7 +94,7 @@
 <style lang="postcss">
   .sidebar-container {
     --sidebar-width: 26rem;
-    @apply fixed w-full h-full border-uni-blue top-0 right-0 transition duration-300;
+    @apply fixed w-full h-full border-uni-blue top-0 right-0 transition duration-300 shadow-md;
     @apply z-50 bg-white;
     @apply pb-4 px-8;
     @apply border-0 border-solid border-l-2;
