@@ -5,6 +5,22 @@ import { ColumnLayout, gridSize } from "./rowLayouts";
 
 export default class Column {
   public width: Writable<Required<ColumnLayout>>;
+  public getTextTarget() {
+    const foundParagraphs = this.innerNode.querySelectorAll(
+      ":scope > p:not([data-mce-caret]):not([data-mce-bogus])"
+    );
+    let textTarget;
+    if (!foundParagraphs.length)
+      textTarget = this.parentGrid.editor.dom.add(this.innerNode, "p");
+    else textTarget = foundParagraphs[foundParagraphs.length - 1];
+    if (this.parentGrid.editor.dom.isEmpty(textTarget)) {
+      textTarget.innerHTML = "";
+      this.parentGrid.editor.dom.add(textTarget, "br", {
+        "data-mce-bogus": "1",
+      });
+    }
+    return foundParagraphs[foundParagraphs.length - 1];
+  }
 
   static create(row: Row, width: Required<ColumnLayout>) {
     const node = row.parentGrid.editor.dom.create("div", {
@@ -49,12 +65,6 @@ export default class Column {
       );
     });
     // If the column is empty, add a hidden placeholder (TinyMCE will remove it on save otherwise)
-    if (this.innerNode.innerHTML === "") {
-      console.log("added P");
-      this.parentGrid.editor.dom.add(this.innerNode, "br", {
-        "data-mce-bogus": "1",
-      });
-    }
     if (this.parentGrid.editor.dom.isEmpty(this.innerNode)) {
       console.log("added placeholder");
       this.parentGrid.editor.dom.add(
@@ -67,23 +77,19 @@ export default class Column {
         },
         "&nbsp;"
       );
+      this.getTextTarget();
     }
     // Bind to clicks and move the focus
     this.parentGrid.editor.dom.bind(this.node, "click", () => {
-      //Move selection if we need to
+      //Move selection if we need to.
       if (
         !this.innerNode.contains(this.parentGrid.editor.selection.getNode())
       ) {
-        if (!this.node.contains(this.innerNode)) {
-          // Re-add it if it was deleted
-          // Remove bogus nodes
-          this.parentGrid.editor.dom.remove(
-            Array.from(this.node.querySelectorAll(":scope *[data-mce-bogus]"))
-          );
-          console.log("added");
-          this.parentGrid.editor.dom.add(this.node, this.innerNode);
-        }
-        this.parentGrid.editor.selection.setCursorLocation(this.innerNode, 0);
+        const textTarget = this.parentGrid.editor.dom.add(
+          this.getTextTarget(),
+          "span"
+        );
+        this.parentGrid.editor.selection.select(textTarget);
       }
     });
   }
