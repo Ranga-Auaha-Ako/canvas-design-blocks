@@ -57,7 +57,9 @@ export default class Row {
     const columns = get(this.columns);
     // Find out if we need to delete any
     const toDelete = columns.slice(layout.cols.length);
-    const colsWithContent = toDelete.filter((c) => c.innerNode.innerText);
+    const colsWithContent = toDelete.filter((c) =>
+      c.innerNode.innerText.replace(/[\n\s]+/m, "")
+    );
     if (colsWithContent.length) {
       const userConfirm = await confirmDialog(
         this.parentGrid.editor,
