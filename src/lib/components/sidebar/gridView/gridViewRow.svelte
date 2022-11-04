@@ -1,9 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { append } from "svelte/internal";
-  import { Writable } from "svelte/store";
   import { fade, slide } from "svelte/transition";
-  import Row from "../grid/row";
+  import Row from "$lib/grid/row";
   import GridAddButton from "./gridAddButton.svelte";
   import GridLayouts from "./gridLayouts.svelte";
   import GridViewColumn from "./gridViewColumn.svelte";
@@ -25,6 +23,7 @@
 <button
   class="gridViewRow"
   transition:slide|local
+  contenteditable="false"
   on:click={() => (showLayoutPicker = !showLayoutPicker)}
   on:mouseover={() => (showButtons = true)}
   on:focus={() => (showButtons = true)}

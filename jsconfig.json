@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "Node",
-    "target": "ESNext",
+    "target": "ES6",
     "module": "ESNext",
     /**
      * svelte-preprocess cannot figure out whether you have
@@ -20,6 +20,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "paths": {
+      "$lib/*": ["src/lib/*"],
+      "$assets/*": ["src/assets/*"]
+    },
     /**
      * Typecheck JS in `.svelte` and `.js` files by default.
      * Disable this if you'd like to use dynamic types.

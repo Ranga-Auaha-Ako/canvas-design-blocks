@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Writable } from "svelte/store";
-  import Column from "../grid/column";
+  import Column from "$lib/grid/column";
 
   export let column: Column;
   $: width = column.width;

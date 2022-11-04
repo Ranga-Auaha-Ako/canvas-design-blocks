@@ -1,10 +1,18 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [
+    svelte({
+      experimental: {
+        inspector: true,
+      },
+      emitCss: false,
+    }),
+  ],
   server: {
     origin: "http://localhost:5173",
   },
@@ -15,6 +23,12 @@ export default defineConfig({
       name: "CanvasGrid",
       // the proper extensions will be added
       fileName: "canvas-grid",
+    },
+  },
+  resolve: {
+    alias: {
+      $lib: path.resolve("./src/lib"),
+      $assets: path.resolve("./src/assets"),
     },
   },
 });

@@ -1,12 +1,17 @@
 import { derived, get, Writable, writable } from "svelte/store";
-import Grid from ".";
+import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
-import confirmDialog from "../confirmDialog";
+import confirmDialog from "$lib/util/confirmDialog";
+import deriveWindow from "$lib/util/deriveWindow";
 
 export default class Row {
   public readonly id = nanoid();
+  public readonly selected = writable(false);
+  get index() {
+    return get(this.parentGrid).findIndex((r) => r.id === this.id);
+  }
 
   public static create(
     grid: Grid,
@@ -26,40 +31,38 @@ export default class Row {
     }
   }
 
-  public static import(gridManager: Grid, node: Element) {
+  public static import(parentGrid: Grid, node: HTMLElement) {
     // Get Row Layout
-    const columnNodes = Array.from(node.children).filter((e) =>
-      Array.from(e.classList).find((c) => c.startsWith("col-"))
-    );
+    const columnNodes: HTMLElement[] = (
+      Array.from(node.children) as HTMLElement[]
+    ).filter((e) => Array.from(e.classList).find((c) => c.startsWith("col-")));
     const rowLayout = RowLayout.getLayout(columnNodes);
     const columns = columnNodes.map((colNode, index) => {
-      return Column.import(gridManager, colNode, rowLayout.cols[index]);
+      return Column.import(parentGrid, colNode, rowLayout.cols[index]);
     });
-    const row = new Row(gridManager, rowLayout, node, writable(columns));
+    const row = new Row(parentGrid, rowLayout, node, writable(columns));
     return row;
   }
 
   constructor(
-    public gridManager: Grid,
-    public layout: RowLayout,
-    public node: Element,
+    public parentGrid: Grid,
+    layout: RowLayout,
+    public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
-    console.log(layout);
     this.setLayout(layout);
   }
 
   async setLayout(layout: RowLayout) {
-    this.layout = layout;
     const columns = get(this.columns);
     // Find out if we need to delete any
     const toDelete = columns.slice(layout.cols.length);
-    const colsWithContent = toDelete.filter(
-      (c) => !c.gridManager.editor.dom.isEmpty(c.node)
+    const colsWithContent = toDelete.filter((c) =>
+      c.innerNode.innerText.replace(/[\n\s]+/m, "")
     );
     if (colsWithContent.length) {
       const userConfirm = await confirmDialog(
-        this.gridManager.editor,
+        this.parentGrid.editor,
         "Update Layout",
         "This row has content in it that will be deleted by removing columns! Are you sure you want to change to this layout?",
         "Yes, change layout"
@@ -80,52 +83,27 @@ export default class Row {
     });
   }
 
-  async checkLayout(addCol = false) {
-    if (addCol) {
-      const leftoverCols = get(this.columns).reduce(
-        (acc, col) => {
-          const widths = get(col.width);
-          return {
-            xs: Math.min(0, acc.xs - widths.xs) as gridSize,
-            sm: Math.min(0, acc.sm - widths.sm) as gridSize,
-            md: Math.min(0, acc.md - widths.md) as gridSize,
-            lg: Math.min(0, acc.lg - widths.lg) as gridSize,
-          };
-        },
-        {
-          xs: 12 as gridSize,
-          sm: 12 as gridSize,
-          md: 12 as gridSize,
-          lg: 12 as gridSize,
-        } as Required<ColumnLayout>
-      );
-      if (Object.values(leftoverCols).some((v) => v > 0)) {
-        // We have space left over, so we need to add a column
-        this.layout.cols.push(leftoverCols);
-      }
-    }
-    this.setLayout(this.layout);
-  }
-
   async delete(force = false) {
-    if (!this.gridManager.editor.dom.isEmpty(this.node)) {
+    if (
+      get(this.columns).find(
+        (c) => c.innerNode.innerText.replace(/[\n\s]+/m, "") // Discard newlines and whitespace
+      )
+    ) {
       const userConfirm =
-        force || (await confirmDialog(this.gridManager.editor));
+        force || (await confirmDialog(this.parentGrid.editor));
       if (!userConfirm) {
         console.log("Cancelled!");
         return false;
       }
     }
-    this.gridManager.editor.dom.remove(this.node);
-    this.gridManager.rows.update((rows) =>
-      rows.filter((r) => r.id !== this.id)
-    );
+    this.parentGrid.editor.dom.remove(this.node);
+    this.parentGrid.rows.update((rows) => rows.filter((r) => r.id !== this.id));
     return true;
   }
 
   deleteCol(column: number | Column) {
     if (typeof column === "number") column = get(this.columns)[column];
-    this.gridManager.editor.dom.remove(column.node);
+    this.parentGrid.editor.dom.remove(column.node);
     this.columns.update((columns) => columns.filter((c) => c !== column));
   }
 
@@ -134,9 +112,9 @@ export default class Row {
     if (replaceContents) {
       const existingChildren = Array.from(columns[col].innerNode.children);
       existingChildren.forEach((child) => {
-        this.gridManager.editor.dom.remove(child);
+        this.parentGrid.editor.dom.remove(child);
       });
     }
-    this.gridManager.editor.dom.add(columns[col].innerNode, content);
+    this.parentGrid.editor.dom.add(columns[col].innerNode, content);
   }
 }

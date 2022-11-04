@@ -1,12 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { Writable, writable } from "svelte/store";
-  import Grid from "./lib/grid";
+  import Grid from "$lib/grid/grid";
   import { setContext } from "svelte";
-  import GridView from "./lib/gridView/gridView.svelte";
-  import GridLayouts from "./lib/gridView/gridLayouts.svelte";
+  import GridView from "$lib/components/sidebar/gridView/gridView.svelte";
   import { fade, fly, slide } from "svelte/transition";
-  import GridManager, { stateObject } from "./lib/grid/gridManager";
+  import GridManager, { stateObject } from "$lib/grid/gridManager";
   import { clickOutside } from "svelte-use-click-outside";
 
   export let state: stateObject = {
@@ -67,12 +66,21 @@
       grid.
     </p>
     <div class="existing-grids">
-      {#each $grids as grid, idx (grid.id)}
-        <GridView {grid} />
-        {#if idx < $grids.length - 1}
-          <span class="space-inbetween">&ctdot;</span>
-        {/if}
-      {/each}
+      {#if $grids.length}
+        {#each $grids as grid, idx (grid.id)}
+          <GridView {grid} />
+          {#if idx < $grids.length - 1}
+            <span class="space-inbetween">&ctdot;</span>
+          {/if}
+        {/each}
+      {:else}
+        <div class="noGrids">
+          <p>
+            No grids found on this page. To create a grid, click the button
+            below.
+          </p>
+        </div>
+      {/if}
     </div>
     <button
       class="Button Button--primary"
@@ -86,9 +94,9 @@
 <style lang="postcss">
   .sidebar-container {
     --sidebar-width: 26rem;
-    @apply fixed w-full h-full border-uni-blue top-0 right-0 transition duration-300;
+    @apply fixed w-full h-full border-uni-blue top-0 right-0 transition duration-300 shadow-md;
     @apply z-50 bg-white;
-    @apply p-4 px-8;
+    @apply pb-4 px-8;
     @apply border-0 border-solid border-l-2;
     @apply grid gap-4;
     @apply overflow-y-auto max-h-screen box-border;
@@ -98,7 +106,7 @@
     transform: translateX(100%);
     & .header {
       grid-area: header;
-      @apply grid items-center gap-3;
+      @apply grid items-center gap-3 sticky top-0 pt-4 bg-white z-50;
       @apply border-solid border-0 border-b border-uni-gray-200;
       grid-template-areas: "back title close" "hr hr hr";
       grid-template-columns: auto 1fr auto;
@@ -114,15 +122,21 @@
     }
     & .grid-details {
       grid-area: content;
+      @apply grid gap-4 justify-items-center;
+      grid-template-rows: auto 1fr auto;
+
+      & .existing-grids {
+        @apply flex flex-col w-full;
+        & .noGrids {
+          @apply md:p-10 p-4 bg-gray-100 border-solid border-2 border-gray-300 rounded italic text-center;
+        }
+        & .space-inbetween {
+          @apply text-center text-gray-400 font-bold leading-none m-0 select-none;
+        }
+      }
     }
     &.active {
       transform: translateX(0);
-    }
-    & .existing-grids {
-      @apply flex flex-col;
-      & .space-inbetween {
-        @apply text-center text-gray-400 font-bold leading-none m-0 select-none;
-      }
     }
   }
   .no-rows {

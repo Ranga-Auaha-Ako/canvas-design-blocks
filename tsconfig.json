@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ES6",
+    "module": "ESNext",
     "allowJs": true,
     "checkJs": true,
     "esModuleInterop": true,
@@ -9,7 +12,12 @@
     "sourceMap": true,
     "strict": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "$lib/*": ["src/lib/*"],
+      "$assets/*": ["src/assets/*"]
+    }
   },
   "exclude": [
     "./dist/**/*",

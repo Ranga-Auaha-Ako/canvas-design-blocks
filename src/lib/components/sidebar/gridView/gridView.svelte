@@ -1,11 +1,7 @@
 <script lang="ts">
-  import { getContext } from "svelte";
-  import { debug } from "svelte/internal";
   import { get } from "svelte/store";
-  import { fade } from "svelte/transition";
-  import Grid from "../grid";
-  import { RowLayout, rowTemplates } from "../grid/rowLayouts";
-  import GridLayouts from "./gridLayouts.svelte";
+  import Grid from "$lib/grid/grid";
+  import { RowLayout } from "$lib/grid/rowLayouts";
 
   export let grid: Grid;
 
