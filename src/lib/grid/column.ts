@@ -62,6 +62,17 @@ export default class Column {
       grid.editor.dom.add(node, innerNode);
     }
     grid.editor.dom.setAttrib(innerNode, "contenteditable", "true");
+    // Move any other children into the inner node - we don't need them
+    [...node.childNodes].forEach((n) => {
+      if (
+        n !== innerNode &&
+        n.nodeType !== Node.COMMENT_NODE &&
+        (n as HTMLElement)?.dataset.cgbNoMove !== "true" // Allow some nodes to be left in place if the author wants
+      ) {
+        console.log("Moving incorrectly placed element into inner node", n);
+        (innerNode as HTMLElement).appendChild(n);
+      }
+    });
     return new Column(grid, width, node, innerNode);
   }
 

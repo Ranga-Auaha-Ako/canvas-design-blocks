@@ -1,0 +1,6 @@
+[advanced]
+
+[[advanced.headers]]
+source = "{**/*}}"
+[advanced.headers.headers]
+Cache-Control = "no-cache"

@@ -10,6 +10,7 @@
   import Row from "$lib/grid/row";
   import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
+  import ConfigureIcon from "$assets/icons/configure.svelte";
 
   export let row: Row;
 
@@ -70,7 +71,8 @@
             showAddRow = false;
           }}
         >
-          &#8801;
+          <!-- &#8801; -->
+          <ConfigureIcon />
         </button>
         <!-- Add above/below -->
         <button
@@ -140,9 +142,9 @@
     & .actions {
       @apply flex items-center h-full;
       & .change {
-        transform: rotate(90deg);
+        /* transform: rotate(90deg); */
         &:hover {
-          transform: rotate(90deg) scale(1, 1.4);
+          /* transform: rotate(90deg) scale(1, 1.4); */
         }
       }
     }
