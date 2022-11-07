@@ -89,7 +89,7 @@
           <button
             title="Add Row Above"
             class="addAbove"
-            on:click={() => addRow(row.index)}
+            on:click={() => addRow(row.index, row.layout)}
             transition:fade
           >
             <ArrowOpenUp />
@@ -97,7 +97,7 @@
           <button
             title="Add Row Below"
             class="addBelow"
-            on:click={() => addRow(row.index + 1)}
+            on:click={() => addRow(row.index + 1, row.layout)}
             transition:fade
           >
             <ArrowOpenDown />

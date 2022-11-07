@@ -19,8 +19,6 @@ export class Grid implements Readable<Row[]> {
   public readonly selected: Writable<boolean | string> = writable(false);
   public rows: Writable<Row[]> = writable([]);
 
-  private _start: HTMLElement;
-
   public static create(
     state: stateObject,
     editor: Editor = window.tinymce.activeEditor,
@@ -30,15 +28,6 @@ export class Grid implements Readable<Row[]> {
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
     });
-    const _start = editor.dom.add(
-      gridRoot,
-      "div",
-      {
-        class: "cge-start",
-        style: "display: none;",
-      },
-      `--Canvas Grid Builder Markup v1.0--`
-    );
     // Add grid to page
     if (atCursor) {
       const insertNode = editor.selection.getNode();
@@ -77,15 +66,7 @@ export class Grid implements Readable<Row[]> {
     rows?: Row[]
   ) {
     // Don't do this - duplicate grids might have duplicate IDS so always safer to make a new one
-    // // If ID Already set, use that instead of generating a new one
-    // if (this.gridRoot.dataset.cgeId) this.id = this.gridRoot.dataset.cgeId;
-    // Find start element
-    const foundStart = Array.from(gridRoot.children).find((e) =>
-      e.classList.contains("cge-start")
-    ) as HTMLElement | undefined;
-    if (!foundStart)
-      throw new Error("Grid root does not contain start element");
-    this._start = foundStart; // Should be a hidden div
+
     // Set up rows
     if (rows) this.rows.set(rows);
     else this.addRow(rowTemplates["1"]);
@@ -164,12 +145,20 @@ export class Grid implements Readable<Row[]> {
 
   public addRow(layout?: RowLayout, index?: number) {
     let row: Row;
-    if (index === undefined) row = Row.create(this, layout);
-    else {
-      let insertAfter;
-      if (index === 0) insertAfter = this._start;
-      else insertAfter = this.gridRoot.children[index];
-      row = Row.create(this, layout, insertAfter);
+    const rows = get(this.rows);
+    if (index === undefined) {
+      row = Row.create(this, layout);
+    } else {
+      if (index === 0) {
+        row = Row.create(this, layout, this.gridRoot, "afterbegin");
+      } else {
+        row = Row.create(
+          this,
+          layout,
+          this.gridRoot.children[index],
+          "afterend"
+        );
+      }
     }
     this.rows.update((rows) => {
       if (index === undefined) rows.push(row);
