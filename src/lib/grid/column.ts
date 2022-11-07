@@ -81,6 +81,24 @@ export default class Column {
     }
     // Bind to clicks and move the focus
     this.parentGrid.editor.dom.bind(this.node, "click", () => {
+      // If the column uses the old format (has text as direct decendant rather than in a paragraph), move it into a paragraph
+      const textNodes = [
+        ...this.node.childNodes,
+        ...this.innerNode.childNodes,
+      ].filter((n) => n.nodeType === Node.TEXT_NODE);
+      textNodes.forEach((n) => {
+        // Add to new paragraph
+        n.textContent &&
+          this.parentGrid.editor.dom.add(
+            this.innerNode,
+            "p",
+            {},
+            n.textContent
+          );
+        // Remove old text node
+        this.parentGrid.editor.dom.remove(n);
+      });
+
       //Move selection if we need to.
       if (
         !this.innerNode.contains(this.parentGrid.editor.selection.getNode())
@@ -89,7 +107,7 @@ export default class Column {
           this.getTextTarget(),
           "span"
         );
-        this.parentGrid.editor.selection.select(textTarget);
+        if (textTarget) this.parentGrid.editor.selection.select(textTarget);
       }
     });
   }
