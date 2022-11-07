@@ -31,4 +31,8 @@ export default defineConfig({
       $assets: path.resolve("./src/assets"),
     },
   },
+  define: {
+    __APP_VERSION__:
+      JSON.stringify(process.env.npm_package_version) || "unknown",
+  },
 });
