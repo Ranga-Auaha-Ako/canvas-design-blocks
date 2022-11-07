@@ -94,10 +94,9 @@ export class GridManager implements Writable<Grid[]> {
   }
 
   public importAll() {
-    const newGrids = this.findGrids().map((grid) => {
-      console.log("Importing grid", grid);
-      return Grid.import(this.state, this.editor, grid);
-    });
+    const newGrids = this.findGrids().map((grid) =>
+      Grid.import(this.state, this.editor, grid)
+    );
     if (newGrids.length) this.add(newGrids);
   }
 

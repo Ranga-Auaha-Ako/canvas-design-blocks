@@ -15,9 +15,29 @@ import { stateObject } from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
 
 export class Grid implements Readable<Row[]> {
+  public static gridMarkupVersion = "1.0.0";
   public readonly id = nanoid();
   public readonly selected: Writable<boolean | string> = writable(false);
   public rows: Writable<Row[]> = writable([]);
+
+  public static migrate(grid: Grid) {
+    if (grid.gridRoot.dataset.cgbVersion === Grid.gridMarkupVersion) return;
+    console.log(
+      `Migrating grid from ${grid.gridRoot.dataset.cgbVersion || "alpha"} to v${
+        Grid.gridMarkupVersion
+      }`
+    );
+    // SINCE alpha: Columns might have direct text decendants of innernode. This is no longer allowed, so we need to wrap them in a paragraph
+    if (grid.gridRoot.dataset.cgeVersion === undefined) {
+      get(grid).forEach((row) => {
+        get(row.columns).forEach((col) => {
+          col.checkChildren();
+        });
+      });
+    }
+    // Migrate row to new version
+    grid.gridRoot.dataset.cgbVersion = Grid.gridMarkupVersion;
+  }
 
   public static create(
     state: stateObject,
@@ -27,6 +47,7 @@ export class Grid implements Readable<Row[]> {
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
+      "data-cgb-version": Grid.gridMarkupVersion,
     });
     // Add grid to page
     if (atCursor) {
@@ -56,6 +77,8 @@ export class Grid implements Readable<Row[]> {
     ) as HTMLElement[];
     const rowInsts = rows.map((row) => Row.import(grid, row));
     grid.rows.set(rowInsts);
+    // Migrate if needed
+    Grid.migrate(grid);
     return grid;
   }
 
