@@ -13,17 +13,41 @@ export default class Row {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
   }
 
+  public static columnNodes(node: HTMLElement): HTMLElement[] {
+    return (Array.from(node.children) as HTMLElement[]).filter((e) =>
+      Array.from(e.classList || []).find((c) => c.startsWith("col-"))
+    );
+  }
+  public static getLayout(node: HTMLElement): RowLayout {
+    const columnNodes = Row.columnNodes(node);
+    return RowLayout.getLayout(columnNodes);
+  }
+  get colNodes() {
+    return Row.columnNodes(this.node);
+  }
+  get layout() {
+    return Row.getLayout(this.node);
+  }
+
+  public static create(grid: Grid, layout?: RowLayout): Row;
+  public static create(
+    grid: Grid,
+    layout?: RowLayout,
+    insertAdjacent?: Element,
+    placement?: InsertPosition
+  ): Row;
   public static create(
     grid: Grid,
     layout: RowLayout = rowTemplates["1"],
-    insertAfter?: Element
-  ) {
+    insertAdjacent?: Element,
+    placement: InsertPosition = "afterend"
+  ): Row {
     const newNode = grid.editor.dom.create("div", {
       class: "grid-row",
       // "data-cgb-row-id": `${nanoid()}`,
     });
-    if (insertAfter) {
-      grid.editor.dom.insertAfter(newNode, insertAfter);
+    if (insertAdjacent) {
+      insertAdjacent.insertAdjacentElement(placement, newNode);
       return new Row(grid, layout, newNode);
     } else {
       grid.editor.dom.add(grid.gridRoot, newNode);
@@ -33,11 +57,8 @@ export default class Row {
 
   public static import(parentGrid: Grid, node: HTMLElement) {
     // Get Row Layout
-    const columnNodes: HTMLElement[] = (
-      Array.from(node.children) as HTMLElement[]
-    ).filter((e) => Array.from(e.classList).find((c) => c.startsWith("col-")));
-    const rowLayout = RowLayout.getLayout(columnNodes);
-    const columns = columnNodes.map((colNode, index) => {
+    const rowLayout = Row.getLayout(node);
+    const columns = Row.columnNodes(node).map((colNode, index) => {
       return Column.import(parentGrid, colNode, rowLayout.cols[index]);
     });
     const row = new Row(parentGrid, rowLayout, node, writable(columns));

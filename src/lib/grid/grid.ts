@@ -15,11 +15,29 @@ import { stateObject } from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
 
 export class Grid implements Readable<Row[]> {
+  public static gridMarkupVersion = "1.0.0";
   public readonly id = nanoid();
   public readonly selected: Writable<boolean | string> = writable(false);
   public rows: Writable<Row[]> = writable([]);
 
-  private _start: HTMLElement;
+  public static migrate(grid: Grid) {
+    if (grid.gridRoot.dataset.cgbVersion === Grid.gridMarkupVersion) return;
+    console.log(
+      `Migrating grid from ${grid.gridRoot.dataset.cgbVersion || "alpha"} to v${
+        Grid.gridMarkupVersion
+      }`
+    );
+    // SINCE alpha: Columns might have direct text decendants of innernode. This is no longer allowed, so we need to wrap them in a paragraph
+    if (grid.gridRoot.dataset.cgeVersion === undefined) {
+      get(grid).forEach((row) => {
+        get(row.columns).forEach((col) => {
+          col.checkChildren();
+        });
+      });
+    }
+    // Migrate row to new version
+    grid.gridRoot.dataset.cgbVersion = Grid.gridMarkupVersion;
+  }
 
   public static create(
     state: stateObject,
@@ -29,16 +47,8 @@ export class Grid implements Readable<Row[]> {
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
+      "data-cgb-version": Grid.gridMarkupVersion,
     });
-    const _start = editor.dom.add(
-      gridRoot,
-      "div",
-      {
-        class: "cge-start",
-        style: "display: none;",
-      },
-      `--Canvas Grid Builder Markup v1.0--`
-    );
     // Add grid to page
     if (atCursor) {
       const insertNode = editor.selection.getNode();
@@ -67,6 +77,8 @@ export class Grid implements Readable<Row[]> {
     ) as HTMLElement[];
     const rowInsts = rows.map((row) => Row.import(grid, row));
     grid.rows.set(rowInsts);
+    // Migrate if needed
+    Grid.migrate(grid);
     return grid;
   }
 
@@ -77,15 +89,7 @@ export class Grid implements Readable<Row[]> {
     rows?: Row[]
   ) {
     // Don't do this - duplicate grids might have duplicate IDS so always safer to make a new one
-    // // If ID Already set, use that instead of generating a new one
-    // if (this.gridRoot.dataset.cgeId) this.id = this.gridRoot.dataset.cgeId;
-    // Find start element
-    const foundStart = Array.from(gridRoot.children).find((e) =>
-      e.classList.contains("cge-start")
-    ) as HTMLElement | undefined;
-    if (!foundStart)
-      throw new Error("Grid root does not contain start element");
-    this._start = foundStart; // Should be a hidden div
+
     // Set up rows
     if (rows) this.rows.set(rows);
     else this.addRow(rowTemplates["1"]);
@@ -164,12 +168,20 @@ export class Grid implements Readable<Row[]> {
 
   public addRow(layout?: RowLayout, index?: number) {
     let row: Row;
-    if (index === undefined) row = Row.create(this, layout);
-    else {
-      let insertAfter;
-      if (index === 0) insertAfter = this._start;
-      else insertAfter = this.gridRoot.children[index];
-      row = Row.create(this, layout, insertAfter);
+    const rows = get(this.rows);
+    if (index === undefined) {
+      row = Row.create(this, layout);
+    } else {
+      if (index === 0) {
+        row = Row.create(this, layout, this.gridRoot, "afterbegin");
+      } else {
+        row = Row.create(
+          this,
+          layout,
+          this.gridRoot.children[index],
+          "afterend"
+        );
+      }
     }
     this.rows.update((rows) => {
       if (index === undefined) rows.push(row);

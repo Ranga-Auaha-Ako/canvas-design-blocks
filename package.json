@@ -1,7 +1,6 @@
 {
-  "name": "myapp",
-  "private": true,
-  "version": "0.1.0",
+  "name": "canvas-grid-builder",
+  "version": "1.0.0",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {

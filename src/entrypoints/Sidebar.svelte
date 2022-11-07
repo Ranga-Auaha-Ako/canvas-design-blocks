@@ -7,6 +7,7 @@
   import { fade, fly, slide } from "svelte/transition";
   import GridManager, { stateObject } from "$lib/grid/gridManager";
   import { clickOutside } from "svelte-use-click-outside";
+  import { version } from "$lib/util/constants";
 
   export let state: stateObject = {
     showInterface: writable(false),
@@ -61,9 +62,9 @@
   </div>
   <div class="grid-details" transition:fade>
     <p>
-      Welcome to the new Canvas Grid Editor. To begin, select an existing grid
-      on the page by clicking the outline, or click the button below to create a
-      grid.
+      Welcome to the beta (version {version}) release of Canvas Grid Editor. To
+      begin, select an existing grid on the page by clicking the outline, or
+      click the button below to create a grid.
     </p>
     <div class="existing-grids">
       {#if $grids.length}
