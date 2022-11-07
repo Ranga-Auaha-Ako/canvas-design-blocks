@@ -55,7 +55,13 @@ export class Grid implements Readable<Row[]> {
       const inGrid = insertNode.closest(".canvas-grid-editor");
       if (inGrid) {
         editor.dom.insertAfter(gridRoot, inGrid);
+      } else if (
+        insertNode.nodeName === "BODY" ||
+        insertNode.closest("body") === null
+      ) {
+        editor.dom.add(editor.dom.getRoot(), gridRoot);
       } else if (!editor.dom.isBlock(insertNode)) {
+        //  If the cursor is in a non-block element, insert the grid after the element
         editor.dom.insertAfter(gridRoot, insertNode);
       } else {
         editor.dom.add(insertNode, gridRoot);
