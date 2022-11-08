@@ -8,6 +8,8 @@ COPY . .
 
 RUN yarn build
 
-FROM nginx as prod
-COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+FROM joseluisq/static-web-server:latest as prod
+COPY --from=build /usr/src/app/dist /public
+COPY ./static-web-server.toml /config.toml
+ENV SERVER_CONFIG_FILE=/config.toml
 EXPOSE 80
