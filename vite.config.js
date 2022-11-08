@@ -7,10 +7,10 @@ import path from "path";
 export default defineConfig({
   plugins: [
     svelte({
-      experimental: {
-        inspector: true,
-      },
       emitCss: false,
+      compilerOptions: {
+        customElement: false,
+      },
     }),
   ],
   server: {

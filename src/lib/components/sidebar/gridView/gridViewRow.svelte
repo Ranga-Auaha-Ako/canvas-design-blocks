@@ -3,7 +3,7 @@
   import { fade, slide } from "svelte/transition";
   import Row from "$lib/grid/row";
   import GridAddButton from "./gridAddButton.svelte";
-  import GridLayouts from "$lib/components/gridLayouts.svelte";
+  import GridLayouts from "$lib/components/layoutEditor/gridLayouts.svelte";
   import GridViewColumn from "./gridViewColumn.svelte";
 
   export let showPrependButton = true;
@@ -57,6 +57,7 @@
   {/if}
   {#if showLayoutPicker}
     <GridLayouts
+      activeLayout={row.layout}
       on:cancel={() => {
         showLayoutPicker = false;
       }}

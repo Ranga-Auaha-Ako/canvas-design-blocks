@@ -9,6 +9,12 @@ export interface ColumnLayout {
 
 export class RowLayout {
   public readonly cols: Required<ColumnLayout>[];
+  public get id(): string {
+    return this.cols
+      .map((col) => `${col.xs}/${col.sm}/${col.md}/${col.lg}`)
+      .join("-");
+  }
+
   constructor(cols: ColumnLayout[]) {
     this.cols = cols.map((col) => {
       const xs = col.xs;
