@@ -3,7 +3,7 @@
   import Grid from "$lib/grid/grid";
   import { RowLayout } from "$lib/grid/rowLayouts";
   import Portal from "$lib/portal/portal.svelte";
-  import GridLayouts from "../sidebar/gridView/gridLayouts.svelte";
+  import GridLayouts from "$lib/components/gridLayouts.svelte";
   import { onMount } from "svelte";
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
@@ -114,6 +114,7 @@
           data-mce-bogus="all"
         >
           <GridLayouts
+            showAdvanced={true}
             on:add={(e) => {
               setRowLayout(e.detail);
               showChangeLayout = false;
