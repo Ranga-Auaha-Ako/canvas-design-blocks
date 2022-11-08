@@ -13,7 +13,7 @@ export const preventBubble = (elem: Element, all = false) => {
 
   events.forEach((evt) =>
     elem.addEventListener(evt, (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       e.stopPropagation();
       return false;
     })

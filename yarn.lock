@@ -1721,6 +1721,13 @@ pify@^2.3.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
   integrity sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==
 
+postcss-class-prefix@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/postcss-class-prefix/-/postcss-class-prefix-0.3.0.tgz#d69e86d062a3403853b3f34c9476441c3ddfe7d3"
+  integrity sha512-qqp2a/tF1+NibJs5s4WncbjgrwQRqFF/EWdy74MR1zDb1F6O5yEUdleACA030hdX5LeFk8EGIRmTa3CFv+R67g==
+  dependencies:
+    postcss "^5.0.4"
+
 postcss-for@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/postcss-for/-/postcss-for-2.1.1.tgz#841378c0ef909d50e1980d5aa71e6a340e728fcd"
@@ -1812,7 +1819,7 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^5.0.0, postcss@^5.0.21:
+postcss@^5.0.0, postcss@^5.0.21, postcss@^5.0.4:
   version "5.2.18"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-5.2.18.tgz#badfa1497d46244f6390f58b319830d9107853c5"
   integrity sha512-zrUjRRe1bpXKsX1qAJNJjqZViErVuyEkMTRrwu4ud4sbTtIBRmtaYDrHmcGgmrbsW3MHfmtIf+vJumgQn+PrXg==
@@ -2283,6 +2290,11 @@ svelte-hmr@^0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.15.0.tgz#c8304b5dd33f006415329d91470761d19417a324"
   integrity sha512-Aw21SsyoohyVn4yiKXWPNCSW2DQNH/76kvUnE9kpt4h9hcg9tfyQc6xshx9hzgMfGF0kVx0EGD8oBMWSnATeOg==
+
+svelte-local-storage-store@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/svelte-local-storage-store/-/svelte-local-storage-store-0.3.1.tgz#0abb0a119d4a37625394bab0ed2c0fe958e81a31"
+  integrity sha512-pG+jjBY8oZWQ1XRnVkLIuPPbPqBWVtj0IINQBjkZSpJ+OqMs285efd+oiGdk4vBDnqomw81SForn+KH1j3HguA==
 
 svelte-preprocess@^4.10.7:
   version "4.10.7"

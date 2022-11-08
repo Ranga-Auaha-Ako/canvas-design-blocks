@@ -18,16 +18,14 @@ export default class Row {
       Array.from(e.classList || []).find((c) => c.startsWith("col-"))
     );
   }
-  public static getLayout(node: HTMLElement): RowLayout {
+  public static getLayoutFromNode(node: HTMLElement): RowLayout {
     const columnNodes = Row.columnNodes(node);
     return RowLayout.getLayout(columnNodes);
   }
   get colNodes() {
     return Row.columnNodes(this.node);
   }
-  get layout() {
-    return Row.getLayout(this.node);
-  }
+  public layout;
 
   public static create(grid: Grid, layout?: RowLayout): Row;
   public static create(
@@ -57,7 +55,7 @@ export default class Row {
 
   public static import(parentGrid: Grid, node: HTMLElement) {
     // Get Row Layout
-    const rowLayout = Row.getLayout(node);
+    const rowLayout = Row.getLayoutFromNode(node);
     const columns = Row.columnNodes(node).map((colNode, index) => {
       return Column.import(parentGrid, colNode, rowLayout.cols[index]);
     });
@@ -72,6 +70,9 @@ export default class Row {
     public columns: Writable<Column[]> = writable([])
   ) {
     this.setLayout(layout);
+    this.layout = derived(this.columns, ($columns) => {
+      return RowLayout.getLayout($columns.map((c) => c.node));
+    });
   }
 
   async setLayout(layout: RowLayout) {
