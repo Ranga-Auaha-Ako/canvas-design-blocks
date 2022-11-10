@@ -8,6 +8,7 @@ const config = {
           silver: "#8D9091",
           light: "#009AC7",
           DEFAULT: "#00467F",
+          dark: "#003459",
         },
         "uni-gray": {
           100: "#F2F2F2",

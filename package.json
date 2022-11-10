@@ -1,6 +1,6 @@
 {
   "name": "canvas-grid-builder",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
@@ -21,6 +21,7 @@
     "postcss-import": "^15.0.0",
     "postcss-load-config": "^4.0.1",
     "postcss-nesting": "^10.2.0",
+    "redefine-custom-elements": "rictic/redefine-custom-elements#no-double-construction",
     "svelte": "^3.49.0",
     "svelte-local-storage-store": "^0.3.1",
     "svelte-preprocess": "^4.10.7",

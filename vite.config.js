@@ -8,8 +8,16 @@ export default defineConfig({
   plugins: [
     svelte({
       emitCss: false,
+      exclude: "src/**/*.wc.svelte",
       compilerOptions: {
         customElement: false,
+      },
+    }),
+    svelte({
+      emitCss: false,
+      include: "src/**/*.wc.svelte",
+      compilerOptions: {
+        customElement: true,
       },
     }),
   ],
