@@ -136,7 +136,7 @@
           @apply bg-slate-100 p-1.5 rounded border-0;
           @apply flex gap-1.5;
           @apply cursor-pointer transition;
-          @apply h-8;
+          @apply h-8 w-full;
           &:hover {
             @apply bg-slate-200;
             transform: scale(1.05);
@@ -158,16 +158,15 @@
       @apply flex;
       grid-area: advanced;
       & button {
-        @apply bg-transparent text-white font-bold border-0 text-xs text-center w-full p-0.5 transition;
+        @apply bg-transparent text-white font-bold border-0 text-xs text-center w-full p-2 transition;
         transition-property: padding, transform;
 
         &:hover {
-          @apply py-2;
+          @apply py-3;
           transform: scale(1.05);
         }
         & :global(svg) {
           @apply inline-block relative fill-current;
-          top: 0.15em;
           width: 1em;
           height: 1em;
         }

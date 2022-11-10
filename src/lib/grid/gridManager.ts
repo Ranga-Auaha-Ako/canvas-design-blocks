@@ -147,11 +147,6 @@ export class GridManager implements Writable<Grid[]> {
       });
     });
 
-    // Hide sidebar when editor is focused
-    this.editor.on("nodechange", () => {
-      this.state.showInterface.set(false);
-    });
-
     // Events where we need to hide the interface
     const hideInterfaceEvents = ["dragstart"];
     hideInterfaceEvents.forEach((evtName) => {

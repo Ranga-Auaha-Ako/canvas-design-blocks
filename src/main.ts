@@ -1,8 +1,6 @@
-import { debug } from "svelte/internal";
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import GridManager, { stateObject } from "$lib/grid/gridManager";
-import preventBubble from "$lib/util/preventBubble";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.wc.svelte";
 import Sidebar from "./entrypoints/Sidebar.wc.svelte";
@@ -39,11 +37,15 @@ const loadSidebar = (props: Sidebar["$$prop_def"]) => {
 };
 
 const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
-  const target = document.body;
+  const target = document.querySelector("#left-side #section-tabs");
   if (!target) return;
+  // Create list item at start of target
+  const li = document.createElement("li");
+  li.classList.add("section");
+  target.insertAdjacentElement("afterbegin", li);
 
   return new Toolbar({
-    target,
+    target: li,
     props,
   });
 };
@@ -64,11 +66,8 @@ export const loadApp = async () => {
   // Create Grid Manager
   const grids = new GridManager(state, editor);
 
-  // Load sidebar
-  loadSidebar({ state, grids });
-
   // // Add button to open grid editor
-  loadToolbar({ state });
+  loadToolbar({ state, grids });
 
   // Load editor (inject live interface into TinyMCE iframe)
   loadEditor(editor, { state, grids });

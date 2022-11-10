@@ -158,6 +158,7 @@
   button {
     @apply bg-transparent text-white border-0 transition;
     @apply flex items-center justify-center;
+    @apply w-3 h-3;
     & .active,
     &:hover {
       transform: scale(1.25);

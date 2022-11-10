@@ -2,73 +2,79 @@
 
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import { stateObject } from "$lib/grid/gridManager";
-  import Portal from "$lib/portal/portal.svelte";
+  import GridManager, { stateObject } from "$lib/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg";
-  import { writable } from "svelte/store";
+  import { slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
+  import { version } from "$lib/util/constants";
+  import Grid from "$lib/grid/grid";
+  import ElementPanel from "../lib/components/toolbar/elementPanel.svelte";
 
   export let state: stateObject | undefined;
+  export let grids: GridManager | undefined;
 
   $: open = state?.showInterface;
 
   let container: HTMLElement;
+  $: if (container) preventBubble(container);
 
-  const editorOffset = writable(0);
-
-  const getEditorOffset = () => {
-    const editor = window.tinymce.activeEditor;
-    const editorContainer = editor.getContainer();
-    const offset = editorContainer.getBoundingClientRect();
-    editorOffset.set(offset.top - 40);
+  const addGrid = () => {
+    if (!grids) return;
+    const newGrid = Grid.create(grids.state, undefined, true);
+    grids.add(newGrid, true);
   };
-  window.addEventListener("resize", () =>
-    debounceToolbarRepos(getEditorOffset, 100)
-  );
-
-  onMount(() => {
-    preventBubble(container, true);
-    getEditorOffset();
-  });
-
-  let timer: any;
-  function debounceToolbarRepos(func: Function, amount: number) {
-    clearTimeout(timer);
-    timer = setTimeout(func, amount);
-  }
 </script>
 
-<div bind:this={container} class="cgb-toolbar" style:top={`${$editorOffset}px`}>
+<div bind:this={container} class="cgb-toolbar">
   <button
     class="cgb-openButton"
     title="Canvas Grid Builder"
     on:click={() => {
-      $open = true;
+      $open = !$open;
       dispatch("open");
     }}
   >
+    <div class="details">Visual Editor</div>
     <img src={IconWhite} alt="" />
-    <div class="details">Grids</div>
   </button>
+
+  {#if $open && $grids}
+    <div class="toolbar-menu" transition:slide>
+      <ElementPanel on:add={addGrid}>
+        <svelte:fragment slot="name">Add Grid</svelte:fragment>
+      </ElementPanel>
+
+      <div class="version">
+        v{version}<i>b</i>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style lang="postcss">
+  @import "../app.postcss";
   .cgb-toolbar {
-    @apply fixed top-4 z-40 overflow-clip;
-    @apply flex flex-row items-center justify-center;
-    @apply rounded-l shadow-md w-10 bg-uni-blue;
-    @apply -right-6 pr-6 transition;
-    transition-property: right;
-    &:hover {
-      @apply right-0;
-    }
+    display: contents;
   }
   .cgb-openButton {
-    @apply bg-uni-blue text-white p-0 m-0 border-none w-full h-auto relative cursor-pointer;
+    @apply rounded-sm text-white bg-uni-blue w-full h-8 py-1 px-2 leading-6;
+    @apply flex flex-row;
+    & img {
+      @apply h-full p-0.5;
+    }
     & .details {
-      @apply absolute text-xs top-0 left-4 w-full h-full;
-      transform: rotate(90deg);
+      @apply flex-grow text-left;
+    }
+  }
+
+  .toolbar-menu {
+    @apply border-uni-gray-200 border rounded mt-2;
+    & .version {
+      @apply text-xs text-right p-2;
+      & i {
+        @apply text-xs;
+      }
     }
   }
 </style>
