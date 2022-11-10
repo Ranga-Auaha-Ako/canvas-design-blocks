@@ -7,10 +7,18 @@ import path from "path";
 export default defineConfig({
   plugins: [
     svelte({
-      experimental: {
-        inspector: true,
-      },
       emitCss: false,
+      exclude: "src/**/*.wc.svelte",
+      compilerOptions: {
+        customElement: false,
+      },
+    }),
+    svelte({
+      emitCss: false,
+      include: "src/**/*.wc.svelte",
+      compilerOptions: {
+        customElement: true,
+      },
     }),
   ],
   server: {
