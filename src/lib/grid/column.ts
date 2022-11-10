@@ -108,6 +108,7 @@ export default class Column {
     this.checkChildren();
     // Bind to clicks and move the focus
     this.parentGrid.editor.dom.bind(this.node, "click", () => {
+      this.checkChildren();
       //Move selection if we need to.
       if (
         !this.innerNode.contains(this.parentGrid.editor.selection.getNode())
