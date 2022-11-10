@@ -107,12 +107,10 @@ export default class Column {
     // Fix children if needed
     this.checkChildren();
     // Bind to clicks and move the focus
-    this.parentGrid.editor.dom.bind(this.node, "click", () => {
+    this.parentGrid.editor.dom.bind(this.node, "click", (e) => {
       this.checkChildren();
       //Move selection if we need to.
-      if (
-        !this.innerNode.contains(this.parentGrid.editor.selection.getNode())
-      ) {
+      if (!this.innerNode.contains(e.target)) {
         const textTarget = this.parentGrid.editor.dom.add(
           this.getTextTarget(),
           "span"
