@@ -1,3 +1,5 @@
+<svelte:options tag="cgb-toolbar" />
+
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { stateObject } from "$lib/grid/gridManager";
@@ -7,9 +9,9 @@
   import { writable } from "svelte/store";
   const dispatch = createEventDispatcher();
 
-  export let state: stateObject;
+  export let state: stateObject | undefined;
 
-  $: open = state.showInterface;
+  $: open = state?.showInterface;
 
   let container: HTMLElement;
 
@@ -63,7 +65,7 @@
     }
   }
   .cgb-openButton {
-    @apply bg-uni-blue text-white p-0 m-0 border-none w-full h-auto relative;
+    @apply bg-uni-blue text-white p-0 m-0 border-none w-full h-auto relative cursor-pointer;
     & .details {
       @apply absolute text-xs top-0 left-4 w-full h-full;
       transform: rotate(90deg);

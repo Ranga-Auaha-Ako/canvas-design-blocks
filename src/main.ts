@@ -3,10 +3,9 @@ import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import GridManager, { stateObject } from "$lib/grid/gridManager";
 import preventBubble from "$lib/util/preventBubble";
-import "./app.postcss";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
-import Toolbar from "./entrypoints/Toolbar.svelte";
-import Sidebar from "./entrypoints/Sidebar.svelte";
+import Toolbar from "./entrypoints/Toolbar.wc.svelte";
+import Sidebar from "./entrypoints/Sidebar.wc.svelte";
 import EditorApp from "./entrypoints/Editor.svelte";
 
 const state: stateObject = {
@@ -30,16 +29,11 @@ const getEditor = () =>
   });
 
 const loadSidebar = (props: Sidebar["$$prop_def"]) => {
-  // Build DIV to contain app
-  const div = document.createElement("div");
-  div.style.display = "contents";
-  div.dataset.mceBogus = "1";
-  div.id = "canvas-grid-container";
-  document.body.insertAdjacentElement("beforeend", div);
-  preventBubble(div, true);
+  const target = document.body;
+  if (!target) return;
   // Create app
   return new Sidebar({
-    target: div,
+    target,
     props,
   });
 };
@@ -47,6 +41,7 @@ const loadSidebar = (props: Sidebar["$$prop_def"]) => {
 const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
   const target = document.body;
   if (!target) return;
+
   return new Toolbar({
     target,
     props,
@@ -72,7 +67,7 @@ export const loadApp = async () => {
   // Load sidebar
   loadSidebar({ state, grids });
 
-  // Add button to open grid editor
+  // // Add button to open grid editor
   loadToolbar({ state });
 
   // Load editor (inject live interface into TinyMCE iframe)

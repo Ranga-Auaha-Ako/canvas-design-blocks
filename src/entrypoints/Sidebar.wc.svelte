@@ -1,3 +1,5 @@
+<svelte:options tag="cgb-sidebar" />
+
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { Writable, writable } from "svelte/store";
@@ -9,44 +11,34 @@
   import { clickOutside } from "svelte-use-click-outside";
   import { version } from "$lib/util/constants";
 
-  export let state: stateObject = {
+  export let state: stateObject | undefined = {
     showInterface: writable(false),
   };
 
-  export let grids = new GridManager(state);
+  export let grids: GridManager | undefined;
 
-  setContext("grids", grids);
-
-  $: showInterface = state.showInterface;
+  $: showInterface = state?.showInterface;
+  $: console.log($showInterface);
 
   onMount(() => {
-    // Two situations might occur:
-    // -------- No need to make a new grid:
-    //   1. Page already has a grid
-    // -------- Need to make a new grid:
-    //   X (NOT IN USE). Page is empty (auto-init grid)
-    //   3. Page has content. We can add a grid at the cursor position when asked
-    const editor = window.tinymce.activeEditor;
-    // // If page is empty, we can auto-init a grid
-    // if (editor.dom.isEmpty(editor.dom.getRoot())) {
-    //   grids.add(Grid.create(grids.state));
-    // }
+    // Event listener to listen for clicks outside the sidebar
+    document.addEventListener("click", (e) => {
+      if (e.target && e.target instanceof HTMLElement) {
+        if (e.target.closest("cgb-sidebar") === null) {
+          if ($showInterface) state?.showInterface.set(false);
+        }
+      }
+    });
   });
 
   const dispatch = createEventDispatcher();
 
   let showRowMenu = false;
 
-  $: hasGrid = $grids.length > 0;
+  $: hasGrid = $grids && $grids.length > 0;
 </script>
 
-<div
-  class="sidebar-container"
-  class:active={$showInterface}
-  use:clickOutside={() => {
-    if ($showInterface) state.showInterface.set(false);
-  }}
->
+<div class="sidebar-container" class:active={$showInterface}>
   <div class="header">
     <div class="close">
       <button
@@ -55,10 +47,10 @@
           $showInterface = false;
         }}
       >
-        <i class="icon-Line icon-x" aria-hidden="true" />
+        &times;
       </button>
     </div>
-    <h3>Canvas Grid Builder</h3>
+    <h3>Canvas Custom Elements</h3>
   </div>
   <div class="grid-details" transition:fade>
     <p>
@@ -66,33 +58,18 @@
       begin, select an existing grid on the page by clicking the outline, or
       click the button below to create a grid.
     </p>
-    <div class="existing-grids">
-      {#if $grids.length}
-        {#each $grids as grid, idx (grid.id)}
-          <GridView {grid} />
-          {#if idx < $grids.length - 1}
-            <span class="space-inbetween">&ctdot;</span>
-          {/if}
-        {/each}
-      {:else}
-        <div class="noGrids">
-          <p>
-            No grids found on this page. To create a grid, click the button
-            below.
-          </p>
-        </div>
-      {/if}
-    </div>
     <button
-      class="Button Button--primary"
+      class="Button Button--primary w-full"
       on:click={() => {
-        grids.add(Grid.create(grids.state, undefined, true), true);
+        grids?.add(Grid.create(grids.state, undefined, true), true);
+        $showInterface = false;
       }}>Create Grid</button
     >
   </div>
 </div>
 
 <style lang="postcss">
+  @import "../app.postcss";
   .sidebar-container {
     --sidebar-width: 26rem;
     @apply fixed w-full h-full border-uni-blue top-0 right-0 transition duration-300 shadow-md;
@@ -113,6 +90,7 @@
       grid-template-columns: auto 1fr auto;
       & h3 {
         grid-area: title;
+        @apply text-2xl my-0;
       }
       & .close {
         grid-area: close;
@@ -123,18 +101,6 @@
     }
     & .grid-details {
       grid-area: content;
-      @apply grid gap-4 justify-items-center;
-      grid-template-rows: auto 1fr auto;
-
-      & .existing-grids {
-        @apply flex flex-col w-full;
-        & .noGrids {
-          @apply md:p-10 p-4 bg-gray-100 border-solid border-2 border-gray-300 rounded italic text-center;
-        }
-        & .space-inbetween {
-          @apply text-center text-gray-400 font-bold leading-none m-0 select-none;
-        }
-      }
     }
     &.active {
       transform: translateX(0);

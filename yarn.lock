@@ -1941,6 +1941,10 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
+redefine-custom-elements@rictic/redefine-custom-elements#no-double-construction:
+  version "0.1.2"
+  resolved "https://codeload.github.com/rictic/redefine-custom-elements/tar.gz/29974d0df78ec4d50719b104d6d3ba711e6e2eb7"
+
 redent@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-3.0.0.tgz#e557b7998316bb53c9f1f56fa626352c6963059f"

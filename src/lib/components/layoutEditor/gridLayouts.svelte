@@ -39,6 +39,20 @@
     }
     return slide(node);
   };
+
+  $: (() => {
+    if (row) {
+      const win = deriveWindow(row.node);
+      if (!win) return;
+      win.document.addEventListener("click", (e) => {
+        if (e.target && e.target instanceof win.HTMLElement) {
+          if (e.target.closest("cgb-rowmenu") === null) {
+            dispatch("cancel");
+          }
+        }
+      });
+    }
+  })();
 </script>
 
 <div
@@ -46,27 +60,29 @@
   class:expanded={row && $settingsOpen}
   in:smartSlide|local
   out:fade
-  use:clickOutside={() => dispatch("cancel")}
 >
   <div class="details">
-    <div class="layoutGrid">
-      {#each Object.entries(rowTemplates) as [name, template] (template.id)}
-        <button
-          class="layout"
-          class:active={$activeLayout && $activeLayout.id === template.id}
-          title={name}
-          tabindex="0"
-          on:click={(e) => dispatch("add", template)}
-        >
-          {#each template.cols as col}
-            <div
-              class="col"
-              style={`--gridViewColWidth:${(col.lg / 12) * 100}%;`}
-            />
-          {/each}
-        </button>
-      {/each}
+    <div class="layoutOptions">
+      <div class="layoutGrid">
+        {#each Object.entries(rowTemplates) as [name, template] (template.id)}
+          <button
+            class="layout"
+            class:active={$activeLayout && $activeLayout.id === template.id}
+            title={name}
+            tabindex="0"
+            on:click={(e) => dispatch("add", template)}
+          >
+            {#each template.cols as col}
+              <div
+                class="col"
+                style={`--gridViewColWidth:${(col.lg / 12) * 100}%;`}
+              />
+            {/each}
+          </button>
+        {/each}
+      </div>
     </div>
+
     {#if showAdvanced}
       <div class="settings">
         {#if row && $settingsOpen}
@@ -107,29 +123,33 @@
       grid-area: settings;
       @apply flex w-full overflow-y-auto;
     }
-    & .layoutGrid {
-      @apply grid grid-cols-3 gap-2 items-stretch max-w-full p-2 bg-white rounded z-20;
-      min-height: 10rem;
+    & .layoutOptions {
+      @apply z-20 p-2 bg-white rounded max-w-full;
       grid-area: grid;
       width: var(--col-width);
-      & .layout {
-        @apply relative;
-        @apply bg-slate-100 p-2 rounded border-0;
-        @apply flex gap-2;
-        @apply cursor-pointer transition;
-        @apply max-h-12;
-        &:hover {
-          @apply bg-slate-200;
-          transform: scale(1.05);
-        }
-        & .col {
-          @apply h-full;
-          @apply bg-uni-blue-light rounded;
-          width: var(--gridViewColWidth);
-        }
-        &.active {
-          @apply border-2 border-solid border-uni-blue-light;
+
+      & .layoutGrid {
+        @apply grid grid-cols-3 gap-1.5 items-stretch  w-full;
+        min-height: 10rem;
+        & .layout {
+          @apply relative;
+          @apply bg-slate-100 p-1.5 rounded border-0;
+          @apply flex gap-1.5;
+          @apply cursor-pointer transition;
+          @apply h-8;
+          &:hover {
+            @apply bg-slate-200;
+            transform: scale(1.05);
+          }
           & .col {
+            @apply h-full;
+            @apply bg-uni-blue-light rounded;
+            width: var(--gridViewColWidth);
+          }
+          &.active {
+            @apply border-2 border-solid border-uni-blue-light;
+            & .col {
+            }
           }
         }
       }
@@ -166,9 +186,11 @@
       --full-width: calc(var(--col-width) * 2 + var(--border-width));
       height: min(600px, calc(100vh - 3.5rem));
       width: var(--full-width);
-      & .layoutGrid {
+      & .layoutOptions {
         width: 10rem;
-        grid-template-columns: repeat(2, 1fr);
+        & .layoutGrid {
+          grid-template-columns: repeat(2, 1fr);
+        }
       }
       & .settings {
         @apply p-2 visible opacity-100;
