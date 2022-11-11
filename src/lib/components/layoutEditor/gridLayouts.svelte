@@ -193,7 +193,7 @@
       border-width: var(--border-width);
       &.expanded {
         --full-width: 100%;
-        & .layoutGrid {
+        & .layoutOptions {
           @apply hidden;
           width: var(--col-width);
         }
