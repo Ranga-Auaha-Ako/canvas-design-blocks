@@ -45,7 +45,7 @@
 </script>
 
 <div
-  class="wrapper"
+  class="cgb-actions-wrapper"
   contenteditable="false"
   unselectable={true}
   draggable="false"
@@ -141,7 +141,7 @@
     @apply sticky top-2 px-2 py-0.5 h-6;
     @apply bg-uni-blue text-white rounded-full shadow;
   }
-  .wrapper {
+  .cgb-actions-wrapper {
     @apply left-0 right-0 absolute z-10 pointer-events-none;
     top: -1.125rem; /* Centered in the gap between rows. Otherwise -top-3 for top of row*/
     height: 100%;
