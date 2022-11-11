@@ -51,7 +51,7 @@ export class GridManager implements Writable<Grid[]> {
     this._grids.update((grids) => {
       return grids.filter((g) => {
         if (get(g.rows).length === 0) {
-          this.editor.dom.remove(g.gridRoot, false);
+          this.editor.dom.remove(g.node, false);
           return false;
         } else return true;
       });
@@ -119,7 +119,7 @@ export class GridManager implements Writable<Grid[]> {
 
     // Check existing grids for changes
     const nodeUpdated = get(this._grids).filter((g) => {
-      if (!g.editor.getDoc().contains(g.gridRoot)) {
+      if (!g.editor.getDoc().contains(g.node)) {
         console.log("Grid no longer in DOM, removing", g.id);
         g.destroy();
         return true;

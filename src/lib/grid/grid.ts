@@ -21,14 +21,14 @@ export class Grid implements Readable<Row[]> {
   public rows: Writable<Row[]> = writable([]);
 
   public static migrate(grid: Grid) {
-    if (grid.gridRoot.dataset.cgbVersion === Grid.gridMarkupVersion) return;
+    if (grid.node.dataset.cgbVersion === Grid.gridMarkupVersion) return;
     console.log(
-      `Migrating grid from ${grid.gridRoot.dataset.cgbVersion || "alpha"} to v${
+      `Migrating grid from ${grid.node.dataset.cgbVersion || "alpha"} to v${
         Grid.gridMarkupVersion
       }`
     );
     // SINCE alpha: Columns might have direct text decendants of innernode. This is no longer allowed, so we need to wrap them in a paragraph
-    if (grid.gridRoot.dataset.cgeVersion === undefined) {
+    if (grid.node.dataset.cgeVersion === undefined) {
       get(grid).forEach((row) => {
         get(row.columns).forEach((col) => {
           col.checkChildren();
@@ -36,7 +36,7 @@ export class Grid implements Readable<Row[]> {
       });
     }
     // Migrate row to new version
-    grid.gridRoot.dataset.cgbVersion = Grid.gridMarkupVersion;
+    grid.node.dataset.cgbVersion = Grid.gridMarkupVersion;
   }
 
   public static create(
@@ -91,7 +91,7 @@ export class Grid implements Readable<Row[]> {
   constructor(
     public state: stateObject,
     public editor: Editor = window.tinymce.activeEditor,
-    public gridRoot: HTMLElement,
+    public node: HTMLElement,
     rows?: Row[]
   ) {
     // Don't do this - duplicate grids might have duplicate IDS so always safer to make a new one
@@ -102,7 +102,7 @@ export class Grid implements Readable<Row[]> {
     // Bind events to grid
     this.bindEvents();
     // Set ID of grid
-    this.gridRoot.dataset.cgeId = this.id;
+    this.node.dataset.cgeId = this.id;
   }
 
   public bindEvents() {
@@ -116,7 +116,7 @@ export class Grid implements Readable<Row[]> {
           return;
         }
       } else {
-        if (element === this.gridRoot) {
+        if (element === this.node) {
           this.selected.set(true);
           return;
         }
@@ -125,8 +125,8 @@ export class Grid implements Readable<Row[]> {
     });
 
     // Prevent accidental deletion of grid
-    this.editor.dom.setAttrib(this.gridRoot, "contenteditable", "false");
-    this.gridRoot.parentElement?.addEventListener(
+    this.editor.dom.setAttrib(this.node, "contenteditable", "false");
+    this.node.parentElement?.addEventListener(
       "keydown",
       (e) => {
         if (e.key === "Backspace" || e.key === "Delete") {
@@ -135,13 +135,13 @@ export class Grid implements Readable<Row[]> {
           if (e.key === "Backspace") {
             if (
               selectNode.dataset.mceCaret === "after" &&
-              selectNode.previousSibling === this.gridRoot
+              selectNode.previousSibling === this.node
             )
               willDeleteElem = true;
           } else {
             if (
               selectNode.dataset.mceCaret === "before" &&
-              selectNode.nextSibling === this.gridRoot
+              selectNode.nextSibling === this.node
             )
               willDeleteElem = true;
           }
@@ -184,14 +184,9 @@ export class Grid implements Readable<Row[]> {
       row = Row.create(this, layout);
     } else {
       if (index === 0) {
-        row = Row.create(this, layout, this.gridRoot, "afterbegin");
+        row = Row.create(this, layout, this.node, "afterbegin");
       } else {
-        row = Row.create(
-          this,
-          layout,
-          this.gridRoot.children[index],
-          "afterend"
-        );
+        row = Row.create(this, layout, this.node.children[index], "afterend");
       }
     }
     this.rows.update((rows) => {

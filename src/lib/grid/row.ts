@@ -47,7 +47,7 @@ export default class Row {
       insertAdjacent.insertAdjacentElement(placement, newNode);
       return new Row(grid, layout, newNode);
     } else {
-      grid.editor.dom.add(grid.gridRoot, newNode);
+      grid.editor.dom.add(grid.node, newNode);
       return new Row(grid, layout, newNode);
     }
   }
