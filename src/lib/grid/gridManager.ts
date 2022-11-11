@@ -133,6 +133,9 @@ export class GridManager implements Writable<Grid[]> {
 
     // Import any new grids
     this.importAll();
+
+    // Fire off checks in each grid
+    get(this._grids).forEach((g) => g.checkRows());
   }
 
   public watchEditor() {

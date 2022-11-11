@@ -165,6 +165,11 @@ export class Grid implements Readable<Row[]> {
     );
   }
 
+  public checkRows() {
+    // Trigger a check on all rows
+    get(this.rows).forEach((row) => row.checkChildren());
+  }
+
   public destroy() {
     this.rows.update((row) => {
       row.forEach((r) => r.delete(true));

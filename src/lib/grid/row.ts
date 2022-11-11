@@ -8,7 +8,6 @@ import deriveWindow from "$lib/util/deriveWindow";
 
 export default class Row {
   public readonly id = nanoid();
-  public readonly selected = writable(false);
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
   }
@@ -72,6 +71,10 @@ export default class Row {
     this.setLayout(layout);
     this.layout = derived(this.columns, ($columns) => {
       return RowLayout.getLayout($columns.map((c) => c.node));
+    });
+    this.checkChildren();
+    this.node.addEventListener("click", () => {
+      this.checkChildren;
     });
   }
 
@@ -138,5 +141,40 @@ export default class Row {
       });
     }
     this.parentGrid.editor.dom.add(columns[col].innerNode, content);
+  }
+
+  public checkChildren() {
+    const cols = get(this.columns);
+    const colNodes = cols.map((col) => col.node);
+    let lastMatchedCol: number = 0;
+    // Check if any of the children are not column elements
+    Array.from(this.node.children).forEach((child) => {
+      const window = deriveWindow(child);
+      if (window && child instanceof window.HTMLElement) {
+        // Allow some nodes to be left in place if the author wants
+        if (child.dataset.cgbNoMove === "true") return;
+
+        // Check if the child is a cgb interface or otherwise "bogus" and not delete it
+        if (child.dataset.mceBogus) return;
+
+        // Check if the child is a column
+        const colIndex = colNodes.findIndex((col) => col === child);
+        if (colIndex >= 0) {
+          lastMatchedCol = colIndex;
+          return;
+        }
+        // Not a column element, so move it to the last column or delete it if empty
+        if (child.innerText.replace(/[\n\s]+/m, "")) {
+          // Not empty, so move it to the last column
+          if (cols.length > lastMatchedCol) {
+            cols[lastMatchedCol].innerNode.appendChild(child);
+          } else {
+            this.parentGrid.editor.dom.remove(child);
+          }
+        } else {
+          this.parentGrid.editor.dom.remove(child);
+        }
+      }
+    });
   }
 }
