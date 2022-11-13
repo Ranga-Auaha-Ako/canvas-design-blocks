@@ -3,11 +3,52 @@ import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
+import cssParse from "inline-style-parser";
+import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
+import MceElement from "$lib/tinymce/mceElement";
 
-export default class Row {
+export default class Row extends MceElement {
   public readonly id = nanoid();
+  public properties = writable<{ padding?: number; shadow: boolean }>({
+    padding: 0,
+    shadow: false,
+  });
+  public style = writableDerived<typeof this.properties, string>(
+    this.properties,
+    (props) => {
+      let cssString = "";
+      if (props["padding"]) cssString += `padding: ${props["padding"]}px;`;
+      return cssString;
+    },
+    {
+      withOld(reflect, old) {
+        const style = cssParse(reflect);
+        let result = {};
+        const padding = style.find((e: any) => e.property === "padding");
+        return {
+          ...old,
+          padding: parseInt(padding.value) || undefined,
+        };
+      },
+    }
+  );
+  public classList = writableDerived<typeof this.properties, string>(
+    this.properties,
+    (props) => {
+      let classes = "";
+      if (props["shadow"]) classes += "uoa_shadowbox ";
+    },
+    {
+      withOld(reflect, old) {
+        return {
+          ...old,
+          shadow: reflect.includes("uoa_shadowbox"),
+        };
+      },
+    }
+  );
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
   }
@@ -68,6 +109,10 @@ export default class Row {
     public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
+    super(node);
+    // Watch the style of the element. Change if needed
+    this.startObserving(new Map([["style", this.style]]));
+
     this.setLayout(layout);
     this.layout = derived(this.columns, ($columns) => {
       return RowLayout.getLayout($columns.map((c) => c.node));

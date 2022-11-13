@@ -13,8 +13,9 @@ import { RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
 import { stateObject } from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
+import MceElement from "$lib/tinymce/mceElement";
 
-export class Grid implements Readable<Row[]> {
+export class Grid extends MceElement implements Readable<Row[]> {
   public static gridMarkupVersion = "1.0.0";
   public readonly id = nanoid();
   public readonly selected: Writable<boolean | string> = writable(false);
@@ -94,7 +95,7 @@ export class Grid implements Readable<Row[]> {
     public node: HTMLElement,
     rows?: Row[]
   ) {
-    // Don't do this - duplicate grids might have duplicate IDS so always safer to make a new one
+    super(node);
 
     // Set up rows
     if (rows) this.rows.set(rows);

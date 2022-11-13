@@ -110,6 +110,11 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
+"@types/css@^0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@types/css/-/css-0.0.33.tgz#d0b49c4090c09c8e5dc01364560627e5ebb770f2"
+  integrity sha512-qjeDgh86R0LIeEM588q65yatc8Yyo/VvSIYFqq8JOIHDolhGNX0rz7k/OuxqDpnpqlefoHj8X4Ai/6hT9IWtKQ==
+
 "@types/minimist@^1.2.0":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
@@ -1140,6 +1145,11 @@ inherits@2, inherits@^2.0.3, inherits@~2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
+
+inline-style-parser@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/inline-style-parser/-/inline-style-parser-0.1.1.tgz#ec8a3b429274e9c0a1f1c4ffa9453a7fef72cea1"
+  integrity sha512-7NXolsK4CAS5+xvdj5OMMbI962hU/wvwoxk+LWR9Ek9bVtyuuYScDN6eS0rUm6TxApFpw7CX1o4uJzcd4AyD3Q==
 
 ip@^2.0.0:
   version "2.0.0"
@@ -2312,6 +2322,11 @@ svelte-use-click-outside@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/svelte-use-click-outside/-/svelte-use-click-outside-1.0.0.tgz#9db6208c314b5cb9cc80a38284a89da176c8075d"
   integrity sha512-tOWeMPxeIoW9RshS0WbogRhdYdbxcJV0ebkzSh1lwR7Ihl0hSZMmB4YyCHHoXJK4xcbxCCFh0AnQ1vkzGZfLVQ==
+
+svelte-writable-derived@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/svelte-writable-derived/-/svelte-writable-derived-2.1.5.tgz#c2fc5cbaf13ad6c8a41facd390ec80cd24397920"
+  integrity sha512-g26/W1iWj7FlLwaggNwXxHwMSf70/bHAYcpBT/EijijjakCSU9/PXmn31fL/kw2P1SzVEU6ayyCFuNYqTY3RUw==
 
 svelte@^3.49.0:
   version "3.52.0"
