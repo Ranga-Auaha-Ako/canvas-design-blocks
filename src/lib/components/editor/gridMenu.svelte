@@ -7,7 +7,7 @@
 </script>
 
 {#each $grid as row, index (row.id)}
-  <Portal target={row.node}>
+  <Portal target={row.node} bogus={true}>
     <RowMenu {row} />
   </Portal>
 {/each}

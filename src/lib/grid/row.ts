@@ -3,52 +3,15 @@ import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
-import cssParse from "inline-style-parser";
 import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
 import MceElement from "$lib/tinymce/mceElement";
 
 export default class Row extends MceElement {
-  public readonly id = nanoid();
-  public properties = writable<{ padding?: number; shadow: boolean }>({
-    padding: 0,
-    shadow: false,
-  });
-  public style = writableDerived<typeof this.properties, string>(
-    this.properties,
-    (props) => {
-      let cssString = "";
-      if (props["padding"]) cssString += `padding: ${props["padding"]}px;`;
-      return cssString;
-    },
-    {
-      withOld(reflect, old) {
-        const style = cssParse(reflect);
-        let result = {};
-        const padding = style.find((e: any) => e.property === "padding");
-        return {
-          ...old,
-          padding: parseInt(padding.value) || undefined,
-        };
-      },
-    }
-  );
-  public classList = writableDerived<typeof this.properties, string>(
-    this.properties,
-    (props) => {
-      let classes = "";
-      if (props["shadow"]) classes += "uoa_shadowbox ";
-    },
-    {
-      withOld(reflect, old) {
-        return {
-          ...old,
-          shadow: reflect.includes("uoa_shadowbox"),
-        };
-      },
-    }
-  );
+  public attributes: MceElement["attributes"] = new Map([]);
+  public defaultClasses = new Set(["grid-row"]);
+
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
   }
@@ -80,10 +43,7 @@ export default class Row extends MceElement {
     insertAdjacent?: Element,
     placement: InsertPosition = "afterend"
   ): Row {
-    const newNode = grid.editor.dom.create("div", {
-      class: "grid-row",
-      // "data-cgb-row-id": `${nanoid()}`,
-    });
+    const newNode = grid.editor.dom.create("div");
     if (insertAdjacent) {
       insertAdjacent.insertAdjacentElement(placement, newNode);
       return new Row(grid, layout, newNode);
@@ -110,8 +70,8 @@ export default class Row extends MceElement {
     public columns: Writable<Column[]> = writable([])
   ) {
     super(node);
-    // Watch the style of the element. Change if needed
-    this.startObserving(new Map([["style", this.style]]));
+    // Start watching for changes in the TinyMCE DOM
+    this.startObserving();
 
     this.setLayout(layout);
     this.layout = derived(this.columns, ($columns) => {
@@ -166,7 +126,8 @@ export default class Row extends MceElement {
         return false;
       }
     }
-    this.parentGrid.editor.dom.remove(this.node);
+    // Disconnects watching devices, removes self from DOM.
+    super.delete();
     this.parentGrid.rows.update((rows) => rows.filter((r) => r.id !== this.id));
     return true;
   }
@@ -188,7 +149,26 @@ export default class Row extends MceElement {
     this.parentGrid.editor.dom.add(columns[col].innerNode, content);
   }
 
+  public checkSelf() {
+    this.shouldObserve = false;
+    // Check if self has been deleted. If so, reinsert into dom
+    if (!this.node.parentElement) {
+      const position = get(this.parentGrid).findIndex((r) => r.id === this.id);
+      if (position == -1) {
+        // Uncaught delete!
+        this.delete(true);
+        return;
+      }
+      get(this.parentGrid)[position - 1].node.insertAdjacentElement(
+        "afterend",
+        this.node
+      );
+    }
+    this.shouldObserve = true;
+  }
+
   public checkChildren() {
+    this.shouldObserve = false;
     const cols = get(this.columns);
     const colNodes = cols.map((col) => col.node);
     let lastMatchedCol: number = 0;
@@ -221,5 +201,6 @@ export default class Row extends MceElement {
         }
       }
     });
+    this.shouldObserve = true;
   }
 }

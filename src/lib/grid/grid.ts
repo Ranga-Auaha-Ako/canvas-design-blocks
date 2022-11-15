@@ -11,13 +11,15 @@ import type { Editor } from "tinymce";
 import Row from "./row";
 import { RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
-import { stateObject } from "./gridManager";
+import GridManager, { stateObject } from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
 import MceElement from "$lib/tinymce/mceElement";
 
 export class Grid extends MceElement implements Readable<Row[]> {
   public static gridMarkupVersion = "1.0.0";
-  public readonly id = nanoid();
+  public attributes: MceElement["attributes"] = new Map([]);
+  public defaultClasses = new Set(["canvas-grid-editor"]);
+
   public readonly selected: Writable<boolean | string> = writable(false);
   public rows: Writable<Row[]> = writable([]);
 
@@ -43,6 +45,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
   public static create(
     state: stateObject,
     editor: Editor = window.tinymce.activeEditor,
+    gridManager: GridManager,
     atCursor = false
   ) {
     // Creates a new grid at the specified location
@@ -69,15 +72,16 @@ export class Grid extends MceElement implements Readable<Row[]> {
       }
     } else editor.dom.add(editor.dom.getRoot(), gridRoot);
     // Create grid instance
-    return new this(state, editor, gridRoot);
+    return new this(state, editor, gridRoot, gridManager);
   }
 
   public static import(
     state: stateObject,
     editor: Editor = window.tinymce.activeEditor,
-    gridRoot: HTMLElement
+    gridRoot: HTMLElement,
+    gridManager: GridManager
   ) {
-    const grid = new this(state, editor, gridRoot, []);
+    const grid = new this(state, editor, gridRoot, gridManager, []);
     // Get rows
     const rows = Array.from(gridRoot.children).filter((e) =>
       e.classList.contains("grid-row")
@@ -93,9 +97,12 @@ export class Grid extends MceElement implements Readable<Row[]> {
     public state: stateObject,
     public editor: Editor = window.tinymce.activeEditor,
     public node: HTMLElement,
+    public gridManager: GridManager,
     rows?: Row[]
   ) {
     super(node);
+    // Start watching for changes in the TinyMCE DOM
+    this.startObserving();
 
     // Set up rows
     if (rows) this.rows.set(rows);
@@ -154,7 +161,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
               "Delete Grid?",
               "Are you sure you want to delete this grid?"
             ).then((confirm) => {
-              if (confirm) this.destroy();
+              if (confirm) this.delete();
             });
             return false;
           }
@@ -166,12 +173,42 @@ export class Grid extends MceElement implements Readable<Row[]> {
     );
   }
 
-  public checkRows() {
+  public checkChildren() {
+    this.shouldObserve = false;
     // Trigger a check on all rows
     get(this.rows).forEach((row) => row.checkChildren());
+    this.shouldObserve = true;
   }
 
-  public destroy() {
+  public checkSelf() {
+    this.shouldObserve = false;
+    // Check if the grid is empty
+    if (this.node.children.length === 0) this.delete();
+    // Check if the grid is in the body
+    if (!this.node.parentNode) {
+      const position = get(this.gridManager).findIndex((r) => r.id === this.id);
+      if (position == -1) {
+        // Uncaught delete!
+        this.delete();
+        return;
+      }
+      if (position > 0) {
+        get(this.gridManager)[position - 1].node.insertAdjacentElement(
+          "afterend",
+          this.node
+        );
+      } else {
+        get(this.gridManager)[position + 1].node.insertAdjacentElement(
+          "beforebegin",
+          this.node
+        );
+      }
+    }
+    this.shouldObserve = true;
+  }
+
+  public delete() {
+    super.delete();
     this.rows.update((row) => {
       row.forEach((r) => r.delete(true));
       return [];

@@ -14,6 +14,8 @@
     "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
     "@types/css": "^0.0.33",
     "autoprefixer": "^10.4.12",
+    "css": "^3.0.0",
+    "csstype": "^3.1.1",
     "inline-style-parser": "^0.1.1",
     "nanoid": "^4.0.0",
     "node-sass": "^7.0.3",
@@ -23,6 +25,7 @@
     "postcss-import": "^15.0.0",
     "postcss-load-config": "^4.0.1",
     "postcss-nesting": "^10.2.0",
+    "rollup-plugin-visualizer": "^5.8.3",
     "svelte": "^3.49.0",
     "svelte-local-storage-store": "^0.3.1",
     "svelte-preprocess": "^4.10.7",
@@ -31,6 +34,7 @@
     "tailwindcss": "^3.1.8",
     "tinymce": "5.10",
     "typescript": "^4.8.4",
+    "unit-to-px": "^1.0.5",
     "vite": "^3.0.7"
   },
   "dependencies": {}

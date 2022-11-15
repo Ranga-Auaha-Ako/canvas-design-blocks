@@ -171,7 +171,7 @@
     &.expanded {
       @apply bg-uni-blue border-uni-blue;
       --full-width: calc(var(--col-width) * 2 + var(--border-width));
-      height: min(600px, calc(100vh - 3.5rem));
+      height: min(400px, calc(100vh - 3.5rem));
       width: var(--full-width);
       & .layoutOptions {
         width: 10rem;

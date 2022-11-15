@@ -2,6 +2,7 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import path from "path";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,6 +12,9 @@ export default defineConfig({
       compilerOptions: {
         customElement: false,
       },
+    }),
+    visualizer({
+      filename: "./dist/stats.html",
     }),
   ],
   server: {

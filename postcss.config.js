@@ -5,7 +5,6 @@ import tailwindNesting from "@tailwindcss/nesting";
 import PostCSSImport from "postcss-import";
 import postcssNesting from "postcss-nesting";
 import postcssFor from "postcss-for";
-import classPrfx from "postcss-class-prefix";
 
 export default {
   plugins: [

@@ -4,17 +4,47 @@
   import Row from "$lib/grid/row";
   import { get } from "svelte/store";
   import { nanoid } from "nanoid";
+  import writableDerived from "svelte-writable-derived";
+  import toPx from "unit-to-px";
 
   export let row: Row;
   $: columns = row.columns;
 
-  $: props = row.properties;
+  $: style = row.style;
+  $: classList = row.classList;
+
+  $: preferences = writableDerived(
+    [style, classList],
+    ([$style, $classList]) => {
+      const isCard =
+        $classList.has("uoa_shadowbox") && $classList.has("uoa_corners_4");
+      return {
+        padding: toPx($style.padding),
+        card: isCard,
+      };
+    },
+    {
+      withOld(reflecting, [oldStyle, oldClassList]) {
+        // Create new class List
+        if (!reflecting.card) {
+          oldClassList.delete("uoa_shadowbox");
+          oldClassList.delete("uoa_corners_4");
+        } else {
+          oldClassList.add("uoa_shadowbox");
+          oldClassList.add("uoa_corners_4");
+        }
+        // Create new style
+        oldStyle.padding = `${reflecting.padding}px`;
+        return [oldStyle, oldClassList];
+      },
+    }
+  );
 
   let activeColumn = 0;
 
   const ids = {
     padding: nanoid(),
-    shadow: nanoid(),
+    card: nanoid(),
   };
 </script>
 
@@ -22,18 +52,18 @@
   <h5>Advanced Settings</h5>
   <ColPicker {row} />
   <label for={ids.padding}>
-    Padding ({$props.padding}px)
+    Padding ({$preferences.padding}px)
     <input
       id={ids.padding}
       type="range"
       min="0"
       max="20"
-      bind:value={$props.padding}
+      bind:value={$preferences.padding}
     />
   </label>
-  <label for={ids.shadow}>
-    Shadow ({$props.shadow})
-    <input id={ids.shadow} type="checkbox" bind:checked={$props.shadow} />
+  <label for={ids.card}>
+    Show as card? ({$preferences.card})
+    <input id={ids.card} type="checkbox" bind:checked={$preferences.card} />
   </label>
 </div>
 
