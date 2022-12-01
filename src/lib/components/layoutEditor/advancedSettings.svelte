@@ -10,7 +10,7 @@
   export let row: Row;
   $: columns = row.columns;
 
-  $: style = row.style;
+  $: style = row._style;
   $: classList = row.classList;
 
   $: preferences = writableDerived(
@@ -19,22 +19,27 @@
       const isCard =
         $classList.has("uoa_shadowbox") && $classList.has("uoa_corners_4");
       return {
-        padding: toPx($style.padding),
+        padding: $style.padding ? toPx($style.padding) : 0,
+        margin: $style.margin ? toPx($style.margin) : 0,
         card: isCard,
       };
     },
     {
       withOld(reflecting, [oldStyle, oldClassList]) {
-        // Create new class List
+        // Card effect
         if (!reflecting.card) {
+          if (oldClassList.has("uoa_shadowbox")) oldStyle.margin = "0";
           oldClassList.delete("uoa_shadowbox");
           oldClassList.delete("uoa_corners_4");
         } else {
+          if (!oldClassList.has("uoa_shadowbox")) oldStyle.margin = "10px";
           oldClassList.add("uoa_shadowbox");
           oldClassList.add("uoa_corners_4");
         }
-        // Create new style
-        oldStyle.padding = `${reflecting.padding}px`;
+        if (oldStyle) {
+          // Padding
+          oldStyle.padding = `${reflecting.padding}px`;
+        }
         return [oldStyle, oldClassList];
       },
     }
