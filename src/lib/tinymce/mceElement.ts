@@ -3,17 +3,22 @@ import writableDerived from "svelte-writable-derived";
 import { get, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
 
+type observerMap = Map<Element, Partial<MutationObserverInit>>;
+
 // Base class for all elements in the TinyMCE DOM tree that we might manipulate.
 export default abstract class MceElement {
   public observer?: MutationObserver;
-  public shouldObserve = true;
   public window: Window & typeof globalThis;
 
-  public _style;
+  public _style: Writable<CSSStyleDeclaration>;
+  public classList: Writable<DOMTokenList>;
   private _classes = writable("");
   private _id: Writable<typeof this.id>;
-  abstract attributes: Map<string, Writable<string> | false>;
-  private _attributes: Map<string, Writable<string> | typeof this._style>;
+  abstract readonly attributes: Map<string, Writable<string> | false>;
+  private _attributes: Map<
+    string,
+    Writable<string> | typeof this._style | typeof this.classList
+  >;
   get mergedAttributes() {
     const _attrs = this._attributes;
     this.attributes.forEach((value, key) => {
@@ -25,18 +30,11 @@ export default abstract class MceElement {
   }
   abstract defaultClasses: Set<string>;
 
-  public classList = writableDerived<typeof this._classes, Set<string>>( // TODO: NEED TO SET DERIVED PROPS AFTER CONSTRUCTING!
-    this._classes,
-    (props) => {
-      const classes = props.split(" ");
-      return new Set(
-        classes.filter((c) => c !== "" && !this.defaultClasses.has(c))
-      ); // Remove empty classes and default classes
-    },
-    (reflect) => [...this.defaultClasses, ...reflect].join(" ")
-  );
-
-  constructor(public node: HTMLElement, public readonly id = nanoid()) {
+  constructor(
+    public node: HTMLElement,
+    public watchNodes: observerMap = new Map([[node, {}]]),
+    public readonly id = nanoid()
+  ) {
     // Watch ID for changes
     this._id = writable(this.id);
     this._id.subscribe((value) => {
@@ -44,9 +42,13 @@ export default abstract class MceElement {
       this.checkSelf();
     });
     this._style = writable<CSSStyleDeclaration>(node.style);
+    this.classList = writable<DOMTokenList>(node.classList);
 
-    this._attributes = new Map<string, Writable<string> | typeof this._style>([
-      ["class", this._classes],
+    this._attributes = new Map<
+      string,
+      Writable<string> | typeof this._style | typeof this.classList
+    >([
+      ["class", this.classList],
       ["style", this._style],
       ["data-cgb-id", this._id],
     ]);
@@ -77,8 +79,6 @@ export default abstract class MceElement {
   }
 
   public observerFunc(mutations: MutationRecord[]) {
-    // Don't update if we shouldn't be observing. E.g. when we're updating the node ourselves.
-    if (!this.shouldObserve) return;
     // Get list of changed attributes
     const changedAttributes = mutations.filter(
       (mutation) =>
@@ -108,6 +108,16 @@ export default abstract class MceElement {
           const styles = <Writable<CSSStyleDeclaration | undefined>>attr;
           const target = mutation.target as HTMLElement;
           if (target.style !== get(styles)) styles.set(target.style);
+        } else if (mutation.attributeName === "class") {
+          const classList = <Writable<DOMTokenList | undefined>>attr;
+          // Set default classList
+          this.stopObserving();
+          if (this.node.classList !== get(classList))
+            classList.update((classes) => {
+              this.defaultClasses.forEach((c) => this.node.classList.add(c));
+              return this.node.classList;
+            });
+          this.startObserving();
         } else {
           const newValue = this.node.getAttribute(mutation.attributeName!);
           if (newValue !== mutation.oldValue) {
@@ -126,13 +136,44 @@ export default abstract class MceElement {
     }
   }
 
-  public startObserving(
+  public startObserving() {
+    this.watchNodes.forEach((options, node) => {
+      if (!this.observer) {
+        console.debug("Start observing called before observer was created!");
+        return;
+      }
+      this.observer.observe(node, {
+        ...(node === this.node
+          ? {
+              attributes: true,
+              attributeOldValue: true,
+              attributeFilter: [...this.mergedAttributes.keys()],
+            }
+          : {}),
+        childList: true,
+        ...options,
+      });
+    });
+  }
+
+  public stopObserving() {
+    if (!this.observer) {
+      // console.error("Stop observing called before observer was created!");
+      return;
+    }
+    this.observer.disconnect();
+  }
+
+  public setupObserver(
     node = this.node,
     options?: Partial<MutationObserverInit>
   ) {
     // Update attributes and styles on node by triggering sub update
     this._style.update((_) => _);
-    this.classList.update((_) => _);
+    this.classList.update((classes) => {
+      this.defaultClasses.forEach((c) => classes.add(c));
+      return classes;
+    });
 
     console.log(
       `Watching ${node.nodeName} for changes to attributes: ${[
@@ -143,19 +184,11 @@ export default abstract class MceElement {
     const ownWindow = deriveWindow(node);
     if (this.mergedAttributes.size === 0 || !ownWindow) return;
     // Create a MutationObserver to watch for changes to the node's attributes
-    this.observer = new ownWindow.MutationObserver(this.observerFunc);
+    this.observer = new ownWindow.MutationObserver(
+      this.observerFunc.bind(this)
+    );
     // Watch for changes to the node's attributes
-    this.observer.observe(node, {
-      ...(node === this.node
-        ? {
-            attributes: true,
-            attributeOldValue: true,
-            attributeFilter: [...this.mergedAttributes.keys()],
-          }
-        : {}),
-      childList: true,
-      ...options,
-    });
+    this.startObserving();
 
     if (node === this.node) {
       // Watch for changes to the watched props
@@ -173,12 +206,6 @@ export default abstract class MceElement {
           }
         });
       });
-    }
-  }
-
-  public stopObserving() {
-    if (this.observer) {
-      this.observer.disconnect();
     }
   }
 

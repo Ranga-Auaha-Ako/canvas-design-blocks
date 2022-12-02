@@ -17,7 +17,8 @@
     [style, classList],
     ([$style, $classList]) => {
       const isCard =
-        $classList.has("uoa_shadowbox") && $classList.has("uoa_corners_4");
+        $classList.contains("uoa_shadowbox") &&
+        $classList.contains("uoa_corners_4");
       return {
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
@@ -28,11 +29,11 @@
       withOld(reflecting, [oldStyle, oldClassList]) {
         // Card effect
         if (!reflecting.card) {
-          if (oldClassList.has("uoa_shadowbox")) oldStyle.margin = "0";
-          oldClassList.delete("uoa_shadowbox");
-          oldClassList.delete("uoa_corners_4");
+          if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+          oldClassList.remove("uoa_shadowbox");
+          oldClassList.remove("uoa_corners_4");
         } else {
-          if (!oldClassList.has("uoa_shadowbox")) oldStyle.margin = "10px";
+          if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
           oldClassList.add("uoa_shadowbox");
           oldClassList.add("uoa_corners_4");
         }

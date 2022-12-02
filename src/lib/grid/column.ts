@@ -1,5 +1,5 @@
 import MceElement from "$lib/tinymce/mceElement";
-import { Writable, writable } from "svelte/store";
+import { get, Writable, writable } from "svelte/store";
 import type Grid from "./grid";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
@@ -27,13 +27,13 @@ export default class Column extends MceElement {
   }
 
   public checkSelf() {
-    this.shouldObserve = false;
+    // this.stopObserving();
     // We don't need to check anything, but if we did, we'd do it here.
-    this.shouldObserve = true;
+    // this.startObserving();
   }
 
   public checkChildren() {
-    this.shouldObserve = false;
+    this.stopObserving();
     // Check if innernode still exists
     let isNew;
     [this.innerNode, isNew] = Column.getOrCreateInnerNode(
@@ -41,8 +41,12 @@ export default class Column extends MceElement {
       this.node,
       this.innerNode
     );
-    if (isNew) this.startObserving(this.innerNode);
-    this.shouldObserve = true;
+    if (isNew) {
+      this.watchNodes.clear();
+      this.watchNodes.set(this.node, {});
+      this.watchNodes.set(this.innerNode, {});
+    }
+    this.startObserving();
   }
 
   static create(row: Row, width: Required<ColumnLayout>) {
@@ -150,11 +154,23 @@ export default class Column extends MceElement {
     super(node);
     this.width = writable(width);
     this.width.subscribe((width) => {
-      this.parentGrid.editor.dom.removeAllAttribs(this.node);
-      this.parentGrid.editor.dom.addClass(
-        this.node,
-        `cgb-col col-xs-${width.xs} col-sm-${width.sm} col-md-${width.md} col-lg-${width.lg}`
-      );
+      this.classList.update((classes) => {
+        // Remove all width classes
+        const widthClasses = Array.from(classes).filter((c) =>
+          c.match(/^col-(xs|sm|md|lg)/)
+        );
+        classes.remove(...widthClasses);
+        // Add new width classes
+        [
+          `col-xs-${width.xs}`,
+          `col-sm-${width.sm}`,
+          `col-md-${width.md}`,
+          `col-lg-${width.lg}`,
+        ].forEach((c) => {
+          classes.add(c);
+        });
+        return classes;
+      });
     });
     // Fix children if needed
     this.checkChildren();
@@ -170,9 +186,9 @@ export default class Column extends MceElement {
         if (textTarget) this.parentGrid.editor.selection.select(textTarget);
       }
     });
-    // Start watching for changes in the TinyMCE DOM
-    this.startObserving();
     // Watch innernode for changes (just to be safe)
-    this.startObserving(this.innerNode);
+    this.watchNodes.set(this.innerNode, {});
+    // Start watching for changes in the TinyMCE DOM
+    this.setupObserver();
   }
 }

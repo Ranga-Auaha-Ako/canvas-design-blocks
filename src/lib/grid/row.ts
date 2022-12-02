@@ -71,7 +71,7 @@ export default class Row extends MceElement {
   ) {
     super(node);
     // Start watching for changes in the TinyMCE DOM
-    this.startObserving();
+    this.setupObserver();
 
     this.setLayout(layout);
     this.layout = derived(this.columns, ($columns) => {
@@ -150,7 +150,7 @@ export default class Row extends MceElement {
   }
 
   public checkSelf() {
-    this.shouldObserve = false;
+    this.stopObserving();
     // Check if self has been deleted. If so, reinsert into dom
     if (!this.node.parentElement) {
       const position = get(this.parentGrid).findIndex((r) => r.id === this.id);
@@ -164,11 +164,11 @@ export default class Row extends MceElement {
         this.node
       );
     }
-    this.shouldObserve = true;
+    this.stopObserving();
   }
 
   public checkChildren() {
-    this.shouldObserve = false;
+    this.stopObserving();
     const cols = get(this.columns);
     const colNodes = cols.map((col) => col.node);
     let lastMatchedCol: number = 0;
@@ -201,6 +201,6 @@ export default class Row extends MceElement {
         }
       }
     });
-    this.shouldObserve = true;
+    this.stopObserving();
   }
 }

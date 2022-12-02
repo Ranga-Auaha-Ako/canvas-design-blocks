@@ -102,7 +102,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
   ) {
     super(node);
     // Start watching for changes in the TinyMCE DOM
-    this.startObserving();
+    this.setupObserver();
 
     // Set up rows
     if (rows) this.rows.set(rows);
@@ -174,14 +174,14 @@ export class Grid extends MceElement implements Readable<Row[]> {
   }
 
   public checkChildren() {
-    this.shouldObserve = false;
+    this.stopObserving();
     // Trigger a check on all rows
     get(this.rows).forEach((row) => row.checkChildren());
-    this.shouldObserve = true;
+    this.startObserving();
   }
 
   public checkSelf() {
-    this.shouldObserve = false;
+    this.stopObserving();
     // Check if the grid is empty
     if (this.node.children.length === 0) this.delete();
     // Check if the grid is in the body
@@ -204,7 +204,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
         );
       }
     }
-    this.shouldObserve = true;
+    this.startObserving();
   }
 
   public delete() {
