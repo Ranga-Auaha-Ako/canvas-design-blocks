@@ -34,6 +34,7 @@ const loadSidebar = (props: Sidebar["$$prop_def"]) => {
   const div = document.createElement("div");
   div.style.display = "contents";
   div.dataset.mceBogus = "1";
+  // div.dataset.mceType = "Canvas-Grid-Builder";
   div.id = "canvas-grid-container";
   document.body.insertAdjacentElement("beforeend", div);
   preventBubble(div, true);

@@ -112,10 +112,6 @@ export default class Column extends MceElement {
     // If the column is empty, reset it to a single empty paragraph
     if (MceElement.isEmpty(foundInnerNode)) {
       foundInnerNode.innerHTML = "";
-      const target = grid.editor.dom.add(foundInnerNode, "p");
-      grid.editor.dom.add(target, "br", {
-        "data-mce-bogus": "1",
-      });
       grid.editor.dom.add(
         foundInnerNode,
         "div",
@@ -126,17 +122,16 @@ export default class Column extends MceElement {
         },
         "&nbsp;"
       );
+      const target = grid.editor.dom.add(foundInnerNode, "p");
+      grid.editor.dom.add(target, "br", {
+        "data-mce-bogus": "1",
+      });
+      // Move cursor to the new paragraph if it's inside `node`
+      if (grid.editor.selection.getNode().closest(".cgb-col") === outerNode) {
+        grid.editor.selection.setCursorLocation(target, 0);
+        console.log("Moving cursor to new paragraph");
+      }
     }
-    // // If column has no paragraph, add one (and remove a <br/> if it exists to maintain height)
-    // else if (!foundInnerNode.querySelector(":scope > p")) {
-    //   const br = foundInnerNode.querySelector(":scope > br");
-    //   if (br) grid.editor.dom.remove(br);
-
-    //   const target = grid.editor.dom.add(foundInnerNode, "p");
-    //   grid.editor.dom.add(target, "br", {
-    //     "data-mce-bogus": "1",
-    //   });
-    // }
     return [foundInnerNode, isNew];
   }
 
@@ -184,6 +179,34 @@ export default class Column extends MceElement {
           "span"
         );
         if (textTarget) this.parentGrid.editor.selection.select(textTarget);
+      }
+    });
+    this.parentGrid.editor.dom.bind(this.node, "keydown", (e) => {
+      if (!(e.key === "Backspace" || e.key === "Delete")) return;
+      // In some cases (currently tested on Chrome), backspacing when the column is selected will delete all paragraph tags without triggering the observer.
+      // This is a workaround to ensure that the column is always valid.
+      if (MceElement.isEmpty(this.innerNode)) {
+        e.preventDefault();
+        this.checkChildren();
+        console.log("Trying to fix things!");
+        return false;
+      } else {
+        // If selection is at the start of the column, don't do anything
+        const selection = this.parentGrid.editor.selection;
+        const rng = selection.getRng();
+        if (
+          e.key === "Backspace" &&
+          selection.isCollapsed() &&
+          rng.startOffset === 0 &&
+          Array.from(this.innerNode.children)
+            .filter((e) => (e as HTMLElement)?.style?.display !== "none")
+            .findIndex(
+              (e) => e === selection.getStart().closest(".cgb-col-inner > *")
+            ) === 0
+        ) {
+          e.preventDefault();
+          return false;
+        }
       }
     });
     // Watch innernode for changes (just to be safe)

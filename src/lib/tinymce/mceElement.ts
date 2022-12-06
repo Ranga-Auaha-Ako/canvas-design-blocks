@@ -39,7 +39,8 @@ export default abstract class MceElement {
     this._id = writable(this.id);
     this._id.subscribe((value) => {
       // TODO: Update the ID by reinstantiating the instance (is this needed?)
-      this.checkSelf();
+      // Only check self if initialized (otherwise it will be checked in the constructor)
+      if (this.observer) this.checkSelf();
     });
     this._style = writable<CSSStyleDeclaration>(node.style);
     this.classList = writable<DOMTokenList>(node.classList);
@@ -79,6 +80,7 @@ export default abstract class MceElement {
   }
 
   public observerFunc(mutations: MutationRecord[]) {
+    // document.getElementById("main")?.appendChild(new Text("test"));
     // Get list of changed attributes
     const changedAttributes = mutations.filter(
       (mutation) =>
@@ -153,6 +155,7 @@ export default abstract class MceElement {
         childList: true,
         ...options,
       });
+      console.log("Observing:", node, this.observer);
     });
   }
 
@@ -174,15 +177,10 @@ export default abstract class MceElement {
       this.defaultClasses.forEach((c) => classes.add(c));
       return classes;
     });
-
-    console.log(
-      `Watching ${node.nodeName} for changes to attributes: ${[
-        ...this.mergedAttributes.keys(),
-      ]}`,
-      node
-    );
     const ownWindow = deriveWindow(node);
     if (this.mergedAttributes.size === 0 || !ownWindow) return;
+
+    console.log(`Created mutationObserver for ${node.nodeName}`, node);
     // Create a MutationObserver to watch for changes to the node's attributes
     this.observer = new ownWindow.MutationObserver(
       this.observerFunc.bind(this)
