@@ -69,16 +69,9 @@
    * DOM Element or CSS Selector
    */
   export let target: HTMLElement | string = "body";
-  export let bogus: boolean = false;
+  // export let bogus: boolean = false;
 </script>
 
-<div
-  use:portal={target}
-  style="display: contents"
-  hidden
-  data-mce-bogus={bogus ? "1" : undefined}
-  contenteditable={bogus ? false : undefined}
-  draggable={bogus || undefined}
->
+<div use:portal={target} style="display: contents" hidden>
   <slot />
 </div>

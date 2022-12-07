@@ -33,7 +33,7 @@ const loadSidebar = (props: Sidebar["$$prop_def"]) => {
   // Build DIV to contain app
   const div = document.createElement("div");
   div.style.display = "contents";
-  div.dataset.mceBogus = "1";
+  div.dataset.mceBogus = "all";
   // div.dataset.mceType = "Canvas-Grid-Builder";
   div.id = "canvas-grid-container";
   document.body.insertAdjacentElement("beforeend", div);

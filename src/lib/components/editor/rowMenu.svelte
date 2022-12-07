@@ -50,7 +50,7 @@
   unselectable={true}
   draggable="false"
   bind:this={gridMenuWrapper}
-  data-mce-bogus="1"
+  data-mce-bogus="all"
 >
   {#if $selectedRow === row.id || $selectedRow === true}
     <div class="gridMenu" transition:fade={{ delay: 100, duration: 200 }}>
@@ -115,7 +115,7 @@
         class="layoutConfig"
         contenteditable="false"
         unselectable={true}
-        data-mce-bogus="1"
+        data-mce-bogus="all"
       >
         <GridLayouts
           showAdvanced={true}

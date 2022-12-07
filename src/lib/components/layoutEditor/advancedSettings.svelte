@@ -75,6 +75,9 @@
 
 <div class="advancedSettings">
   <div class="card">
+    <p>Heads up! This section is still under heavy development.</p>
+  </div>
+  <div class="card">
     <h5>Row Settings</h5>
     <span class="label-text">Row Type</span>
     <div class="btn-group">
@@ -107,7 +110,11 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <ColourPicker id={ids.background} bind:colour={$preferences.background} />
+    <ColourPicker
+      label="Background Colour"
+      id={ids.background}
+      bind:colour={$preferences.background}
+    />
   </div>
   {#each $columns as column, i}
     <ColSettings {column} index={i} />

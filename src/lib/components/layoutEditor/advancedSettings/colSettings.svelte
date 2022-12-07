@@ -37,6 +37,7 @@
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
         background: rgb2hex($style.background),
+        textColor: rgb2hex($style.color),
         card: isCard ? ColType.Card : ColType.Normal,
       };
     },
@@ -44,11 +45,11 @@
       withOld(reflecting, [oldStyle, oldClassList]) {
         // Card effect
         if (reflecting.card === ColType.Normal) {
-          if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+          // if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
           oldClassList.remove("uoa_shadowbox");
           oldClassList.remove("uoa_corners_4");
         } else if (reflecting.card === ColType.Card) {
-          if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+          // if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
           oldClassList.add("uoa_shadowbox");
           oldClassList.add("uoa_corners_4");
         }
@@ -57,6 +58,8 @@
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
           oldStyle.background = reflecting.background || "";
+          // Text Colour
+          oldStyle.color = reflecting.textColor || "";
         }
         return [oldStyle, oldClassList];
       },
@@ -98,8 +101,14 @@
     />
   </label>
   <ColourPicker
+    label="Background Colour"
     id={column.id + "-bg-col"}
     bind:colour={$preferences.background}
+  />
+  <ColourPicker
+    label="Text Colour"
+    id={column.id + "-text-col"}
+    bind:colour={$preferences.textColor}
   />
 </div>
 

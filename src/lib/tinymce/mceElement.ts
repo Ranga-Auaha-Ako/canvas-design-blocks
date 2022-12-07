@@ -156,12 +156,12 @@ export default abstract class MceElement {
         childList: true,
         ...options,
       });
-      console.log("Observing:", node, this.observer);
+      // console.log("Observing:", node, this.observer);
     });
   }
 
   public stopObserving() {
-    console.log("Stop observing:", this.node, this.observer);
+    // console.log("Stop observing:", this.node, this.observer);
     if (!this.observer) {
       // console.error("Stop observing called before observer was created!");
       return;
