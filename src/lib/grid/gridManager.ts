@@ -51,7 +51,7 @@ export class GridManager implements Writable<Grid[]> {
     this._grids.update((grids) => {
       return grids.filter((g) => {
         if (get(g.rows).length === 0) {
-          this.editor.dom.remove(g.gridRoot, false);
+          this.editor.dom.remove(g.node, false);
           return false;
         } else return true;
       });
@@ -95,7 +95,7 @@ export class GridManager implements Writable<Grid[]> {
 
   public importAll() {
     const newGrids = this.findGrids().map((grid) =>
-      Grid.import(this.state, this.editor, grid)
+      Grid.import(this.state, this.editor, grid, this)
     );
     if (newGrids.length) this.add(newGrids);
   }
@@ -114,14 +114,14 @@ export class GridManager implements Writable<Grid[]> {
     deletedGridIds.forEach((id) => {
       console.log("Removing grid", id);
       const grid = this.get(id);
-      if (grid) grid.destroy();
+      if (grid) grid.delete();
     });
 
     // Check existing grids for changes
     const nodeUpdated = get(this._grids).filter((g) => {
-      if (!g.editor.getDoc().contains(g.gridRoot)) {
+      if (!g.editor.getDoc().contains(g.node)) {
         console.log("Grid no longer in DOM, removing", g.id);
-        g.destroy();
+        g.delete();
         return true;
       }
       return false;
@@ -133,6 +133,9 @@ export class GridManager implements Writable<Grid[]> {
 
     // Import any new grids
     this.importAll();
+
+    // Fire off checks in each grid
+    get(this._grids).forEach((g) => g.checkChildren());
   }
 
   public watchEditor() {

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { get } from "svelte/store";
+  import { get, Readable, Writable } from "svelte/store";
   import Grid from "$lib/grid/grid";
   import { RowLayout } from "$lib/grid/rowLayouts";
   import Portal from "$lib/portal/portal.svelte";
-  import GridLayouts from "../sidebar/gridView/gridLayouts.svelte";
+  import GridLayouts from "$lib/components/layoutEditor/gridLayouts.svelte";
   import { onMount } from "svelte";
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
@@ -30,6 +30,9 @@
     showAddRow = false;
   });
 
+  // Track state of the row menu
+  let showAdvancedOpen: Writable<boolean>;
+
   const addRow = (index: number, template?: RowLayout) => {
     row.parentGrid.addRow(template, index);
     showAddRow = false;
@@ -42,7 +45,7 @@
 </script>
 
 <div
-  class="wrapper"
+  class="cgb-actions-wrapper"
   contenteditable="false"
   unselectable={true}
   draggable="false"
@@ -86,42 +89,50 @@
           +
         </button>
       </div>
-      {#if showAddRow}
-        <div class="addRowSelect" transition:slide>
-          <button
-            title="Add Row Above"
-            class="addAbove"
-            on:click={() => addRow(row.index, row.layout)}
-            transition:fade
-          >
-            <ArrowOpenUp />
-          </button>
-          <button
-            title="Add Row Below"
-            class="addBelow"
-            on:click={() => addRow(row.index + 1, row.layout)}
-            transition:fade
-          >
-            <ArrowOpenDown />
-          </button>
-        </div>
-      {/if}
-      {#if showChangeLayout}
-        <div
-          class="layoutConfig"
-          contenteditable="false"
-          unselectable={true}
-          data-mce-bogus="all"
-        >
-          <GridLayouts
-            on:add={(e) => {
-              setRowLayout(e.detail);
-              showChangeLayout = false;
-            }}
-          />
-        </div>
-      {/if}
     </div>
+    {#if showAddRow}
+      <div class="addRowSelect" transition:slide>
+        <button
+          title="Add Row Above"
+          class="addAbove"
+          on:click={() => addRow(row.index, get(row.layout))}
+          transition:fade
+        >
+          <ArrowOpenUp />
+        </button>
+        <button
+          title="Add Row Below"
+          class="addBelow"
+          on:click={() => addRow(row.index + 1, get(row.layout))}
+          transition:fade
+        >
+          <ArrowOpenDown />
+        </button>
+      </div>
+    {/if}
+    {#if showChangeLayout}
+      <div
+        class="layoutConfig"
+        contenteditable="false"
+        unselectable={true}
+        data-mce-bogus="all"
+      >
+        <GridLayouts
+          showAdvanced={true}
+          bind:settingsOpen={showAdvancedOpen}
+          {row}
+          on:add={(e) => {
+            setRowLayout(e.detail);
+            if (!$showAdvancedOpen) {
+              showChangeLayout = false;
+            }
+          }}
+          on:cancel={() => {
+            showChangeLayout = false;
+          }}
+        />
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -130,7 +141,7 @@
     @apply sticky top-2 px-2 py-0.5 h-6;
     @apply bg-uni-blue text-white rounded-full shadow;
   }
-  .wrapper {
+  .cgb-actions-wrapper {
     @apply left-0 right-0 absolute z-10 pointer-events-none;
     top: -1.125rem; /* Centered in the gap between rows. Otherwise -top-3 for top of row*/
     height: 100%;
@@ -152,17 +163,14 @@
 
   .addRowSelect {
     @apply menu;
-    @apply flex items-center absolute;
+    @apply flex items-center sticky z-10 pointer-events-auto;
     @apply bg-uni-blue-light;
-    @apply left-0 right-0 top-6 mt-0.5 mx-auto w-fit;
+    @apply left-0 right-0 top-9 mt-0.5 mx-auto w-fit;
   }
 
   .layoutConfig {
-    @apply absolute top-7 mx-auto w-screen;
+    @apply sticky top-7 w-full pointer-events-auto;
     @apply bg-uni-blue text-white rounded-full shadow;
-    max-width: 18rem;
-    left: -100vw;
-    right: -100vw;
   }
 
   button {

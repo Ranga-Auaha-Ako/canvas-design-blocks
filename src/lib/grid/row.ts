@@ -3,12 +3,15 @@ import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
+import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
+import MceElement from "$lib/tinymce/mceElement";
 
-export default class Row {
-  public readonly id = nanoid();
-  public readonly selected = writable(false);
+export default class Row extends MceElement {
+  public attributes: MceElement["attributes"] = new Map([]);
+  public defaultClasses = new Set(["grid-row"]);
+
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
   }
@@ -18,16 +21,14 @@ export default class Row {
       Array.from(e.classList || []).find((c) => c.startsWith("col-"))
     );
   }
-  public static getLayout(node: HTMLElement): RowLayout {
+  public static getLayoutFromNode(node: HTMLElement): RowLayout {
     const columnNodes = Row.columnNodes(node);
     return RowLayout.getLayout(columnNodes);
   }
   get colNodes() {
     return Row.columnNodes(this.node);
   }
-  get layout() {
-    return Row.getLayout(this.node);
-  }
+  public layout;
 
   public static create(grid: Grid, layout?: RowLayout): Row;
   public static create(
@@ -42,22 +43,19 @@ export default class Row {
     insertAdjacent?: Element,
     placement: InsertPosition = "afterend"
   ): Row {
-    const newNode = grid.editor.dom.create("div", {
-      class: "grid-row",
-      // "data-cgb-row-id": `${nanoid()}`,
-    });
+    const newNode = grid.editor.dom.create("div");
     if (insertAdjacent) {
       insertAdjacent.insertAdjacentElement(placement, newNode);
       return new Row(grid, layout, newNode);
     } else {
-      grid.editor.dom.add(grid.gridRoot, newNode);
+      grid.editor.dom.add(grid.node, newNode);
       return new Row(grid, layout, newNode);
     }
   }
 
   public static import(parentGrid: Grid, node: HTMLElement) {
     // Get Row Layout
-    const rowLayout = Row.getLayout(node);
+    const rowLayout = Row.getLayoutFromNode(node);
     const columns = Row.columnNodes(node).map((colNode, index) => {
       return Column.import(parentGrid, colNode, rowLayout.cols[index]);
     });
@@ -71,7 +69,18 @@ export default class Row {
     public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
+    super(node);
+    // Start watching for changes in the TinyMCE DOM
+    this.setupObserver();
+
     this.setLayout(layout);
+    this.layout = derived(this.columns, ($columns) => {
+      return RowLayout.getLayout($columns.map((c) => c.node));
+    });
+    this.checkChildren();
+    this.node.addEventListener("click", () => {
+      this.checkChildren;
+    });
   }
 
   async setLayout(layout: RowLayout) {
@@ -117,7 +126,8 @@ export default class Row {
         return false;
       }
     }
-    this.parentGrid.editor.dom.remove(this.node);
+    // Disconnects watching devices, removes self from DOM.
+    super.delete();
     this.parentGrid.rows.update((rows) => rows.filter((r) => r.id !== this.id));
     return true;
   }
@@ -137,5 +147,60 @@ export default class Row {
       });
     }
     this.parentGrid.editor.dom.add(columns[col].innerNode, content);
+  }
+
+  public checkSelf() {
+    this.stopObserving();
+    // Check if self has been deleted. If so, reinsert into dom
+    if (!this.node.parentElement) {
+      const position = get(this.parentGrid).findIndex((r) => r.id === this.id);
+      if (position == -1) {
+        // Uncaught delete!
+        this.delete(true);
+        return;
+      }
+      get(this.parentGrid)[position - 1].node.insertAdjacentElement(
+        "afterend",
+        this.node
+      );
+    }
+    this.stopObserving();
+  }
+
+  public checkChildren() {
+    this.stopObserving();
+    const cols = get(this.columns);
+    const colNodes = cols.map((col) => col.node);
+    let lastMatchedCol: number = 0;
+    // Check if any of the children are not column elements
+    Array.from(this.node.children).forEach((child) => {
+      const window = deriveWindow(child);
+      if (window && child instanceof window.HTMLElement) {
+        // Allow some nodes to be left in place if the author wants
+        if (child.dataset.cgbNoMove === "true") return;
+
+        // Check if the child is a cgb interface or otherwise "bogus" and not delete it
+        if (child.dataset.mceBogus) return;
+
+        // Check if the child is a column
+        const colIndex = colNodes.findIndex((col) => col === child);
+        if (colIndex >= 0) {
+          lastMatchedCol = colIndex;
+          return;
+        }
+        // Not a column element, so move it to the last column or delete it if empty
+        if (child.innerText.replace(/[\n\s]+/m, "")) {
+          // Not empty, so move it to the last column
+          if (cols.length > lastMatchedCol) {
+            cols[lastMatchedCol].innerNode.appendChild(child);
+          } else {
+            this.parentGrid.editor.dom.remove(child);
+          }
+        } else {
+          this.parentGrid.editor.dom.remove(child);
+        }
+      }
+    });
+    this.stopObserving();
   }
 }

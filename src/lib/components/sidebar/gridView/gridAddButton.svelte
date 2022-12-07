@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
-  import GridLayouts from "./gridLayouts.svelte";
+  import GridLayouts from "$lib/components/layoutEditor/gridLayouts.svelte";
 
   export let append = false;
 
