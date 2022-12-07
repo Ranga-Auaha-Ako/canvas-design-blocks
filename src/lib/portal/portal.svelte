@@ -76,9 +76,8 @@
   use:portal={target}
   style="display: contents"
   hidden
-  data-mce-bogus={bogus ? "all" : undefined}
-  contenteditable={bogus || undefined}
-  unselectable={bogus || undefined}
+  data-mce-bogus={bogus ? "1" : undefined}
+  contenteditable={bogus ? false : undefined}
   draggable={bogus || undefined}
 >
   <slot />

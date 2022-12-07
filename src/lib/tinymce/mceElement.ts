@@ -2,6 +2,7 @@ import deriveWindow from "$lib/util/deriveWindow";
 import writableDerived from "svelte-writable-derived";
 import { get, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
+import { Editor } from "tinymce";
 
 type observerMap = Map<Element, Partial<MutationObserverInit>>;
 
@@ -160,6 +161,7 @@ export default abstract class MceElement {
   }
 
   public stopObserving() {
+    console.log("Stop observing:", this.node, this.observer);
     if (!this.observer) {
       // console.error("Stop observing called before observer was created!");
       return;
@@ -167,10 +169,8 @@ export default abstract class MceElement {
     this.observer.disconnect();
   }
 
-  public setupObserver(
-    node = this.node,
-    options?: Partial<MutationObserverInit>
-  ) {
+  public setupObserver(editor?: Editor) {
+    const node = this.node;
     // Update attributes and styles on node by triggering sub update
     this._style.update((_) => _);
     this.classList.update((classes) => {
@@ -188,23 +188,34 @@ export default abstract class MceElement {
     // Watch for changes to the node's attributes
     this.startObserving();
 
-    if (node === this.node) {
-      // Watch for changes to the watched props
-      this.mergedAttributes.forEach((attr, key) => {
-        attr.subscribe((value) => {
-          console.log("Updating Attr from Store:", key, value);
-          const parentWindow = deriveWindow(node);
-          if (
-            parentWindow &&
-            value instanceof parentWindow.CSSStyleDeclaration
-          ) {
-            node.style.cssText = value.cssText;
-          } else if (value !== undefined) {
-            node.setAttribute(key, value as string);
-          }
-        });
+    // Watch for changes to the watched props
+    this.mergedAttributes.forEach((attr, key) => {
+      attr.subscribe((value) => {
+        console.log("Updating Attr from Store:", key, value);
+        const parentWindow = deriveWindow(node);
+        if (parentWindow && value instanceof parentWindow.CSSStyleDeclaration) {
+          node.style.cssText = value.cssText;
+          node.dataset.mceStyle = value.cssText;
+        } else if (value !== undefined) {
+          node.setAttribute(key, value as string);
+        }
       });
-    }
+    });
+
+    const startObserving = this.startObserving.bind(this);
+    const stopObserving = this.stopObserving.bind(this);
+    // Stop observing and start observing when editor looses focus
+    editor?.on("focus", startObserving);
+    editor?.on("blur", stopObserving);
+    // Stop observing and start observing when editor is activated or deactivated
+    editor?.on("activate", startObserving);
+    editor?.on("deactivate", stopObserving);
+    // Stop observing and start observing when editor is getting content
+    editor?.on("BeforeGetContent", stopObserving);
+    editor?.on("GetContent", startObserving);
+    // Stop observing and start observing when editor is setting content
+    editor?.on("BeforeSetContent", stopObserving);
+    editor?.on("SetContent", startObserving);
   }
 
   public delete() {
