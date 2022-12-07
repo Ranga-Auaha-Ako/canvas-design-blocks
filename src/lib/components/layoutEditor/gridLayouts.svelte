@@ -111,7 +111,7 @@
       @apply flex w-full overflow-y-auto;
     }
     & .layoutOptions {
-      @apply z-20 p-2 bg-white rounded max-w-full;
+      @apply z-20 p-2 bg-white rounded max-w-full overflow-y-auto;
       grid-area: grid;
       width: var(--col-width);
 
@@ -163,7 +163,7 @@
     & .settings {
       grid-area: settings;
       margin-left: -100%;
-      @apply bg-white text-black rounded text-sm h-full;
+      @apply bg-white text-black rounded text-sm h-full overflow-y-auto;
       @apply p-0 relative transition-all z-10 invisible opacity-0;
       width: calc(var(--full-width) - 10rem - var(--border-width));
     }

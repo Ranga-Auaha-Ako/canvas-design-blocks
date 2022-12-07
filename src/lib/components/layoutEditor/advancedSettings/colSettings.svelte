@@ -4,15 +4,11 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "unit-to-px";
-  import ColourPicker from "./advancedSettings/colourPicker.svelte";
-  import ColSettings from "./advancedSettings/colSettings.svelte";
+  import ColourPicker from "./colourPicker.svelte";
+  import Column from "$lib/grid/column";
 
-  export let row: Row;
-
-  enum RowType {
-    Normal = "normal",
-    Card = "card",
-  }
+  export let column: Column;
+  export let index: number;
 
   const rgb2hex = (rgb: string) => {
     const vals = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -23,10 +19,13 @@
       .join("")}`;
   };
 
-  $: columns = row.columns;
+  enum ColType {
+    Normal = "normal",
+    Card = "card",
+  }
 
-  $: style = row._style;
-  $: classList = row.classList;
+  $: style = column._style;
+  $: classList = column.classList;
 
   $: preferences = writableDerived(
     [style, classList],
@@ -38,17 +37,17 @@
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
         background: rgb2hex($style.background),
-        card: isCard ? RowType.Card : RowType.Normal,
+        card: isCard ? ColType.Card : ColType.Normal,
       };
     },
     {
       withOld(reflecting, [oldStyle, oldClassList]) {
         // Card effect
-        if (reflecting.card === RowType.Normal) {
+        if (reflecting.card === ColType.Normal) {
           if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
           oldClassList.remove("uoa_shadowbox");
           oldClassList.remove("uoa_corners_4");
-        } else if (reflecting.card === RowType.Card) {
+        } else if (reflecting.card === ColType.Card) {
           if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
           oldClassList.add("uoa_shadowbox");
           oldClassList.add("uoa_corners_4");
@@ -63,55 +62,45 @@
       },
     }
   );
-
-  let activeColumn = 0;
-
-  const ids = {
-    padding: nanoid(),
-    card: nanoid(),
-    background: nanoid(),
-  };
 </script>
 
-<div class="advancedSettings">
-  <div class="card">
-    <h5>Row Settings</h5>
-    <span class="label-text">Row Type</span>
-    <div class="btn-group">
-      <label class="btn" class:active={$preferences.card === RowType.Normal}>
-        <span>Default</span>
-        <input
-          name={ids.card}
-          type="radio"
-          value="normal"
-          bind:group={$preferences.card}
-        />
-      </label>
-      <label class="btn" class:active={$preferences.card === RowType.Card}>
-        <span>Card</span>
-        <input
-          name={ids.card}
-          type="radio"
-          value="card"
-          bind:group={$preferences.card}
-        />
-      </label>
-    </div>
-    <label for={ids.padding}>
-      <span class="label-text">Padding ({$preferences.padding}px)</span>
+<div class="card">
+  <h5>Column {index + 1}</h5>
+  <span class="label-text">Row Type</span>
+  <div class="btn-group">
+    <label class="btn" class:active={$preferences.card === ColType.Normal}>
+      <span>Default</span>
       <input
-        id={ids.padding}
-        type="range"
-        min="0"
-        max="20"
-        bind:value={$preferences.padding}
+        name={column.id + "-card"}
+        type="radio"
+        value="normal"
+        bind:group={$preferences.card}
       />
     </label>
-    <ColourPicker id={ids.background} bind:colour={$preferences.background} />
+    <label class="btn" class:active={$preferences.card === ColType.Card}>
+      <span>Card</span>
+      <input
+        name={column.id + "-card"}
+        type="radio"
+        value="card"
+        bind:group={$preferences.card}
+      />
+    </label>
   </div>
-  {#each $columns as column, i}
-    <ColSettings {column} index={i} />
-  {/each}
+  <label for={column.id + "-pad"}>
+    <span class="label-text">Padding ({$preferences.padding}px)</span>
+    <input
+      id={column.id + "-pad"}
+      type="range"
+      min="0"
+      max="20"
+      bind:value={$preferences.padding}
+    />
+  </label>
+  <ColourPicker
+    id={column.id + "-bg-col"}
+    bind:colour={$preferences.background}
+  />
 </div>
 
 <style lang="postcss">
