@@ -69,6 +69,7 @@
    * DOM Element or CSS Selector
    */
   export let target: HTMLElement | string = "body";
+  // export let bogus: boolean = false;
 </script>
 
 <div use:portal={target} style="display: contents" hidden>

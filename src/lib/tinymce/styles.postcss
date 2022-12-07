@@ -1,3 +1,5 @@
+@import "./UoA_Styles_Preview.postcss";
+
 .canvas-grid-editor {
   @apply flex flex-col gap-3 relative;
   @apply p-3 m-3 outline-dashed outline-2 outline-gray-200 transition duration-300;
@@ -15,7 +17,7 @@
     @apply flex gap-3 relative;
     & [class=^="col-"],
     & .cgb-col {
-      @apply outline-dashed outline-2 outline-gray-200 bg-white cursor-text;
+      @apply outline-dashed outline-2 outline-gray-200 cursor-text;
       @apply transition duration-300;
       transition-property: outline;
       @nest [data-mce-selected] &, &:hover, &:focus, &:focus-within {

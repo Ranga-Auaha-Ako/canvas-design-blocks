@@ -86,7 +86,7 @@
     <button
       class="Button Button--primary"
       on:click={() => {
-        grids.add(Grid.create(grids.state, undefined, true), true);
+        grids.add(Grid.create(grids.state, undefined, grids, true), true);
       }}>Create Grid</button
     >
   </div>
