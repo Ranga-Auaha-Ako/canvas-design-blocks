@@ -191,7 +191,7 @@ export default abstract class MceElement {
     // Watch for changes to the watched props
     this.mergedAttributes.forEach((attr, key) => {
       attr.subscribe((value) => {
-        console.log("Updating Attr from Store:", key, value);
+        // console.log("Updating Attr from Store:", key, value);
         const parentWindow = deriveWindow(node);
         if (parentWindow && value instanceof parentWindow.CSSStyleDeclaration) {
           node.style.cssText = value.cssText;
