@@ -109,16 +109,13 @@
       grid-area: header;
       @apply grid items-center gap-3 sticky top-0 pt-4 bg-white z-50;
       @apply border-solid border-0 border-b border-uni-gray-200;
-      grid-template-areas: "back title close" "hr hr hr";
-      grid-template-columns: auto 1fr auto;
+      grid-template-areas: "title close" "hr hr";
+      grid-template-columns: 1fr auto;
       & h3 {
         grid-area: title;
       }
       & .close {
         grid-area: close;
-      }
-      & .back {
-        grid-area: back;
       }
     }
     & .grid-details {
@@ -139,8 +136,5 @@
     &.active {
       transform: translateX(0);
     }
-  }
-  .no-rows {
-    @apply relative;
   }
 </style>

@@ -136,6 +136,7 @@
   {/if}
 </div>
 
+<!-- svelte-ignore css-unused-selector -->
 <style lang="postcss">
   .menu {
     @apply sticky top-2 px-2 py-0.5 h-6;

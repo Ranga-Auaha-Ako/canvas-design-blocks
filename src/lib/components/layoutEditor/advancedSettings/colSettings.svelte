@@ -3,7 +3,7 @@
   import { get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
-  import toPx from "unit-to-px";
+  import toPx from "to-px";
   import ColourPicker from "./colourPicker.svelte";
   import Column from "$lib/grid/column";
 
@@ -24,7 +24,7 @@
     Card = "card",
   }
 
-  $: style = column._style;
+  $: style = column.style;
   $: classList = column.classList;
 
   $: preferences = writableDerived(
@@ -136,12 +136,6 @@
         @apply w-full;
       }
     }
-  }
-  .input-group {
-    @apply flex items-center gap-2;
-  }
-  input[type="color"] {
-    @apply rounded border-none;
   }
   .btn {
     @apply flex items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;

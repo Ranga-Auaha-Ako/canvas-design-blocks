@@ -11,14 +11,14 @@ export default abstract class MceElement {
   public observer?: MutationObserver;
   public window: Window & typeof globalThis;
 
-  public _style: Writable<CSSStyleDeclaration>;
+  public style: Writable<CSSStyleDeclaration>;
   public classList: Writable<DOMTokenList>;
   private _classes = writable("");
   private _id: Writable<typeof this.id>;
   abstract readonly attributes: Map<string, Writable<string> | false>;
   private _attributes: Map<
     string,
-    Writable<string> | typeof this._style | typeof this.classList
+    Writable<string> | typeof this.style | typeof this.classList
   >;
   get mergedAttributes() {
     const _attrs = this._attributes;
@@ -43,15 +43,15 @@ export default abstract class MceElement {
       // Only check self if initialized (otherwise it will be checked in the constructor)
       if (this.observer) this.checkSelf();
     });
-    this._style = writable<CSSStyleDeclaration>(node.style);
+    this.style = writable<CSSStyleDeclaration>(node.style);
     this.classList = writable<DOMTokenList>(node.classList);
 
     this._attributes = new Map<
       string,
-      Writable<string> | typeof this._style | typeof this.classList
+      Writable<string> | typeof this.style | typeof this.classList
     >([
       ["class", this.classList],
-      ["style", this._style],
+      ["style", this.style],
       ["data-cgb-id", this._id],
     ]);
 
@@ -172,7 +172,7 @@ export default abstract class MceElement {
   public setupObserver(editor?: Editor) {
     const node = this.node;
     // Update attributes and styles on node by triggering sub update
-    this._style.update((_) => _);
+    this.style.update((_) => _);
     this.classList.update((classes) => {
       this.defaultClasses.forEach((c) => classes.add(c));
       return classes;
