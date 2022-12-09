@@ -6,6 +6,9 @@ import { Editor } from "tinymce";
 import { McePopover } from "./popover/popover";
 import { SvelteComponent } from "svelte";
 import { SelectableElement } from "./selectableElement";
+import { htmlVoidElements } from "html-void-elements";
+
+const voidElementsSet = new Set(htmlVoidElements);
 
 type observerMap = Map<Element, Partial<MutationObserverInit>>;
 
@@ -79,23 +82,24 @@ export default abstract class MceElement extends SelectableElement {
 
   public static isEmpty(node: HTMLElement): boolean {
     return (
-      node.childNodes.length === 0 ||
-      Array.from(node.childNodes).every((child) => {
-        switch (child.nodeType) {
-          case Node.ELEMENT_NODE:
-            return (
-              (child as HTMLElement).classList.contains(
-                "cgb-empty-placeholder"
-              ) ||
-              (child as HTMLElement).dataset.mceBogus ||
-              this.isEmpty(child as HTMLElement)
-            );
-          case Node.TEXT_NODE:
-            return (child as Text).data.trim() === "";
-          default:
-            return true;
-        }
-      })
+      !voidElementsSet.has(node.tagName.toLowerCase()) &&
+      (node.childNodes.length === 0 ||
+        Array.from(node.childNodes).every((child) => {
+          switch (child.nodeType) {
+            case Node.ELEMENT_NODE:
+              return (
+                (child as HTMLElement).classList.contains(
+                  "cgb-empty-placeholder"
+                ) ||
+                (child as HTMLElement).dataset.mceBogus ||
+                this.isEmpty(child as HTMLElement)
+              );
+            case Node.TEXT_NODE:
+              return (child as Text).data.trim() === "";
+            default:
+              return true;
+          }
+        }))
     );
   }
 

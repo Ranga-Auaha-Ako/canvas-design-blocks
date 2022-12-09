@@ -47,7 +47,7 @@ export class McePopover extends SelectableElement {
     this._isActive = false;
     this.hostComponent.$set({ show: false });
     this.stopObserving();
-    console.log("Hiding popover");
+    // console.log("Hiding popover");
   }
   private clickOutside = (e: MouseEvent) => {
     if (!this.node?.contains(e.target as Node)) {

@@ -130,7 +130,7 @@ export default class Column extends MceElement {
       // Move cursor to the new paragraph if it's inside `node`
       if (grid.editor.selection.getNode().closest(".cgb-col") === outerNode) {
         grid.editor.selection.setCursorLocation(target, 0);
-        console.log("Moving cursor to new paragraph");
+        // console.log("Moving cursor to new paragraph");
       }
     }
     return [foundInnerNode, isNew];

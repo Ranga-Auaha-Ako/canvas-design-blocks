@@ -160,7 +160,6 @@ export class GridManager implements Writable<Grid[]> {
     hideInterfaceEvents.forEach((evtName) => {
       this.editor.on(evtName, (e) => {
         this.state.showInterface.set(false);
-        debugger;
         get(this._grids).forEach((g) => g.selected.set(false));
       });
     });
