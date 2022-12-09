@@ -8,6 +8,7 @@ export default class Column extends MceElement {
   public width: Writable<Required<ColumnLayout>>;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["cgb-col"]);
+  public parentRow?: Row;
 
   public getTextTarget() {
     const foundParagraphs = this.innerNode.querySelectorAll(
@@ -49,7 +50,7 @@ export default class Column extends MceElement {
     this.startObserving();
   }
 
-  static create(row: Row, width: Required<ColumnLayout>) {
+  static create(row: Row, width: Required<ColumnLayout>, parentRow?: Row) {
     const node = row.parentGrid.editor.dom.create("div", {
       class: "cgb-col",
     });
@@ -129,7 +130,7 @@ export default class Column extends MceElement {
       // Move cursor to the new paragraph if it's inside `node`
       if (grid.editor.selection.getNode().closest(".cgb-col") === outerNode) {
         grid.editor.selection.setCursorLocation(target, 0);
-        console.log("Moving cursor to new paragraph");
+        // console.log("Moving cursor to new paragraph");
       }
     }
     return [foundInnerNode, isNew];

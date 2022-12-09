@@ -76,8 +76,9 @@ export const loadApp = async () => {
   // Add button to open grid editor
   loadToolbar({ state });
 
-  // Load editor (inject live interface into TinyMCE iframe)
-  loadEditor(editor, { state, grids });
+  // NO LONGER NEEDED - Grid editor is now an overlay
+  // // Load editor (inject live interface into TinyMCE iframe)
+  // loadEditor(editor, { state, grids });
 
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");

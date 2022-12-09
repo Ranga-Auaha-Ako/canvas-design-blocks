@@ -46,7 +46,6 @@
   class:expanded={row && $settingsOpen}
   in:smartSlide|local
   out:fade
-  use:clickOutside={() => dispatch("cancel")}
 >
   <div class="details">
     <div class="layoutOptions">
@@ -93,10 +92,11 @@
 
 <style lang="postcss">
   .layoutList {
-    @apply absolute top-0 mx-auto z-20 box-content left-0 right-0 overflow-hidden cursor-auto;
-    @apply max-w-full h-48 transition-all duration-300;
+    @apply mx-auto z-20 overflow-hidden cursor-auto box-content absolute left-1/2;
+    @apply h-52 transition-all duration-300;
     @apply bg-uni-blue-light rounded-md shadow-lg border-solid border-uni-blue-light;
     @apply grid;
+    transform: translateX(-50%);
     --col-width: 18rem;
     --full-width: var(--col-width);
     --border-width: 2px;
@@ -111,7 +111,7 @@
       @apply flex w-full overflow-y-auto;
     }
     & .layoutOptions {
-      @apply z-20 p-2 bg-white rounded max-w-full overflow-y-auto;
+      @apply z-20 p-2 bg-white rounded max-w-full overflow-y-auto box-border;
       grid-area: grid;
       width: var(--col-width);
 
@@ -164,7 +164,7 @@
       grid-area: settings;
       margin-left: -100%;
       @apply bg-white text-black rounded text-sm h-full overflow-y-auto;
-      @apply p-0 relative transition-all z-10 invisible opacity-0;
+      @apply p-0 relative transition-all z-10 invisible opacity-0 box-border;
       width: calc(var(--full-width) - 10rem - var(--border-width));
     }
 
@@ -188,11 +188,11 @@
 
   @media (max-width: 640px) {
     .layoutList {
-      --col-width: 100%;
-      --full-width: 100%;
+      --col-width: 90vw;
+      --full-width: 90vw;
       border-width: var(--border-width);
       &.expanded {
-        --full-width: 100%;
+        --full-width: 90vw;
         & .layoutOptions {
           @apply hidden;
           width: var(--col-width);

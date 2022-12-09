@@ -3,7 +3,7 @@
   import { get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
-  import toPx from "unit-to-px";
+  import toPx from "to-px";
   import ColourPicker from "./advancedSettings/colourPicker.svelte";
   import ColSettings from "./advancedSettings/colSettings.svelte";
 
@@ -25,7 +25,7 @@
 
   $: columns = row.columns;
 
-  $: style = row._style;
+  $: style = row.style;
   $: classList = row.classList;
 
   $: preferences = writableDerived(
