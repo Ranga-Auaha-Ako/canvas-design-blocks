@@ -20,7 +20,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["canvas-grid-editor"]);
 
-  public readonly selected: Writable<boolean | string> = writable(false);
+  public readonly cursorSelected: Writable<boolean | string> = writable(false);
   public rows: Writable<Row[]> = writable([]);
 
   public static migrate(grid: Grid) {
@@ -120,16 +120,16 @@ export class Grid extends MceElement implements Readable<Row[]> {
       if (rowNode) {
         const row = get(this.rows).find((r) => r.node === rowNode);
         if (row) {
-          this.selected.set(row.id);
+          this.cursorSelected.set(row.id);
           return;
         }
       } else {
         if (element === this.node) {
-          this.selected.set(true);
+          this.cursorSelected.set(true);
           return;
         }
       }
-      this.selected.set(false);
+      this.cursorSelected.set(false);
     });
 
     // Prevent accidental deletion of grid
@@ -153,7 +153,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
             )
               willDeleteElem = true;
           }
-          if (get(this.selected) === true || willDeleteElem) {
+          if (get(this.cursorSelected) === true || willDeleteElem) {
             e.preventDefault();
             e.stopPropagation();
             confirmDialog(

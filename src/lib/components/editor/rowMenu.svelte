@@ -12,7 +12,7 @@
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
   import ConfigureIcon from "$assets/icons/configure.svelte";
 
-  export let row: Row;
+  export let props: { row: Row };
 
   let gridMenuWrapper: HTMLElement;
 
@@ -23,24 +23,23 @@
   // Either false or the id of the row to change layout for
   let showChangeLayout: boolean = false;
   let showAddRow: boolean = false;
-  $: selectedRow = row.parentGrid.selected;
 
-  $: selectedRow.subscribe((row) => {
+  $: if (props.row.id) {
     showChangeLayout = false;
     showAddRow = false;
-  });
+  }
 
   // Track state of the row menu
   let showAdvancedOpen: Writable<boolean>;
 
   const addRow = (index: number, template?: RowLayout) => {
-    row.parentGrid.addRow(template, index);
+    props.row.parentGrid.addRow(template, index);
     showAddRow = false;
-    row.parentGrid.editor.selection.setCursorLocation();
+    props.row.parentGrid.editor.selection.setCursorLocation();
   };
 
   const setRowLayout = (template: RowLayout) => {
-    row.setLayout(template);
+    props.row.setLayout(template);
   };
 </script>
 
@@ -52,87 +51,85 @@
   bind:this={gridMenuWrapper}
   data-mce-bogus="all"
 >
-  {#if $selectedRow === row.id || $selectedRow === true}
-    <div class="gridMenu" transition:fade={{ delay: 100, duration: 200 }}>
-      <div class="actions">
-        <!-- Delete Row -->
-        <button
-          title="Delete Row"
-          class="delete"
-          on:click={() => {
-            row.delete();
-          }}
-        >
-          &times;
-        </button>
-        <!-- Change Layout -->
-        <button
-          title="Change Layout"
-          class="change"
-          on:click={() => {
-            showChangeLayout = !showChangeLayout;
-            showAddRow = false;
-          }}
-        >
-          <!-- &#8801; -->
-          <ConfigureIcon />
-        </button>
-        <!-- Add above/below -->
-        <button
-          title="Add Row"
-          class="addRow"
-          on:click={() => {
-            showAddRow = !showAddRow;
-            showChangeLayout = false;
-          }}
-        >
-          +
-        </button>
-      </div>
-    </div>
-    {#if showAddRow}
-      <div class="addRowSelect" transition:slide>
-        <button
-          title="Add Row Above"
-          class="addAbove"
-          on:click={() => addRow(row.index, get(row.layout))}
-          transition:fade
-        >
-          <ArrowOpenUp />
-        </button>
-        <button
-          title="Add Row Below"
-          class="addBelow"
-          on:click={() => addRow(row.index + 1, get(row.layout))}
-          transition:fade
-        >
-          <ArrowOpenDown />
-        </button>
-      </div>
-    {/if}
-    {#if showChangeLayout}
-      <div
-        class="layoutConfig"
-        contenteditable="false"
-        unselectable={true}
-        data-mce-bogus="all"
+  <div class="gridMenu" transition:fade={{ delay: 100, duration: 200 }}>
+    <div class="actions">
+      <!-- Delete Row -->
+      <button
+        title="Delete Row"
+        class="delete"
+        on:click={() => {
+          props.row.delete();
+        }}
       >
-        <GridLayouts
-          showAdvanced={true}
-          bind:settingsOpen={showAdvancedOpen}
-          {row}
-          on:add={(e) => {
-            setRowLayout(e.detail);
-            if (!$showAdvancedOpen) {
-              showChangeLayout = false;
-            }
-          }}
-          on:cancel={() => {
+        &times;
+      </button>
+      <!-- Change Layout -->
+      <button
+        title="Change Layout"
+        class="change"
+        on:click={() => {
+          showChangeLayout = !showChangeLayout;
+          showAddRow = false;
+        }}
+      >
+        <!-- &#8801; -->
+        <ConfigureIcon />
+      </button>
+      <!-- Add above/below -->
+      <button
+        title="Add Row"
+        class="addRow"
+        on:click={() => {
+          showAddRow = !showAddRow;
+          showChangeLayout = false;
+        }}
+      >
+        +
+      </button>
+    </div>
+  </div>
+  {#if showAddRow}
+    <div class="addRowSelect" transition:slide>
+      <button
+        title="Add Row Above"
+        class="addAbove"
+        on:click={() => addRow(props.row.index, get(props.row.layout))}
+        transition:fade
+      >
+        <ArrowOpenUp />
+      </button>
+      <button
+        title="Add Row Below"
+        class="addBelow"
+        on:click={() => addRow(props.row.index + 1, get(props.row.layout))}
+        transition:fade
+      >
+        <ArrowOpenDown />
+      </button>
+    </div>
+  {/if}
+  {#if showChangeLayout}
+    <div
+      class="layoutConfig"
+      contenteditable="false"
+      unselectable={true}
+      data-mce-bogus="all"
+    >
+      <GridLayouts
+        showAdvanced={true}
+        bind:settingsOpen={showAdvancedOpen}
+        row={props.row}
+        on:add={(e) => {
+          setRowLayout(e.detail);
+          if (!$showAdvancedOpen) {
             showChangeLayout = false;
-          }}
-        />
-      </div>
-    {/if}
+          }
+        }}
+        on:cancel={() => {
+          showChangeLayout = false;
+        }}
+      />
+    </div>
   {/if}
 </div>
 
@@ -142,15 +139,8 @@
     @apply sticky top-2 px-2 py-0.5 h-6;
     @apply bg-uni-blue text-white rounded-full shadow;
   }
-  .cgb-actions-wrapper {
-    @apply left-0 right-0 absolute z-10 pointer-events-none;
-    top: -1.125rem; /* Centered in the gap between rows. Otherwise -top-3 for top of row*/
-    height: 100%;
-    pointer-events: none;
-  }
   .gridMenu {
-    @apply mx-auto w-fit max-w-full menu pointer-events-auto;
-
+    @apply mx-auto w-fit menu;
     & .actions {
       @apply flex items-center h-full;
       & .change {
@@ -163,15 +153,9 @@
   }
 
   .addRowSelect {
-    @apply menu;
-    @apply flex items-center sticky z-10 pointer-events-auto;
-    @apply bg-uni-blue-light;
-    @apply left-0 right-0 top-9 mt-0.5 mx-auto w-fit;
-  }
-
-  .layoutConfig {
-    @apply sticky top-7 w-full pointer-events-auto;
-    @apply bg-uni-blue text-white rounded-full shadow;
+    @apply flex items-center absolute z-10 px-2 py-0.5 h-6;
+    @apply bg-uni-blue-light rounded-full shadow text-white;
+    @apply left-0 right-0 mt-0.5 mx-auto w-fit;
   }
 
   button {

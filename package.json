@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@floating-ui/dom": "^1.0.9",
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
@@ -28,6 +29,7 @@
     "postcss-nesting": "^10.2.0",
     "rollup-plugin-visualizer": "^5.8.3",
     "svelte": "^3.49.0",
+    "svelte-floating-ui": "^1.1.6",
     "svelte-local-storage-store": "^0.3.1",
     "svelte-preprocess": "^4.10.7",
     "svelte-use-click-outside": "^1.0.0",
