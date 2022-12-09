@@ -47,7 +47,10 @@
   } else {
     if (cleanup) cleanup();
   }
-  $: console.log({ component, show, target, popover: popoverEl });
+  $: if (true) {
+    console.log({ component, show, target, popover: popoverEl });
+    // debugger;
+  }
 </script>
 
 <div
