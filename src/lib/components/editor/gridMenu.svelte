@@ -7,7 +7,7 @@
 </script>
 
 {#each $grid as row, index (row.id)}
-  <Portal target={row.node}>
-    <RowMenu {row} />
-  </Portal>
+  <!-- <Portal target={row.node}>
+    <RowMenu {props.row} />
+  </Portal> -->
 {/each}

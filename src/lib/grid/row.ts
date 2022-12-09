@@ -1,4 +1,4 @@
-import { derived, get, Writable, writable } from "svelte/store";
+import { derived, get, Readable, Writable, writable } from "svelte/store";
 import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
@@ -7,10 +7,13 @@ import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
 import MceElement from "$lib/tinymce/mceElement";
+import type { McePopover } from "$lib/tinymce/popover/popover";
+import RowMenu from "$lib/components/editor/rowMenu.svelte";
 
 export default class Row extends MceElement {
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["grid-row"]);
+  public popover: McePopover;
 
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
@@ -81,6 +84,19 @@ export default class Row extends MceElement {
     this.node.addEventListener("click", () => {
       this.checkChildren;
     });
+    // Set up popover
+    this.popover = this.setupPopover(RowMenu, { row: this });
+    this.selected.subscribe((selected) => {
+      if (selected) {
+        !this.popover.isActive && this.popover.show();
+      } else {
+        this.popover.isActive && this.popover.hide();
+      }
+    });
+    // Row children are always columns or the popover
+    columns.subscribe((cols) => {
+      this.children.set([...cols, this.popover]);
+    });
   }
 
   async setLayout(layout: RowLayout) {
@@ -103,7 +119,7 @@ export default class Row extends MceElement {
     }
     for (let i = 0; i < layout.cols.length; i++) {
       if (i > columns.length - 1)
-        columns.push(Column.create(this, layout.cols[i]));
+        columns.push(Column.create(this, layout.cols[i], this));
       else columns[i].width.set(layout.cols[i]);
     }
     this.columns.set(columns);
