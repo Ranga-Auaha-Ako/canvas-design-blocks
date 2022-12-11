@@ -8,6 +8,7 @@
   import GridManager, { stateObject } from "$lib/grid/gridManager";
   import { clickOutside } from "svelte-use-click-outside";
   import { version } from "$lib/util/constants";
+  import preventBubble from "$lib/util/preventBubble";
 
   export let state: stateObject = {
     showInterface: writable(false),
@@ -18,26 +19,6 @@
   setContext("grids", grids);
 
   $: showInterface = state.showInterface;
-
-  onMount(() => {
-    // Two situations might occur:
-    // -------- No need to make a new grid:
-    //   1. Page already has a grid
-    // -------- Need to make a new grid:
-    //   X (NOT IN USE). Page is empty (auto-init grid)
-    //   3. Page has content. We can add a grid at the cursor position when asked
-    const editor = window.tinymce.activeEditor;
-    // // If page is empty, we can auto-init a grid
-    // if (editor.dom.isEmpty(editor.dom.getRoot())) {
-    //   grids.add(Grid.create(grids.state));
-    // }
-  });
-
-  const dispatch = createEventDispatcher();
-
-  let showRowMenu = false;
-
-  $: hasGrid = $grids.length > 0;
 </script>
 
 <div
@@ -46,6 +27,7 @@
   use:clickOutside={() => {
     if ($showInterface) state.showInterface.set(false);
   }}
+  use:preventBubble={true}
 >
   <div class="header">
     <div class="close">
@@ -86,7 +68,7 @@
     <button
       class="Button Button--primary"
       on:click={() => {
-        grids.add(Grid.create(grids.state, undefined, grids, true), true);
+        grids.add(Grid.create(grids.state, grids, true), true);
       }}>Create Grid</button
     >
   </div>

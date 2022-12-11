@@ -44,9 +44,9 @@ export class Grid extends MceElement implements Readable<Row[]> {
 
   public static create(
     state: stateObject,
-    editor: Editor = window.tinymce.activeEditor,
     gridManager: GridManager,
-    atCursor = false
+    atCursor = false,
+    editor: Editor = window.tinymce.activeEditor
   ) {
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
@@ -77,9 +77,9 @@ export class Grid extends MceElement implements Readable<Row[]> {
 
   public static import(
     state: stateObject,
-    editor: Editor = window.tinymce.activeEditor,
     gridRoot: HTMLElement,
-    gridManager: GridManager
+    gridManager: GridManager,
+    editor: Editor = window.tinymce.activeEditor
   ) {
     const grid = new this(state, editor, gridRoot, gridManager, []);
     // Get rows
