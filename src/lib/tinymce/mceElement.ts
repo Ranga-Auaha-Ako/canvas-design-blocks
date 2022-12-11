@@ -9,6 +9,7 @@ import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
 
 const voidElementsSet = new Set(htmlVoidElements);
+voidElementsSet.add("iframe");
 
 type observerMap = Map<Element, Partial<MutationObserverInit>>;
 
