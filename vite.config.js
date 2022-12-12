@@ -28,6 +28,11 @@ export default defineConfig({
       // the proper extensions will be added
       fileName: "canvas-grid",
     },
+    rollupOptions: {
+      output: {
+        assetFileNames: "canvas-grid.[ext]",
+      },
+    },
   },
   resolve: {
     alias: {

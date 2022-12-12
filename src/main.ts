@@ -1,10 +1,9 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import GridManager, { stateObject } from "$lib/grid/gridManager";
-import "./app.postcss";
+import pageStyles from "./app.postcss?inline";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
-import Sidebar from "./entrypoints/Sidebar.svelte";
 
 const state: stateObject = {
   showInterface: writable(false),
@@ -54,6 +53,20 @@ export const loadApp = async () => {
   const editorStyles = document.createElement("style");
   editorStyles.innerHTML = tinyMCEStyles;
   editor.getBody().insertAdjacentElement("beforebegin", editorStyles);
+
+  // Inject our styles into the page
+  const pageStylesEl = document.createElement("style");
+  pageStylesEl.innerHTML = pageStyles;
+  document.head.insertAdjacentElement("beforeend", pageStylesEl);
+
+  // Add class to page body when toolbar is open
+  state.showInterface.subscribe((show) => {
+    if (show) {
+      document.body.classList.add("cgb-toolbar-open");
+    } else {
+      document.body.classList.remove("cgb-toolbar-open");
+    }
+  });
 };
 
 // Load the app only on certain pages

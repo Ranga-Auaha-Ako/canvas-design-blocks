@@ -19,8 +19,8 @@
 
   const addGrid = () => {
     if (!grids) return;
-    const newGrid = Grid.create(grids.state, grids);
-    grids.add(newGrid, true);
+    const newGrid = Grid.create(grids.state, grids, false, grids.editor, true);
+    grids.add(newGrid);
   };
 </script>
 
@@ -52,7 +52,6 @@
 </div>
 
 <style lang="postcss">
-  @import "../app.postcss";
   .cgb-toolbar {
     display: contents;
   }

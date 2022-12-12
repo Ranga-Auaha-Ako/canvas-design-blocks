@@ -34,7 +34,7 @@ export class GridManager implements Writable<Grid[]> {
       console.log("Grids updated", grids);
     });
   }
-  public add(grid: Grid | Grid[], select = false) {
+  public add(grid: Grid | Grid[]) {
     if (Array.isArray(grid)) {
       this.update((grids) => {
         return [...grids, ...grid];
