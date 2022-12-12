@@ -36,7 +36,7 @@
     }
     const position = await computePosition(target, popoverEl, {
       placement: "top",
-      middleware: [offset(0), flip(), shift(), hide({ strategy: "escaped" })],
+      middleware: [offset(0), shift(), hide({ strategy: "escaped" })],
     });
     x = position.x + additionalOffset[0];
     y = position.y + additionalOffset[1];
