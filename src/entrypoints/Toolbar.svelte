@@ -28,6 +28,7 @@
   <button
     class="cgb-openButton"
     title="Canvas Grid Builder"
+    class:cgb-active={$open}
     on:click={() => {
       $open = !$open;
       dispatch("open");
@@ -56,8 +57,12 @@
     display: contents;
   }
   .cgb-openButton {
-    @apply rounded-sm text-white bg-uni-blue w-full h-8 py-1 px-2 leading-6;
-    @apply flex flex-row;
+    @apply rounded-sm w-full h-8 py-1 px-2;
+    @apply flex flex-row items-center;
+    @apply transition text-sm border border-uni-gray-200 rounded;
+    &.cgb-active {
+      @apply bg-uni-blue text-white border-2 border-uni-blue;
+    }
     & img {
       @apply h-full p-0.5;
     }

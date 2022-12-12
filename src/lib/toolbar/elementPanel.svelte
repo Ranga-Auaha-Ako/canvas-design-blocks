@@ -10,16 +10,14 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<button
-  on:click={() => dispatch("add")}
-  class="pane"
-  style:backgroundImage={background}
->
-  <h3 class="element-name">
-    <slot name="name" />
-  </h3>
-  <div class="icon-add">+</div>
-</button>
+<div class="cgb-component">
+  <button on:click={() => dispatch("add")} class="pane" style:background>
+    <h3 class="element-name">
+      <slot name="name" />
+    </h3>
+    <div class="">+</div>
+  </button>
+</div>
 
 <style lang="postcss">
   .pane {
