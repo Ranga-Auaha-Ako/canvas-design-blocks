@@ -26,19 +26,6 @@ const getEditor = () =>
     }
   });
 
-const loadSidebar = (props: Sidebar["$$prop_def"]) => {
-  // Build DIV to contain app
-  const div = document.createElement("div");
-  div.style.display = "contents";
-  div.id = "canvas-grid-container";
-  document.body.insertAdjacentElement("beforeend", div);
-  // Create app
-  return new Sidebar({
-    target: div,
-    props,
-  });
-};
-
 const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
   const target = document.querySelector("#left-side #section-tabs");
   if (!target) return;
@@ -59,9 +46,6 @@ export const loadApp = async () => {
 
   // Create Grid Manager
   const grids = new GridManager(state, editor);
-
-  // Load sidebar
-  loadSidebar({ state, grids });
 
   // Add button to open grid editor
   loadToolbar({ state, grids });
