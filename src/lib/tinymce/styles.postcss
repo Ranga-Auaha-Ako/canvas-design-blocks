@@ -1,6 +1,6 @@
 @import "./UoA_Styles_Preview.postcss";
 
-.canvas-grid-editor {
+.mce-content-body .canvas-grid-editor {
   @apply flex flex-col gap-3 relative;
   @apply p-3 m-3 outline-dashed outline-2 outline-gray-200 transition duration-300;
   @apply bg-uni-blue-light bg-opacity-0 transition duration-300;
@@ -33,12 +33,12 @@
   }
 }
 @for $i from 1 to 12 {
-  .canvas-grid-editor .col-md-$i {
+  .mce-content-body .canvas-grid-editor .col-md-$i {
     width: calc(100% / 12 * $(i));
   }
 }
 
-.canvas-grid-editor {
+.mce-content-body .canvas-grid-editor {
   & [data-mce-selected] {
     @apply outline-0 cursor-auto !important;
   }

@@ -24,6 +24,7 @@
     "node-sass": "^7.0.3",
     "postcss": "^8.4.18",
     "postcss-class-prefix": "^0.3.0",
+    "postcss-editor-styles": "^0.3.0",
     "postcss-for": "^2.1.1",
     "postcss-import": "^15.0.0",
     "postcss-load-config": "^4.0.1",

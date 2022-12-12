@@ -8,7 +8,7 @@ import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
 import MceElement from "$lib/tinymce/mceElement";
 import type { McePopover } from "$lib/tinymce/popover/popover";
-import RowMenu from "$lib/components/editor/rowMenu.svelte";
+import RowMenu from "$lib/grid/components/rowMenu.svelte";
 
 export default class Row extends MceElement {
   public attributes: MceElement["attributes"] = new Map([]);

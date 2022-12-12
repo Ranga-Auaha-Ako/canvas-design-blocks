@@ -41,56 +41,61 @@
   };
 </script>
 
-<div
-  class="layoutList"
-  class:expanded={row && $settingsOpen}
-  in:smartSlide|local
-  out:fade
->
-  <div class="details">
-    <div class="layoutOptions">
-      <div class="layoutGrid">
-        {#each Object.entries(rowTemplates) as [name, template] (template.id)}
-          <button
-            class="layout"
-            class:active={$activeLayout && $activeLayout.id === template.id}
-            title={name}
-            tabindex="0"
-            on:click={(e) => dispatch("add", template)}
-          >
-            {#each template.cols as col}
-              <div
-                class="col"
-                style={`--gridViewColWidth:${(col.lg / 12) * 100}%;`}
-              />
-            {/each}
-          </button>
-        {/each}
+<div class="cgb-component">
+  <div
+    class="layoutList"
+    class:expanded={row && $settingsOpen}
+    in:smartSlide|local
+    out:fade
+  >
+    <div class="details">
+      <div class="layoutOptions">
+        <div class="layoutGrid">
+          {#each Object.entries(rowTemplates) as [name, template] (template.id)}
+            <button
+              class="layout"
+              class:active={$activeLayout && $activeLayout.id === template.id}
+              title={name}
+              tabindex="0"
+              on:click={(e) => dispatch("add", template)}
+            >
+              {#each template.cols as col}
+                <div
+                  class="col"
+                  style={`--gridViewColWidth:${(col.lg / 12) * 100}%;`}
+                />
+              {/each}
+            </button>
+          {/each}
+        </div>
       </div>
-    </div>
 
+      {#if showAdvanced}
+        <div class="settings">
+          {#if row && $settingsOpen}
+            <AdvancedSettings {row} />
+          {/if}
+        </div>
+      {/if}
+    </div>
     {#if showAdvanced}
-      <div class="settings">
-        {#if row && $settingsOpen}
-          <AdvancedSettings {row} />
-        {/if}
+      <div class="advanced">
+        <button
+          class="open-advanced"
+          on:click={() => ($settingsOpen = !$settingsOpen)}
+        >
+          <Settings />
+          {$settingsOpen ? "Hide" : ""} Advanced Settings
+        </button>
       </div>
     {/if}
   </div>
-  {#if showAdvanced}
-    <div class="advanced">
-      <button
-        class="open-advanced"
-        on:click={() => ($settingsOpen = !$settingsOpen)}
-      >
-        <Settings />
-        {$settingsOpen ? "Hide" : ""} Advanced Settings
-      </button>
-    </div>
-  {/if}
 </div>
 
 <style lang="postcss">
+  .cgb-component {
+    @contents;
+  }
   .layoutList {
     @apply mx-auto z-20 overflow-hidden cursor-auto box-content absolute left-1/2;
     @apply h-52 transition-all duration-300;

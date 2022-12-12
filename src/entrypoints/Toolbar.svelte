@@ -7,7 +7,7 @@
   const dispatch = createEventDispatcher();
   import { version } from "$lib/util/constants";
   import Grid from "$lib/grid/grid";
-  import ElementPanel from "../lib/components/toolbar/elementPanel.svelte";
+  import ElementPanel from "$lib/toolbar/elementPanel.svelte";
 
   export let state: stateObject | undefined;
   export let grids: GridManager | undefined;
@@ -24,7 +24,7 @@
   };
 </script>
 
-<div bind:this={container} class="cgb-toolbar">
+<div bind:this={container} class="cgb-toolbar cgb-component">
   <button
     class="cgb-openButton"
     title="Canvas Grid Builder"

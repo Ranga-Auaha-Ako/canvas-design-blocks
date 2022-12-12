@@ -5,6 +5,7 @@ import tailwindNesting from "@tailwindcss/nesting";
 import PostCSSImport from "postcss-import";
 import postcssNesting from "postcss-nesting";
 import postcssFor from "postcss-for";
+import postcssEditorStyles from "postcss-editor-styles";
 
 export default {
   plugins: [
@@ -15,5 +16,15 @@ export default {
     tailwind(tailwindConfig),
     //But others, like autoprefixer, need to run after,
     autoprefixer,
+    // Postcss Editor Styles : Desipte the name, this plugin is used to prefix
+    // the CSS with a custom selector, so that it only applies to a div.
+    postcssEditorStyles({
+      scopeTo: ".cgb-component",
+      // These would be used to potentially not apply to nested elements controlled
+      // by Canvas. We don't have those, so set to nothing.
+      tags: [],
+      tagSuffix: "",
+      ignore: [".mce-content-body"],
+    }),
   ],
 };
