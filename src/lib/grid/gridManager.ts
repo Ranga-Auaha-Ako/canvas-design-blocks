@@ -95,7 +95,7 @@ export class GridManager implements Writable<Grid[]> {
 
   public importAll() {
     const newGrids = this.findGrids().map((grid) =>
-      Grid.import(this.state, this.editor, grid, this)
+      Grid.import(this.state, grid, this, this.editor)
     );
     if (newGrids.length) this.add(newGrids);
   }
@@ -148,11 +148,6 @@ export class GridManager implements Writable<Grid[]> {
       this.editor.on(evtName, (e) => {
         this.checkGrids();
       });
-    });
-
-    // Hide sidebar when editor is focused
-    this.editor.on("nodechange", () => {
-      this.state.showInterface.set(false);
     });
 
     // Events where we need to hide the interface

@@ -53,15 +53,17 @@
   // }
 </script>
 
-<div
-  class="cgb-popover-wrapper"
-  style:transform
-  bind:this={popoverEl}
-  class:active={component && show && target && popoverEl}
->
-  {#if component && show}
-    <svelte:component this={component} {props} />
-  {/if}
+<div class="cgb-component">
+  <div
+    class="cgb-popover-wrapper"
+    style:transform
+    bind:this={popoverEl}
+    class:active={component && show && target && popoverEl}
+  >
+    {#if component && show}
+      <svelte:component this={component} {props} />
+    {/if}
+  </div>
 </div>
 
 <style lang="postcss">

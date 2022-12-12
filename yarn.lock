@@ -1793,6 +1793,11 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==
 
+picocolors@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-0.2.1.tgz#570670f793646851d1ba135996962abad587859f"
+  integrity sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==
+
 picocolors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
@@ -1814,6 +1819,13 @@ postcss-class-prefix@^0.3.0:
   integrity sha512-qqp2a/tF1+NibJs5s4WncbjgrwQRqFF/EWdy74MR1zDb1F6O5yEUdleACA030hdX5LeFk8EGIRmTa3CFv+R67g==
   dependencies:
     postcss "^5.0.4"
+
+postcss-editor-styles@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/postcss-editor-styles/-/postcss-editor-styles-0.3.0.tgz#22877f6b4ae36ac3c0bc9bf79b7c44982f3d3646"
+  integrity sha512-sKtPEWt+ScRCYbfu36AfaMK3LVUvetfOy2pObRv+8/VVTbObybGlDFMYx7hyK9KAJTfL3v0+i2pRl6pSWyqXZA==
+  dependencies:
+    postcss "^7.0.18"
 
 postcss-for@^2.1.1:
   version "2.1.1"
@@ -1915,6 +1927,14 @@ postcss@^5.0.0, postcss@^5.0.21, postcss@^5.0.4:
     js-base64 "^2.1.9"
     source-map "^0.5.6"
     supports-color "^3.2.3"
+
+postcss@^7.0.18:
+  version "7.0.39"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.39.tgz#9624375d965630e2e1f2c02a935c82a59cb48309"
+  integrity sha512-yioayjNbHn6z1/Bywyb2Y4s3yvDAeXGOyxqD+LnVOinq6Mdmd++SW2wUNVzavyyHxd6+DxzWGIuosg6P1Rj8uA==
+  dependencies:
+    picocolors "^0.2.1"
+    source-map "^0.6.1"
 
 postcss@^8.4.17, postcss@^8.4.18:
   version "8.4.18"
