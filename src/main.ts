@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
-import GridManager, { stateObject } from "$lib/grid/gridManager";
+import GridManager, { stateObject } from "$lib/elements/grid/gridManager";
 import pageStyles from "./app.postcss?inline";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Row from "$lib/grid/row";
+  import Row from "$lib/elements/grid/row";
   import { get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
   import ColourPicker from "./colourPicker.svelte";
-  import Column from "$lib/grid/column";
+  import Column from "$lib/elements/grid/column";
 
   export let column: Column;
   export let index: number;
@@ -67,49 +67,51 @@
   );
 </script>
 
-<div class="card">
-  <h5>Column {index + 1}</h5>
-  <span class="label-text">Row Type</span>
-  <div class="btn-group">
-    <label class="btn" class:active={$preferences.card === ColType.Normal}>
-      <span>Default</span>
+<div class="cgb-component">
+  <div class="card">
+    <h5>Column {index + 1}</h5>
+    <span class="label-text">Row Type</span>
+    <div class="btn-group">
+      <label class="btn" class:active={$preferences.card === ColType.Normal}>
+        <span>Default</span>
+        <input
+          name={column.id + "-card"}
+          type="radio"
+          value="normal"
+          bind:group={$preferences.card}
+        />
+      </label>
+      <label class="btn" class:active={$preferences.card === ColType.Card}>
+        <span>Card</span>
+        <input
+          name={column.id + "-card"}
+          type="radio"
+          value="card"
+          bind:group={$preferences.card}
+        />
+      </label>
+    </div>
+    <label for={column.id + "-pad"}>
+      <span class="label-text">Padding ({$preferences.padding}px)</span>
       <input
-        name={column.id + "-card"}
-        type="radio"
-        value="normal"
-        bind:group={$preferences.card}
+        id={column.id + "-pad"}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.padding}
       />
     </label>
-    <label class="btn" class:active={$preferences.card === ColType.Card}>
-      <span>Card</span>
-      <input
-        name={column.id + "-card"}
-        type="radio"
-        value="card"
-        bind:group={$preferences.card}
-      />
-    </label>
-  </div>
-  <label for={column.id + "-pad"}>
-    <span class="label-text">Padding ({$preferences.padding}px)</span>
-    <input
-      id={column.id + "-pad"}
-      type="range"
-      min="0"
-      max="20"
-      bind:value={$preferences.padding}
+    <ColourPicker
+      label="Background Colour"
+      id={column.id + "-bg-col"}
+      bind:colour={$preferences.background}
     />
-  </label>
-  <ColourPicker
-    label="Background Colour"
-    id={column.id + "-bg-col"}
-    bind:colour={$preferences.background}
-  />
-  <ColourPicker
-    label="Text Colour"
-    id={column.id + "-text-col"}
-    bind:colour={$preferences.textColor}
-  />
+    <ColourPicker
+      label="Text Colour"
+      id={column.id + "-text-col"}
+      bind:colour={$preferences.textColor}
+    />
+  </div>
 </div>
 
 <style lang="postcss">

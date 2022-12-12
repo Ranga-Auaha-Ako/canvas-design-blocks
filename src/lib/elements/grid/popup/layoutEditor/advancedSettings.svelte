@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Row from "$lib/grid/row";
+  import Row from "$lib/elements/grid/row";
   import { get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
@@ -38,6 +38,7 @@
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
         background: rgb2hex($style.background),
+        textColor: rgb2hex($style.color),
         card: isCard ? RowType.Card : RowType.Normal,
       };
     },
@@ -58,6 +59,8 @@
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
           oldStyle.background = reflecting.background || "";
+          // Text Colour
+          oldStyle.color = reflecting.textColor || "";
         }
         return [oldStyle, oldClassList];
       },
@@ -70,55 +73,63 @@
     padding: nanoid(),
     card: nanoid(),
     background: nanoid(),
+    textcolor: nanoid(),
   };
 </script>
 
-<div class="advancedSettings">
-  <div class="card">
-    <p>Heads up! This section is still under heavy development.</p>
-  </div>
-  <div class="card">
-    <h5>Row Settings</h5>
-    <span class="label-text">Row Type</span>
-    <div class="btn-group">
-      <label class="btn" class:active={$preferences.card === RowType.Normal}>
-        <span>Default</span>
-        <input
-          name={ids.card}
-          type="radio"
-          value="normal"
-          bind:group={$preferences.card}
-        />
-      </label>
-      <label class="btn" class:active={$preferences.card === RowType.Card}>
-        <span>Card</span>
-        <input
-          name={ids.card}
-          type="radio"
-          value="card"
-          bind:group={$preferences.card}
-        />
-      </label>
+<div class="cgb-component">
+  <div class="advancedSettings">
+    <div class="card">
+      <p>Heads up! This section is still under heavy development.</p>
     </div>
-    <label for={ids.padding}>
-      <span class="label-text">Padding ({$preferences.padding}px)</span>
-      <input
-        id={ids.padding}
-        type="range"
-        min="0"
-        max="20"
-        bind:value={$preferences.padding}
+    <div class="card">
+      <h5>Row Settings</h5>
+      <span class="label-text">Row Type</span>
+      <div class="btn-group">
+        <label class="btn" class:active={$preferences.card === RowType.Normal}>
+          <span>Default</span>
+          <input
+            name={ids.card}
+            type="radio"
+            value="normal"
+            bind:group={$preferences.card}
+          />
+        </label>
+        <label class="btn" class:active={$preferences.card === RowType.Card}>
+          <span>Card</span>
+          <input
+            name={ids.card}
+            type="radio"
+            value="card"
+            bind:group={$preferences.card}
+          />
+        </label>
+      </div>
+      <label for={ids.padding}>
+        <span class="label-text">Padding ({$preferences.padding}px)</span>
+        <input
+          id={ids.padding}
+          type="range"
+          min="0"
+          max="20"
+          bind:value={$preferences.padding}
+        />
+      </label>
+      <ColourPicker
+        label="Background Colour"
+        id={ids.background}
+        bind:colour={$preferences.background}
       />
-    </label>
-    <ColourPicker
-      label="Background Colour"
-      id={ids.background}
-      bind:colour={$preferences.background}
-    />
+      <ColourPicker
+        label="Text Colour"
+        id={ids.textcolor}
+        bind:colour={$preferences.textColor}
+      />
+    </div>
+    {#each $columns as column, i}
+      <ColSettings {column} index={i} />
+    {/each}
   </div>
-  {#each $columns as column, i}
-    <ColSettings {column} index={i} />
-  {/each}
 </div>
 
 <style lang="postcss">

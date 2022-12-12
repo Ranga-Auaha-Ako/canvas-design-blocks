@@ -1,12 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import GridManager, { stateObject } from "$lib/grid/gridManager";
+  import GridManager, { stateObject } from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg";
   import { slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { version } from "$lib/util/constants";
-  import Grid from "$lib/grid/grid";
+  import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
 
   export let state: stateObject | undefined;

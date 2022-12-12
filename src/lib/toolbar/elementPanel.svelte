@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import GridManager, { stateObject } from "$lib/grid/gridManager";
-  import Grid from "$lib/grid/grid";
+  import GridManager, { stateObject } from "$lib/elements/grid/gridManager";
+  import Grid from "$lib/elements/grid/grid";
   import Settings from "$assets/icons/settings.svelte";
   import Question from "$assets/icons/question.svelte";
 

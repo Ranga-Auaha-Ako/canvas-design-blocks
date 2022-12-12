@@ -1,13 +1,12 @@
 <script lang="ts">
   import { get, Readable, Writable } from "svelte/store";
-  import Grid from "$lib/grid/grid";
-  import { RowLayout } from "$lib/grid/rowLayouts";
-  import Portal from "$lib/portal/portal.svelte";
-  import GridLayouts from "$lib/grid/components/layoutEditor/gridLayouts.svelte";
+  import Grid from "$lib/elements/grid/grid";
+  import { RowLayout } from "$lib/elements/grid/rowLayouts";
+  import GridLayouts from "$lib/elements/grid/popup/layoutEditor/gridLayouts.svelte";
   import { onMount } from "svelte";
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
-  import Row from "$lib/grid/row";
+  import Row from "$lib/elements/grid/row";
   import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
   import ConfigureIcon from "$assets/icons/configure.svelte";

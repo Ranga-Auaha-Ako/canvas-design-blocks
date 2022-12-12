@@ -29,28 +29,30 @@
   let edit = false;
 </script>
 
-<div class="container">
-  <label for={id}> {label} </label>
-  <button
-    on:click={(e) => (edit = !edit)}
-    class="colour"
-    title="Click to change"
-    style:background-color={colour || "unset"}
-    class:unset={colour == "unset" || colour == ""}
-    class:white={colour == "#ffffff"}
-  />
-  <div {id} class="colourPicker" class:edit>
-    {#each options as option}
-      <button
-        class="colour colour-option"
-        class:unset={option.code == "unset"}
-        class:white={option.code == "#ffffff"}
-        title={option.name}
-        style:background-color={option.code}
-        class:selected={colour == option.code}
-        on:click={(e) => select(option.code)}
-      />
-    {/each}
+<div class="cgb-component">
+  <div class="container">
+    <label for={id}> {label} </label>
+    <button
+      on:click={(e) => (edit = !edit)}
+      class="colour"
+      title="Click to change"
+      style:background-color={colour || "unset"}
+      class:unset={colour == "unset" || colour == ""}
+      class:white={colour == "#ffffff"}
+    />
+    <div {id} class="colourPicker" class:edit>
+      {#each options as option}
+        <button
+          class="colour colour-option"
+          class:unset={option.code == "unset"}
+          class:white={option.code == "#ffffff"}
+          title={option.name}
+          style:background-color={option.code}
+          class:selected={colour == option.code}
+          on:click={(e) => select(option.code)}
+        />
+      {/each}
+    </div>
   </div>
 </div>
 
