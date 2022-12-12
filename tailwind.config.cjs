@@ -1,6 +1,9 @@
 const config = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
-
+  prefix: "cgb-ui-",
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {
       colors: {
