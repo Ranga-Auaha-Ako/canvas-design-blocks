@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { RowLayout, rowTemplates } from "$lib/grid/rowLayouts";
+  import { RowLayout, rowTemplates } from "$lib/elements/grid/rowLayouts";
   import { createEventDispatcher, onMount } from "svelte";
   import { fade, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { clickOutside } from "svelte-use-click-outside";
   import deriveWindow from "$lib/util/deriveWindow";
   import Settings from "$assets/icons/settings.svelte";
-  import type Row from "$lib/grid/row";
+  import type Row from "$lib/elements/grid/row";
   import { writable } from "svelte-local-storage-store";
   import AdvancedSettings from "./advancedSettings.svelte";
   import { Readable } from "svelte/store";
