@@ -3,7 +3,7 @@
   import Grid from "$lib/grid/grid";
   import { RowLayout } from "$lib/grid/rowLayouts";
   import Portal from "$lib/portal/portal.svelte";
-  import GridLayouts from "$lib/components/layoutEditor/gridLayouts.svelte";
+  import GridLayouts from "$lib/grid/components/layoutEditor/gridLayouts.svelte";
   import { onMount } from "svelte";
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
@@ -13,12 +13,6 @@
   import ConfigureIcon from "$assets/icons/configure.svelte";
 
   export let props: { row: Row };
-
-  let gridMenuWrapper: HTMLElement;
-
-  onMount(() => {
-    preventBubble(gridMenuWrapper);
-  });
 
   // Either false or the id of the row to change layout for
   let showChangeLayout: boolean = false;
@@ -43,14 +37,7 @@
   };
 </script>
 
-<div
-  class="cgb-actions-wrapper"
-  contenteditable="false"
-  unselectable={true}
-  draggable="false"
-  bind:this={gridMenuWrapper}
-  data-mce-bogus="all"
->
+<div class="cgb-component" use:preventBubble>
   <div class="gridMenu" transition:fade={{ delay: 100, duration: 200 }}>
     <div class="actions">
       <!-- Delete Row -->
@@ -109,12 +96,7 @@
     </div>
   {/if}
   {#if showChangeLayout}
-    <div
-      class="layoutConfig"
-      contenteditable="false"
-      unselectable={true}
-      data-mce-bogus="all"
-    >
+    <div class="layoutConfig">
       <GridLayouts
         showAdvanced={true}
         bind:settingsOpen={showAdvancedOpen}
@@ -135,14 +117,12 @@
 
 <!-- svelte-ignore css-unused-selector -->
 <style lang="postcss">
-  .menu {
+  .gridMenu {
     @apply sticky top-2 px-2 py-0.5 h-6;
     @apply bg-uni-blue text-white rounded-full shadow;
-  }
-  .gridMenu {
-    @apply mx-auto w-fit menu;
+    @apply mx-auto w-fit;
     & .actions {
-      @apply flex items-center h-full;
+      @apply flex h-full items-stretch;
       & .change {
         /* transform: rotate(90deg); */
         &:hover {
@@ -160,7 +140,7 @@
 
   button {
     @apply bg-transparent text-white border-0 transition;
-    @apply flex items-center justify-center;
+    @apply flex items-center justify-center px-1;
     & .active,
     &:hover {
       transform: scale(1.25);

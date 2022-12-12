@@ -44,9 +44,10 @@ export class Grid extends MceElement implements Readable<Row[]> {
 
   public static create(
     state: stateObject,
-    editor: Editor = window.tinymce.activeEditor,
     gridManager: GridManager,
-    atCursor = false
+    atCursor = false,
+    editor: Editor = window.tinymce.activeEditor,
+    highlight = false
   ) {
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
@@ -72,14 +73,14 @@ export class Grid extends MceElement implements Readable<Row[]> {
       }
     } else editor.dom.add(editor.dom.getRoot(), gridRoot);
     // Create grid instance
-    return new this(state, editor, gridRoot, gridManager);
+    return new this(state, editor, gridRoot, gridManager, undefined, highlight);
   }
 
   public static import(
     state: stateObject,
-    editor: Editor = window.tinymce.activeEditor,
     gridRoot: HTMLElement,
-    gridManager: GridManager
+    gridManager: GridManager,
+    editor: Editor = window.tinymce.activeEditor
   ) {
     const grid = new this(state, editor, gridRoot, gridManager, []);
     // Get rows
@@ -98,7 +99,8 @@ export class Grid extends MceElement implements Readable<Row[]> {
     public editor: Editor = window.tinymce.activeEditor,
     public node: HTMLElement,
     public gridManager: GridManager,
-    rows?: Row[]
+    rows?: Row[],
+    highlight: boolean = false
   ) {
     super(node);
     // Start watching for changes in the TinyMCE DOM
@@ -111,6 +113,15 @@ export class Grid extends MceElement implements Readable<Row[]> {
     this.bindEvents();
     // Set ID of grid
     this.node.dataset.cgeId = this.id;
+
+    // If desired, scroll to and highlight the grid
+    if (highlight) {
+      gridManager.editor.getWin().scrollTo({
+        top: this.node.offsetTop,
+        behavior: "smooth",
+      });
+      gridManager.editor.selection.select(this.node);
+    }
   }
 
   public bindEvents() {
