@@ -24,7 +24,7 @@ export default {
       // by Canvas. We don't have those, so set to nothing.
       tags: [],
       tagSuffix: "",
-      ignore: [".mce-content-body"],
+      ignore: [".mce-content-body", ":root"],
     }),
   ],
 };
