@@ -22,6 +22,7 @@
 
   let x = 0;
   let y = 0;
+  let isVisible = false;
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
 
   $: updateFunction = async () => {
@@ -36,10 +37,20 @@
     }
     const position = await computePosition(target, popoverEl, {
       placement: "top",
-      middleware: [offset(0), shift(), hide({ strategy: "escaped" })],
+      middleware: [
+        offset(0),
+        shift(),
+        hide({
+          strategy: "escaped",
+        }),
+      ],
     });
-    x = position.x + additionalOffset[0];
-    y = position.y + additionalOffset[1];
+    const { middlewareData } = position;
+    isVisible = !middlewareData.hide?.escaped ?? false;
+    if (isVisible) {
+      x = position.x + additionalOffset[0];
+      y = position.y + additionalOffset[1];
+    }
   };
 
   $: if (component && show && target && popoverEl) {
@@ -58,7 +69,7 @@
     class="cgb-popover-wrapper"
     style:transform
     bind:this={popoverEl}
-    class:active={component && show && target && popoverEl}
+    class:active={component && show && target && popoverEl && isVisible}
   >
     {#if component && show}
       <svelte:component this={component} {props} />
