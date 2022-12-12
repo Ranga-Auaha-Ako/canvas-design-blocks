@@ -140,7 +140,7 @@
 
   button {
     @apply bg-transparent text-white border-0 transition;
-    @apply flex items-center justify-center px-0.5;
+    @apply flex items-center justify-center px-1;
     & .active,
     &:hover {
       transform: scale(1.25);
