@@ -19,7 +19,7 @@
 
   const addGrid = () => {
     if (!grids) return;
-    const newGrid = Grid.create(grids.state, grids, false, grids.editor, true);
+    const newGrid = Grid.create(grids.state, grids, true, grids.editor, true);
     grids.add(newGrid);
   };
 </script>
