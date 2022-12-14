@@ -48,6 +48,14 @@ export default abstract class MceElement extends SelectableElement {
     });
     return _attrs;
   }
+  static attrIsStyle = (
+    key: string,
+    val: string | CSSStyleDeclaration | DOMTokenList
+  ): val is CSSStyleDeclaration => key === "style";
+  static attrIsClassList = (
+    key: string,
+    val: string | CSSStyleDeclaration | DOMTokenList
+  ): val is DOMTokenList => key === "class";
 
   constructor(
     public node: HTMLElement,
@@ -218,11 +226,12 @@ export default abstract class MceElement extends SelectableElement {
     // Watch for changes to the watched props
     this.mergedAttributes.forEach((attr, key) => {
       attr.subscribe((value) => {
-        // console.log("Updating Attr from Store:", key, value);
-        const parentWindow = deriveWindow(node);
-        if (parentWindow && value instanceof parentWindow.CSSStyleDeclaration) {
-          node.style.cssText = value.cssText;
-          node.dataset.mceStyle = value.cssText;
+        if (MceElement.attrIsStyle(key, value)) {
+          const cssText = value.cssText;
+          node.style.cssText = cssText;
+          node.dataset.mceStyle = cssText;
+        } else if (MceElement.attrIsClassList(key, value)) {
+          node.classList.value = value.value;
         } else if (value !== undefined) {
           node.setAttribute(key, value as string);
         }
