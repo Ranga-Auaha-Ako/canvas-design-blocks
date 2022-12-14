@@ -79,7 +79,7 @@
 
 <div class="cgb-component">
   <div class="advancedSettings">
-    <div class="card">
+    <div class="card bg-orange-300 text-white font-bold text-xs text-center">
       <p>Heads up! This section is still under heavy development.</p>
     </div>
     <div class="card">
@@ -126,9 +126,6 @@
         bind:colour={$preferences.textColor}
       />
     </div>
-    {#each $columns as column, i}
-      <ColSettings {column} index={i} />
-    {/each}
   </div>
 </div>
 
@@ -142,7 +139,7 @@
     }
   }
   .card {
-    @apply p-4 m-2 shadow-md rounded bg-white;
+    @apply p-4 m-2 shadow-md rounded;
     @apply flex flex-col gap-2;
     & .label-text {
       @apply font-bold text-uni-gray-500;
