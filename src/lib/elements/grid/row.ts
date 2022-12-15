@@ -1,4 +1,11 @@
-import { derived, get, Readable, Writable, writable } from "svelte/store";
+import {
+  derived,
+  get,
+  Readable,
+  Unsubscriber,
+  Writable,
+  writable,
+} from "svelte/store";
 import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
@@ -91,6 +98,17 @@ export default class Row extends MceElement {
         !this.popover.isActive && this.popover.show();
       } else {
         this.popover.isActive && this.popover.hide();
+      }
+    });
+    let parentSelectUnsub: Unsubscriber | undefined;
+    this.parent.subscribe((parent) => {
+      if (parentSelectUnsub) parentSelectUnsub();
+      if (parent) {
+        parentSelectUnsub = parent.selected.subscribe((selected) => {
+          console.log("parent", parent, "selected", selected);
+          if (selected === parent) this.popover.show();
+          else if (parent === get(this.selected)) this.popover.hide();
+        });
       }
     });
     // Row children are always columns or the popover

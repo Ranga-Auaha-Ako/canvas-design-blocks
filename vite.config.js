@@ -45,4 +45,7 @@ export default defineConfig({
       JSON.stringify(process.env.npm_package_version) || "unknown",
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
   },
+  // optimizeDeps: {
+  //   exclude: ["svelte-awesome-color-picker"],
+  // },
 });

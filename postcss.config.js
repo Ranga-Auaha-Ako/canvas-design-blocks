@@ -6,6 +6,9 @@ import PostCSSImport from "postcss-import";
 import postcssNesting from "postcss-nesting";
 import postcssFor from "postcss-for";
 import postcssEditorStyles from "postcss-editor-styles";
+import excludeFiles from "postcss-exclude-files";
+
+const excludeFilesPlugin = excludeFiles.default;
 
 export default {
   plugins: [
@@ -20,18 +23,23 @@ export default {
     // the CSS with a custom selector, so that it only applies to a div.
     // This is used to prevent the CSS from affecting the rest of Canvas, but means
     // We need to wrap any component in a .cgb-component div.
-    postcssEditorStyles({
-      scopeTo: ".cgb-component",
-      // These would be used to potentially not apply to nested elements controlled
-      // by Canvas. We don't have those, so set to nothing.
-      tags: [],
-      tagSuffix: "",
-      // replace: [],
-      ignore: [
-        ".mce-content-body",
-        ":root",
-        "body.edit",
-        "body.edit.cgb-toolbar-open",
+    excludeFilesPlugin({
+      filter: "**/node_modules/**",
+      plugins: [
+        postcssEditorStyles({
+          scopeTo: ".cgb-component",
+          // These would be used to potentially not apply to nested elements controlled
+          // by Canvas. We don't have those, so set to nothing.
+          tags: [],
+          tagSuffix: "",
+          // replace: [],
+          ignore: [
+            ".mce-content-body",
+            ":root",
+            "body.edit",
+            "body.edit.cgb-toolbar-open",
+          ],
+        }),
       ],
     }),
   ],

@@ -4,8 +4,15 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker from "./advancedSettings/colourPicker.svelte";
+  import ColourPicker, {
+    getColour,
+    isReadable,
+    Readability,
+    ReadableLevel,
+  } from "$lib/util/components/colourPicker.svelte";
   import ColSettings from "./advancedSettings/colSettings.svelte";
+  import { colord } from "colord";
+  import type { Colord } from "colord";
 
   export let row: Row;
 
@@ -13,15 +20,6 @@
     Normal = "normal",
     Card = "card",
   }
-
-  const rgb2hex = (rgb: string) => {
-    const vals = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!vals) return undefined;
-    return `#${vals
-      .slice(1)
-      .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
-      .join("")}`;
-  };
 
   $: columns = row.columns;
 
@@ -37,8 +35,8 @@
       return {
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
-        background: rgb2hex($style.background),
-        textColor: rgb2hex($style.color),
+        background: getColour($style.background),
+        textColor: getColour($style.color),
         card: isCard ? RowType.Card : RowType.Normal,
       };
     },
@@ -58,9 +56,9 @@
           // Padding
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
-          oldStyle.background = reflecting.background || "";
+          oldStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
-          oldStyle.color = reflecting.textColor || "";
+          oldStyle.color = reflecting.textColor?.toHex() || "";
         }
         return [oldStyle, oldClassList];
       },
@@ -68,6 +66,12 @@
   );
 
   let activeColumn = 0;
+
+  $: contrastLevel = (
+    $preferences.textColor && $preferences.background
+      ? ReadableLevel($preferences.textColor, $preferences.background)
+      : false
+  ) as false | ReturnType<typeof ReadableLevel>;
 
   const ids = {
     padding: nanoid(),
@@ -115,15 +119,37 @@
           bind:value={$preferences.padding}
         />
       </label>
+      <!-- Warning if contrast is dangerously low -->
+      {#if contrastLevel && contrastLevel.suitability !== Readability.BODY}
+        <div class="card bg-orange-100">
+          <p>
+            <span class="font-bold">Warning:</span> The contrast between the
+            background and text colours is
+            {#if contrastLevel.suitability === Readability.LARGE}
+              only suitable for bold text, large text or headers.
+            {:else if contrastLevel.suitability === Readability.HEADER}
+              only suitable for headers.
+            {:else if contrastLevel.suitability === Readability.NONE}
+              not suitable for any text.
+            {:else}
+              not definedHeaders.
+            {/if}
+          </p>
+        </div>
+      {/if}
       <ColourPicker
         label="Background Colour"
         id={ids.background}
         bind:colour={$preferences.background}
+        bind:contrastColour={$preferences.textColor}
+        isTextColour={false}
       />
       <ColourPicker
         label="Text Colour"
         id={ids.textcolor}
         bind:colour={$preferences.textColor}
+        bind:contrastColour={$preferences.background}
+        isTextColour={true}
       />
     </div>
   </div>
