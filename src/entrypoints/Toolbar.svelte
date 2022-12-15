@@ -13,6 +13,7 @@
   export let grids: GridManager | undefined;
 
   $: open = state?.showInterface;
+  $: configComponent = state?.configComponent;
 
   let container: HTMLElement;
   $: if (container) preventBubble(container);
@@ -37,6 +38,15 @@
     <div class="details">Visual Editor</div>
     <img src={IconWhite} alt="" />
   </button>
+
+  {#if $configComponent}
+    <div class="toolbar-menu advanced-settings" transition:slide>
+      <svelte:component
+        this={$configComponent.component}
+        {...$configComponent.props}
+      />
+    </div>
+  {/if}
 
   {#if $open && $grids}
     <div class="toolbar-menu" transition:slide>
@@ -78,5 +88,9 @@
         @apply text-xs;
       }
     }
+  }
+
+  .advanced-settings {
+    @apply p-2;
   }
 </style>
