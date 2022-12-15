@@ -171,6 +171,7 @@
   let x = 0;
   let y = 0;
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
+  let container: HTMLDivElement;
   let popoverTarget: HTMLButtonElement;
   let popoverEl: HTMLDivElement;
 
@@ -178,7 +179,7 @@
     let additionalOffset = [0, 0];
     const position = await computePosition(popoverTarget, popoverEl, {
       placement: "top",
-      middleware: [offset(0), shift(), flip()],
+      middleware: [offset(0), shift(), flip(), offset(10)],
     });
     x = position.x + additionalOffset[0];
     y = position.y + additionalOffset[1];
@@ -195,10 +196,16 @@
   });
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="cgb-component" use:clickOutside={() => (edit = false)}>
-  <div class="container">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <label for={id} on:click={() => (edit = false)}> {label} </label>
+  <div
+    class="container"
+    bind:this={container}
+    on:click={({ target }) => {
+      if (target === container) edit = false;
+    }}
+  >
+    <label for={id}> {label} </label>
     <button
       bind:this={popoverTarget}
       on:click={(e) => (edit = !edit)}
