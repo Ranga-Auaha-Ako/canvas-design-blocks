@@ -189,7 +189,9 @@
 
   let cleanup: () => void;
   $: if (edit && popoverTarget && popoverEl) {
-    cleanup = autoUpdate(popoverTarget, popoverEl, updateFunction);
+    cleanup = autoUpdate(popoverTarget, popoverEl, updateFunction, {
+      animationFrame: true,
+    });
   } else {
     if (cleanup) cleanup();
   }
