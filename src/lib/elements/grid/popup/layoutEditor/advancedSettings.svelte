@@ -86,72 +86,70 @@
     <div class="card bg-orange-300 text-white font-bold text-xs text-center">
       <p>Heads up! This section is still under heavy development.</p>
     </div>
-    <div class="card">
-      <h5>Row Settings</h5>
-      <span class="label-text">Row Type</span>
-      <div class="btn-group">
-        <label class="btn" class:active={$preferences.card === RowType.Normal}>
-          <span>Default</span>
-          <input
-            name={ids.card}
-            type="radio"
-            value="normal"
-            bind:group={$preferences.card}
-          />
-        </label>
-        <label class="btn" class:active={$preferences.card === RowType.Card}>
-          <span>Card</span>
-          <input
-            name={ids.card}
-            type="radio"
-            value="card"
-            bind:group={$preferences.card}
-          />
-        </label>
-      </div>
-      <label for={ids.padding}>
-        <span class="label-text">Padding ({$preferences.padding}px)</span>
+    <h5>Row Settings</h5>
+    <span class="label-text">Row Type</span>
+    <div class="btn-group">
+      <label class="btn" class:active={$preferences.card === RowType.Normal}>
+        <span>Default</span>
         <input
-          id={ids.padding}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding}
+          name={ids.card}
+          type="radio"
+          value="normal"
+          bind:group={$preferences.card}
         />
       </label>
-      <!-- Warning if contrast is dangerously low -->
-      {#if contrastLevel && contrastLevel.suitability !== Readability.BODY}
-        <div class="card bg-orange-100">
-          <p>
-            <span class="font-bold">Warning:</span> The contrast between the
-            background and text colours is
-            {#if contrastLevel.suitability === Readability.LARGE}
-              only suitable for bold text, large text or headers.
-            {:else if contrastLevel.suitability === Readability.HEADER}
-              only suitable for headers.
-            {:else if contrastLevel.suitability === Readability.NONE}
-              not suitable for any text.
-            {:else}
-              not definedHeaders.
-            {/if}
-          </p>
-        </div>
-      {/if}
-      <ColourPicker
-        label="Background Colour"
-        id={ids.background}
-        bind:colour={$preferences.background}
-        bind:contrastColour={$preferences.textColor}
-        isTextColour={false}
-      />
-      <ColourPicker
-        label="Text Colour"
-        id={ids.textcolor}
-        bind:colour={$preferences.textColor}
-        bind:contrastColour={$preferences.background}
-        isTextColour={true}
-      />
+      <label class="btn" class:active={$preferences.card === RowType.Card}>
+        <span>Card</span>
+        <input
+          name={ids.card}
+          type="radio"
+          value="card"
+          bind:group={$preferences.card}
+        />
+      </label>
     </div>
+    <label for={ids.padding}>
+      <span class="label-text">Padding ({$preferences.padding}px)</span>
+      <input
+        id={ids.padding}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.padding}
+      />
+    </label>
+    <!-- Warning if contrast is dangerously low -->
+    {#if contrastLevel && contrastLevel.suitability !== Readability.BODY}
+      <div class="card bg-orange-100">
+        <p>
+          <span class="font-bold">Warning:</span> The contrast between the
+          background and text colours is
+          {#if contrastLevel.suitability === Readability.LARGE}
+            only suitable for bold text, large text or headers.
+          {:else if contrastLevel.suitability === Readability.HEADER}
+            only suitable for headers.
+          {:else if contrastLevel.suitability === Readability.NONE}
+            not suitable for any text.
+          {:else}
+            not definedHeaders.
+          {/if}
+        </p>
+      </div>
+    {/if}
+    <ColourPicker
+      label="Background Colour"
+      id={ids.background}
+      bind:colour={$preferences.background}
+      bind:contrastColour={$preferences.textColor}
+      isTextColour={false}
+    />
+    <ColourPicker
+      label="Text Colour"
+      id={ids.textcolor}
+      bind:colour={$preferences.textColor}
+      bind:contrastColour={$preferences.background}
+      isTextColour={true}
+    />
   </div>
 </div>
 
@@ -165,7 +163,7 @@
     }
   }
   .card {
-    @apply p-4 m-2 shadow-md rounded;
+    @apply p-4 shadow-md rounded;
     @apply flex flex-col gap-2;
     & .label-text {
       @apply font-bold text-uni-gray-500;

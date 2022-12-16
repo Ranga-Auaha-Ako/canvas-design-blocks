@@ -10,6 +10,7 @@
   import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
   import ConfigureIcon from "$assets/icons/configure.svelte";
+  import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
 
   export let props: { row: Row };
 
@@ -24,6 +25,15 @@
 
   // Track state of the row menu
   let showAdvancedOpen: Writable<boolean>;
+
+  $: if (showChangeLayout && $showAdvancedOpen) {
+    props.row.parentGrid.gridManager.state.configComponent.set({
+      component: AdvancedSettings,
+      props: { row: props.row },
+    });
+  } else {
+    props.row.parentGrid.gridManager.state.configComponent.set(null);
+  }
 
   const addRow = (index: number, template?: RowLayout) => {
     props.row.parentGrid.addRow(template, index);
