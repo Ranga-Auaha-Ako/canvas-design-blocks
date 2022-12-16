@@ -29,7 +29,7 @@
   <button
     class="cgb-openButton"
     title="Canvas Grid Builder"
-    class:cgb-active={$open}
+    class:cgb-active={$open || $configComponent}
     on:click={() => {
       $open = !$open;
       dispatch("open");
@@ -39,16 +39,15 @@
     <img src={IconWhite} alt="" />
   </button>
 
-  {#if $configComponent}
-    <div class="toolbar-menu advanced-settings" transition:slide>
-      <svelte:component
-        this={$configComponent.component}
-        {...$configComponent.props}
-      />
-    </div>
-  {/if}
-
-  {#if $open && $grids}
+  {#if ($open || $configComponent) && $grids}
+    {#if $configComponent}
+      <div class="toolbar-menu advanced-settings" transition:slide>
+        <svelte:component
+          this={$configComponent.component}
+          {...$configComponent.props}
+        />
+      </div>
+    {/if}
     <div class="toolbar-menu" transition:slide>
       <ElementPanel on:add={addGrid}>
         <svelte:fragment slot="name">Add Grid</svelte:fragment>

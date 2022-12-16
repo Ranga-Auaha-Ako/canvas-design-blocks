@@ -9,7 +9,7 @@
     shift,
     hide,
   } from "@floating-ui/dom";
-  import type { SvelteComponent } from "svelte";
+  import { onDestroy, SvelteComponent } from "svelte";
   import { fade } from "svelte/transition";
 
   export let component: typeof SvelteComponent | undefined = undefined;
@@ -58,6 +58,10 @@
   } else {
     if (cleanup) cleanup();
   }
+
+  onDestroy(() => {
+    if (cleanup) cleanup();
+  });
   // $: if (true) {
   //   console.log({ component, show, target, popover: popoverEl });
   //   // debugger;
@@ -81,7 +85,7 @@
   .cgb-popover-wrapper {
     @apply absolute top-0 left-0;
     @apply z-10 pointer-events-none;
-    @apply invisible opacity-0 transition-all;
+    @apply invisible opacity-0 transition-opacity;
     &.active {
       @apply visible opacity-100;
     }

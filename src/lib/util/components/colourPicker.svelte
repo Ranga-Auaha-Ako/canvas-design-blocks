@@ -59,6 +59,8 @@
   import { onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import { apcaContrastValue, colorFromObject } from "a11y-color-contrast";
+  import Portal from "$lib/portal/portal.svelte";
+  import preventBubble from "../preventBubble";
 
   export let id: string;
   export let colour: Colord | undefined = undefined;
@@ -197,7 +199,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="cgb-component" use:clickOutside={() => (edit = false)}>
+<div class="cgb-component">
   <div
     class="container"
     bind:this={container}
@@ -215,39 +217,47 @@
       class:unset={colour === undefined}
       class:white={colour?.toHex() == "#ffffff"}
     />
-    <div
-      {id}
-      class="colourPicker"
-      aria-hidden={!edit}
-      class:edit
-      bind:this={popoverEl}
-      style:transform
-    >
-      {#if edit}
-        {#each options as option}
-          {@const inaccessible =
-            contrastColour &&
-            option.code &&
-            (isTextColour
-              ? !isReadable(option.code, contrastColour)
-              : !isReadable(contrastColour, option.code))}
+    <Portal>
+      <div
+        class="cgb-component"
+        use:clickOutside={() => (edit = false)}
+        use:preventBubble={false}
+      >
+        <div
+          {id}
+          class="colourPicker"
+          aria-hidden={!edit}
+          class:edit
+          bind:this={popoverEl}
+          style:transform
+        >
+          {#if edit}
+            {#each options as option}
+              {@const inaccessible =
+                contrastColour &&
+                option.code &&
+                (isTextColour
+                  ? !isReadable(option.code, contrastColour)
+                  : !isReadable(contrastColour, option.code))}
 
-          <button
-            class="colour colour-option"
-            class:unset={option.code === undefined}
-            class:white={option.code && option.code.toHsl().l > 0.9}
-            class:inaccessible
-            class:dark={option.code && option.code.toHsl().l < 0.5}
-            title={`${option.name}${
-              inaccessible ? " (Warning! inaccessible)" : ""
-            }`}
-            style:background-color={option.code?.toHex()}
-            class:selected={colour?.rgba === option.code?.rgba}
-            on:click={(e) => select(option.code)}
-          />
-        {/each}
-      {/if}
-    </div>
+              <button
+                class="colour colour-option"
+                class:unset={option.code === undefined}
+                class:white={option.code && option.code.toHsl().l > 0.9}
+                class:inaccessible
+                class:dark={option.code && option.code.toHsl().l < 0.5}
+                title={`${option.name}${
+                  inaccessible ? " (Warning! inaccessible)" : ""
+                }`}
+                style:background-color={option.code?.toHex()}
+                class:selected={colour?.rgba === option.code?.rgba}
+                on:click={(e) => select(option.code)}
+              />
+            {/each}
+          {/if}
+        </div>
+      </div>
+    </Portal>
   </div>
 </div>
 
@@ -270,11 +280,11 @@
     display: inline-block;
   }
   .colourPicker {
-    @apply absolute top-0 left-0 p-4 z-10;
-    @apply shadow bg-white rounded;
+    @apply absolute top-0 left-0 p-4 z-10 w-44 h-44;
+    @apply shadow-lg bg-white rounded;
     @apply grid grid-cols-4 gap-1;
     /* @apply flex flex-wrap gap-1 shadow bg-white rounded; */
-    @apply pointer-events-none opacity-0 transition-all;
+    @apply pointer-events-none opacity-0 transition-opacity;
     &.edit {
       @apply visible opacity-100 pointer-events-auto;
     }

@@ -13,6 +13,7 @@
   import ColSettings from "./advancedSettings/colSettings.svelte";
   import { colord } from "colord";
   import type { Colord } from "colord";
+  import preventBubble from "$lib/util/preventBubble";
 
   export let row: Row;
 
@@ -82,10 +83,7 @@
 </script>
 
 <div class="cgb-component">
-  <div class="advancedSettings">
-    <div class="card bg-orange-300 text-white font-bold text-xs text-center">
-      <p>Heads up! This section is still under heavy development.</p>
-    </div>
+  <div class="advancedSettings" use:preventBubble>
     <h5>Row Settings</h5>
     <span class="label-text">Row Type</span>
     <div class="btn-group">
@@ -154,6 +152,9 @@
 </div>
 
 <style lang="postcss">
+  .advancedSettings {
+    /* @apply columns-2; */
+  }
   h5 {
     @apply w-full font-bold;
     &:after {

@@ -16,7 +16,6 @@ import deriveWindow from "$lib/util/deriveWindow";
 import MceElement from "$lib/tinymce/mceElement";
 import type { McePopover } from "$lib/tinymce/popover/popover";
 import RowMenu from "$lib/elements/grid/popup/rowMenu.svelte";
-import AdvancedSettings from "./popup/layoutEditor/advancedSettings.svelte";
 
 export default class Row extends MceElement {
   public attributes: MceElement["attributes"] = new Map([]);
@@ -99,7 +98,6 @@ export default class Row extends MceElement {
         !this.popover.isActive && this.popover.show();
       } else {
         if (this.popover.isActive) {
-          this.parentGrid.state.configComponent.set(null);
           this.popover.hide();
         }
       }

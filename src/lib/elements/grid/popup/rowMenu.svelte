@@ -18,6 +18,8 @@
   let showChangeLayout: boolean = false;
   let showAddRow: boolean = false;
 
+  let gridMenuEl: HTMLElement;
+
   $: if (props.row.id) {
     showChangeLayout = false;
     showAddRow = false;
@@ -26,14 +28,14 @@
   // Track state of the row menu
   let showAdvancedOpen: Writable<boolean>;
 
-  $: if (showChangeLayout && $showAdvancedOpen) {
-    props.row.parentGrid.gridManager.state.configComponent.set({
-      component: AdvancedSettings,
-      props: { row: props.row },
-    });
-  } else {
-    props.row.parentGrid.gridManager.state.configComponent.set(null);
-  }
+  // $: if (showChangeLayout && $showAdvancedOpen) {
+  //   props.row.parentGrid.gridManager.state.configComponent.set({
+  //     component: AdvancedSettings,
+  //     props: { row: props.row },
+  //   });
+  // } else {
+  //   props.row.parentGrid.gridManager.state.configComponent.set(null);
+  // }
 
   const addRow = (index: number, template?: RowLayout) => {
     props.row.parentGrid.addRow(template, index);
@@ -47,7 +49,11 @@
 </script>
 
 <div class="cgb-component" use:preventBubble>
-  <div class="gridMenu" transition:fade={{ delay: 100, duration: 200 }}>
+  <div
+    class="gridMenu"
+    bind:this={gridMenuEl}
+    transition:fade={{ delay: 100, duration: 200 }}
+  >
     <div class="actions">
       <!-- Delete Row -->
       <button
@@ -110,6 +116,7 @@
         showAdvanced={true}
         bind:settingsOpen={showAdvancedOpen}
         row={props.row}
+        sourceTarget={gridMenuEl}
         on:add={(e) => {
           setRowLayout(e.detail);
           if (!$showAdvancedOpen) {
