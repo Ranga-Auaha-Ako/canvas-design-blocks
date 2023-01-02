@@ -14,6 +14,7 @@
   import { colord } from "colord";
   import type { Colord } from "colord";
   import preventBubble from "$lib/util/preventBubble";
+  import { slide } from "svelte/transition";
 
   export let row: Row;
 
@@ -118,7 +119,7 @@
     </label>
     <!-- Warning if contrast is dangerously low -->
     {#if contrastLevel && contrastLevel.suitability !== Readability.BODY}
-      <div class="card bg-orange-100">
+      <div class="card bg-orange-100" transition:slide>
         <p>
           <span class="font-bold">Warning:</span> The contrast between the
           background and text colours is
@@ -147,6 +148,7 @@
       bind:colour={$preferences.textColor}
       bind:contrastColour={$preferences.background}
       isTextColour={true}
+      showAccessible={false}
     />
   </div>
 </div>

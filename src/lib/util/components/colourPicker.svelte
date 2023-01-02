@@ -67,6 +67,7 @@
   export let contrastColour: Colord | undefined = undefined;
   export let isTextColour: boolean = true; // Used to determine if the colour is for text or background
   // export let contrastSettings: undefined | Parameters<Colord["isReadable"]>[1] =
+  export let showAccessible: boolean = true;
   $: inaccessible = false;
   undefined;
   export let label: string;
@@ -87,16 +88,23 @@
     );
   };
 
+  const getAccessibleCol = (fg: Colord, bg: Colord, returnBG = true) => {
+    const returnCol = returnBG ? bg : fg;
+    if (isLightMode(fg, bg)) {
+      return returnCol.darken(0.25);
+    } else {
+      return returnCol.desaturate(0.3).lighten(0.7);
+    }
+  };
+
   const smartColour = (
     colour: string,
     conColour: typeof contrastColour,
     colIsText: boolean
   ) => {
     const c = colord(colour);
-    if (conColour) {
-      if (colIsText ? !isReadable(c, conColour) : !isReadable(conColour, c)) {
-        return isLightMode(c, conColour) ? c.darken(0.25) : c.lighten(0.25);
-      }
+    if (conColour && !colIsText && !isReadable(conColour, c)) {
+      return getAccessibleCol(c, conColour, false);
     }
     return c;
   };
@@ -164,6 +172,16 @@
     { code: undefined, name: "None" },
   ];
 
+  $: {
+    if (colour && contrastColour && !isTextColour) {
+      // Lighten the BG if text is inaccessible
+      const inaccessible = !isReadable(contrastColour, colour);
+      if (inaccessible) {
+        colour = getAccessibleCol(contrastColour, colour);
+      }
+    }
+  }
+
   const select = (c: Colord | undefined) => {
     colour = getColour(c);
   };
@@ -180,8 +198,13 @@
   $: updateFunction = async () => {
     let additionalOffset = [0, 0];
     const position = await computePosition(popoverTarget, popoverEl, {
-      placement: "top",
-      middleware: [offset(0), shift(), flip(), offset(10)],
+      placement: "bottom-start",
+      middleware: [
+        offset(0),
+        shift(),
+        // flip(),
+        offset(10),
+      ],
     });
     x = position.x + additionalOffset[0];
     y = position.y + additionalOffset[1];
@@ -236,6 +259,7 @@
           {#if edit}
             {#each options as option}
               {@const inaccessible =
+                showAccessible &&
                 contrastColour &&
                 option.code &&
                 (isTextColour
