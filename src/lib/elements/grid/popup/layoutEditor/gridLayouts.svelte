@@ -192,7 +192,7 @@
         transition-property: padding, transform;
 
         &:hover {
-          @apply py-1;
+          /* @apply py-1; */
           transform: scale(1.05);
         }
         & :global(svg) {
