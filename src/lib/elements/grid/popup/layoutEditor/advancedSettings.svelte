@@ -11,8 +11,6 @@
     ReadableLevel,
   } from "$lib/util/components/colourPicker.svelte";
   import ColSettings from "./advancedSettings/colSettings.svelte";
-  import { colord } from "colord";
-  import type { Colord } from "colord";
   import preventBubble from "$lib/util/preventBubble";
   import { slide } from "svelte/transition";
 

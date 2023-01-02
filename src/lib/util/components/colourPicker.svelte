@@ -1,10 +1,8 @@
 <script lang="ts" context="module">
-  import { colord, extend, Colord } from "colord";
-  // import a11yPlugin from "colord/plugins/a11y";
-  // extend([a11yPlugin]);
+  import Color from "color";
   export function getColour(
-    colour: Colord | string | undefined
-  ): undefined | Colord {
+    colour: Color | string | undefined
+  ): undefined | Color {
     const notColours = new Set([
       "currentcolor",
       "inherit",
@@ -13,15 +11,16 @@
       "rever-layer",
       "unset",
     ]);
-    if (colour instanceof Colord) return colour;
+    if (colour instanceof Color) return colour;
     if (!colour || notColours.has(colour)) return undefined;
-    return colord(colour);
+    return new Color(colour);
   }
 
-  export const getContrast = (text: Colord, background: Colord) => {
-    const textCol = text.toRgb();
-    const bgCol = background.toRgb();
-    return apcaContrastValue(colorFromObject(textCol), colorFromObject(bgCol));
+  export const getContrast = (text: Color, background: Color) => {
+    return text.contrast(background);
+    // const textCol = text.rgb();
+    // const bgCol = background.rgb();
+    // return apcaContrastValue(colorFromObject(textCol), colorFromObject(bgCol));
   };
 
   // https://www.myndex.com/APCA/
@@ -33,8 +32,8 @@
     NONE = 0,
   }
 
-  export const ReadableLevel = (text: Colord, background: Colord) => {
-    const contrast = Math.abs(getContrast(text, background));
+  export const ReadableLevel = (text: Color, background: Color) => {
+    const contrast = text.contrast(background);
     let suitability = Readability.NONE;
     if (contrast >= Readability.BODY) suitability = Readability.BODY;
     else if (contrast >= Readability.LARGE) suitability = Readability.LARGE;
@@ -42,8 +41,10 @@
     return { contrast, suitability };
   };
 
-  export const isReadable = (text: Colord, background: Colord) => {
-    return Math.abs(getContrast(text, background)) >= 90;
+  export const isReadable = (text: Color, background: Color) => {
+    // AA: 4.5:1
+    // AAA: 7:1
+    return text.contrast(background) >= 7;
   };
 </script>
 
@@ -58,13 +59,12 @@
   } from "@floating-ui/dom";
   import { onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
-  import { apcaContrastValue, colorFromObject } from "a11y-color-contrast";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
 
   export let id: string;
-  export let colour: Colord | undefined = undefined;
-  export let contrastColour: Colord | undefined = undefined;
+  export let colour: Color | undefined = undefined;
+  export let contrastColour: Color | undefined = undefined;
   export let isTextColour: boolean = true; // Used to determine if the colour is for text or background
   // export let contrastSettings: undefined | Parameters<Colord["isReadable"]>[1] =
   export let showAccessible: boolean = true;
@@ -78,22 +78,17 @@
    * @param background
    * @param flip If true, the foreground/bg will be flipped
    */
-  const isLightMode = (
-    text: Colord,
-    background: Colord,
-    flip: boolean = false
-  ): boolean => {
-    return (
-      (flip ? getContrast(background, text) : getContrast(text, background)) > 0
-    );
+  const isLightMode = (text: Color, background: Color): boolean => {
+    // Black text on white background is light mode
+    return text.lightness() < background.lightness();
   };
 
-  const getAccessibleCol = (fg: Colord, bg: Colord, returnBG = true) => {
+  const getAccessibleCol = (fg: Color, bg: Color, returnBG = true) => {
     const returnCol = returnBG ? bg : fg;
     if (isLightMode(fg, bg)) {
-      return returnCol.darken(0.25);
+      return returnCol.blacken(0.6);
     } else {
-      return returnCol.desaturate(0.3).lighten(0.7);
+      return returnCol.whiten(0.6);
     }
   };
 
@@ -102,7 +97,7 @@
     conColour: typeof contrastColour,
     colIsText: boolean
   ) => {
-    const c = colord(colour);
+    const c = new Color(colour);
     if (conColour && !colIsText && !isReadable(conColour, c)) {
       return getAccessibleCol(c, conColour, false);
     }
@@ -182,7 +177,7 @@
     }
   }
 
-  const select = (c: Colord | undefined) => {
+  const select = (c: Color | undefined) => {
     colour = getColour(c);
   };
 
@@ -238,9 +233,9 @@
       on:click={(e) => (edit = !edit)}
       class="colour"
       title="Click to change"
-      style:background-color={colour?.toHex() || "unset"}
+      style:background-color={colour?.hex() || "unset"}
       class:unset={colour === undefined}
-      class:white={colour?.toHex() == "#ffffff"}
+      class:white={colour && colour.isLight()}
     />
     <Portal>
       <div
@@ -269,14 +264,14 @@
               <button
                 class="colour colour-option"
                 class:unset={option.code === undefined}
-                class:white={option.code && option.code.toHsl().l > 0.9}
+                class:white={option.code?.isLight()}
                 class:inaccessible
-                class:dark={option.code && option.code.toHsl().l < 0.5}
+                class:dark={option.code?.isDark()}
                 title={`${option.name}${
                   inaccessible ? " (Warning! inaccessible)" : ""
                 }`}
-                style:background-color={option.code?.toHex()}
-                class:selected={colour?.rgba === option.code?.rgba}
+                style:background-color={option.code?.hex()}
+                class:selected={colour?.rgb() === option.code?.rgb()}
                 on:click={(e) => select(option.code)}
               />
             {/each}
