@@ -6,13 +6,11 @@
   import toPx from "to-px";
   import ColourPicker, {
     getColour,
-    isReadable,
-    Readability,
-    ReadableLevel,
   } from "$lib/util/components/colourPicker.svelte";
   import ColSettings from "./advancedSettings/colSettings.svelte";
   import preventBubble from "$lib/util/preventBubble";
   import { slide } from "svelte/transition";
+  import deriveWindow from "$lib/util/deriveWindow";
 
   export let row: Row;
 
@@ -68,10 +66,16 @@
   let activeColumn = 0;
 
   $: contrastLevel = (
-    $preferences.textColor && $preferences.background
-      ? ReadableLevel($preferences.textColor, $preferences.background)
+    inferredTextCol && $preferences.background
+      ? inferredTextCol.contrast($preferences.background)
       : false
-  ) as false | ReturnType<typeof ReadableLevel>;
+  ) as false | number;
+  $: isReadable = contrastLevel && contrastLevel >= 7;
+
+  // Used for accessibility checking
+  $: inferredTextCol =
+    $preferences.textColor ||
+    getColour(row.window.getComputedStyle(row.node).color);
 
   const ids = {
     padding: nanoid(),
@@ -115,39 +119,33 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <!-- Warning if contrast is dangerously low -->
-    {#if contrastLevel && contrastLevel.suitability !== Readability.BODY}
-      <div class="card bg-orange-100" transition:slide>
-        <p>
-          <span class="font-bold">Warning:</span> The contrast between the
-          background and text colours is
-          {#if contrastLevel.suitability === Readability.LARGE}
-            only suitable for bold text, large text or headers.
-          {:else if contrastLevel.suitability === Readability.HEADER}
-            only suitable for headers.
-          {:else if contrastLevel.suitability === Readability.NONE}
-            not suitable for any text.
-          {:else}
-            not definedHeaders.
-          {/if}
+    <div
+      class="colour-alert-box"
+      class:alert-active={contrastLevel !== false && !isReadable}
+      transition:slide
+    >
+      <ColourPicker
+        label="Background Colour"
+        id={ids.background}
+        bind:colour={$preferences.background}
+        bind:contrastColour={inferredTextCol}
+      />
+      <ColourPicker
+        label="Text Colour"
+        id={ids.textcolor}
+        bind:colour={$preferences.textColor}
+        bind:contrastColour={$preferences.background}
+        showAccessible={false}
+      />
+      <!-- Warning if contrast is dangerously low -->
+      {#if contrastLevel && contrastLevel < 7}
+        <p class="alert-details">
+          <span class="font-bold">Warning:</span> The contrast ratio between the
+          background and text colours is only {contrastLevel.toFixed(2)}:1. Most
+          text should be 7:1 (AAA), or at least 4.5:1 (AA).
         </p>
-      </div>
-    {/if}
-    <ColourPicker
-      label="Background Colour"
-      id={ids.background}
-      bind:colour={$preferences.background}
-      bind:contrastColour={$preferences.textColor}
-      isTextColour={false}
-    />
-    <ColourPicker
-      label="Text Colour"
-      id={ids.textcolor}
-      bind:colour={$preferences.textColor}
-      bind:contrastColour={$preferences.background}
-      isTextColour={true}
-      showAccessible={false}
-    />
+      {/if}
+    </div>
   </div>
 </div>
 
@@ -179,12 +177,12 @@
       }
     }
   }
-  .input-group {
+  /* .input-group {
     @apply flex items-center gap-2;
   }
   input[type="color"] {
     @apply rounded border-none;
-  }
+  } */
   .btn {
     @apply flex items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;
   }
@@ -204,6 +202,16 @@
       & input {
         @apply invisible absolute;
       }
+    }
+  }
+
+  .colour-alert-box {
+    @apply ring-0 ring-orange-300 p-2 rounded transition;
+    &.alert-active {
+      @apply shadow-md text-orange-800 ring-2 font-bold;
+    }
+    & .alert-details {
+      @apply text-xs italic;
     }
   }
 </style>

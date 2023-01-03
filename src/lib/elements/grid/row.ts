@@ -94,7 +94,6 @@ export default class Row extends MceElement {
     // Set up popover
     this.popover = this.setupPopover(RowMenu, { row: this });
     this.selected.subscribe((selected) => {
-      console.log("Selected", selected?.node, this.popover.isActive);
       if (selected) {
         !this.popover.isActive && this.popover.show();
       } else {

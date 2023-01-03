@@ -1,8 +1,10 @@
 <script lang="ts" context="module">
-  import Color from "color";
+  import { colord, extend, Colord } from "colord";
+  import a11yPlugin from "colord/plugins/a11y";
+  extend([a11yPlugin]);
   export function getColour(
-    colour: Color | string | undefined
-  ): undefined | Color {
+    colour: Colord | string | undefined
+  ): undefined | Colord {
     const notColours = new Set([
       "currentcolor",
       "inherit",
@@ -11,173 +13,102 @@
       "rever-layer",
       "unset",
     ]);
-    if (colour instanceof Color) return colour;
+    if (colour instanceof Colord) return colour;
     if (!colour || notColours.has(colour)) return undefined;
-    return new Color(colour);
+    return colord(colour);
   }
-
-  export const getContrast = (text: Color, background: Color) => {
-    return text.contrast(background);
-    // const textCol = text.rgb();
-    // const bgCol = background.rgb();
-    // return apcaContrastValue(colorFromObject(textCol), colorFromObject(bgCol));
-  };
-
-  // https://www.myndex.com/APCA/
-  export enum Readability {
-    BODY = 90, // 18px/weight 300 or 14px/weight 400 (normal), or non-body text with a font no smaller than 12px
-    LARGE = 75, // 24px/300 weight, 18px/400, 16px/500 and 14px/700. This level may be used with non-body text with a font no smaller than 15px/400
-    // CONTENT = 60, // 48px/200, 36px/300, 24px normal weight (400), 21px/500, 18px/600, 16px/700 (bold)
-    HEADER = 45, //  (36px normal weight or 24px bold) such as headlines, and large text
-    NONE = 0,
-  }
-
-  export const ReadableLevel = (text: Color, background: Color) => {
-    const contrast = text.contrast(background);
-    let suitability = Readability.NONE;
-    if (contrast >= Readability.BODY) suitability = Readability.BODY;
-    else if (contrast >= Readability.LARGE) suitability = Readability.LARGE;
-    else if (contrast >= Readability.HEADER) suitability = Readability.HEADER;
-    return { contrast, suitability };
-  };
-
-  export const isReadable = (text: Color, background: Color) => {
-    // AA: 4.5:1
-    // AAA: 7:1
-    return text.contrast(background) >= 7;
-  };
 </script>
 
 <script lang="ts">
-  import {
-    autoUpdate,
-    computePosition,
-    flip,
-    hide,
-    offset,
-    shift,
-  } from "@floating-ui/dom";
+  import { autoUpdate, computePosition, offset, shift } from "@floating-ui/dom";
   import { onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
 
   export let id: string;
-  export let colour: Color | undefined = undefined;
-  export let contrastColour: Color | undefined = undefined;
-  export let isTextColour: boolean = true; // Used to determine if the colour is for text or background
-  // export let contrastSettings: undefined | Parameters<Colord["isReadable"]>[1] =
+  export let colour: Colord | undefined = undefined;
+  export let contrastColour: Colord | undefined = undefined;
   export let showAccessible: boolean = true;
-  $: inaccessible = false;
-  undefined;
   export let label: string;
 
-  /**
-   * Returns whether the combination is light mode (true) or dark mode (false)
-   * @param colours
-   * @param background
-   * @param flip If true, the foreground/bg will be flipped
-   */
-  const isLightMode = (text: Color, background: Color): boolean => {
-    // Black text on white background is light mode
-    return text.lightness() < background.lightness();
-  };
-
-  const getAccessibleCol = (fg: Color, bg: Color, returnBG = true) => {
-    const returnCol = returnBG ? bg : fg;
-    if (isLightMode(fg, bg)) {
-      return returnCol.blacken(0.6);
-    } else {
-      return returnCol.whiten(0.6);
-    }
-  };
-
-  const smartColour = (
-    colour: string,
-    conColour: typeof contrastColour,
-    colIsText: boolean
-  ) => {
-    const c = new Color(colour);
-    if (conColour && !colIsText && !isReadable(conColour, c)) {
-      return getAccessibleCol(c, conColour, false);
+  const smartColour = (colour: string, conColour: typeof contrastColour) => {
+    const c = colord(colour);
+    // Only adjust colour if contrast is not readable (AA not AAA)
+    if (conColour && showAccessible && !conColour.isReadable(c)) {
+      if (conColour.isLight()) {
+        return c.darken(0.1);
+      } else {
+        return c.desaturate(0.3).lighten(0.5);
+      }
     }
     return c;
   };
   $: options = [
     {
-      code: smartColour("#00467F", contrastColour, isTextColour),
+      code: smartColour("#00467F", contrastColour),
       name: "Dark blue",
     },
     {
-      code: smartColour("#000000", contrastColour, isTextColour),
+      code: smartColour("#000000", contrastColour),
       name: "Black",
     },
     {
-      code: smartColour("#4A4A4C", contrastColour, isTextColour),
+      code: smartColour("#4A4A4C", contrastColour),
       name: "Body Grey",
     },
     {
-      code: smartColour("#8D9091", contrastColour, isTextColour),
+      code: smartColour("#8D9091", contrastColour),
       name: "Silver",
     },
     {
-      code: smartColour("#A71930", contrastColour, isTextColour),
+      code: smartColour("#A71930", contrastColour),
       name: "Arts",
     },
     {
-      code: smartColour("#7D0063", contrastColour, isTextColour),
+      code: smartColour("#7D0063", contrastColour),
       name: "Business School",
     },
     {
-      code: smartColour("#D2492A", contrastColour, isTextColour),
+      code: smartColour("#D2492A", contrastColour),
       name: "Creative Arts and Industries",
     },
     {
-      code: smartColour("#55A51C", contrastColour, isTextColour),
+      code: smartColour("#55A51C", contrastColour),
       name: "Education and Social Work",
     },
     {
-      code: smartColour("#4F2D7F", contrastColour, isTextColour),
+      code: smartColour("#4F2D7F", contrastColour),
       name: "Engineering",
     },
     {
-      code: smartColour("#005B82", contrastColour, isTextColour),
+      code: smartColour("#005B82", contrastColour),
       name: "Auckland Law School",
     },
     {
-      code: smartColour("#00877C", contrastColour, isTextColour),
+      code: smartColour("#00877C", contrastColour),
       name: "Medical Health Sciences",
     },
     {
-      code: smartColour("#0039A6", contrastColour, isTextColour),
+      code: smartColour("#0039A6", contrastColour),
       name: "Science",
     },
     {
-      code: smartColour("#BA4482", contrastColour, isTextColour),
+      code: smartColour("#BA4482", contrastColour),
       name: "Auckland Bioengineering Institute",
     },
     {
-      code: smartColour("#006990", contrastColour, isTextColour),
+      code: smartColour("#006990", contrastColour),
       name: "Liggins Institute",
     },
     {
-      code: smartColour("#ffffff", contrastColour, isTextColour),
+      code: smartColour("#ffffff", contrastColour),
       name: "White",
     },
     { code: undefined, name: "None" },
   ];
 
-  $: {
-    if (colour && contrastColour && !isTextColour) {
-      // Lighten the BG if text is inaccessible
-      const inaccessible = !isReadable(contrastColour, colour);
-      if (inaccessible) {
-        colour = getAccessibleCol(contrastColour, colour);
-      }
-    }
-  }
-
-  const select = (c: Color | undefined) => {
+  const select = (c: Colord | undefined) => {
     colour = getColour(c);
   };
 
@@ -233,7 +164,7 @@
       on:click={(e) => (edit = !edit)}
       class="colour"
       title="Click to change"
-      style:background-color={colour?.hex() || "unset"}
+      style:background-color={colour?.toHex() || "unset"}
       class:unset={colour === undefined}
       class:white={colour && colour.isLight()}
     />
@@ -257,9 +188,7 @@
                 showAccessible &&
                 contrastColour &&
                 option.code &&
-                (isTextColour
-                  ? !isReadable(option.code, contrastColour)
-                  : !isReadable(contrastColour, option.code))}
+                !option.code.isReadable(contrastColour, { level: "AAA" })}
 
               <button
                 class="colour colour-option"
@@ -270,8 +199,8 @@
                 title={`${option.name}${
                   inaccessible ? " (Warning! inaccessible)" : ""
                 }`}
-                style:background-color={option.code?.hex()}
-                class:selected={colour?.rgb() === option.code?.rgb()}
+                style:background-color={option.code?.toHex()}
+                class:selected={colour?.toRgb() === option.code?.toRgb()}
                 on:click={(e) => select(option.code)}
               />
             {/each}
