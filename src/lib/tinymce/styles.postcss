@@ -32,7 +32,9 @@
     }
   }
   /* Required to fix iframes to not escape the bounds of a col. Only works in editor, but iframes will resize to fit in main page. */
-  & iframe.lti-embed {
+  & iframe.lti-embed,
+  & .mce-preview-object,
+  & .mce-preview-object iframe {
     max-width: 100% !important;
     /* These are disabled as not all iframes will be video and need a 16:9 ratio */
     /* aspect-ratio: 16 / 9 !important;
