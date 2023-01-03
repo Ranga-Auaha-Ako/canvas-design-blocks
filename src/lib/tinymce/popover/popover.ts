@@ -10,7 +10,7 @@ export class McePopover extends SelectableElement {
   public readonly node: HTMLElement;
   public readonly id: string;
   public get isActive() {
-    return this._isActive;
+    return this.hostComponent.component && this.hostComponent.show;
   }
   private _isActive = false;
 

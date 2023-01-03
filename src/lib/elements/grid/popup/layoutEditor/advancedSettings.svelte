@@ -4,8 +4,13 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker from "./advancedSettings/colourPicker.svelte";
+  import ColourPicker, {
+    getColour,
+  } from "$lib/util/components/colourPicker.svelte";
   import ColSettings from "./advancedSettings/colSettings.svelte";
+  import preventBubble from "$lib/util/preventBubble";
+  import { slide } from "svelte/transition";
+  import deriveWindow from "$lib/util/deriveWindow";
 
   export let row: Row;
 
@@ -13,15 +18,6 @@
     Normal = "normal",
     Card = "card",
   }
-
-  const rgb2hex = (rgb: string) => {
-    const vals = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!vals) return undefined;
-    return `#${vals
-      .slice(1)
-      .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
-      .join("")}`;
-  };
 
   $: columns = row.columns;
 
@@ -37,8 +33,8 @@
       return {
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
-        background: rgb2hex($style.background),
-        textColor: rgb2hex($style.color),
+        background: getColour($style.background),
+        textColor: getColour($style.color),
         card: isCard ? RowType.Card : RowType.Normal,
       };
     },
@@ -58,9 +54,9 @@
           // Padding
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
-          oldStyle.background = reflecting.background || "";
+          oldStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
-          oldStyle.color = reflecting.textColor || "";
+          oldStyle.color = reflecting.textColor?.toHex() || "";
         }
         return [oldStyle, oldClassList];
       },
@@ -68,6 +64,18 @@
   );
 
   let activeColumn = 0;
+
+  $: contrastLevel = (
+    inferredTextCol && $preferences.background
+      ? inferredTextCol.contrast($preferences.background)
+      : false
+  ) as false | number;
+  $: isReadable = contrastLevel && contrastLevel >= 7;
+
+  // Used for accessibility checking
+  $: inferredTextCol =
+    $preferences.textColor ||
+    getColour(row.window.getComputedStyle(row.node).color);
 
   const ids = {
     padding: nanoid(),
@@ -78,58 +86,73 @@
 </script>
 
 <div class="cgb-component">
-  <div class="advancedSettings">
-    <div class="card bg-orange-300 text-white font-bold text-xs text-center">
-      <p>Heads up! This section is still under heavy development.</p>
-    </div>
-    <div class="card">
-      <h5>Row Settings</h5>
-      <span class="label-text">Row Type</span>
-      <div class="btn-group">
-        <label class="btn" class:active={$preferences.card === RowType.Normal}>
-          <span>Default</span>
-          <input
-            name={ids.card}
-            type="radio"
-            value="normal"
-            bind:group={$preferences.card}
-          />
-        </label>
-        <label class="btn" class:active={$preferences.card === RowType.Card}>
-          <span>Card</span>
-          <input
-            name={ids.card}
-            type="radio"
-            value="card"
-            bind:group={$preferences.card}
-          />
-        </label>
-      </div>
-      <label for={ids.padding}>
-        <span class="label-text">Padding ({$preferences.padding}px)</span>
+  <div class="advancedSettings" use:preventBubble>
+    <h5>Row Settings</h5>
+    <span class="label-text">Row Type</span>
+    <div class="btn-group">
+      <label class="btn" class:active={$preferences.card === RowType.Normal}>
+        <span>Default</span>
         <input
-          id={ids.padding}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding}
+          name={ids.card}
+          type="radio"
+          value="normal"
+          bind:group={$preferences.card}
         />
       </label>
+      <label class="btn" class:active={$preferences.card === RowType.Card}>
+        <span>Card</span>
+        <input
+          name={ids.card}
+          type="radio"
+          value="card"
+          bind:group={$preferences.card}
+        />
+      </label>
+    </div>
+    <label for={ids.padding}>
+      <span class="label-text">Padding ({$preferences.padding}px)</span>
+      <input
+        id={ids.padding}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.padding}
+      />
+    </label>
+    <div
+      class="colour-alert-box"
+      class:alert-active={contrastLevel !== false && !isReadable}
+      transition:slide
+    >
       <ColourPicker
         label="Background Colour"
         id={ids.background}
         bind:colour={$preferences.background}
+        bind:contrastColour={inferredTextCol}
       />
       <ColourPicker
         label="Text Colour"
         id={ids.textcolor}
         bind:colour={$preferences.textColor}
+        bind:contrastColour={$preferences.background}
+        showAccessible={false}
       />
+      <!-- Warning if contrast is dangerously low -->
+      {#if contrastLevel && contrastLevel < 7}
+        <p class="alert-details">
+          <span class="font-bold">Warning:</span> The contrast ratio between the
+          background and text colours is only {contrastLevel.toFixed(2)}:1. Most
+          text should be 7:1 (AAA), or at least 4.5:1 (AA).
+        </p>
+      {/if}
     </div>
   </div>
 </div>
 
 <style lang="postcss">
+  .advancedSettings {
+    /* @apply columns-2; */
+  }
   h5 {
     @apply w-full font-bold;
     &:after {
@@ -139,7 +162,7 @@
     }
   }
   .card {
-    @apply p-4 m-2 shadow-md rounded;
+    @apply p-4 shadow-md rounded;
     @apply flex flex-col gap-2;
     & .label-text {
       @apply font-bold text-uni-gray-500;
@@ -154,12 +177,12 @@
       }
     }
   }
-  .input-group {
+  /* .input-group {
     @apply flex items-center gap-2;
   }
   input[type="color"] {
     @apply rounded border-none;
-  }
+  } */
   .btn {
     @apply flex items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;
   }
@@ -179,6 +202,16 @@
       & input {
         @apply invisible absolute;
       }
+    }
+  }
+
+  .colour-alert-box {
+    @apply ring-0 ring-orange-300 p-2 rounded transition;
+    &.alert-active {
+      @apply shadow-md text-orange-800 ring-2 font-bold;
+    }
+    & .alert-details {
+      @apply text-xs italic;
     }
   }
 </style>

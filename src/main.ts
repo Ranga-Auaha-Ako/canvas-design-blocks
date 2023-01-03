@@ -7,6 +7,7 @@ import Toolbar from "./entrypoints/Toolbar.svelte";
 
 const state: stateObject = {
   showInterface: writable(false),
+  configComponent: writable(null),
 };
 
 const getEditor = () =>

@@ -4,20 +4,13 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker from "./colourPicker.svelte";
+  import ColourPicker, {
+    getColour,
+  } from "$lib/util/components/colourPicker.svelte";
   import Column from "$lib/elements/grid/column";
 
   export let column: Column;
   export let index: number;
-
-  const rgb2hex = (rgb: string) => {
-    const vals = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!vals) return undefined;
-    return `#${vals
-      .slice(1)
-      .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
-      .join("")}`;
-  };
 
   enum ColType {
     Normal = "normal",
@@ -36,8 +29,8 @@
       return {
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
-        background: rgb2hex($style.background),
-        textColor: rgb2hex($style.color),
+        background: getColour($style.background),
+        textColor: getColour($style.color),
         card: isCard ? ColType.Card : ColType.Normal,
       };
     },
@@ -57,9 +50,9 @@
           // Padding
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
-          oldStyle.background = reflecting.background || "";
+          oldStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
-          oldStyle.color = reflecting.textColor || "";
+          oldStyle.color = reflecting.textColor?.toHex() || "";
         }
         return [oldStyle, oldClassList];
       },
