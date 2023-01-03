@@ -7,6 +7,7 @@ import { McePopover } from "./popover/popover";
 import { SvelteComponent } from "svelte";
 import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
+import type { Placement } from "@floating-ui/dom";
 
 const voidElementsSet = new Set(htmlVoidElements);
 voidElementsSet.add("iframe");
@@ -256,13 +257,14 @@ export default abstract class MceElement extends SelectableElement {
 
   public setupPopover(
     contents?: typeof SvelteComponent,
-    props?: McePopover["props"]
+    props?: McePopover["props"],
+    placement?: Placement
   ) {
     if (this.popover) {
       this.popover.hostComponent.$set({ component: contents, props });
     } else {
       // Create a popover for the node
-      const popover = new McePopover(this, window, contents, props);
+      const popover = new McePopover(this, window, contents, props, placement);
       this.popover = popover;
       this.children.update((children) => {
         children.push(popover);

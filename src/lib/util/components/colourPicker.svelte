@@ -20,7 +20,13 @@
 </script>
 
 <script lang="ts">
-  import { autoUpdate, computePosition, offset, shift } from "@floating-ui/dom";
+  import {
+    autoUpdate,
+    computePosition,
+    offset,
+    Placement,
+    shift,
+  } from "@floating-ui/dom";
   import { onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
@@ -31,6 +37,7 @@
   export let contrastColour: Colord | undefined = undefined;
   export let showAccessible: boolean = true;
   export let label: string;
+  export let popupDirection: Placement = "bottom-start";
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     const c = colord(colour);
@@ -125,7 +132,7 @@
   $: updateFunction = async () => {
     let additionalOffset = [0, 0];
     const position = await computePosition(popoverTarget, popoverEl, {
-      placement: "bottom-start",
+      placement: popupDirection,
       middleware: [
         offset(0),
         shift(),

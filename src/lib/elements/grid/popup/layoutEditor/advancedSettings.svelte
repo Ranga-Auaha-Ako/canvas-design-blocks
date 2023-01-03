@@ -1,16 +1,11 @@
 <script lang="ts">
   import Row from "$lib/elements/grid/row";
-  import { get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker, {
-    getColour,
-  } from "$lib/util/components/colourPicker.svelte";
-  import ColSettings from "./advancedSettings/colSettings.svelte";
+  import { getColour } from "$lib/util/components/colourPicker.svelte";
+  import ColourSettings from "./advancedSettings/colourSettings.svelte";
   import preventBubble from "$lib/util/preventBubble";
-  import { slide } from "svelte/transition";
-  import deriveWindow from "$lib/util/deriveWindow";
 
   export let row: Row;
 
@@ -63,20 +58,6 @@
     }
   );
 
-  let activeColumn = 0;
-
-  $: contrastLevel = (
-    inferredTextCol && $preferences.background
-      ? inferredTextCol.contrast($preferences.background)
-      : false
-  ) as false | number;
-  $: isReadable = contrastLevel && contrastLevel >= 7;
-
-  // Used for accessibility checking
-  $: inferredTextCol =
-    $preferences.textColor ||
-    getColour(row.window.getComputedStyle(row.node).color);
-
   const ids = {
     padding: nanoid(),
     card: nanoid(),
@@ -119,33 +100,7 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <div
-      class="colour-alert-box"
-      class:alert-active={contrastLevel !== false && !isReadable}
-      transition:slide
-    >
-      <ColourPicker
-        label="Background Colour"
-        id={ids.background}
-        bind:colour={$preferences.background}
-        bind:contrastColour={inferredTextCol}
-      />
-      <ColourPicker
-        label="Text Colour"
-        id={ids.textcolor}
-        bind:colour={$preferences.textColor}
-        bind:contrastColour={$preferences.background}
-        showAccessible={false}
-      />
-      <!-- Warning if contrast is dangerously low -->
-      {#if contrastLevel && contrastLevel < 7}
-        <p class="alert-details">
-          <span class="font-bold">Warning:</span> The contrast ratio between the
-          background and text colours is only {contrastLevel.toFixed(2)}:1. Most
-          text should be 7:1 (AAA), or at least 4.5:1 (AA).
-        </p>
-      {/if}
-    </div>
+    <ColourSettings element={row} {preferences} />
   </div>
 </div>
 
@@ -202,16 +157,6 @@
       & input {
         @apply invisible absolute;
       }
-    }
-  }
-
-  .colour-alert-box {
-    @apply ring-0 ring-orange-300 p-2 rounded transition;
-    &.alert-active {
-      @apply shadow-md text-orange-800 ring-2 font-bold;
-    }
-    & .alert-details {
-      @apply text-xs italic;
     }
   }
 </style>

@@ -8,9 +8,9 @@
     getColour,
   } from "$lib/util/components/colourPicker.svelte";
   import Column from "$lib/elements/grid/column";
+  import ColourSettings from "./colourSettings.svelte";
 
   export let column: Column;
-  export let index: number;
 
   enum ColType {
     Normal = "normal",
@@ -62,7 +62,7 @@
 
 <div class="cgb-component">
   <div class="card">
-    <h5>Column {index + 1}</h5>
+    <h5>Column Settings</h5>
     <span class="label-text">Row Type</span>
     <div class="btn-group">
       <label class="btn" class:active={$preferences.card === ColType.Normal}>
@@ -94,16 +94,7 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <ColourPicker
-      label="Background Colour"
-      id={column.id + "-bg-col"}
-      bind:colour={$preferences.background}
-    />
-    <ColourPicker
-      label="Text Colour"
-      id={column.id + "-text-col"}
-      bind:colour={$preferences.textColor}
-    />
+    <ColourSettings element={column} {preferences} popupDirection="top" />
   </div>
 </div>
 
@@ -117,7 +108,7 @@
     }
   }
   .card {
-    @apply p-4 m-2 shadow-md rounded bg-white;
+    @apply p-4 mt-2 shadow-md rounded-lg border-uni-blue-light border-2 bg-white w-screen max-w-sm;
     @apply flex flex-col gap-2;
     & .label-text {
       @apply font-bold text-uni-gray-500;

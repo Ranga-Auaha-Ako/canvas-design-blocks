@@ -9,12 +9,14 @@
     shift,
     hide,
   } from "@floating-ui/dom";
+  import type { Placement } from "@floating-ui/dom";
   import { onDestroy, SvelteComponent } from "svelte";
   import { fade } from "svelte/transition";
 
   export let component: typeof SvelteComponent | undefined = undefined;
   export let show: boolean = false;
   export let props: Record<string, unknown> | undefined = undefined;
+  export let placement: Placement = "top";
   export let target: HTMLElement | undefined = undefined;
 
   let cleanup: () => void;
@@ -36,7 +38,7 @@
       }
     }
     const position = await computePosition(target, popoverEl, {
-      placement: "top",
+      placement,
       middleware: [
         offset(0),
         shift(),

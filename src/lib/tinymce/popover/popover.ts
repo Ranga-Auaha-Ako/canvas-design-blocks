@@ -4,6 +4,7 @@ import type { SvelteComponent } from "svelte";
 import PopoverWrapper from "./popoverWrapper.svelte";
 import { SelectableElement } from "../selectableElement";
 import { nanoid } from "nanoid";
+import type { Placement } from "@floating-ui/dom";
 
 export class McePopover extends SelectableElement {
   public readonly hostComponent: PopoverWrapper;
@@ -18,7 +19,8 @@ export class McePopover extends SelectableElement {
     public readonly MceElement: MceElement,
     public readonly popoverWindow: Window & typeof globalThis,
     public readonly contents?: typeof SvelteComponent,
-    public readonly props?: PopoverWrapper["props"]
+    public readonly props?: PopoverWrapper["props"],
+    public readonly placement?: Placement
   ) {
     super();
     this.id = nanoid();
@@ -39,6 +41,7 @@ export class McePopover extends SelectableElement {
       target: this.MceElement.node,
       show: true,
       props: this.props,
+      placement: this.placement,
     });
     this.startObserving();
   }

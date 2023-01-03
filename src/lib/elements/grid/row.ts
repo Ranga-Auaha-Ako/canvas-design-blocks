@@ -92,7 +92,7 @@ export default class Row extends MceElement {
       this.checkChildren;
     });
     // Set up popover
-    this.popover = this.setupPopover(RowMenu, { row: this });
+    this.popover = this.setupPopover(RowMenu, { row: this }, "top");
     this.selected.subscribe((selected) => {
       if (selected) {
         !this.popover.isActive && this.popover.show();
