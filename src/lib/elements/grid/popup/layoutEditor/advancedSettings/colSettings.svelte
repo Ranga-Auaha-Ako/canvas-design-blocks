@@ -63,7 +63,7 @@
 <div class="cgb-component">
   <div class="card">
     <h5>Column Settings</h5>
-    <span class="label-text">Row Type</span>
+    <span class="label-text">Column Type</span>
     <div class="btn-group">
       <label class="btn" class:active={$preferences.card === ColType.Normal}>
         <span>Default</span>
