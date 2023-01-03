@@ -110,6 +110,7 @@
 
   const select = (c: Colord | undefined) => {
     colour = getColour(c);
+    customColour = false;
   };
 
   let edit = false;
@@ -147,6 +148,15 @@
   onMount(() => {
     updateFunction();
   });
+
+  let customColour = false;
+
+  let customColourVal: string | undefined;
+  $: if (!customColour) {
+    customColourVal = colour?.toHex();
+  } else if (customColourVal) {
+    colour = colord(customColourVal);
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -200,10 +210,41 @@
                   inaccessible ? " (Warning! inaccessible)" : ""
                 }`}
                 style:background-color={option.code?.toHex()}
-                class:selected={colour?.toRgb() === option.code?.toRgb()}
+                class:selected={colour?.toHex() === option.code?.toHex()}
                 on:click={(e) => select(option.code)}
               />
             {/each}
+            <div class="colour-custom" class:selected={customColour}>
+              <div class="editor">
+                <label
+                  class="colour colour-option"
+                  title="Custom colour"
+                  class:white={!customColourVal ||
+                    colord(customColourVal)?.isLight() ||
+                    colord(customColourVal)?.alpha() === 0}
+                  style:background-color={customColourVal}
+                  on:click={() => (customColour = true)}
+                  for={id + "-custom"}
+                >
+                  <input
+                    id={id + "-custom"}
+                    class="invisible absolute"
+                    type="color"
+                    bind:value={customColourVal}
+                    aria-hidden="true"
+                  />
+                </label>
+                <input
+                  id={id + "-custom"}
+                  type="text"
+                  bind:value={customColourVal}
+                  on:input={(e) => {
+                    customColour = true;
+                    return true;
+                  }}
+                />
+              </div>
+            </div>
           {/if}
         </div>
       </div>
@@ -217,6 +258,9 @@
   }
   .container {
     @apply flex items-center justify-start w-full;
+  }
+  .container,
+  .colourPicker {
     --size: 1.7em;
   }
   label {
@@ -230,10 +274,11 @@
     display: inline-block;
   }
   .colourPicker {
-    @apply absolute top-0 left-0 p-4 z-10 w-44 h-44;
+    @apply absolute top-0 left-0 p-4 z-10 box-content;
     @apply shadow-lg bg-white rounded;
-    @apply grid grid-cols-4 gap-1;
-    /* @apply flex flex-wrap gap-1 shadow bg-white rounded; */
+    @apply grid gap-1;
+    grid-template-columns: repeat(4, var(--size));
+    grid-template-rows: repeat(auto-fill, var(--size)), auto;
     @apply pointer-events-none opacity-0 transition-opacity;
     &.edit {
       @apply visible opacity-100 pointer-events-auto;
@@ -267,6 +312,25 @@
       &.dark:after {
         @apply text-red-100;
       }
+    }
+  }
+
+  .colour-custom {
+    @apply col-span-4 mt-1 pt-2 border-t-2 border-gray-300;
+    & .editor {
+      @apply flex gap-1;
+      height: var(--size);
+    }
+    &.selected {
+      & input {
+        @apply ring-blue-500 ring-1;
+      }
+    }
+    & .colour-option {
+      @apply m-0 p-0 aspect-square h-full;
+    }
+    & input {
+      @apply w-full h-full grow p-1;
     }
   }
 </style>
