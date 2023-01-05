@@ -4,7 +4,7 @@
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
   import { getColour } from "$lib/util/components/colourPicker.svelte";
-  import ColourSettings from "./advancedSettings/colourSettings.svelte";
+  import ColourSettings from "$lib/util/components/colourSettings.svelte";
   import preventBubble from "$lib/util/preventBubble";
 
   export let row: Row;

@@ -6,6 +6,7 @@ import ColMenu from "./popup/colMenu.svelte";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
 import { writable as localStorageWritable } from "svelte-local-storage-store";
+import type { Editor } from "tinymce";
 
 export default class Column extends MceElement {
   public width: Writable<Required<ColumnLayout>>;
@@ -152,7 +153,7 @@ export default class Column extends MceElement {
     public node: HTMLElement,
     public innerNode: HTMLElement
   ) {
-    super(node);
+    super(node, parentGrid.editor);
     this.showPopover = localStorageWritable(
       "cgb-preferences-showadvanced",
       false

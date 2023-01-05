@@ -16,6 +16,7 @@ import deriveWindow from "$lib/util/deriveWindow";
 import MceElement from "$lib/tinymce/mceElement";
 import type { McePopover } from "$lib/tinymce/popover/popover";
 import RowMenu from "$lib/elements/grid/popup/rowMenu.svelte";
+import type { Editor } from "tinymce";
 
 export default class Row extends MceElement {
   public attributes: MceElement["attributes"] = new Map([]);
@@ -79,7 +80,7 @@ export default class Row extends MceElement {
     public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
-    super(node);
+    super(node, parentGrid.editor);
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
 

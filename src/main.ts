@@ -1,9 +1,20 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
-import GridManager, { stateObject } from "$lib/elements/grid/gridManager";
+import GridManager from "$lib/elements/grid/gridManager";
 import pageStyles from "./app.postcss?inline";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
+import type { Writable } from "svelte/store";
+import { SvelteComponent } from "svelte";
+import ButtonManager from "$lib/elements/button/buttonManager";
+
+export interface stateObject {
+  showInterface: Writable<boolean>;
+  configComponent: Writable<{
+    component: typeof SvelteComponent;
+    props: Record<string, any>;
+  } | null>;
+}
 
 const state: stateObject = {
   showInterface: writable(false),
@@ -44,11 +55,12 @@ export const loadApp = async () => {
   // Get TinyMCE Editor
   const editor = await getEditor();
 
-  // Create Grid Manager
+  // Create Element Managers
   const grids = new GridManager(state, editor);
+  const buttons = new ButtonManager(state, editor);
 
   // Add button to open grid editor
-  loadToolbar({ state, grids });
+  loadToolbar({ state, managers: [grids, buttons] });
 
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");

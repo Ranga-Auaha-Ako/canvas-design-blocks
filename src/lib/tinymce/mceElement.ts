@@ -2,17 +2,35 @@ import deriveWindow from "$lib/util/deriveWindow";
 import writableDerived from "svelte-writable-derived";
 import { get, Readable, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
-import { Editor } from "tinymce";
 import { McePopover } from "./popover/popover";
 import { SvelteComponent } from "svelte";
 import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
+import type { Editor } from "tinymce";
 import type { Placement } from "@floating-ui/dom";
+import type { stateObject } from "src/main";
+import type { ElementManager } from "$lib/elements/generic/elementManager";
 
 const voidElementsSet = new Set(htmlVoidElements);
 voidElementsSet.add("iframe");
 
 type observerMap = Map<Element, Partial<MutationObserverInit>>;
+
+export interface MceElementStatics {
+  import: (
+    state: stateObject,
+    node: HTMLElement,
+    manager: any, // Has to by "any" to allow manager subclasses to have their own methods
+    editor: Editor
+  ) => MceElement;
+  create: (
+    state: stateObject,
+    manager: any, // Has to by "any" to allow manager subclasses to have their own methods
+    atCursor: boolean,
+    editor: Editor,
+    highlight: boolean
+  ) => MceElement;
+}
 
 // Base class for all elements in the TinyMCE DOM tree that we might manipulate.
 export default abstract class MceElement extends SelectableElement {
@@ -60,6 +78,7 @@ export default abstract class MceElement extends SelectableElement {
 
   constructor(
     public node: HTMLElement,
+    public editor: Editor = window.tinymce.activeEditor,
     public watchNodes: observerMap = new Map([[node, {}]]),
     children: MceElement[] = [],
     public readonly id = nanoid()
@@ -85,6 +104,9 @@ export default abstract class MceElement extends SelectableElement {
       ["style", this.style],
       ["data-cgb-id", this._id],
     ]);
+
+    // Set ID of element
+    this.node.dataset.cgeId = this.id;
 
     // Determine the window this node is in (for iframe support)
     this.window = deriveWindow(node) || window;
