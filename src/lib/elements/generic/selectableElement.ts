@@ -5,27 +5,28 @@ export class SelectableElement {
   public parent: Writable<SelectableElement | false> = writable(false);
   public children: Writable<SelectableElement[]> = writable([]);
   public node?: HTMLElement;
+  private timeoutId: number | undefined;
 
   //  - Functions for selecting and deselecting the node
   public select: () => void = () => {
     this.selected.set(this);
     const parent = get(this.parent);
     if (parent) parent.selected.set(this);
+    if (this.timeoutId) window.clearTimeout(this.timeoutId);
     // console.log("Parent", parent, "of", this, "is now selected");
   };
   public deselect: () => void = () => {
-    setTimeout(() => {
+    if (this.timeoutId) window.clearTimeout(this.timeoutId);
+    this.timeoutId = window.setTimeout(() => {
       // Timeout to allow another element to be selected
       this.selected.update((el) => {
         if (el !== this) return el;
-        // console.log("Deselecting", this);
         return false;
       });
       const parent = get(this.parent);
       if (parent) {
         parent.selected.update((el) => {
           if (el !== this) return el;
-          // console.log("Deselecting parent", parent, "of", this);
           return false;
         });
       }
