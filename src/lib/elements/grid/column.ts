@@ -1,5 +1,5 @@
-import MceElement from "$lib/tinymce/mceElement";
-import type { McePopover } from "$lib/tinymce/popover/popover";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { McePopover } from "$lib/elements/generic/popover/popover";
 import { get, Unsubscriber, Writable, writable } from "svelte/store";
 import type Grid from "./grid";
 import ColMenu from "./popup/colMenu.svelte";
@@ -9,6 +9,8 @@ import { writable as localStorageWritable } from "svelte-local-storage-store";
 import type { Editor } from "tinymce";
 
 export default class Column extends MceElement {
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public width: Writable<Required<ColumnLayout>>;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["cgb-col"]);

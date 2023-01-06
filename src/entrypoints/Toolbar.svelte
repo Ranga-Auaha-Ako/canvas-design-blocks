@@ -30,7 +30,7 @@
   <button
     class="cgb-openButton"
     title="Canvas Grid Builder"
-    class:cgb-active={$open || $configComponent}
+    class:cgb-active={$open}
     on:click={() => {
       $open = !$open;
       dispatch("open");
@@ -40,7 +40,7 @@
     <img src={IconWhite} alt="" />
   </button>
 
-  {#if $open || $configComponent}
+  {#if $open}
     {#if $configComponent}
       <div class="toolbar-menu advanced-settings" transition:slide>
         <svelte:component

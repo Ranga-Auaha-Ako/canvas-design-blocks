@@ -13,12 +13,14 @@ import { RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
 import GridManager from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
-import MceElement from "$lib/tinymce/mceElement";
-import type { MceElementStatics } from "$lib/tinymce/mceElement";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { MceElementStatics } from "$lib/elements/generic/mceElement";
 import { stateObject } from "src/main";
 
 export class Grid extends MceElement implements Readable<Row[]> {
   public static gridMarkupVersion = "1.0.0";
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["canvas-grid-editor"]);
 

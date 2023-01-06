@@ -13,7 +13,9 @@ import type { Editor } from "tinymce";
 import { SvelteComponent } from "svelte";
 import { stateObject } from "src/main";
 import ElementManager from "../generic/elementManager";
-import MceElement, { MceElementStatics } from "$lib/tinymce/mceElement";
+import MceElement, {
+  MceElementStatics,
+} from "$lib/elements/generic/mceElement";
 
 export class GridManager extends ElementManager {
   public elementName: string = "Grid";

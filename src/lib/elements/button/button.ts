@@ -1,12 +1,17 @@
-import MceElement, { MceElementStatics } from "$lib/tinymce/mceElement";
+import MceElement, {
+  MceElementStatics,
+} from "$lib/elements/generic/mceElement";
 import { nanoid } from "nanoid";
 import { stateObject } from "src/main";
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import type { Editor } from "tinymce";
+import ButtonConfig from "./buttonConfig.svelte";
 import { ButtonManager } from "./buttonManager";
 
 export class Button extends MceElement {
   public static markupVersion = "1.0.0";
+  public selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
+  public trackInnerText = true;
   attributes = new Map([
     ["href", writable("")],
     ["title", writable("")],
@@ -39,6 +44,38 @@ export class Button extends MceElement {
       });
       editor.selection.select(this.node);
     }
+
+    // Start watching for changes in the TinyMCE DOM
+    this.setupObserver();
+
+    // Monitor selected state and show Button Editor when selected
+    this.selected.subscribe((selected) => {
+      if (selected === this) {
+        console.log("Button selected");
+        this.state.showInterface.set(true);
+        this.state.configComponent.set({
+          component: ButtonConfig,
+          props: {
+            button: this,
+          },
+        });
+      } else {
+        this.state.configComponent.update((c) => {
+          if (c?.props.button === this) return null;
+          return c;
+        });
+      }
+    });
+  }
+
+  public delete() {
+    if (get(this.selected) === this) {
+      this.state.configComponent.update((c) => {
+        if (c?.props.button === this) return null;
+        return c;
+      });
+    }
+    super.delete();
   }
 
   public static import(
@@ -111,6 +148,8 @@ export class Button extends MceElement {
     this.startObserving();
   }
   checkSelf() {
-    throw new Error("Method not implemented.");
+    if (!this.editor.getBody().contains(this.node)) {
+      this.elementManager.remove(this);
+    }
   }
 }

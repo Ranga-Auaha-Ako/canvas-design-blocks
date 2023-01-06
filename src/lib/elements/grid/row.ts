@@ -13,12 +13,14 @@ import { nanoid } from "nanoid";
 import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
-import MceElement from "$lib/tinymce/mceElement";
-import type { McePopover } from "$lib/tinymce/popover/popover";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { McePopover } from "$lib/elements/generic/popover/popover";
 import RowMenu from "$lib/elements/grid/popup/rowMenu.svelte";
 import type { Editor } from "tinymce";
 
 export default class Row extends MceElement {
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["grid-row"]);
   public popover: McePopover;

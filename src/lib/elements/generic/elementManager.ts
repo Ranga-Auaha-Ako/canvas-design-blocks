@@ -1,7 +1,9 @@
 import { get, writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import { stateObject } from "src/main";
-import MceElement, { MceElementStatics } from "$lib/tinymce/mceElement";
+import MceElement, {
+  MceElementStatics,
+} from "$lib/elements/generic/mceElement";
 
 export abstract class ElementManager implements Writable<MceElement[]> {
   public _elements: Writable<MceElement[]> = writable([]);

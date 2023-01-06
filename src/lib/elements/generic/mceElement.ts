@@ -39,15 +39,22 @@ export default abstract class MceElement extends SelectableElement {
   public window: Window & typeof globalThis;
   // - Popover - will be set if this node has a popover
   public popover?: McePopover;
-  //  - Style and classlist - will reflect what this.node has
+  // - Style and classlist - will reflect what this.node has
   public style: Writable<CSSStyleDeclaration>;
   public classList: Writable<DOMTokenList>;
+  // - Inner text - will reflect what this.node has
+  public innerText: Writable<string> | undefined;
 
   // Requires implementation.
   //  - Stores the attributes that should be watched for changes.
   abstract readonly attributes: Map<string, Writable<string> | false>;
   //  - Stores the default classes that should be added to the node.
   abstract defaultClasses: Set<string>;
+  // CONFIG: Requires implementation.
+  //  - Determines approach to detecting element selection
+  abstract selectionMethod: "TinyMCE" | "focus";
+  //  - Determines wether or not to keep track of contents
+  abstract trackInnerText: boolean;
 
   // Private properties
   //  - ID will reflect what this.node has
@@ -55,8 +62,11 @@ export default abstract class MceElement extends SelectableElement {
   //  - Internal map of attributes to watch - includes style and class which are handled separately
   private _attributes: Map<
     string,
-    Writable<string> | typeof this.style | typeof this.classList
+    Writable<string | null> | typeof this.style | typeof this.classList
   >;
+  //  - Unsubscriber for the TinyMCE-based selection method
+  private selectUnsubscriber?: () => void;
+
   // Merged attributes - includes the default attributes and the subclass-implemented ones
   get mergedAttributes() {
     const _attrs = this._attributes;
@@ -69,11 +79,11 @@ export default abstract class MceElement extends SelectableElement {
   }
   static attrIsStyle = (
     key: string,
-    val: string | CSSStyleDeclaration | DOMTokenList
+    val: string | CSSStyleDeclaration | DOMTokenList | null
   ): val is CSSStyleDeclaration => key === "style";
   static attrIsClassList = (
     key: string,
-    val: string | CSSStyleDeclaration | DOMTokenList
+    val: string | CSSStyleDeclaration | DOMTokenList | null
   ): val is DOMTokenList => key === "class";
 
   constructor(
@@ -91,6 +101,7 @@ export default abstract class MceElement extends SelectableElement {
       // Only check self if initialized (otherwise it will be checked in the constructor)
       if (this.observer) this.checkSelf();
     });
+
     // Watch style and classlist for changes
     this.style = writable<CSSStyleDeclaration>(node.style);
     this.classList = writable<DOMTokenList>(node.classList);
@@ -98,11 +109,12 @@ export default abstract class MceElement extends SelectableElement {
     // Build internal map of attributes to watch
     this._attributes = new Map<
       string,
-      Writable<string> | typeof this.style | typeof this.classList
+      Writable<string | null> | typeof this.style | typeof this.classList
     >([
       ["class", this.classList],
       ["style", this.style],
       ["data-cgb-id", this._id],
+      ["data-mce-selected", writable(null)],
     ]);
 
     // Set ID of element
@@ -146,7 +158,7 @@ export default abstract class MceElement extends SelectableElement {
     const changedNodes = mutations.filter((m) => {
       // Only look at childList mutations
       if (m.type !== "childList") return false;
-      // Check if any of the nodes matter (either it is a valid HTMLElement or something weird happened)
+      // Check if any of the nodes matter (filter out bogus elements)
       const nodes = [...m.addedNodes, ...m.removedNodes].find(
         (n) =>
           (n instanceof this.window.HTMLElement && !n.dataset.mceBogus) ||
@@ -154,6 +166,15 @@ export default abstract class MceElement extends SelectableElement {
       );
       return nodes;
     });
+    // debugger;
+    if (
+      this.trackInnerText &&
+      mutations.find(
+        (m) => m.type === "characterData" || m.type === "childList"
+      )
+    ) {
+      this.innerText?.set(this.node.innerText);
+    }
     // Update the attributes
     changedAttributes.forEach((mutation) => {
       // Don't update if the target node is not this.node (the main node). Can happen if this.startobserving is called on a secondary node, or if the node is a child of this.node.
@@ -179,7 +200,7 @@ export default abstract class MceElement extends SelectableElement {
         } else {
           const newValue = this.node.getAttribute(mutation.attributeName!);
           if (newValue !== mutation.oldValue) {
-            (<Writable<string>>attr).set(newValue || "");
+            (<Writable<string | null>>attr).set(newValue);
           }
         }
       }
@@ -195,7 +216,21 @@ export default abstract class MceElement extends SelectableElement {
   }
 
   public startObserving() {
-    super.startObserving();
+    if (this.selectionMethod === "TinyMCE") {
+      // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
+      this.selectUnsubscriber = this._attributes
+        .get("data-mce-selected")
+        ?.subscribe((value) => {
+          if (value === "inline-boundary") {
+            this.select();
+          } else {
+            this.deselect();
+          }
+        });
+    } else {
+      super.startObserving();
+    }
+
     this.watchNodes.forEach((options, node) => {
       if (!this.observer) {
         console.debug("Start observing called before observer was created!");
@@ -210,6 +245,8 @@ export default abstract class MceElement extends SelectableElement {
             }
           : {}),
         childList: true,
+        characterData: this.trackInnerText,
+        subtree: this.trackInnerText,
         ...options,
       });
       // console.log("Observing:", node, this.observer);
@@ -218,6 +255,10 @@ export default abstract class MceElement extends SelectableElement {
 
   public stopObserving() {
     super.stopObserving();
+    if (this.selectUnsubscriber) {
+      this.selectUnsubscriber();
+      this.selectUnsubscriber = undefined;
+    }
     if (!this.observer) {
       // console.error("Stop observing called before observer was created!");
       return;
@@ -255,11 +296,21 @@ export default abstract class MceElement extends SelectableElement {
           node.dataset.mceStyle = cssText;
         } else if (MceElement.attrIsClassList(key, value)) {
           node.classList.value = value.value;
-        } else if (value !== undefined) {
+        } else if (value !== undefined && value !== null) {
           node.setAttribute(key, value as string);
         }
       });
     });
+
+    // Watch for changes to the inner text
+    if (this.trackInnerText) {
+      this.innerText = writable(this.node.innerText);
+      this.innerText.subscribe((value) => {
+        if (value !== node.innerText) {
+          node.innerText = value;
+        }
+      });
+    }
 
     // const startObserving = this.startObserving.bind(this);
     // const stopObserving = this.stopObserving.bind(this);
