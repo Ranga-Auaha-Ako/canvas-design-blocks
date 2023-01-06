@@ -112,7 +112,7 @@ export default class Column extends MceElement {
       .filter((n) => n.nodeType === Node.TEXT_NODE)
       .forEach((n) => {
         // Add to new paragraph
-        n.textContent &&
+        n.textContent?.trim() &&
           grid.editor.dom.add(foundInnerNode, "p", {}, n.textContent);
         // Remove old text node
         grid.editor.dom.remove(n);

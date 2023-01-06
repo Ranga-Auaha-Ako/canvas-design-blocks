@@ -9,11 +9,11 @@ export class SelectableElement {
 
   //  - Functions for selecting and deselecting the node
   public select: () => void = () => {
+    if (this.timeoutId) window.clearTimeout(this.timeoutId);
+    if (get(this.selected) === this) return;
     this.selected.set(this);
     const parent = get(this.parent);
     if (parent) parent.selected.set(this);
-    if (this.timeoutId) window.clearTimeout(this.timeoutId);
-    // console.log("Parent", parent, "of", this, "is now selected");
   };
   public deselect: () => void = () => {
     if (this.timeoutId) window.clearTimeout(this.timeoutId);

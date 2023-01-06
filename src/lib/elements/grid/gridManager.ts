@@ -29,10 +29,6 @@ export class GridManager extends ElementManager {
     super(state, editor);
 
     this.importAll();
-
-    this.subscribe((grids) => {
-      console.log("Grids updated", grids);
-    });
   }
   public add(grid: Grid | Grid[]) {
     super.add(grid);

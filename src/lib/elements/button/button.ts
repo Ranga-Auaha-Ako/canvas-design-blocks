@@ -5,10 +5,11 @@ import { nanoid } from "nanoid";
 import { stateObject } from "src/main";
 import { get, writable } from "svelte/store";
 import type { Editor } from "tinymce";
+import MceTextElement from "../generic/mceTextElement";
 import ButtonConfig from "./buttonConfig.svelte";
 import { ButtonManager } from "./buttonManager";
 
-export class Button extends MceElement {
+export class Button extends MceTextElement {
   public static markupVersion = "1.0.0";
   public selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
   public trackInnerText = true;
@@ -34,15 +35,11 @@ export class Button extends MceElement {
     public readonly id = nanoid(),
     highlight: boolean = false
   ) {
-    super(node, editor, undefined, [], id);
+    super(node, editor, id);
 
     // If desired, scroll to and highlight the grid
     if (highlight) {
-      editor.getWin().scrollTo({
-        top: this.node.offsetTop,
-        behavior: "smooth",
-      });
-      editor.selection.select(this.node);
+      this.highlight();
     }
 
     // Start watching for changes in the TinyMCE DOM
@@ -51,7 +48,6 @@ export class Button extends MceElement {
     // Monitor selected state and show Button Editor when selected
     this.selected.subscribe((selected) => {
       if (selected === this) {
-        console.log("Button selected");
         this.state.showInterface.set(true);
         this.state.configComponent.set({
           component: ButtonConfig,

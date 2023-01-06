@@ -73,11 +73,13 @@
     display: contents;
   }
   .cgb-openButton {
-    @apply rounded-sm w-full h-8 py-1 px-2;
+    @apply w-full h-8 py-1 px-2;
     @apply flex flex-row items-center;
     @apply transition text-sm border border-uni-gray-200 rounded;
     &.cgb-active {
       @apply bg-uni-blue text-white border-2 border-uni-blue;
+      /* Match Canvas border radius setting */
+      border-radius: 3px;
     }
     & img {
       @apply h-full p-0.5;

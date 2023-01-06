@@ -32,7 +32,11 @@ export interface MceElementStatics {
   ) => MceElement;
 }
 
-// Base class for all elements in the TinyMCE DOM tree that we might manipulate.
+/**
+ * Base class for all elements in the TinyMCE DOM tree that we might manipulate.
+ * - Abstracts binding to attributes, handling messy TinyMCE DOM changes, and
+ *  provides a consistent interface for all elements.
+ */
 export default abstract class MceElement extends SelectableElement {
   // Public properties
   public observer?: MutationObserver;
@@ -42,8 +46,6 @@ export default abstract class MceElement extends SelectableElement {
   // - Style and classlist - will reflect what this.node has
   public style: Writable<CSSStyleDeclaration>;
   public classList: Writable<DOMTokenList>;
-  // - Inner text - will reflect what this.node has
-  public innerText: Writable<string> | undefined;
 
   // Requires implementation.
   //  - Stores the attributes that should be watched for changes.
@@ -53,8 +55,6 @@ export default abstract class MceElement extends SelectableElement {
   // CONFIG: Requires implementation.
   //  - Determines approach to detecting element selection
   abstract selectionMethod: "TinyMCE" | "focus";
-  //  - Determines wether or not to keep track of contents
-  abstract trackInnerText: boolean;
 
   // Private properties
   //  - ID will reflect what this.node has
@@ -166,15 +166,6 @@ export default abstract class MceElement extends SelectableElement {
       );
       return nodes;
     });
-    // debugger;
-    if (
-      this.trackInnerText &&
-      mutations.find(
-        (m) => m.type === "characterData" || m.type === "childList"
-      )
-    ) {
-      this.innerText?.set(this.node.innerText);
-    }
     // Update the attributes
     changedAttributes.forEach((mutation) => {
       // Don't update if the target node is not this.node (the main node). Can happen if this.startobserving is called on a secondary node, or if the node is a child of this.node.
@@ -245,8 +236,6 @@ export default abstract class MceElement extends SelectableElement {
             }
           : {}),
         childList: true,
-        characterData: this.trackInnerText,
-        subtree: this.trackInnerText,
         ...options,
       });
       // console.log("Observing:", node, this.observer);
@@ -268,7 +257,7 @@ export default abstract class MceElement extends SelectableElement {
     // });
   }
 
-  public setupObserver(editor?: Editor) {
+  public setupObserver() {
     const node = this.node;
     // Update attributes and styles on node by triggering sub update
     this.style.update((_) => _);
@@ -301,31 +290,6 @@ export default abstract class MceElement extends SelectableElement {
         }
       });
     });
-
-    // Watch for changes to the inner text
-    if (this.trackInnerText) {
-      this.innerText = writable(this.node.innerText);
-      this.innerText.subscribe((value) => {
-        if (value !== node.innerText) {
-          node.innerText = value;
-        }
-      });
-    }
-
-    // const startObserving = this.startObserving.bind(this);
-    // const stopObserving = this.stopObserving.bind(this);
-    // // Stop observing and start observing when editor looses focus
-    // editor?.on("focus", startObserving);
-    // editor?.on("blur", stopObserving);
-    // // Stop observing and start observing when editor is activated or deactivated
-    // editor?.on("activate", startObserving);
-    // editor?.on("deactivate", stopObserving);
-    // // Stop observing and start observing when editor is getting content
-    // editor?.on("BeforeGetContent", stopObserving);
-    // editor?.on("GetContent", startObserving);
-    // // Stop observing and start observing when editor is setting content
-    // editor?.on("BeforeSetContent", stopObserving);
-    // editor?.on("SetContent", startObserving);
   }
 
   public setupPopover(
@@ -351,6 +315,15 @@ export default abstract class MceElement extends SelectableElement {
   public delete() {
     this.stopObserving();
     this.node.remove();
+  }
+
+  public highlight() {
+    this.editor.getWin().scrollTo({
+      top: this.node.offsetTop,
+      behavior: "smooth",
+    });
+    this.editor.focus();
+    this.editor.selection.select(this.node);
   }
   abstract checkChildren(): void;
   abstract checkSelf(): void;

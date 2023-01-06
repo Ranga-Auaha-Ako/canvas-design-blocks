@@ -124,11 +124,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
 
     // If desired, scroll to and highlight the grid
     if (highlight) {
-      editor.getWin().scrollTo({
-        top: this.node.offsetTop,
-        behavior: "smooth",
-      });
-      editor.selection.select(this.node);
+      this.highlight();
     }
   }
 
