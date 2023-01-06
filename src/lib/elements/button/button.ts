@@ -131,16 +131,16 @@ export class Button extends MceTextElement {
   checkChildren() {
     this.stopObserving();
     // Only text nodes are allowed as children of this.node
-    const children = Array.from(this.node.childNodes);
-    children.forEach((child) => {
-      if (child.nodeType !== Node.TEXT_NODE) {
-        if (child.textContent === null) return;
-        this.node.replaceChild(
-          this.node.ownerDocument.createTextNode(child.textContent),
-          child
-        );
-      }
-    });
+    // const children = Array.from(this.node.childNodes);
+    // children.forEach((child) => {
+    //   if (child.nodeType !== Node.TEXT_NODE) {
+    //     if (child.textContent === null) return;
+    //     this.node.replaceChild(
+    //       this.node.ownerDocument.createTextNode(child.textContent),
+    //       child
+    //     );
+    //   }
+    // });
     this.startObserving();
   }
   checkSelf() {

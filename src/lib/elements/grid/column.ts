@@ -107,16 +107,17 @@ export default class Column extends MceElement {
       }
     });
 
-    // If the column uses the old format (has text as direct decendant rather than in a paragraph), move it into a paragraph
-    [...foundInnerNode.childNodes]
-      .filter((n) => n.nodeType === Node.TEXT_NODE)
-      .forEach((n) => {
-        // Add to new paragraph
-        n.textContent?.trim() &&
-          grid.editor.dom.add(foundInnerNode, "p", {}, n.textContent);
-        // Remove old text node
-        grid.editor.dom.remove(n);
-      });
+    // REMOVED: This introduced more problems than it solved - TinyMCE makes a lot of these text nodes, and moving them can create issues with text like "Hello" being split into "H" "e" "l" "l" "o"
+    // // If the column uses the old format (has text as direct decendant rather than in a paragraph), move it into a paragraph
+    // [...foundInnerNode.childNodes]
+    //   .filter((n) => n.nodeType === Node.TEXT_NODE)
+    //   .forEach((n) => {
+    //     // Add to new paragraph
+    //     n.textContent?.trim() &&
+    //       grid.editor.dom.add(foundInnerNode, "p", {}, n.textContent);
+    //     // Remove old text node
+    //     grid.editor.dom.remove(n);
+    //   });
 
     // If the column is empty, reset it to a single empty paragraph
     if (MceElement.isEmpty(foundInnerNode)) {
