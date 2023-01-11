@@ -38,36 +38,65 @@ export interface MceElementStatics {
  *  provides a consistent interface for all elements.
  */
 export default abstract class MceElement extends SelectableElement {
-  // Public properties
+  /**
+   * The mutationObserver which is activated/deactivated as needed
+   */
   public observer?: MutationObserver;
+  /**
+   * References the window this element exists within
+   */
   public window: Window & typeof globalThis;
-  // - Popover - will be set if this node has a popover
+  /**
+   * Popover - will be set if this node has a popover
+   */
   public popover?: McePopover;
-  // - Style and classlist - will reflect what this.node has
+  /**
+   * References this.node's style, used to allow reactive style changes.
+   */
   public style: Writable<CSSStyleDeclaration>;
+  /**
+   * References this.node's classList, used to allow reactive class changes.
+   */
   public classList: Writable<DOMTokenList>;
 
-  // Requires implementation.
-  //  - Stores the attributes that should be watched for changes.
+  /**
+   * Stores the attributes that should be watched for changes.
+   */
   abstract readonly attributes: Map<string, Writable<string> | false>;
-  //  - Stores the default classes that should be added to the node.
+  /**
+   * Stores the default classes that should be added to the node.
+   */
   abstract defaultClasses: Set<string>;
-  // CONFIG: Requires implementation.
-  //  - Determines approach to detecting element selection
+  /**
+   * Determines approach to detecting element selection
+   * - TinyMCE: Uses TinyMCE's selection API to detect selection
+   * - focus: Uses the focus event to detect selection
+   */
   abstract selectionMethod: "TinyMCE" | "focus";
+  /**
+   * The query selector that will be used to find this element in the TinyMCE DOM.
+   */
+  abstract selector: string;
 
-  // Private properties
-  //  - ID will reflect what this.node has
+  /**
+   * ID will reflect what this.node has
+   */
   private _id: Writable<typeof this.id>;
-  //  - Internal map of attributes to watch - includes style and class which are handled separately
+  /**
+   * Internal map of attributes to watch - includes style and class which are handled separately
+   */
   private _attributes: Map<
     string,
     Writable<string | null> | typeof this.style | typeof this.classList
   >;
-  //  - Unsubscriber for the TinyMCE-based selection method
+  /**
+   * Unsubscriber for the TinyMCE-based selection method
+   */
   private selectUnsubscriber?: () => void;
 
-  // Merged attributes - includes the default attributes and the subclass-implemented ones
+  /**
+   * Merged attributes - includes the default attributes and the subclass-implemented ones
+   */
   get mergedAttributes() {
     const _attrs = this._attributes;
     this.attributes.forEach((value, key) => {
@@ -77,15 +106,39 @@ export default abstract class MceElement extends SelectableElement {
     });
     return _attrs;
   }
+
+  /**
+   * Utility function for type narrowing
+   * @param key The key of attribute to check
+   * @param val The value (not used but required for type)
+   * @returns True if the key is "style", declares val as CSSStyleDeclaration
+   */
   static attrIsStyle = (
     key: string,
     val: string | CSSStyleDeclaration | DOMTokenList | null
   ): val is CSSStyleDeclaration => key === "style";
+
+  /**
+   * Utility function for type narrowing
+   * @param key The key of attribute to check
+   * @param val The value (not used but required for type)
+   * @returns True if the key is "class", declares val as DOMTokenList
+   */
   static attrIsClassList = (
     key: string,
     val: string | CSSStyleDeclaration | DOMTokenList | null
   ): val is DOMTokenList => key === "class";
 
+  /**
+   * Creates an MceElement instance. This does not create the element in
+   * the TinyMCE DOM, and should usually be called through the static
+   * create() or import() methods.
+   * @param node The node in TinyMCE's DOM which this instance represents
+   * @param editor The TinyMCE editor instance
+   * @param watchNodes Any additional nodes to watch for changes
+   * @param children Children MceElements
+   * @param id The ID (captured from import or manually created)
+   */
   constructor(
     public node: HTMLElement,
     public editor: Editor = window.tinymce.activeEditor,
@@ -124,6 +177,11 @@ export default abstract class MceElement extends SelectableElement {
     this.window = deriveWindow(node) || window;
   }
 
+  /**
+   * Determines whether the node is empty (contains no text or meaningful elements)
+   * @param node The node to check
+   * @returns True if the node is empty
+   */
   public static isEmpty(node: HTMLElement): boolean {
     return (
       !voidElementsSet.has(node.tagName.toLowerCase()) &&
@@ -147,6 +205,10 @@ export default abstract class MceElement extends SelectableElement {
     );
   }
 
+  /**
+   * Observer function used by startObserving() to handle changes to the node
+   * @param mutations Any mutations that have occurred (from the observer)
+   */
   public observerFunc(mutations: MutationRecord[]) {
     // document.getElementById("main")?.appendChild(new Text("test"));
     // Get list of changed attributes
@@ -206,6 +268,11 @@ export default abstract class MceElement extends SelectableElement {
     }
   }
 
+  /**
+   * Starts observing the node for changes.
+   *
+   * **Important: Run this after all changes have been made**
+   */
   public startObserving() {
     if (this.selectionMethod === "TinyMCE") {
       // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
@@ -242,6 +309,12 @@ export default abstract class MceElement extends SelectableElement {
     });
   }
 
+  /**
+   * Stops observing the node for changes
+   *
+   * **Important: Run this before making changes - otherwise the
+   * element will start repairing itself mid-change!**
+   */
   public stopObserving() {
     super.stopObserving();
     if (this.selectUnsubscriber) {
@@ -257,6 +330,9 @@ export default abstract class MceElement extends SelectableElement {
     // });
   }
 
+  /**
+   * Run once to setup the observer after instance creation
+   */
   public setupObserver() {
     const node = this.node;
     // Update attributes and styles on node by triggering sub update
@@ -292,6 +368,13 @@ export default abstract class MceElement extends SelectableElement {
     });
   }
 
+  /**
+   * Run once to setup a popover for the node
+   * @param contents The svelte component to display in the popover
+   * @param props Any props to pass to the component
+   * @param placement Where to place the popover
+   * @returns The popover component
+   */
   public setupPopover(
     contents?: typeof SvelteComponent,
     props?: McePopover["props"],
@@ -312,19 +395,34 @@ export default abstract class MceElement extends SelectableElement {
     return this.popover;
   }
 
+  /**
+   * Deletes the node from the DOM and stops observing it
+   */
   public delete() {
     this.stopObserving();
     this.node.remove();
   }
 
-  public highlight() {
-    this.editor.getWin().scrollTo({
-      top: this.node.offsetTop,
-      behavior: "smooth",
-    });
+  /**
+   * Selects the node in the editor
+   * @param scroll Whether to scroll to the node
+   */
+  public highlight(scroll: boolean = true) {
+    if (scroll) {
+      this.editor.getWin().scrollTo({
+        top: this.node.offsetTop,
+        behavior: "smooth",
+      });
+    }
     this.editor.focus();
     this.editor.selection.select(this.node);
   }
+  /**
+   * Function called when a change in the children is detected
+   */
   abstract checkChildren(): void;
+  /**
+   * Function called when a change in the node is detected
+   */
   abstract checkSelf(): void;
 }
