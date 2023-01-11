@@ -38,23 +38,23 @@ export default abstract class MceTextElement extends MceElement {
       "keydown",
       this.keyHandler.bind(this)
     );
-    this.editor.on("SelectionChange", this.selectionHandler.bind(this));
+    // this.editor.on("SelectionChange", this.selectionHandler.bind(this));
     // Add blank character to empty elements to prevent deletion
-    this.selected.subscribe((selected) => {
-      if (selected === this) {
-        if (this.editor.dom.isEmpty(this.node)) {
-          const newChild = this.clearContents();
-          // const newChild = this.window.document.createTextNode("\uFEFF");
-          this.editor.selection.select(newChild);
-          // const sel = this.window.getSelection();
-          // if (!sel || sel.type == "None") return;
-          // sel.selectAllChildren(this.node);
-          // const r = new Range();
-          // r.selectNodeContents(newChild);
-          // this.editor.selection.setRng(r);
-        }
-      }
-    });
+    // this.selected.subscribe((selected) => {
+    //   if (selected === this) {
+    //     if (this.editor.dom.isEmpty(this.node)) {
+    //       const newChild = this.clearContents();
+    //       // const newChild = this.window.document.createTextNode("\uFEFF");
+    //       this.editor.selection.select(newChild);
+    //       // const sel = this.window.getSelection();
+    //       // if (!sel || sel.type == "None") return;
+    //       // sel.selectAllChildren(this.node);
+    //       // const r = new Range();
+    //       // r.selectNodeContents(newChild);
+    //       // this.editor.selection.setRng(r);
+    //     }
+    //   }
+    // });
   }
 
   public clearContents() {
@@ -76,7 +76,7 @@ export default abstract class MceTextElement extends MceElement {
     if (!willDelete) return true;
     // Handle user attempt to delete contents:
     if (e.key === "Backspace" || e.key === "Delete") {
-      console.log("Prevented deletion of outer element, but clearing content");
+      // console.log("Prevented deletion of outer element, but clearing content");
       e.preventDefault();
       // this.node.textContent = "\uFEFF";
       this.clearContents();
@@ -118,9 +118,11 @@ export default abstract class MceTextElement extends MceElement {
     // Watch for changes to the inner text and reflect back to node
     this.innerText = writable(this.node.innerText);
     this.innerText.subscribe((value) => {
+      this.stopObserving();
       if (value !== this.node.innerText) {
         this.node.innerText = value;
       }
+      this.startObserving();
     });
   }
 

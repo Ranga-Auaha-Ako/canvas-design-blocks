@@ -136,14 +136,14 @@ export abstract class ElementManager implements Writable<MceElement[]> {
       });
     });
 
-    // Events where we need to hide the interface
-    const hideInterfaceEvents = ["dragstart"];
-    hideInterfaceEvents.forEach((evtName) => {
-      this.editor.on(evtName, (e) => {
-        this.state.showInterface.set(false);
-        get(this._elements).forEach((el) => el.selected.set(false));
-      });
-    });
+    // // Events where we need to hide the interface
+    // const hideInterfaceEvents = ["dragstart"];
+    // hideInterfaceEvents.forEach((evtName) => {
+    //   this.editor.on(evtName, (e) => {
+    //     this.state.showInterface.set(false);
+    //     get(this._elements).forEach((el) => el.selected.set(new Set()));
+    //   });
+    // });
   }
 }
 

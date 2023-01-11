@@ -96,23 +96,13 @@ export default class Row extends MceElement {
     });
     // Set up popover
     this.popover = this.setupPopover(RowMenu, { row: this }, "top");
-    this.selected.subscribe((selected) => {
+    this.isSelected.subscribe((selected) => {
       if (selected) {
         !this.popover.isActive && this.popover.show();
       } else {
         if (this.popover.isActive) {
           this.popover.hide();
         }
-      }
-    });
-    let parentSelectUnsub: Unsubscriber | undefined;
-    this.parent.subscribe((parent) => {
-      if (parentSelectUnsub) parentSelectUnsub();
-      if (parent) {
-        parentSelectUnsub = parent.selected.subscribe((selected) => {
-          if (selected === parent) this.popover.show();
-          else if (parent === get(this.selected)) this.popover.hide();
-        });
       }
     });
     // Row children are always columns or the popover

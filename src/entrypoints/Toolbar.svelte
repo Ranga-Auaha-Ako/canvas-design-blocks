@@ -45,7 +45,7 @@
       <div class="toolbar-menu advanced-settings" transition:slide>
         <svelte:component
           this={$configComponent.component}
-          {...$configComponent.props}
+          props={$configComponent.props}
         />
       </div>
     {/if}

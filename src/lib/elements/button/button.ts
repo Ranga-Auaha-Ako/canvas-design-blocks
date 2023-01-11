@@ -11,8 +11,12 @@ import { ButtonManager } from "./buttonManager";
 
 export class Button extends MceTextElement {
   public static markupVersion = "1.0.0";
-  public selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
   public trackInnerText = true;
+  public static staticAttributes = {
+    "data-cgb-version": Button.markupVersion,
+    "data-cgb-content": "Simple",
+    contenteditable: "false",
+  };
   attributes = new Map([
     ["href", writable("")],
     ["title", writable("")],
@@ -46,8 +50,9 @@ export class Button extends MceTextElement {
     this.setupObserver();
 
     // Monitor selected state and show Button Editor when selected
-    this.selected.subscribe((selected) => {
-      if (selected === this) {
+    this.isSelected.subscribe((selected) => {
+      if (selected) {
+        console.log("Showing Interface for button");
         this.state.showInterface.set(true);
         this.state.configComponent.set({
           component: ButtonConfig,
@@ -56,6 +61,7 @@ export class Button extends MceTextElement {
           },
         });
       } else {
+        console.log("Hiding Interface for button", selected);
         this.state.configComponent.update((c) => {
           if (c?.props.button === this) return null;
           return c;
@@ -65,7 +71,7 @@ export class Button extends MceTextElement {
   }
 
   public delete() {
-    if (get(this.selected) === this) {
+    if (get(this.isSelected)) {
       this.state.configComponent.update((c) => {
         if (c?.props.button === this) return null;
         return c;
@@ -87,6 +93,11 @@ export class Button extends MceTextElement {
       buttonManager,
       buttonRoot.dataset.cgeId
     );
+    Object.entries(Button.staticAttributes).forEach(([key, value]) => {
+      if (buttonRoot.getAttribute(key) !== value) {
+        buttonRoot.setAttribute(key, value);
+      }
+    });
     return button;
   }
 
@@ -100,11 +111,7 @@ export class Button extends MceTextElement {
     // Creates a new button at the specified location
     const buttonRoot = editor.dom.create(
       "a",
-      {
-        class: "Button",
-        "data-cgb-version": Button.markupVersion,
-        "data-cgb-content": "Simple",
-      },
+      Button.staticAttributes,
       "Button Text"
     );
     // Add button to page
@@ -147,5 +154,9 @@ export class Button extends MceTextElement {
     if (!this.editor.getBody().contains(this.node)) {
       this.elementManager.remove(this);
     }
+  }
+
+  toString() {
+    return "<Button/>";
   }
 }

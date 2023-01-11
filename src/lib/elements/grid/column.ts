@@ -9,6 +9,7 @@ import { writable as localStorageWritable } from "svelte-local-storage-store";
 import type { Editor } from "tinymce";
 
 export default class Column extends MceElement {
+  public selectsParent = true;
   public selectionMethod: "TinyMCE" | "focus" = "focus";
   public trackInnerText = false;
   public width: Writable<Required<ColumnLayout>>;
@@ -229,23 +230,13 @@ export default class Column extends MceElement {
     this.setupObserver();
     // Set up popover
     this.popover = this.setupPopover(ColMenu, { col: this }, "bottom");
-    this.selected.subscribe((selected) => {
+    this.isSelected.subscribe((selected) => {
       if (selected && get(this.showPopover)) {
         !this.popover.isActive && this.popover.show();
       } else {
         if (this.popover.isActive) {
           this.popover.hide();
         }
-      }
-    });
-    let parentSelectUnsub: Unsubscriber | undefined;
-    this.parent.subscribe((parent) => {
-      if (parentSelectUnsub) parentSelectUnsub();
-      if (parent) {
-        parentSelectUnsub = parent.selected.subscribe((selected) => {
-          if (selected === parent) this.popover.show();
-          else if (parent === get(this.selected)) this.popover.hide();
-        });
       }
     });
   }
