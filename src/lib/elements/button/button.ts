@@ -15,10 +15,10 @@ export class Button extends MceTextElement {
   public static staticAttributes = {
     "data-cgb-version": Button.markupVersion,
     "data-cgb-content": "Simple",
-    contenteditable: "false",
+    // contenteditable: "false",
   };
   attributes = new Map([
-    ["href", writable("")],
+    ["href", writable("#")],
     ["title", writable("")],
     ["target", writable("")],
   ]);
@@ -117,7 +117,7 @@ export class Button extends MceTextElement {
     // Creates a new button at the specified location
     const buttonRoot = editor.dom.create(
       "a",
-      Button.staticAttributes,
+      { ...Button.staticAttributes, href: "#" },
       "Button Text"
     );
     // Add button to page
@@ -143,6 +143,7 @@ export class Button extends MceTextElement {
 
   checkChildren() {
     this.stopObserving();
+    super.checkChildren();
     // Only text nodes are allowed as children of this.node
     // const children = Array.from(this.node.childNodes);
     // children.forEach((child) => {
