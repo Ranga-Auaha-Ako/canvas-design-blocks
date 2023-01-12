@@ -68,6 +68,12 @@ export class Button extends MceTextElement {
         });
       }
     });
+
+    this.node.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.select();
+      return false;
+    });
   }
 
   public delete() {

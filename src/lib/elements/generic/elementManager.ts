@@ -7,6 +7,9 @@ import MceElement, {
 
 export abstract class ElementManager implements Writable<MceElement[]> {
   public _elements: Writable<MceElement[]> = writable([]);
+  /**
+   * The query selector that will be used to find elements in the TinyMCE DOM.
+   */
   abstract selector: string;
   abstract elementClass: Omit<typeof MceElement, "new"> & MceElementStatics;
   // Details about the element

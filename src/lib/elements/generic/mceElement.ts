@@ -16,6 +16,11 @@ voidElementsSet.add("iframe");
 
 type observerMap = Map<Element, Partial<MutationObserverInit>>;
 
+/**
+ * The statics that subclasses of MceElement must implement.
+ * - import: Used to import an existing element from the TinyMCE DOM
+ * - create: Used to create a new element in the TinyMCE DOM
+ */
 export interface MceElementStatics {
   import: (
     state: stateObject,
@@ -73,10 +78,6 @@ export default abstract class MceElement extends SelectableElement {
    * - focus: Uses the focus event to detect selection
    */
   abstract selectionMethod: "TinyMCE" | "focus";
-  /**
-   * The query selector that will be used to find this element in the TinyMCE DOM.
-   */
-  abstract selector: string;
 
   /**
    * ID will reflect what this.node has
@@ -168,6 +169,7 @@ export default abstract class MceElement extends SelectableElement {
       ["style", this.style],
       ["data-cgb-id", this._id],
       ["data-mce-selected", writable(null)],
+      ["data-cgb-content", writable("element")],
     ]);
 
     // Set ID of element

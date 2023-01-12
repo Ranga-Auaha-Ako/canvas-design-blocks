@@ -60,7 +60,7 @@ export const loadApp = async () => {
   const buttons = new ButtonManager(state, editor);
 
   // Add button to open grid editor
-  loadToolbar({ state, managers: [buttons] });
+  loadToolbar({ state, managers: [grids, buttons] });
 
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");
