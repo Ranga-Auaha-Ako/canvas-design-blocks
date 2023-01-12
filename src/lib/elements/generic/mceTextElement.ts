@@ -36,21 +36,20 @@ export default abstract class MceTextElement extends MceElement {
     let foundInnerNode: HTMLElement;
     if (!innerNode || innerNode.parentNode !== outerNode) {
       foundInnerNode = outerNode.querySelector(
-        ":scope > div.cgb-el-inner"
+        ":scope > span.cgb-el-inner"
       ) as HTMLDivElement;
       if (!foundInnerNode) {
-        foundInnerNode = this.editor.dom.create("div", {
+        foundInnerNode = this.editor.dom.create("span", {
           contenteditable: true,
           class: "cgb-el-inner",
         });
         outerNode.appendChild(foundInnerNode);
       }
-      this.editor.dom.setAttrib(foundInnerNode, "contenteditable", "true");
       isNew = foundInnerNode !== innerNode;
     } else {
       foundInnerNode = innerNode;
-      this.editor.dom.setAttrib(foundInnerNode, "contenteditable", "true");
     }
+    this.editor.dom.setAttrib(foundInnerNode, "contenteditable", "true");
 
     // Move any other children into the inner node - we don't need them
     [...outerNode.childNodes].forEach((n) => {
@@ -189,6 +188,10 @@ export default abstract class MceTextElement extends MceElement {
       this.innerText?.set(this.node.innerText);
     }
     super.observerFunc(mutations);
+  }
+
+  public checkChildren() {
+    this.getOrCreateInnerNode();
   }
 
   public setupObserver() {
