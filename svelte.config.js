@@ -6,4 +6,8 @@ export default {
   preprocess: sveltePreprocess({
     postcss: true,
   }),
+  // vitePlugin: {
+  //   prebundleSvelteLibraries: false,
+  //   disableDependencyReinclusion: ["svelte-awesome-color-picker"],
+  // },
 };

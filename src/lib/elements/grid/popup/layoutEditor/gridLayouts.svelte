@@ -1,6 +1,6 @@
 <script lang="ts">
   import { RowLayout, rowTemplates } from "$lib/elements/grid/rowLayouts";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { fade, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { clickOutside } from "svelte-use-click-outside";
@@ -10,6 +10,13 @@
   import { writable } from "svelte-local-storage-store";
   import AdvancedSettings from "./advancedSettings.svelte";
   import { Readable } from "svelte/store";
+  import {
+    autoUpdate,
+    computePosition,
+    flip,
+    offset,
+    shift,
+  } from "@floating-ui/dom";
 
   export let row: Row | false = false;
   export let showAdvanced = !!row;
@@ -18,6 +25,33 @@
     : undefined;
 
   export let settingsOpen = writable("cgb-preferences-showadvanced", false);
+
+  // Popover management
+  export let sourceTarget: HTMLElement;
+  let x = 0;
+  let y = 0;
+  let popoverEl: HTMLDivElement;
+  $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
+
+  $: updateFunction = async () => {
+    let additionalOffset = [0, 0];
+    const position = await computePosition(sourceTarget, popoverEl, {
+      placement: showAdvanced && $settingsOpen ? "top" : "top",
+      middleware: [offset(0), shift(), flip(), offset(10)],
+    });
+    x = position.x + additionalOffset[0];
+    y = position.y + additionalOffset[1];
+  };
+
+  let cleanup: () => void;
+  $: if (sourceTarget && popoverEl) {
+    if (cleanup) cleanup();
+    cleanup = autoUpdate(sourceTarget, popoverEl, updateFunction);
+  }
+
+  onDestroy(() => {
+    if (cleanup) cleanup();
+  });
 
   // Source: https://stackoverflow.com/a/63424528/3902950
   const smartSlide = (node: Element) => {
@@ -47,6 +81,8 @@
     class:expanded={row && $settingsOpen}
     in:smartSlide|local
     out:fade
+    bind:this={popoverEl}
+    style:transform
   >
     <div class="details">
       <div class="layoutOptions">
@@ -97,11 +133,13 @@
     @contents;
   }
   .layoutList {
-    @apply mx-auto z-20 overflow-hidden cursor-auto box-content absolute left-1/2;
-    @apply h-52 transition-all duration-300;
+    @apply absolute top-0 left-0;
+    @apply mx-auto z-20 overflow-hidden cursor-auto box-content;
+    @apply h-52 transition duration-300;
     @apply bg-uni-blue-light rounded-md shadow-lg border-solid border-uni-blue-light;
     @apply grid;
-    transform: translateX(-50%);
+    transition-property: color, background-color, border-color, opacity,
+      box-shadow, filter, backdrop-filter, width, height;
     --col-width: 18rem;
     --full-width: var(--col-width);
     --border-width: 2px;
@@ -154,7 +192,7 @@
         transition-property: padding, transform;
 
         &:hover {
-          @apply py-2;
+          /* @apply py-1; */
           transform: scale(1.05);
         }
         & :global(svg) {
@@ -176,7 +214,7 @@
     &.expanded {
       @apply bg-uni-blue border-uni-blue;
       --full-width: calc(var(--col-width) * 2 + var(--border-width));
-      height: min(400px, calc(100vh - 3.5rem));
+      height: min(260px, calc(100vh - 3.5rem));
       width: var(--full-width);
       & .layoutOptions {
         width: 10rem;

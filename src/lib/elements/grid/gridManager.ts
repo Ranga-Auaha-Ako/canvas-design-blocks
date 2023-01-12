@@ -10,9 +10,14 @@ import type { Writable, Readable } from "svelte/store";
 import Row from "./row";
 import Grid from "./grid";
 import type { Editor } from "tinymce";
+import { SvelteComponent } from "svelte";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
+  configComponent: Writable<{
+    component: typeof SvelteComponent;
+    props: Record<string, any>;
+  } | null>;
 }
 
 export class GridManager implements Writable<Grid[]> {

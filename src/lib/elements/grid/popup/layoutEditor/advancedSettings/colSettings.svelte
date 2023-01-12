@@ -4,20 +4,13 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker from "./colourPicker.svelte";
+  import ColourPicker, {
+    getColour,
+  } from "$lib/util/components/colourPicker.svelte";
   import Column from "$lib/elements/grid/column";
+  import ColourSettings from "./colourSettings.svelte";
 
   export let column: Column;
-  export let index: number;
-
-  const rgb2hex = (rgb: string) => {
-    const vals = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!vals) return undefined;
-    return `#${vals
-      .slice(1)
-      .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
-      .join("")}`;
-  };
 
   enum ColType {
     Normal = "normal",
@@ -36,8 +29,8 @@
       return {
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
-        background: rgb2hex($style.background),
-        textColor: rgb2hex($style.color),
+        background: getColour($style.background),
+        textColor: getColour($style.color),
         card: isCard ? ColType.Card : ColType.Normal,
       };
     },
@@ -57,9 +50,9 @@
           // Padding
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
-          oldStyle.background = reflecting.background || "";
+          oldStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
-          oldStyle.color = reflecting.textColor || "";
+          oldStyle.color = reflecting.textColor?.toHex() || "";
         }
         return [oldStyle, oldClassList];
       },
@@ -69,8 +62,8 @@
 
 <div class="cgb-component">
   <div class="card">
-    <h5>Column {index + 1}</h5>
-    <span class="label-text">Row Type</span>
+    <h5>Column Settings</h5>
+    <span class="label-text">Column Type</span>
     <div class="btn-group">
       <label class="btn" class:active={$preferences.card === ColType.Normal}>
         <span>Default</span>
@@ -101,16 +94,7 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <ColourPicker
-      label="Background Colour"
-      id={column.id + "-bg-col"}
-      bind:colour={$preferences.background}
-    />
-    <ColourPicker
-      label="Text Colour"
-      id={column.id + "-text-col"}
-      bind:colour={$preferences.textColor}
-    />
+    <ColourSettings element={column} {preferences} popupDirection="top" />
   </div>
 </div>
 
@@ -124,7 +108,7 @@
     }
   }
   .card {
-    @apply p-4 m-2 shadow-md rounded bg-white;
+    @apply p-4 mt-2 shadow-md rounded-lg border-uni-blue-light border-2 bg-white w-screen max-w-sm;
     @apply flex flex-col gap-2;
     & .label-text {
       @apply font-bold text-uni-gray-500;

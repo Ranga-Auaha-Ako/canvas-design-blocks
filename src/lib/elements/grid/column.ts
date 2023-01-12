@@ -1,14 +1,19 @@
 import MceElement from "$lib/tinymce/mceElement";
-import { get, Writable, writable } from "svelte/store";
+import type { McePopover } from "$lib/tinymce/popover/popover";
+import { get, Unsubscriber, Writable, writable } from "svelte/store";
 import type Grid from "./grid";
+import ColMenu from "./popup/colMenu.svelte";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
+import { writable as localStorageWritable } from "svelte-local-storage-store";
 
 export default class Column extends MceElement {
   public width: Writable<Required<ColumnLayout>>;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["cgb-col"]);
   public parentRow?: Row;
+  public popover: McePopover;
+  public showPopover: Writable<boolean>;
 
   public getTextTarget() {
     const foundParagraphs = this.innerNode.querySelectorAll(
@@ -148,6 +153,10 @@ export default class Column extends MceElement {
     public innerNode: HTMLElement
   ) {
     super(node);
+    this.showPopover = localStorageWritable(
+      "cgb-preferences-showadvanced",
+      false
+    );
     this.width = writable(width);
     this.width.subscribe((width) => {
       this.classList.update((classes) => {
@@ -214,5 +223,26 @@ export default class Column extends MceElement {
     this.watchNodes.set(this.innerNode, {});
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
+    // Set up popover
+    this.popover = this.setupPopover(ColMenu, { col: this }, "bottom");
+    this.selected.subscribe((selected) => {
+      if (selected && get(this.showPopover)) {
+        !this.popover.isActive && this.popover.show();
+      } else {
+        if (this.popover.isActive) {
+          this.popover.hide();
+        }
+      }
+    });
+    let parentSelectUnsub: Unsubscriber | undefined;
+    this.parent.subscribe((parent) => {
+      if (parentSelectUnsub) parentSelectUnsub();
+      if (parent) {
+        parentSelectUnsub = parent.selected.subscribe((selected) => {
+          if (selected === parent) this.popover.show();
+          else if (parent === get(this.selected)) this.popover.hide();
+        });
+      }
+    });
   }
 }

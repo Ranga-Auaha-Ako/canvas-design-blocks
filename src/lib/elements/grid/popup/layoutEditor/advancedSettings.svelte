@@ -1,11 +1,11 @@
 <script lang="ts">
   import Row from "$lib/elements/grid/row";
-  import { get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker from "./advancedSettings/colourPicker.svelte";
-  import ColSettings from "./advancedSettings/colSettings.svelte";
+  import { getColour } from "$lib/util/components/colourPicker.svelte";
+  import ColourSettings from "./advancedSettings/colourSettings.svelte";
+  import preventBubble from "$lib/util/preventBubble";
 
   export let row: Row;
 
@@ -13,15 +13,6 @@
     Normal = "normal",
     Card = "card",
   }
-
-  const rgb2hex = (rgb: string) => {
-    const vals = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!vals) return undefined;
-    return `#${vals
-      .slice(1)
-      .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
-      .join("")}`;
-  };
 
   $: columns = row.columns;
 
@@ -37,8 +28,8 @@
       return {
         padding: $style.padding ? toPx($style.padding) : 0,
         margin: $style.margin ? toPx($style.margin) : 0,
-        background: rgb2hex($style.background),
-        textColor: rgb2hex($style.color),
+        background: getColour($style.background),
+        textColor: getColour($style.color),
         card: isCard ? RowType.Card : RowType.Normal,
       };
     },
@@ -58,16 +49,14 @@
           // Padding
           oldStyle.padding = `${reflecting.padding}px`;
           // Background
-          oldStyle.background = reflecting.background || "";
+          oldStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
-          oldStyle.color = reflecting.textColor || "";
+          oldStyle.color = reflecting.textColor?.toHex() || "";
         }
         return [oldStyle, oldClassList];
       },
     }
   );
-
-  let activeColumn = 0;
 
   const ids = {
     padding: nanoid(),
@@ -78,61 +67,47 @@
 </script>
 
 <div class="cgb-component">
-  <div class="advancedSettings">
-    <div class="card">
-      <p>Heads up! This section is still under heavy development.</p>
-    </div>
-    <div class="card">
-      <h5>Row Settings</h5>
-      <span class="label-text">Row Type</span>
-      <div class="btn-group">
-        <label class="btn" class:active={$preferences.card === RowType.Normal}>
-          <span>Default</span>
-          <input
-            name={ids.card}
-            type="radio"
-            value="normal"
-            bind:group={$preferences.card}
-          />
-        </label>
-        <label class="btn" class:active={$preferences.card === RowType.Card}>
-          <span>Card</span>
-          <input
-            name={ids.card}
-            type="radio"
-            value="card"
-            bind:group={$preferences.card}
-          />
-        </label>
-      </div>
-      <label for={ids.padding}>
-        <span class="label-text">Padding ({$preferences.padding}px)</span>
+  <div class="advancedSettings" use:preventBubble>
+    <h5>Row Settings</h5>
+    <span class="label-text">Row Type</span>
+    <div class="btn-group">
+      <label class="btn" class:active={$preferences.card === RowType.Normal}>
+        <span>Default</span>
         <input
-          id={ids.padding}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding}
+          name={ids.card}
+          type="radio"
+          value="normal"
+          bind:group={$preferences.card}
         />
       </label>
-      <ColourPicker
-        label="Background Colour"
-        id={ids.background}
-        bind:colour={$preferences.background}
-      />
-      <ColourPicker
-        label="Text Colour"
-        id={ids.textcolor}
-        bind:colour={$preferences.textColor}
-      />
+      <label class="btn" class:active={$preferences.card === RowType.Card}>
+        <span>Card</span>
+        <input
+          name={ids.card}
+          type="radio"
+          value="card"
+          bind:group={$preferences.card}
+        />
+      </label>
     </div>
-    {#each $columns as column, i}
-      <ColSettings {column} index={i} />
-    {/each}
+    <label for={ids.padding}>
+      <span class="label-text">Padding ({$preferences.padding}px)</span>
+      <input
+        id={ids.padding}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.padding}
+      />
+    </label>
+    <ColourSettings element={row} {preferences} />
   </div>
 </div>
 
 <style lang="postcss">
+  .advancedSettings {
+    /* @apply columns-2; */
+  }
   h5 {
     @apply w-full font-bold;
     &:after {
@@ -142,7 +117,7 @@
     }
   }
   .card {
-    @apply p-4 m-2 shadow-md rounded bg-white;
+    @apply p-4 shadow-md rounded;
     @apply flex flex-col gap-2;
     & .label-text {
       @apply font-bold text-uni-gray-500;
@@ -157,12 +132,12 @@
       }
     }
   }
-  .input-group {
+  /* .input-group {
     @apply flex items-center gap-2;
   }
   input[type="color"] {
     @apply rounded border-none;
-  }
+  } */
   .btn {
     @apply flex items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;
   }

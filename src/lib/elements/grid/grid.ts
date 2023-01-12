@@ -109,6 +109,10 @@ export class Grid extends MceElement implements Readable<Row[]> {
     // Set up rows
     if (rows) this.rows.set(rows);
     else this.addRow(rowTemplates["1"]);
+    // Grid children are always rows
+    this.rows.subscribe((rows) => {
+      this.children.set([...rows]);
+    });
     // Bind events to grid
     this.bindEvents();
     // Set ID of grid
