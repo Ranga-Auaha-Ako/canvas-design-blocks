@@ -337,6 +337,15 @@ export default abstract class MceElement extends SelectableElement {
    */
   public setupObserver() {
     const node = this.node;
+    // Set attributes to match node state
+    this.attributes.forEach((attr, key) => {
+      const value = node.getAttribute(key);
+      if (!attr) {
+      } else {
+        if (!value) attr.set("");
+        else if (value !== get(attr)) attr.set(value);
+      }
+    });
     // Update attributes and styles on node by triggering sub update
     this.style.update((_) => _);
     this.classList.update((classes) => {
