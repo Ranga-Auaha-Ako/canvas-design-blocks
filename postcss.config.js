@@ -30,8 +30,8 @@ export default {
           scopeTo: ".cgb-component",
           // These would be used to potentially not apply to nested elements controlled
           // by Canvas. We don't have those, so set to nothing.
-          tags: [],
-          tagSuffix: "",
+          tags: ["button"],
+          tagSuffix: ':not([class^="Button"])',
           // replace: [],
           ignore: [
             ".mce-content-body",

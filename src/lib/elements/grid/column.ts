@@ -1,13 +1,17 @@
-import MceElement from "$lib/tinymce/mceElement";
-import type { McePopover } from "$lib/tinymce/popover/popover";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { McePopover } from "$lib/elements/generic/popover/popover";
 import { get, Unsubscriber, Writable, writable } from "svelte/store";
 import type Grid from "./grid";
 import ColMenu from "./popup/colMenu.svelte";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
 import { writable as localStorageWritable } from "svelte-local-storage-store";
+import type { Editor } from "tinymce";
 
 export default class Column extends MceElement {
+  public selectsParent = true;
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public width: Writable<Required<ColumnLayout>>;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["cgb-col"]);
@@ -104,16 +108,17 @@ export default class Column extends MceElement {
       }
     });
 
-    // If the column uses the old format (has text as direct decendant rather than in a paragraph), move it into a paragraph
-    [...foundInnerNode.childNodes]
-      .filter((n) => n.nodeType === Node.TEXT_NODE)
-      .forEach((n) => {
-        // Add to new paragraph
-        n.textContent &&
-          grid.editor.dom.add(foundInnerNode, "p", {}, n.textContent);
-        // Remove old text node
-        grid.editor.dom.remove(n);
-      });
+    // REMOVED: This introduced more problems than it solved - TinyMCE makes a lot of these text nodes, and moving them can create issues with text like "Hello" being split into "H" "e" "l" "l" "o"
+    // // If the column uses the old format (has text as direct decendant rather than in a paragraph), move it into a paragraph
+    // [...foundInnerNode.childNodes]
+    //   .filter((n) => n.nodeType === Node.TEXT_NODE)
+    //   .forEach((n) => {
+    //     // Add to new paragraph
+    //     n.textContent?.trim() &&
+    //       grid.editor.dom.add(foundInnerNode, "p", {}, n.textContent);
+    //     // Remove old text node
+    //     grid.editor.dom.remove(n);
+    //   });
 
     // If the column is empty, reset it to a single empty paragraph
     if (MceElement.isEmpty(foundInnerNode)) {
@@ -152,7 +157,7 @@ export default class Column extends MceElement {
     public node: HTMLElement,
     public innerNode: HTMLElement
   ) {
-    super(node);
+    super(node, parentGrid.editor);
     this.showPopover = localStorageWritable(
       "cgb-preferences-showadvanced",
       false
@@ -225,23 +230,13 @@ export default class Column extends MceElement {
     this.setupObserver();
     // Set up popover
     this.popover = this.setupPopover(ColMenu, { col: this }, "bottom");
-    this.selected.subscribe((selected) => {
+    this.isSelected.subscribe((selected) => {
       if (selected && get(this.showPopover)) {
         !this.popover.isActive && this.popover.show();
       } else {
         if (this.popover.isActive) {
           this.popover.hide();
         }
-      }
-    });
-    let parentSelectUnsub: Unsubscriber | undefined;
-    this.parent.subscribe((parent) => {
-      if (parentSelectUnsub) parentSelectUnsub();
-      if (parent) {
-        parentSelectUnsub = parent.selected.subscribe((selected) => {
-          if (selected === parent) this.popover.show();
-          else if (parent === get(this.selected)) this.popover.hide();
-        });
       }
     });
   }

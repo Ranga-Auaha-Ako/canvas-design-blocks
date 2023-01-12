@@ -13,11 +13,14 @@ import { nanoid } from "nanoid";
 import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
-import MceElement from "$lib/tinymce/mceElement";
-import type { McePopover } from "$lib/tinymce/popover/popover";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { McePopover } from "$lib/elements/generic/popover/popover";
 import RowMenu from "$lib/elements/grid/popup/rowMenu.svelte";
+import type { Editor } from "tinymce";
 
 export default class Row extends MceElement {
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["grid-row"]);
   public popover: McePopover;
@@ -79,7 +82,7 @@ export default class Row extends MceElement {
     public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
-    super(node);
+    super(node, parentGrid.editor);
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
 
@@ -93,23 +96,13 @@ export default class Row extends MceElement {
     });
     // Set up popover
     this.popover = this.setupPopover(RowMenu, { row: this }, "top");
-    this.selected.subscribe((selected) => {
+    this.isSelected.subscribe((selected) => {
       if (selected) {
         !this.popover.isActive && this.popover.show();
       } else {
         if (this.popover.isActive) {
           this.popover.hide();
         }
-      }
-    });
-    let parentSelectUnsub: Unsubscriber | undefined;
-    this.parent.subscribe((parent) => {
-      if (parentSelectUnsub) parentSelectUnsub();
-      if (parent) {
-        parentSelectUnsub = parent.selected.subscribe((selected) => {
-          if (selected === parent) this.popover.show();
-          else if (parent === get(this.selected)) this.popover.hide();
-        });
       }
     });
     // Row children are always columns or the popover
