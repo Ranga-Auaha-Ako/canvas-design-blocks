@@ -124,7 +124,13 @@ export class Button extends MceTextElement {
     if (atCursor) {
       const insertNode = editor.selection.getNode();
       const inElement = insertNode.closest(`*[data-cgb-content="Simple"]`);
-      if (inElement) {
+      // If outside of the body, insert at the end of the body
+      if (
+        !editor.getBody().contains(insertNode) ||
+        insertNode === editor.getBody()
+      ) {
+        editor.dom.add(editor.getBody(), buttonRoot);
+      } else if (inElement) {
         editor.dom.insertAfter(buttonRoot, inElement);
       } else {
         editor.dom.insertAfter(buttonRoot, insertNode);
