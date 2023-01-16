@@ -67,11 +67,13 @@
 </script>
 
 <div class="cgb-component">
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <div
     class="cgb-popover-wrapper"
     style:transform
     bind:this={popoverEl}
     class:active={component && show && target && popoverEl && isVisible}
+    tabindex="0"
   >
     {#if component && show}
       <svelte:component this={component} {props} />

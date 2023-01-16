@@ -105,6 +105,15 @@ export default class Row extends MceElement {
         }
       }
     });
+    // let curSel: any;
+    // this.isSelected.subscribe(() => {
+    //   const par = get(this.parent);
+    //   console.log(
+    //     "Selected",
+    //     Array.from(get(this.selected)),
+    //     par !== false ? Array.from(get(this.selected)) : null
+    //   );
+    // });
     // Row children are always columns or the popover
     columns.subscribe((cols) => {
       this.children.set([...cols, this.popover]);
