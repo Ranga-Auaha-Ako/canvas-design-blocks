@@ -27,7 +27,7 @@
     Placement,
     shift,
   } from "@floating-ui/dom";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
@@ -154,6 +154,10 @@
   }
   onMount(() => {
     updateFunction();
+  });
+
+  onDestroy(() => {
+    if (cleanup) cleanup();
   });
 
   let customColour = false;
