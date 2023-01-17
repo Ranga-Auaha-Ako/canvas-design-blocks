@@ -29,14 +29,6 @@
 
   $: updateFunction = async () => {
     if (!target || !popoverEl) return;
-    let additionalOffset = [0, 0];
-    if (target.ownerDocument !== popoverEl.ownerDocument) {
-      const iframe = target.ownerDocument.defaultView?.frameElement;
-      if (iframe) {
-        const { left, top } = iframe.getBoundingClientRect();
-        additionalOffset = [left, top];
-      }
-    }
     const position = await computePosition(target, popoverEl, {
       placement,
       middleware: [
@@ -50,8 +42,8 @@
     const { middlewareData } = position;
     isVisible = !middlewareData.hide?.escaped ?? false;
     if (isVisible) {
-      x = position.x + additionalOffset[0];
-      y = position.y + additionalOffset[1];
+      x = position.x;
+      y = position.y;
     }
   };
 

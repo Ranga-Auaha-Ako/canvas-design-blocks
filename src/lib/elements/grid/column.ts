@@ -148,16 +148,23 @@ export default class Column extends MceElement {
 
   static import(grid: Grid, node: HTMLElement, width: Required<ColumnLayout>) {
     let [innerNode, isNew] = this.getOrCreateInnerNode(grid, node);
-    return new Column(grid, width, node, innerNode);
+    return new Column(
+      grid,
+      width,
+      node,
+      innerNode,
+      node.dataset.cgbId || undefined
+    );
   }
 
   constructor(
     public parentGrid: Grid,
     width: Required<ColumnLayout>,
     public node: HTMLElement,
-    public innerNode: HTMLElement
+    public innerNode: HTMLElement,
+    id?: string
   ) {
-    super(node, parentGrid.editor);
+    super(node, parentGrid.editor, undefined, undefined, id);
     this.showPopover = localStorageWritable(
       "cgb-preferences-showadvanced",
       false
@@ -239,5 +246,17 @@ export default class Column extends MceElement {
         }
       }
     });
+    let curSel: any;
+    this.isSelected.subscribe(() => {
+      const par = get(this.parent);
+      console.log(
+        "Selected",
+        Array.from(get(this.selected)),
+        par !== false ? Array.from(get(par.selected)) : null
+      );
+    });
+  }
+  toString() {
+    return "<Column/>";
   }
 }
