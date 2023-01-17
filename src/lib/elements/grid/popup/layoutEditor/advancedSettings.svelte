@@ -33,28 +33,26 @@
         card: isCard ? RowType.Card : RowType.Normal,
       };
     },
-    {
-      withOld(reflecting, [oldStyle, oldClassList]) {
-        // Card effect
-        if (reflecting.card === RowType.Normal) {
-          if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
-          oldClassList.remove("uoa_shadowbox");
-          oldClassList.remove("uoa_corners_4");
-        } else if (reflecting.card === RowType.Card) {
-          if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
-          oldClassList.add("uoa_shadowbox");
-          oldClassList.add("uoa_corners_4");
-        }
-        if (oldStyle) {
-          // Padding
-          oldStyle.padding = `${reflecting.padding}px`;
-          // Background
-          oldStyle.background = reflecting.background?.toHex() || "";
-          // Text Colour
-          oldStyle.color = reflecting.textColor?.toHex() || "";
-        }
-        return [oldStyle, oldClassList];
-      },
+    (reflecting, [oldStyle, oldClassList]) => {
+      // Card effect
+      if (reflecting.card === RowType.Normal) {
+        if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+        oldClassList.remove("uoa_shadowbox");
+        oldClassList.remove("uoa_corners_4");
+      } else if (reflecting.card === RowType.Card) {
+        if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+        oldClassList.add("uoa_shadowbox");
+        oldClassList.add("uoa_corners_4");
+      }
+      if (oldStyle) {
+        // Padding
+        oldStyle.padding = `${reflecting.padding}px`;
+        // Background
+        oldStyle.background = reflecting.background?.toHex() || "";
+        // Text Colour
+        oldStyle.color = reflecting.textColor?.toHex() || "";
+      }
+      return [oldStyle, oldClassList];
     }
   );
 

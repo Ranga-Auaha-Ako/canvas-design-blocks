@@ -1,6 +1,6 @@
 {
   "name": "canvas-grid-builder",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
@@ -36,7 +36,7 @@
     "svelte-local-storage-store": "^0.3.1",
     "svelte-preprocess": "^4.10.7",
     "svelte-use-click-outside": "^1.0.0",
-    "svelte-writable-derived": "^2.1.5",
+    "svelte-writable-derived": "^3.0.1",
     "tailwindcss": "^3.1.8",
     "tinymce": "5.10",
     "to-px": "^1.1.0",

@@ -1,6 +1,5 @@
 import deriveWindow from "$lib/util/deriveWindow";
-import writableDerived from "svelte-writable-derived";
-import { get, Readable, writable, Writable } from "svelte/store";
+import { get, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
 import { McePopover } from "./popover/popover";
 import { SvelteComponent } from "svelte";
@@ -9,7 +8,6 @@ import { htmlVoidElements } from "html-void-elements";
 import type { Editor } from "tinymce";
 import type { Placement } from "@floating-ui/dom";
 import type { stateObject } from "src/main";
-import type { ElementManager } from "$lib/elements/generic/elementManager";
 
 const voidElementsSet = new Set(htmlVoidElements);
 voidElementsSet.add("iframe");
