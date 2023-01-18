@@ -29,29 +29,20 @@
 
   $: updateFunction = async () => {
     if (!target || !popoverEl) return;
-    let additionalOffset = [0, 0];
-    if (target.ownerDocument !== popoverEl.ownerDocument) {
-      const iframe = target.ownerDocument.defaultView?.frameElement;
-      if (iframe) {
-        const { left, top } = iframe.getBoundingClientRect();
-        additionalOffset = [left, top];
-      }
-    }
     const position = await computePosition(target, popoverEl, {
       placement,
       middleware: [
-        offset(0),
         shift(),
-        hide({
-          strategy: "escaped",
-        }),
+        // hide({
+        //   strategy: "escaped",
+        // }),
       ],
     });
     const { middlewareData } = position;
     isVisible = !middlewareData.hide?.escaped ?? false;
     if (isVisible) {
-      x = position.x + additionalOffset[0];
-      y = position.y + additionalOffset[1];
+      x = position.x;
+      y = position.y;
     }
   };
 
@@ -64,18 +55,16 @@
   onDestroy(() => {
     if (cleanup) cleanup();
   });
-  // $: if (true) {
-  //   console.log({ component, show, target, popover: popoverEl });
-  //   // debugger;
-  // }
 </script>
 
 <div class="cgb-component">
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <div
     class="cgb-popover-wrapper"
     style:transform
     bind:this={popoverEl}
     class:active={component && show && target && popoverEl && isVisible}
+    tabindex="0"
   >
     {#if component && show}
       <svelte:component this={component} {props} />

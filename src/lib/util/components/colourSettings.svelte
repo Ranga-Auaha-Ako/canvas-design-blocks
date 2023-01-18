@@ -6,7 +6,7 @@
     getColour,
   } from "$lib/util/components/colourPicker.svelte";
   import { slide } from "svelte/transition";
-  import MceElement from "$lib/tinymce/mceElement";
+  import MceElement from "$lib/elements/generic/mceElement";
   import type { Placement } from "@floating-ui/dom";
 
   export let element: MceElement;

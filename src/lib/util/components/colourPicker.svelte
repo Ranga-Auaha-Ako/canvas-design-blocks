@@ -27,7 +27,7 @@
     Placement,
     shift,
   } from "@floating-ui/dom";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
@@ -130,7 +130,6 @@
   let popoverEl: HTMLDivElement;
 
   $: updateFunction = async () => {
-    let additionalOffset = [0, 0];
     const position = await computePosition(popoverTarget, popoverEl, {
       placement: popupDirection,
       middleware: [
@@ -140,8 +139,8 @@
         offset(10),
       ],
     });
-    x = position.x + additionalOffset[0];
-    y = position.y + additionalOffset[1];
+    x = position.x;
+    y = position.y;
   };
 
   let cleanup: () => void;
@@ -154,6 +153,10 @@
   }
   onMount(() => {
     updateFunction();
+  });
+
+  onDestroy(() => {
+    if (cleanup) cleanup();
   });
 
   let customColour = false;

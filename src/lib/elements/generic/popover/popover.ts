@@ -34,6 +34,13 @@ export class McePopover extends SelectableElement {
   }
 
   public show() {
+    console.log(
+      "Showing popover",
+      this.MceElement.id,
+      this.MceElement.node,
+      this.props,
+      this.placement
+    );
     if (this.isActive) return;
     this._isActive = true;
     this.hostComponent.$set({
@@ -46,22 +53,22 @@ export class McePopover extends SelectableElement {
     this.startObserving();
   }
   hide() {
+    console.log("Hiding popover", this.MceElement.id);
     if (!this.isActive) return;
     this._isActive = false;
     this.hostComponent.$set({ show: false });
     this.stopObserving();
-    // console.log("Hiding popover");
   }
   private clickOutside = (e: MouseEvent) => {
     if (!this.node?.contains(e.target as Node)) {
-      this.deselect();
+      this.MceElement.deselect("Popover");
       this.popoverWindow.removeEventListener("click", this.clickOutside);
     }
   };
   public startObserving() {
     this.node?.addEventListener("focusin", () => {
       this.popoverWindow.addEventListener("click", this.clickOutside);
-      this.select();
+      this.MceElement.select("Popover");
     });
   }
 }

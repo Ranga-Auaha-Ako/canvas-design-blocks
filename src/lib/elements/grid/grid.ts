@@ -11,12 +11,16 @@ import type { Editor } from "tinymce";
 import Row from "./row";
 import { RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
-import GridManager, { stateObject } from "./gridManager";
+import GridManager from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
-import MceElement from "$lib/tinymce/mceElement";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { MceElementStatics } from "$lib/elements/generic/mceElement";
+import { stateObject } from "src/main";
 
 export class Grid extends MceElement implements Readable<Row[]> {
   public static gridMarkupVersion = "1.0.0";
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["canvas-grid-editor"]);
 
@@ -57,7 +61,9 @@ export class Grid extends MceElement implements Readable<Row[]> {
     // Add grid to page
     if (atCursor) {
       const insertNode = editor.selection.getNode();
-      const inGrid = insertNode.closest(".canvas-grid-editor");
+      const inGrid =
+        insertNode.closest(".canvas-grid-editor") ||
+        insertNode.closest(`*[data-cgb-content="Simple"]`);
       if (inGrid) {
         editor.dom.insertAfter(gridRoot, inGrid);
       } else if (
@@ -102,7 +108,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
     rows?: Row[],
     highlight: boolean = false
   ) {
-    super(node);
+    super(node, editor);
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
 
@@ -115,16 +121,10 @@ export class Grid extends MceElement implements Readable<Row[]> {
     });
     // Bind events to grid
     this.bindEvents();
-    // Set ID of grid
-    this.node.dataset.cgeId = this.id;
 
     // If desired, scroll to and highlight the grid
     if (highlight) {
-      gridManager.editor.getWin().scrollTo({
-        top: this.node.offsetTop,
-        behavior: "smooth",
-      });
-      gridManager.editor.selection.select(this.node);
+      this.highlight();
     }
   }
 

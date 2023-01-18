@@ -13,14 +13,22 @@ import { nanoid } from "nanoid";
 import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
-import MceElement from "$lib/tinymce/mceElement";
-import type { McePopover } from "$lib/tinymce/popover/popover";
+import MceElement from "$lib/elements/generic/mceElement";
+import type { McePopover } from "$lib/elements/generic/popover/popover";
 import RowMenu from "$lib/elements/grid/popup/rowMenu.svelte";
+import type { Editor } from "tinymce";
 
 export default class Row extends MceElement {
+  public selectionMethod: "TinyMCE" | "focus" = "focus";
+  public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
   public defaultClasses = new Set(["grid-row"]);
   public popover: McePopover;
+
+  // Modify this to be a derived store based only on current element. Do not use parent grid
+  public isSelected: Readable<boolean> = derived(this.selected, ($selected) => {
+    return $selected.size > 0;
+  });
 
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
@@ -79,7 +87,7 @@ export default class Row extends MceElement {
     public node: HTMLElement,
     public columns: Writable<Column[]> = writable([])
   ) {
-    super(node);
+    super(node, parentGrid.editor);
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
 
@@ -93,7 +101,7 @@ export default class Row extends MceElement {
     });
     // Set up popover
     this.popover = this.setupPopover(RowMenu, { row: this }, "top");
-    this.selected.subscribe((selected) => {
+    this.isSelected.subscribe((selected) => {
       if (selected) {
         !this.popover.isActive && this.popover.show();
       } else {
@@ -102,16 +110,15 @@ export default class Row extends MceElement {
         }
       }
     });
-    let parentSelectUnsub: Unsubscriber | undefined;
-    this.parent.subscribe((parent) => {
-      if (parentSelectUnsub) parentSelectUnsub();
-      if (parent) {
-        parentSelectUnsub = parent.selected.subscribe((selected) => {
-          if (selected === parent) this.popover.show();
-          else if (parent === get(this.selected)) this.popover.hide();
-        });
-      }
-    });
+    // let curSel: any;
+    // this.isSelected.subscribe(() => {
+    //   const par = get(this.parent);
+    //   console.log(
+    //     "Selected",
+    //     Array.from(get(this.selected)),
+    //     par !== false ? Array.from(get(this.selected)) : null
+    //   );
+    // });
     // Row children are always columns or the popover
     columns.subscribe((cols) => {
       this.children.set([...cols, this.popover]);

@@ -8,7 +8,7 @@
     getColour,
   } from "$lib/util/components/colourPicker.svelte";
   import Column from "$lib/elements/grid/column";
-  import ColourSettings from "./colourSettings.svelte";
+  import ColourSettings from "$lib/util/components/colourSettings.svelte";
 
   export let column: Column;
 

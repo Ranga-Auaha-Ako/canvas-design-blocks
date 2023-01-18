@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import GridManager, { stateObject } from "$lib/elements/grid/gridManager";
+  import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg";
   import { slide } from "svelte/transition";
@@ -8,9 +8,11 @@
   import { version } from "$lib/util/constants";
   import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
+  import type { stateObject } from "src/main";
+  import ElementManager from "$lib/elements/generic/elementManager";
 
   export let state: stateObject | undefined;
-  export let grids: GridManager | undefined;
+  export let managers: ElementManager[];
 
   $: open = state?.showInterface;
   $: configComponent = state?.configComponent;
@@ -18,10 +20,9 @@
   let container: HTMLElement;
   $: if (container) preventBubble(container);
 
-  const addGrid = () => {
-    if (!grids) return;
-    const newGrid = Grid.create(grids.state, grids, true, grids.editor, true);
-    grids.add(newGrid);
+  const add = (manager: ElementManager) => {
+    if (!managers) return;
+    const newManager = manager.create(true, true);
   };
 </script>
 
@@ -29,7 +30,7 @@
   <button
     class="cgb-openButton"
     title="Canvas Grid Builder"
-    class:cgb-active={$open || $configComponent}
+    class:cgb-active={$open}
     on:click={() => {
       $open = !$open;
       dispatch("open");
@@ -39,20 +40,27 @@
     <img src={IconWhite} alt="" />
   </button>
 
-  {#if ($open || $configComponent) && $grids}
+  {#if $open}
     {#if $configComponent}
       <div class="toolbar-menu advanced-settings" transition:slide>
         <svelte:component
           this={$configComponent.component}
-          {...$configComponent.props}
+          props={$configComponent.props}
         />
       </div>
     {/if}
     <div class="toolbar-menu" transition:slide>
-      <ElementPanel on:add={addGrid}>
-        <svelte:fragment slot="name">Add Grid</svelte:fragment>
-      </ElementPanel>
-
+      {#each managers as manager}
+        <ElementPanel
+          on:add={() => {
+            add(manager);
+          }}
+        >
+          <svelte:fragment slot="name"
+            >Add {manager.elementName}</svelte:fragment
+          >
+        </ElementPanel>
+      {/each}
       <div class="version">
         v{version}<i>b</i>
       </div>
@@ -65,11 +73,13 @@
     display: contents;
   }
   .cgb-openButton {
-    @apply rounded-sm w-full h-8 py-1 px-2;
+    @apply w-full h-8 py-1 px-2;
     @apply flex flex-row items-center;
     @apply transition text-sm border border-uni-gray-200 rounded;
     &.cgb-active {
       @apply bg-uni-blue text-white border-2 border-uni-blue;
+      /* Match Canvas border radius setting */
+      border-radius: 3px;
     }
     & img {
       @apply h-full p-0.5;
