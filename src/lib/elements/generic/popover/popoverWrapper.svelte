@@ -32,11 +32,10 @@
     const position = await computePosition(target, popoverEl, {
       placement,
       middleware: [
-        offset(0),
         shift(),
-        hide({
-          strategy: "escaped",
-        }),
+        // hide({
+        //   strategy: "escaped",
+        // }),
       ],
     });
     const { middlewareData } = position;

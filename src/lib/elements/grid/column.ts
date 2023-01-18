@@ -250,9 +250,11 @@ export default class Column extends MceElement {
     this.isSelected.subscribe(() => {
       const par = get(this.parent);
       console.log(
+        this.id,
         "Selected",
         Array.from(get(this.selected)),
-        par !== false ? Array.from(get(par.selected)) : null
+        par !== false ? Array.from(get(par.selected)) : null,
+        this.popover.isActive
       );
     });
   }
