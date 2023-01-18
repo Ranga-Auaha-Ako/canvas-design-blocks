@@ -25,7 +25,7 @@
       choice && existing.add(choice);
       return existing;
     };
-    return writableDerived(classWritable, derive, reflect);
+    return writableDerived(classWritable, derive, { withOld: reflect });
   };
 
   const validClasses = [

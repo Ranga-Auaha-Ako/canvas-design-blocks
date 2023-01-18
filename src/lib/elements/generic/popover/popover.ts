@@ -34,6 +34,13 @@ export class McePopover extends SelectableElement {
   }
 
   public show() {
+    console.log(
+      "Showing popover",
+      this.MceElement.id,
+      this.MceElement.node,
+      this.props,
+      this.placement
+    );
     if (this.isActive) return;
     this._isActive = true;
     this.hostComponent.$set({
@@ -46,6 +53,7 @@ export class McePopover extends SelectableElement {
     this.startObserving();
   }
   hide() {
+    console.log("Hiding popover", this.MceElement.id);
     if (!this.isActive) return;
     this._isActive = false;
     this.hostComponent.$set({ show: false });

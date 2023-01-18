@@ -130,7 +130,6 @@
   let popoverEl: HTMLDivElement;
 
   $: updateFunction = async () => {
-    let additionalOffset = [0, 0];
     const position = await computePosition(popoverTarget, popoverEl, {
       placement: popupDirection,
       middleware: [
@@ -140,8 +139,8 @@
         offset(10),
       ],
     });
-    x = position.x + additionalOffset[0];
-    y = position.y + additionalOffset[1];
+    x = position.x;
+    y = position.y;
   };
 
   let cleanup: () => void;
