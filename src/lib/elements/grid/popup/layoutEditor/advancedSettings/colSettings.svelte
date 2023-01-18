@@ -34,28 +34,27 @@
         card: isCard ? ColType.Card : ColType.Normal,
       };
     },
-    {
-      withOld(reflecting, [oldStyle, oldClassList]) {
-        // Card effect
-        if (reflecting.card === ColType.Normal) {
-          // if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
-          oldClassList.remove("uoa_shadowbox");
-          oldClassList.remove("uoa_corners_4");
-        } else if (reflecting.card === ColType.Card) {
-          // if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
-          oldClassList.add("uoa_shadowbox");
-          oldClassList.add("uoa_corners_4");
-        }
-        if (oldStyle) {
-          // Padding
-          oldStyle.padding = `${reflecting.padding}px`;
-          // Background
-          oldStyle.background = reflecting.background?.toHex() || "";
-          // Text Colour
-          oldStyle.color = reflecting.textColor?.toHex() || "";
-        }
-        return [oldStyle, oldClassList];
-      },
+    //@ts-ignore - I don't know why this is complaining, some mixup in types in the module is the likely cause
+    (reflecting, [oldStyle, oldClassList]) => {
+      // Card effect
+      if (reflecting.card === ColType.Normal) {
+        // if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+        oldClassList.remove("uoa_shadowbox");
+        oldClassList.remove("uoa_corners_4");
+      } else if (reflecting.card === ColType.Card) {
+        // if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+        oldClassList.add("uoa_shadowbox");
+        oldClassList.add("uoa_corners_4");
+      }
+      if (oldStyle) {
+        // Padding
+        oldStyle.padding = `${reflecting.padding}px`;
+        // Background
+        oldStyle.background = reflecting.background?.toHex() || "";
+        // Text Colour
+        oldStyle.color = reflecting.textColor?.toHex() || "";
+      }
+      return [oldStyle, oldClassList];
     }
   );
 </script>
