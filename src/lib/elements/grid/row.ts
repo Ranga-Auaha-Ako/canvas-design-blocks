@@ -25,6 +25,11 @@ export default class Row extends MceElement {
   public defaultClasses = new Set(["grid-row"]);
   public popover: McePopover;
 
+  // Modify this to be a derived store based only on current element. Do not use parent grid
+  public isSelected: Readable<boolean> = derived(this.selected, ($selected) => {
+    return $selected.size > 0;
+  });
+
   get index() {
     return get(this.parentGrid).findIndex((r) => r.id === this.id);
   }

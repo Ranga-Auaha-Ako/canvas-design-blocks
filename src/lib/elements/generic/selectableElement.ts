@@ -17,12 +17,6 @@ export class SelectableElement {
   public isSelected: Readable<boolean> = derived(
     [this.selected, this.parentSelected],
     ([$selected, $parentSelected]) => {
-      // console.log(
-      //   $selected,
-      //   $selected.size > 0,
-      //   $parentSelected,
-      //   this.toString()
-      // );
       return $selected.size > 0 || $parentSelected;
     }
   );
