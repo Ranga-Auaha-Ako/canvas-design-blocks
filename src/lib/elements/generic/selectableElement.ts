@@ -32,13 +32,6 @@ export class SelectableElement {
 
   //  - Functions for selecting and deselecting the node
   public select(context: SelectableElement | string = this): void {
-    if (
-      this.toString() === "<Column/>" &&
-      this.id === "oGfTr7wdqe6mnVFGkWA1G"
-    ) {
-      console.log(get(this.selected));
-      debugger;
-    }
     const existingTimeout = this.selectedTimeouts.get(context);
     if (existingTimeout) clearTimeout(existingTimeout);
     this.selected.update((el) => {
@@ -51,13 +44,6 @@ export class SelectableElement {
       });
   }
   public deselect(context: SelectableElement | string = this): void {
-    if (
-      this.toString() === "<Column/>" &&
-      this.id === "oGfTr7wdqe6mnVFGkWA1G"
-    ) {
-      console.log(get(this.selected));
-      debugger;
-    }
     // console.log("Deselecting", this.toString(), "Context:", context.toString());
     const existingTimeout = this.selectedTimeouts.get(context);
     if (existingTimeout) clearTimeout(existingTimeout);
@@ -123,21 +109,9 @@ export class SelectableElement {
     // });
   }
 
-  private deselectSelf() {
-    this.deselect(this);
-  }
   public startObserving() {
-    // Used
-    const parentWindow = this.node?.ownerDocument.defaultView;
-    this.node?.addEventListener("focusin", () => {
-      if (parentWindow) {
-        parentWindow.addEventListener("click", this.deselectSelf);
-      } else {
-        this.node?.addEventListener("focusout", this.deselectSelf);
-      }
-      this.select(this);
-    });
-    // this.node?.addEventListener("focusin", this.select.bind(this, this));
+    this.node?.addEventListener("focusin", this.select.bind(this, this));
+    this.node?.addEventListener("focusout", this.deselect.bind(this, this));
   }
 
   public stopObserving() {

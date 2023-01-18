@@ -1225,10 +1225,10 @@ svelte-use-click-outside@^1.0.0:
   resolved "https://registry.yarnpkg.com/svelte-use-click-outside/-/svelte-use-click-outside-1.0.0.tgz#9db6208c314b5cb9cc80a38284a89da176c8075d"
   integrity sha512-tOWeMPxeIoW9RshS0WbogRhdYdbxcJV0ebkzSh1lwR7Ihl0hSZMmB4YyCHHoXJK4xcbxCCFh0AnQ1vkzGZfLVQ==
 
-svelte-writable-derived@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/svelte-writable-derived/-/svelte-writable-derived-3.0.1.tgz#34b8945d1aee20168d2a86d8e46a7b80b6ffbcd9"
-  integrity sha512-zBWCS5c3MA9o4NT/UJHP3KoPOhtmH2ZQ/QRK31w9LzLdPP7MNncUcBGIu4iH2RVt17iRfR6agm7nEqwNvsYuMw==
+svelte-writable-derived@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/svelte-writable-derived/-/svelte-writable-derived-2.1.6.tgz#973426e89835fbc5cac5eea8cc747a8152f544de"
+  integrity sha512-vqOXuiESMZyP/kt/RD+nOk2RVHNakDm1K1hmfeGAKc4jzcSp5hEkUi43MDbkVlMurkSBlcMVTQwRQy4LcBT2lw==
 
 svelte@^3.49.0:
   version "3.55.1"

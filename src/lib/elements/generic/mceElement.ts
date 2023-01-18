@@ -286,12 +286,7 @@ export default abstract class MceElement extends SelectableElement {
           }
         });
     } else {
-      if (
-        !(
-          this.toString() === "<Column/>" && this.id === "oGfTr7wdqe6mnVFGkWA1G"
-        )
-      )
-        super.startObserving();
+      super.startObserving();
     }
 
     this.watchNodes.forEach((options, node) => {
