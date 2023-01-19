@@ -21,7 +21,10 @@ import type { Editor } from "tinymce";
 export default class Row extends MceElement {
   public selectionMethod: "TinyMCE" | "focus" = "focus";
   public trackInnerText = false;
-  public attributes: MceElement["attributes"] = new Map([]);
+  public attributes: MceElement["attributes"] = new Map([
+    // Gaps between the columns defined in pixels
+    ["data-cgb-gap", writable("0")],
+  ]);
   public defaultClasses = new Set(["grid-row"]);
   public popover: McePopover;
 
@@ -77,7 +80,12 @@ export default class Row extends MceElement {
     const columns = Row.columnNodes(node).map((colNode, index) => {
       return Column.import(parentGrid, colNode, rowLayout.cols[index]);
     });
+    let rowGap = node.dataset.cgbGap || "0";
+    if (isNaN(Number(rowGap))) {
+      rowGap = "0";
+    }
     const row = new Row(parentGrid, rowLayout, node, writable(columns));
+    (row.attributes.get("data-cgb-gap") as Writable<string>)?.set(rowGap);
     return row;
   }
 

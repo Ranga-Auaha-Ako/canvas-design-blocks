@@ -1,6 +1,6 @@
 <script lang="ts">
   import Row from "$lib/elements/grid/row";
-  import { get } from "svelte/store";
+  import { get, Writable } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
@@ -38,17 +38,27 @@
       withOld(reflecting, [oldStyle, oldClassList]) {
         // Card effect
         if (reflecting.card === ColType.Normal) {
-          // if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+          if (
+            oldClassList.contains("uoa_shadowbox") &&
+            oldStyle.margin === "10px"
+          )
+            reflecting.margin = 0;
           oldClassList.remove("uoa_shadowbox");
           oldClassList.remove("uoa_corners_4");
         } else if (reflecting.card === ColType.Card) {
-          // if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+          if (
+            !oldClassList.contains("uoa_shadowbox") &&
+            oldStyle.margin === "0px"
+          )
+            reflecting.margin = 10;
           oldClassList.add("uoa_shadowbox");
           oldClassList.add("uoa_corners_4");
         }
         if (oldStyle) {
           // Padding
           oldStyle.padding = `${reflecting.padding}px`;
+          // Margin
+          oldStyle.margin = `${reflecting.margin}px`;
           // Background
           oldStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
@@ -63,6 +73,7 @@
 <div class="cgb-component">
   <div class="card">
     <h5>Column Settings</h5>
+    {$style.margin}
     <span class="label-text">Column Type</span>
     <div class="btn-group">
       <label class="btn" class:active={$preferences.card === ColType.Normal}>
@@ -92,6 +103,16 @@
         min="0"
         max="20"
         bind:value={$preferences.padding}
+      />
+    </label>
+    <label for={column.id + "-margin"}>
+      <span class="label-text">Margin ({$preferences.margin}px)</span>
+      <input
+        id={column.id + "-margin"}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.margin}
       />
     </label>
     <ColourSettings element={column} {preferences} popupDirection="top" />

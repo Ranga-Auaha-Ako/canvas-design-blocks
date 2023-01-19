@@ -1,6 +1,6 @@
 import MceElement from "$lib/elements/generic/mceElement";
 import type { McePopover } from "$lib/elements/generic/popover/popover";
-import { get, Unsubscriber, Writable, writable } from "svelte/store";
+import { derived, get, Unsubscriber, Writable, writable } from "svelte/store";
 import type Grid from "./grid";
 import ColMenu from "./popup/colMenu.svelte";
 import Row from "./row";
@@ -18,6 +18,26 @@ export default class Column extends MceElement {
   public parentRow?: Row;
   public popover: McePopover;
   public showPopover: Writable<boolean>;
+
+  get index() {
+    if (!this.parentRow) return -1;
+    return get(this.parentRow.columns).findIndex((c) => c.id === this.id);
+  }
+
+  // get gap() {
+  //   if (!this.parentRow) return undefined;
+  //   if (
+  //     this.index === 0 ||
+  //     this.index === get(this.parentRow.columns).length - 1
+  //   )
+  //     return undefined;
+  //   return derived(
+  //     this.parentRow.attributes.get("data-cgb-gap") as Writable<string>,
+  //     ($gap) => {
+  //       return Number($gap) || 0;
+  //     }
+  //   );
+  // }
 
   public getTextTarget() {
     const foundParagraphs = this.innerNode.querySelectorAll(
