@@ -1,4 +1,4 @@
-# Canvas Grid Builder
+# Canvas Design Blocks
 
 Quickly create and edit grid layouts for your Canvas pages. Hooks into the TinyMCE Editor, and can be installed as a Tampermonkey script or directly into your installation of Canvas as a theme.
 
