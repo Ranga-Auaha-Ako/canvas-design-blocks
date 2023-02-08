@@ -98,10 +98,10 @@
       bind:group={$isBlock}
     />
   </div>
-  <div class="input-group">
+  <!-- <div class="input-group">
     <label for="buttonIconSelect">Button Icon</label>
     <button id="buttonIconSelect" class="Button">No Icon</button>
-  </div>
+  </div> -->
 </div>
 
 <style lang="postcss">
