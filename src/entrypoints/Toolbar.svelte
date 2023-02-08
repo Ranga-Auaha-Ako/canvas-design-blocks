@@ -29,14 +29,14 @@
 <div bind:this={container} class="cgb-toolbar cgb-component">
   <button
     class="cgb-openButton"
-    title="Canvas Grid Builder"
+    title="Canvas Design Blocks"
     class:cgb-active={$open}
     on:click={() => {
       $open = !$open;
       dispatch("open");
     }}
   >
-    <div class="details">Visual Editor</div>
+    <div class="details">Design Blocks</div>
     <img src={IconWhite} alt="" />
   </button>
 
