@@ -1,12 +1,13 @@
 {
-  "name": "canvas-grid-builder",
-  "version": "1.5.0",
+  "name": "canvas-design-blocks",
+  "version": "2.0.0",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "zip": "cd ./dist/ && bestzip bundle.zip icon/* canvas-extend.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.json popup.html"
   },
   "devDependencies": {
     "@floating-ui/dom": "^1.1.0",
@@ -16,13 +17,13 @@
     "@types/css": "^0.0.33",
     "@types/to-px": "^1.1.2",
     "autoprefixer": "^10.4.12",
+    "bestzip": "^2.2.1",
     "colord": "^2.9.3",
     "css": "^3.0.0",
     "csstype": "^3.1.1",
     "html-void-elements": "^2.0.1",
     "inline-style-parser": "^0.1.1",
     "nanoid": "^4.0.0",
-    "sass": "^1.57.1",
     "postcss": "^8.4.18",
     "postcss-class-prefix": "^0.3.0",
     "postcss-editor-styles": "^0.3.0",
@@ -32,6 +33,7 @@
     "postcss-load-config": "^4.0.1",
     "postcss-nesting": "^10.2.0",
     "rollup-plugin-visualizer": "^5.8.3",
+    "sass": "^1.57.1",
     "svelte": "^3.49.0",
     "svelte-local-storage-store": "^0.3.1",
     "svelte-preprocess": "^5.0.0",
