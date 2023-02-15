@@ -41,6 +41,12 @@
   </button>
 
   {#if $open}
+    <div class="upgrade-warning" transition:slide>
+      Warning! This version is no longer maintained. Please upgrade to the Google Chrome extension to continue using Design Blocks.
+      <a target="_blank" rel="noreferrer" href="https://chrome.google.com/webstore/detail/pigilebjadbgcmklbgndfpckcgibedla">
+      Upgrade</a>
+      <i>Firefox and other versions coming soon.</i>
+    </div>
     {#if $configComponent}
       <div class="toolbar-menu advanced-settings" transition:slide>
         <svelte:component
@@ -62,11 +68,14 @@
         </ElementPanel>
       {/each}
       <div class="version">
-        v{version}<i>b</i>
+        <div class="version-num">
+          v{version}<i>b</i>
+        </div>
       </div>
     </div>
   {/if}
 </div>
+
 
 <style lang="postcss">
   .cgb-toolbar {
@@ -92,10 +101,19 @@
   .toolbar-menu {
     @apply border-uni-gray-200 border rounded mt-2;
     & .version {
-      @apply text-xs text-right p-2;
-      & i {
-        @apply text-xs;
+      @apply text-xs p-2;
+      & .version-num {
+        @apply text-xs text-right p-2;
+        & i {
+          @apply text-xs;
+        }
       }
+    }
+  }
+  .upgrade-warning {
+    @apply mt-2 text-xs font-bold bg-orange-700 text-white rounded shadow p-2;
+    & a {
+      @apply text-black text-center bg-white rounded shadow block p-2 m-1 transition hover:opacity-80;
     }
   }
 
