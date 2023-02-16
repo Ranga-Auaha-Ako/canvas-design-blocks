@@ -35,7 +35,7 @@ export default defineConfig({
         entryFileNames: "canvas-blocks.min.js",
       },
     },
-    watch: true
+    // watch: true
   },
   resolve: {
     alias: {
