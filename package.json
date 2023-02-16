@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "zip": "cd ./dist/ && bestzip bundle.zip icon/* canvas-extend.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.json popup.html"
+    "zip": "cd ./dist/ && bestzip bundle.zip icon/* canvas-extend.js canvas-blocks.min.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.json popup.html"
   },
   "devDependencies": {
     "@floating-ui/dom": "^1.1.0",
