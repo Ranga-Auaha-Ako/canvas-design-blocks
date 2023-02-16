@@ -54,14 +54,16 @@
   on:focusin={() => button.select("ButtonConfig")}
   on:focusout={() => button.deselect("ButtonConfig")}
 >
-  <div class="input-group">
+  <p class="text-xs">To configure the button text and link, use the built-in Canvas link options.</p>
+  <hr class="my-1">
+  <!-- <div class="input-group">
     <label for="buttonTextConfig">Button Text</label>
     <input type="text" id="buttonTextConfig" bind:value={$innerText} />
   </div>
   <div class="input-group">
     <label for="buttonLinkConfig">Button Link</label>
     <input type="url" id="buttonLinkConfig" bind:value={$href} />
-  </div>
+  </div> -->
   <div class="input-group">
     <label for="buttonTargetConfig">Button Target</label>
     <select id="buttonTargetConfig" bind:value={$target}>
@@ -98,10 +100,10 @@
       bind:group={$isBlock}
     />
   </div>
-  <div class="input-group">
+  <!-- <div class="input-group">
     <label for="buttonIconSelect">Button Icon</label>
     <button id="buttonIconSelect" class="Button">No Icon</button>
-  </div>
+  </div> -->
 </div>
 
 <style lang="postcss">

@@ -24,15 +24,18 @@ export default defineConfig({
     target: "es2018",
     lib: {
       entry: resolve(__dirname, "src/main.ts"),
-      name: "CanvasGrid",
+      name: "CanvasBlocks",
+      formats: ["iife"],
       // the proper extensions will be added
-      fileName: "canvas-grid",
+      fileName: "canvas-blocks",
     },
     rollupOptions: {
       output: {
-        assetFileNames: "canvas-grid.[ext]",
+        assetFileNames: "canvas-blocks.[ext]",
+        entryFileNames: "canvas-blocks.min.js",
       },
     },
+    watch: true
   },
   resolve: {
     alias: {
