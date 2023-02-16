@@ -41,5 +41,10 @@
     "host_permissions": [
         "https://canvas.auckland.ac.nz/*"
     ],
-    "permissions": ["storage"]
+    "permissions": ["storage"],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "designblocks+raa@auckland.ac.nz"
+        }
+    }
   }
