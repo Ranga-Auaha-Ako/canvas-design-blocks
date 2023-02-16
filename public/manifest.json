@@ -28,6 +28,7 @@
     "content_scripts": [{
         "matches": [
             "https://canvas.auckland.ac.nz/courses/*/pages/*/edit",
+            "https://canvas.auckland.ac.nz/courses/*/pages",
             "https://canvas.auckland.ac.nz/courses/*/pages/",
             "https://canvas.auckland.ac.nz/courses/*/discussion_topics/new",
             "https://canvas.auckland.ac.nz/courses/*/discussion_topics/*/edit",
