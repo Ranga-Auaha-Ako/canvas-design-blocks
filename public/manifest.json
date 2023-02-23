@@ -3,7 +3,7 @@
     "name": "Canvas Design Blocks",
     "short_name": "Design Blocks",
     "description": "Quickly create and edit pages, creating grids and other elements without using the HTML editor.",
-    "version": "2.0.0",
+    "version": "2.0.2",
     "action": {
       "default_icon": {
         "16": "icon/logo_icon_16.png",
@@ -32,7 +32,9 @@
             "https://canvas.auckland.ac.nz/courses/*/pages/",
             "https://canvas.auckland.ac.nz/courses/*/discussion_topics/new",
             "https://canvas.auckland.ac.nz/courses/*/discussion_topics/*/edit",
-            "https://canvas.auckland.ac.nz/courses/*/quizzes/*/edit"
+            "https://canvas.auckland.ac.nz/courses/*/quizzes/*/edit",
+            "https://canvas.auckland.ac.nz/courses/*/assignments/syllabus",
+            "https://canvas.auckland.ac.nz/courses/*"
         ],
         "js": ["canvas-extend.js"],
         "css": []

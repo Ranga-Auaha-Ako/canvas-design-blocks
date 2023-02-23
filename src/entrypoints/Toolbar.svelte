@@ -61,8 +61,15 @@
           >
         </ElementPanel>
       {/each}
-      <div class="version">
-        v{version}<i>b</i>
+      <div class="info-panel">
+        <a
+          href="mailto:z.millerwaugh@auckland.ac.nz?subject=Canvas%20Design%20Blocks"
+        >
+          <span class="text-uni-blue">Feedback</span>
+        </a>
+        <span class="version">
+          v{version}<i>b</i>
+        </span>
       </div>
     </div>
   {/if}
@@ -91,8 +98,11 @@
 
   .toolbar-menu {
     @apply border-uni-gray-200 border rounded mt-2;
-    & .version {
-      @apply text-xs text-right p-2;
+    & .info-panel {
+      @apply text-xs p-2 flex;
+      & .version {
+        @apply text-right flex-grow;
+      }
       & i {
         @apply text-xs;
       }

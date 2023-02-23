@@ -24,15 +24,14 @@ const state: stateObject = {
 let attempts = 0;
 const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
-    if(!window.tinymce) {
+    if (!window.tinymce) {
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
         attempts++;
         if (attempts < 6) resolve(getEditor());
         else reject("Could not find TinyMCE editor");
       }, 5000);
-    }
-    if (!window.tinymce?.activeEditor) {
+    } else if (!window.tinymce?.activeEditor) {
       // Try again once there is an active editor
       window.tinymce.on("AddEditor", ({ editor }: { editor: Editor }) => {
         editor.on("init", () => {
