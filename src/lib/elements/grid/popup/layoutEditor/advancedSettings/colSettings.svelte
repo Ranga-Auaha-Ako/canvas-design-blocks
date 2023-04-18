@@ -1,6 +1,6 @@
 <script lang="ts">
   import Row from "$lib/elements/grid/row";
-  import { get } from "svelte/store";
+  import { Writable, get } from "svelte/store";
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
@@ -19,42 +19,54 @@
 
   $: style = column.style;
   $: classList = column.classList;
+  $: innerStyle = column.attributes.get(
+    "innerNode/style"
+  ) as Writable<CSSStyleDeclaration>;
+  $: innerClassList = column.attributes.get(
+    "innerNode/class"
+  ) as Writable<DOMTokenList>;
 
   $: preferences = writableDerived(
-    [style, classList],
-    ([$style, $classList]) => {
+    [style, classList, innerStyle, innerClassList],
+    ([$style, $classList, $innerStyle, $innerClassList]) => {
       const isCard =
-        $classList.contains("uoa_shadowbox") &&
-        $classList.contains("uoa_corners_4");
+        $innerClassList.contains("uoa_shadowbox") &&
+        $innerClassList.contains("uoa_corners_4");
       return {
-        padding: $style.padding ? toPx($style.padding) : 0,
-        margin: $style.margin ? toPx($style.margin) : 0,
-        background: getColour($style.background),
-        textColor: getColour($style.color),
+        padding:
+          $innerStyle.padding && (toPx($innerStyle.padding) || 0) > 0
+            ? Math.round(toPx($innerStyle.padding) || 0)
+            : 0.03,
+        margin: $innerStyle.margin ? toPx($innerStyle.margin) : 0,
+        background: getColour($innerStyle.background),
+        textColor: getColour($innerStyle.color),
         card: isCard ? ColType.Card : ColType.Normal,
       };
     },
     {
-      withOld(reflecting, [oldStyle, oldClassList]) {
+      withOld(
+        reflecting,
+        [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
+      ) {
         // Card effect
         if (reflecting.card === ColType.Normal) {
-          // if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
-          oldClassList.remove("uoa_shadowbox");
-          oldClassList.remove("uoa_corners_4");
+          // if (oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+          oldInnerClassList.remove("uoa_shadowbox");
+          oldInnerClassList.remove("uoa_corners_4");
         } else if (reflecting.card === ColType.Card) {
-          // if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
-          oldClassList.add("uoa_shadowbox");
-          oldClassList.add("uoa_corners_4");
+          // if (!oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+          oldInnerClassList.add("uoa_shadowbox");
+          oldInnerClassList.add("uoa_corners_4");
         }
-        if (oldStyle) {
+        if (oldInnerStyle) {
           // Padding
-          oldStyle.padding = `${reflecting.padding}px`;
+          oldInnerStyle.padding = `${reflecting.padding}px`;
           // Background
-          oldStyle.background = reflecting.background?.toHex() || "";
+          oldInnerStyle.background = reflecting.background?.toHex() || "";
           // Text Colour
-          oldStyle.color = reflecting.textColor?.toHex() || "";
+          oldInnerStyle.color = reflecting.textColor?.toHex() || "";
         }
-        return [oldStyle, oldClassList];
+        return [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList];
       },
     }
   );

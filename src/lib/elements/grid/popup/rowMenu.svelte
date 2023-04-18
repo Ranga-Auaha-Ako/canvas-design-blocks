@@ -135,7 +135,7 @@
 <style lang="postcss">
   .gridMenu {
     @apply px-2 py-0.5 h-6;
-    @apply bg-uni-blue text-white rounded-full shadow;
+    @apply bg-uni-blue text-white rounded-full shadow select-none;
     @apply mx-auto w-fit;
     & .actions {
       @apply flex h-full items-stretch;

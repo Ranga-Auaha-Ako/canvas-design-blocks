@@ -104,7 +104,7 @@ export default abstract class MceTextElement extends MceElement {
     super(
       node,
       editor,
-      new Map([[node, modifiedObserverConfig]]),
+      new Map([[node, { ...modifiedObserverConfig, name: "" }]]),
       undefined,
       id
     );

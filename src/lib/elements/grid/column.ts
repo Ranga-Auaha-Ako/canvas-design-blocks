@@ -53,8 +53,8 @@ export default class Column extends MceElement {
     );
     if (isNew) {
       this.watchNodes.clear();
-      this.watchNodes.set(this.node, {});
-      this.watchNodes.set(this.innerNode, {});
+      this.watchNodes.set(this.node, { name: "" });
+      this.watchNodes.set(this.innerNode, { name: "innerNode" });
     }
     this.startObserving();
   }
@@ -232,7 +232,12 @@ export default class Column extends MceElement {
       }
     });
     // Watch innernode for changes (just to be safe)
-    this.watchNodes.set(this.innerNode, {});
+    this.watchNodes.set(this.innerNode, {
+      name: "innerNode",
+      attributeFilter: ["style", "class"],
+    });
+    this.attributes.set("innerNode/style", writable(this.innerNode.style));
+    this.attributes.set("innerNode/class", writable(this.innerNode.classList));
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
     // Set up popover

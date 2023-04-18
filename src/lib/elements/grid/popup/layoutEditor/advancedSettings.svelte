@@ -37,7 +37,7 @@
       withOld(reflecting, [oldStyle, oldClassList]) {
         // Card effect
         if (reflecting.card === RowType.Normal) {
-          if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+          if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "";
           oldClassList.remove("uoa_shadowbox");
           oldClassList.remove("uoa_corners_4");
         } else if (reflecting.card === RowType.Card) {

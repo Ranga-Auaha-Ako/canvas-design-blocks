@@ -12,7 +12,10 @@ import type { stateObject } from "src/main";
 const voidElementsSet = new Set(htmlVoidElements);
 voidElementsSet.add("iframe");
 
-type observerMap = Map<Element, Partial<MutationObserverInit>>;
+type observerMap = Map<
+  HTMLElement,
+  Partial<MutationObserverInit> & { name: string }
+>;
 
 /**
  * The statics that subclasses of MceElement must implement.
@@ -64,8 +67,14 @@ export default abstract class MceElement extends SelectableElement {
 
   /**
    * Stores the attributes that should be watched for changes.
+   * The key can be in the format:
+   * - "attrName" - watch the attribute on the root node. "node" nodename (root node) is implied
+   * - "nodeName/attrName" - watch the attribute on a child node, where nodeName is the name of the child node (defined in WatchNodes)
    */
-  abstract readonly attributes: Map<string, Writable<string> | false>;
+  abstract readonly attributes: Map<
+    string,
+    Writable<string | CSSStyleDeclaration | DOMTokenList> | false
+  >;
   /**
    * Stores the default classes that should be added to the node.
    */
@@ -86,7 +95,7 @@ export default abstract class MceElement extends SelectableElement {
    */
   private _attributes: Map<
     string,
-    Writable<string | null> | typeof this.style | typeof this.classList
+    Writable<string | CSSStyleDeclaration | DOMTokenList | null>
   >;
   /**
    * Unsubscriber for the TinyMCE-based selection method
@@ -107,6 +116,18 @@ export default abstract class MceElement extends SelectableElement {
   }
 
   /**
+   * Get node from WatchNodes by the NodeID (different from the ID attr)
+   * @param id The ID to search for
+   * @returns The node with the ID, or null if not found
+   */
+  getNodeById(id: string): HTMLElement | null {
+    for (const [node, { name }] of this.watchNodes) {
+      if (name === "id") return node;
+    }
+    return null;
+  }
+
+  /**
    * Utility function for type narrowing
    * @param key The key of attribute to check
    * @param val The value (not used but required for type)
@@ -115,7 +136,7 @@ export default abstract class MceElement extends SelectableElement {
   static attrIsStyle = (
     key: string,
     val: string | CSSStyleDeclaration | DOMTokenList | null
-  ): val is CSSStyleDeclaration => key === "style";
+  ): val is CSSStyleDeclaration => key.split("/").pop() === "style";
 
   /**
    * Utility function for type narrowing
@@ -126,7 +147,7 @@ export default abstract class MceElement extends SelectableElement {
   static attrIsClassList = (
     key: string,
     val: string | CSSStyleDeclaration | DOMTokenList | null
-  ): val is DOMTokenList => key === "class";
+  ): val is DOMTokenList => key.split("/").pop() === "class";
 
   /**
    * Creates an MceElement instance. This does not create the element in
@@ -141,7 +162,7 @@ export default abstract class MceElement extends SelectableElement {
   constructor(
     public node: HTMLElement,
     public editor: Editor = window.tinymce.activeEditor,
-    public watchNodes: observerMap = new Map([[node, {}]]),
+    public watchNodes: observerMap = new Map([[node, { name: "" }]]),
     children: MceElement[] = [],
     public readonly id = nanoid()
   ) {
@@ -210,7 +231,11 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
-    // document.getElementById("main")?.appendChild(new Text("test"));
+    // console.log(
+    //   `\n${mutations
+    //     .map((m) => `${(m.target as HTMLElement).className}:${m.type}`)
+    //     .join(", ")} mutation(s) detected`
+    // );
     // Get list of changed attributes
     const changedAttributes = mutations.filter(
       (mutation) =>
@@ -230,25 +255,34 @@ export default abstract class MceElement extends SelectableElement {
     });
     // Update the attributes
     changedAttributes.forEach((mutation) => {
-      // Don't update if the target node is not this.node (the main node). Can happen if this.startobserving is called on a secondary node, or if the node is a child of this.node.
-
-      if (mutation.target !== this.node) return;
+      // Check if the target node is not this.node (the main node). Can happen if this.startobserving is called on a secondary node, or if the node is a child of this.node.
+      if (!mutation.attributeName) return;
+      let targetAttr = mutation.attributeName;
+      if (mutation.target !== this.node) {
+        // Find the node in the watchNodes map, marking the index so we can individually identify the attribute in the mergedAttributes map
+        const watchID = this.watchNodes.get(
+          mutation.target as HTMLElement
+        )?.name;
+        if (!watchID) return;
+        targetAttr = `${watchID}/${mutation.attributeName}`;
+      }
       // Only update if the attribute is in the list of attributes to watch
-      const attr = this.mergedAttributes.get(mutation.attributeName!);
+      const attr = this.mergedAttributes.get(targetAttr);
       if (attr) {
         if (mutation.attributeName === "style") {
           const styles = <Writable<CSSStyleDeclaration | undefined>>attr;
           const target = mutation.target as HTMLElement;
-          if (target.style !== get(styles)) styles.set(target.style);
+          // if (target.style !== get(styles)) styles.set(target.style);
+          styles.set(target.style);
         } else if (mutation.attributeName === "class") {
           const classList = <Writable<DOMTokenList | undefined>>attr;
           // Set default classList
           this.stopObserving();
-          if (this.node.classList !== get(classList))
-            classList.update((classes) => {
-              this.defaultClasses.forEach((c) => this.node.classList.add(c));
-              return this.node.classList;
-            });
+          // if (this.node.classList !== get(classList))
+          classList.update((classes) => {
+            this.defaultClasses.forEach((c) => this.node.classList.add(c));
+            return this.node.classList;
+          });
           this.startObserving();
         } else {
           const newValue = this.node.getAttribute(mutation.attributeName!);
@@ -274,6 +308,12 @@ export default abstract class MceElement extends SelectableElement {
    * **Important: Run this after all changes have been made**
    */
   public startObserving() {
+    // if (this.observer)
+    //   console.log(
+    //     "Started observing:",
+    //     this.watchNodes,
+    //     this.watchNodes.entries().next().value[0] === this.node
+    //   );
     if (this.selectionMethod === "TinyMCE") {
       // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
       this.selectUnsubscriber = this._attributes
@@ -299,7 +339,9 @@ export default abstract class MceElement extends SelectableElement {
           ? {
               attributes: true,
               attributeOldValue: true,
-              attributeFilter: [...this.mergedAttributes.keys()],
+              attributeFilter: [...this.mergedAttributes.keys()].filter(
+                (key): key is string => typeof key === "string"
+              ),
             }
           : {}),
         childList: true,
@@ -326,6 +368,7 @@ export default abstract class MceElement extends SelectableElement {
       return;
     }
     this.observer.disconnect();
+    // console.log("Stopped observing:", this.node, this.observer);
     // this.watchNodes.forEach((_, node) => {
     // });
   }
@@ -337,11 +380,16 @@ export default abstract class MceElement extends SelectableElement {
     const node = this.node;
     // Set attributes to match node state
     this.attributes.forEach((attr, key) => {
-      const value = node.getAttribute(key);
-      if (!attr) {
-      } else {
-        if (!value) attr.set("");
-        else if (value !== get(attr)) attr.set(value);
+      let keySplit = key.split("/");
+      const attrName = keySplit.pop()!;
+      const watchID = keySplit.pop();
+      const foundNode = watchID ? this.getNodeById(watchID) : node;
+      if (!watchID && attr) {
+        if (foundNode && attr) {
+          const value = foundNode.getAttribute(attrName);
+          if (!value) attr.set("");
+          else if (value !== get(attr)) attr.set(value);
+        }
       }
     });
     // Update attributes and styles on node by triggering sub update
@@ -364,14 +412,21 @@ export default abstract class MceElement extends SelectableElement {
     // Watch for changes to the watched props
     this.mergedAttributes.forEach((attr, key) => {
       attr.subscribe((value) => {
+        const keySplit = key.split("/");
+        const attrName = keySplit.pop()!;
+        const targetNodeID = keySplit.pop();
+        const targetNode = targetNodeID ? this.getNodeById(targetNodeID) : node;
+        if (!targetNode) return;
         if (MceElement.attrIsStyle(key, value)) {
           const cssText = value.cssText;
-          node.style.cssText = cssText;
-          node.dataset.mceStyle = cssText;
+          if (targetNode.style.cssText === cssText) return;
+          targetNode.style.cssText = cssText;
+          targetNode.dataset.mceStyle = cssText;
         } else if (MceElement.attrIsClassList(key, value)) {
-          node.classList.value = value.value;
+          if (targetNode.classList.value === value.value) return;
+          targetNode.classList.value = value.value;
         } else if (value !== undefined && value !== null) {
-          node.setAttribute(key, value as string);
+          targetNode.setAttribute(attrName, value);
         }
       });
     });
