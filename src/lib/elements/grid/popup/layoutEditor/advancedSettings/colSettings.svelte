@@ -97,7 +97,9 @@
       </label>
     </div>
     <label for={column.id + "-pad"}>
-      <span class="label-text">Padding ({$preferences.padding}px)</span>
+      <span class="label-text"
+        >Padding ({Math.round($preferences.padding || 0)}px)</span
+      >
       <input
         id={column.id + "-pad"}
         type="range"

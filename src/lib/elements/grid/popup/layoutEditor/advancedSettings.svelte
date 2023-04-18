@@ -91,7 +91,9 @@
       </label>
     </div>
     <label for={ids.padding}>
-      <span class="label-text">Padding ({$preferences.padding}px)</span>
+      <span class="label-text"
+        >Padding ({Math.round($preferences.padding || 0)}px)</span
+      >
       <input
         id={ids.padding}
         type="range"

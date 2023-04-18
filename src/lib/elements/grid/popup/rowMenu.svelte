@@ -13,10 +13,23 @@
   import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
 
   export let props: { row: Row };
+  export let isDominant: Writable<boolean>;
+  export let dominantPopover: Readable<boolean> | undefined = undefined;
 
   // Either false or the id of the row to change layout for
   let showChangeLayout: boolean = false;
   let showAddRow: boolean = false;
+
+  $: if (showChangeLayout) {
+    isDominant.set(true);
+  } else {
+    isDominant.set(false);
+  }
+
+  $: if (!$dominantPopover) {
+    showChangeLayout = false;
+    showAddRow = false;
+  }
 
   let gridMenuEl: HTMLElement;
 

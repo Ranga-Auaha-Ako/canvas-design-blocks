@@ -11,13 +11,17 @@
   } from "@floating-ui/dom";
   import type { Placement } from "@floating-ui/dom";
   import { onDestroy, SvelteComponent } from "svelte";
+  import type { Readable, Writable } from "svelte/store";
   import { fade } from "svelte/transition";
+  import type { McePopover } from "./popover";
 
   export let component: typeof SvelteComponent | undefined = undefined;
   export let show: boolean = false;
   export let props: Record<string, unknown> | undefined = undefined;
   export let placement: Placement = "top";
   export let target: HTMLElement | undefined = undefined;
+  export let isDominant: Writable<boolean> | undefined = undefined;
+  export let dominantPopover: Readable<boolean> | undefined = undefined;
 
   let cleanup: () => void;
   export let popoverEl: HTMLElement;
@@ -67,7 +71,12 @@
     tabindex="0"
   >
     {#if component && show}
-      <svelte:component this={component} {props} />
+      <svelte:component
+        this={component}
+        {props}
+        {isDominant}
+        {dominantPopover}
+      />
     {/if}
   </div>
 </div>

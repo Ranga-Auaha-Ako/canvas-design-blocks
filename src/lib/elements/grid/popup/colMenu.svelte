@@ -13,12 +13,26 @@
   import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
   import Column from "../column";
   import ColSettings from "./layoutEditor/advancedSettings/colSettings.svelte";
+  import type { McePopover } from "$lib/elements/generic/popover/popover";
 
   export let props: { col: Column };
+  export let isDominant: Writable<boolean>;
+  export let dominantPopover: Readable<boolean> | undefined = undefined;
 
   // Either false or the id of the row to change layout for
   let showConfig: boolean = false;
   let showAddRow: boolean = false;
+
+  $: if (showConfig) {
+    isDominant.set(true);
+  } else {
+    isDominant.set(false);
+  }
+
+  $: if (!$dominantPopover) {
+    showConfig = false;
+    showAddRow = false;
+  }
 
   let gridMenuEl: HTMLElement;
 
