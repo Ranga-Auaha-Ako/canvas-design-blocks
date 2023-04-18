@@ -36,7 +36,7 @@
         padding:
           $innerStyle.padding && (toPx($innerStyle.padding) || 0) > 0
             ? Math.round(toPx($innerStyle.padding) || 0)
-            : 0.03,
+            : 0,
         margin: $innerStyle.margin ? toPx($innerStyle.margin) : 0,
         background: getColour($innerStyle.background),
         textColor: getColour($innerStyle.color),
@@ -54,9 +54,14 @@
           oldInnerClassList.remove("uoa_shadowbox");
           oldInnerClassList.remove("uoa_corners_4");
         } else if (reflecting.card === ColType.Card) {
-          // if (!oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+          if (
+            !oldInnerClassList.contains("uoa_shadowbox") &&
+            reflecting.padding === 0
+          )
+            reflecting.padding = 10;
           oldInnerClassList.add("uoa_shadowbox");
           oldInnerClassList.add("uoa_corners_4");
+          oldInnerStyle.height = "100%";
         }
         if (oldInnerStyle) {
           // Padding

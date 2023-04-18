@@ -54,7 +54,10 @@ export default class Column extends MceElement {
     if (isNew) {
       this.watchNodes.clear();
       this.watchNodes.set(this.node, { name: "" });
-      this.watchNodes.set(this.innerNode, { name: "innerNode" });
+      this.watchNodes.set(this.innerNode, {
+        name: "innerNode",
+        attributeFilter: ["style", "class"],
+      });
     }
     this.startObserving();
   }
@@ -254,13 +257,13 @@ export default class Column extends MceElement {
     let curSel: any;
     this.isSelected.subscribe(() => {
       const par = get(this.parent);
-      console.log(
-        this.id,
-        "Selected",
-        Array.from(get(this.selected)),
-        par !== false ? Array.from(get(par.selected)) : null,
-        this.popover.isActive
-      );
+      // console.log(
+      //   this.id,
+      //   "Selected",
+      //   Array.from(get(this.selected)),
+      //   par !== false ? Array.from(get(par.selected)) : null,
+      //   this.popover.isActive
+      // );
     });
   }
   toString() {

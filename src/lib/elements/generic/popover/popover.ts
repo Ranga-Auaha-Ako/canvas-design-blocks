@@ -7,9 +7,9 @@ import { nanoid } from "nanoid";
 import type { Placement } from "@floating-ui/dom";
 
 let activePopover: Writable<McePopover | null> = writable(null);
-activePopover.subscribe((popover) => {
-  console.log("Active popover", popover?.id);
-});
+// activePopover.subscribe((popover) => {
+//   console.log("Active popover", popover?.id);
+// });
 
 export class McePopover extends SelectableElement {
   public readonly hostComponent: PopoverWrapper;
@@ -46,13 +46,13 @@ export class McePopover extends SelectableElement {
   }
 
   public show() {
-    console.log(
-      "Showing popover",
-      this.MceElement.id,
-      this.MceElement.node,
-      this.props,
-      this.placement
-    );
+    // console.log(
+    //   "Showing popover",
+    //   this.MceElement.id,
+    //   this.MceElement.node,
+    //   this.props,
+    //   this.placement
+    // );
     if (this.isActive) return;
     this._isActive = true;
     this.hostComponent.$set({
@@ -73,7 +73,7 @@ export class McePopover extends SelectableElement {
     }
   }
   hide() {
-    console.log("Hiding popover", this.MceElement.id);
+    // console.log("Hiding popover", this.MceElement.id);
     if (!this.isActive) return;
     this._isActive = false;
     this.hostComponent.$set({ show: false });

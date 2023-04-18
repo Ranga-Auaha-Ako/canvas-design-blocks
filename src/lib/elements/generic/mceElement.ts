@@ -274,6 +274,9 @@ export default abstract class MceElement extends SelectableElement {
           const target = mutation.target as HTMLElement;
           // if (target.style !== get(styles)) styles.set(target.style);
           styles.set(target.style);
+          this.stopObserving();
+          target.dataset.mceStyle = target.style.cssText;
+          this.startObserving();
         } else if (mutation.attributeName === "class") {
           const classList = <Writable<DOMTokenList | undefined>>attr;
           // Set default classList
@@ -285,7 +288,9 @@ export default abstract class MceElement extends SelectableElement {
           });
           this.startObserving();
         } else {
-          const newValue = this.node.getAttribute(mutation.attributeName!);
+          const newValue = (mutation.target as HTMLElement).getAttribute(
+            mutation.attributeName!
+          );
           if (newValue !== mutation.oldValue) {
             (<Writable<string | null>>attr).set(newValue);
           }
@@ -419,9 +424,10 @@ export default abstract class MceElement extends SelectableElement {
         if (!targetNode) return;
         if (MceElement.attrIsStyle(key, value)) {
           const cssText = value.cssText;
-          if (targetNode.style.cssText === cssText) return;
-          targetNode.style.cssText = cssText;
-          targetNode.dataset.mceStyle = cssText;
+          if (targetNode.style.cssText !== cssText)
+            targetNode.style.cssText = cssText;
+          if (targetNode.dataset.mceStyle !== cssText)
+            targetNode.dataset.mceStyle = cssText;
         } else if (MceElement.attrIsClassList(key, value)) {
           if (targetNode.classList.value === value.value) return;
           targetNode.classList.value = value.value;
