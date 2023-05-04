@@ -48,6 +48,8 @@
         reflecting,
         [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
       ) {
+        // Height
+        if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
         // Card effect
         if (reflecting.card === ColType.Normal) {
           // if (oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
@@ -56,12 +58,12 @@
         } else if (reflecting.card === ColType.Card) {
           if (
             !oldInnerClassList.contains("uoa_shadowbox") &&
-            reflecting.padding === 0
+            reflecting.padding < 1
           )
             reflecting.padding = 10;
           oldInnerClassList.add("uoa_shadowbox");
           oldInnerClassList.add("uoa_corners_4");
-          oldInnerStyle.height = "100%";
+          oldInnerStyle.display = "flow-root";
         }
         if (oldInnerStyle) {
           // Padding

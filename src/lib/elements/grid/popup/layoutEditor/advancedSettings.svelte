@@ -135,20 +135,20 @@
         />
       </label>
     </div>
-    <!-- Checkbox for individually adjusting padding -->
-    <label class="checkbox">
-      <input
-        type="checkbox"
-        bind:checked={manualAdjustPadding}
-        class="checkbox-input"
-      />
-      <span class="checkbox-label">Manual Adjust Padding</span>
-    </label>
-    {#if !manualAdjustPadding && typeof $preferences.padding === "number"}
-      <label for={ids.padding}>
-        <span class="label-text"
-          >Padding ({Math.round($preferences.padding || 0)}px)</span
-        >
+    <div>
+      <span class="label-text">
+        Padding {typeof $preferences.padding === "number"
+          ? `(${Math.round($preferences.padding || 0)}px)`
+          : ""}
+        <button on:click={() => (manualAdjustPadding = !manualAdjustPadding)}>
+          {#if !manualAdjustPadding}
+            ▶
+          {:else}
+            ▼
+          {/if}
+        </button>
+      </span>
+      {#if !manualAdjustPadding && typeof $preferences.padding === "number"}
         <input
           id={ids.padding}
           type="range"
@@ -156,71 +156,71 @@
           max="20"
           bind:value={$preferences.padding}
         />
-      </label>
-    {:else if typeof $preferences.padding !== "number"}
-      <label for={ids.padding + "-top"}>
-        <span class="label-text"
-          >Padding Top ({Math.round($preferences.padding[0] || 0)}px)</span
-        >
-        <input
-          id={ids.padding + "-top"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding[0]}
-        />
-      </label>
-      <label for={ids.padding + "-right"}>
-        <span class="label-text"
-          >Padding Right ({Math.round($preferences.padding[1] || 0)}px)</span
-        >
-        <input
-          id={ids.padding + "-right"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding[1]}
-        />
-      </label>
-      <label for={ids.padding + "-bottom"}>
-        <span class="label-text"
-          >Padding Bottom ({Math.round($preferences.padding[2] || 0)}px)</span
-        >
-        <input
-          id={ids.padding + "-bottom"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding[2]}
-        />
-      </label>
-      <label for={ids.padding + "-left"}>
-        <span class="label-text"
-          >Padding Left ({Math.round($preferences.padding[3] || 0)}px)</span
-        >
-        <input
-          id={ids.padding + "-left"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.padding[3]}
-        />
-      </label>
-    {/if}
-    <!-- Checkbox for individually adjusting margin -->
-    <label class="checkbox">
-      <input
-        type="checkbox"
-        bind:checked={manualAdjustMargin}
-        class="checkbox-input"
-      />
-      <span class="checkbox-label">Manual Adjust Margin</span>
-    </label>
-    {#if !manualAdjustMargin}
-      <label for={ids.margin}>
-        <span class="label-text"
-          >Margin ({Math.round($preferences.margin || 0)}px)</span
-        >
+      {:else if typeof $preferences.padding !== "number"}
+        <label for={ids.padding + "-top"}>
+          <span class="label-text"
+            >Padding Top ({Math.round($preferences.padding[0] || 0)}px)</span
+          >
+          <input
+            id={ids.padding + "-top"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.padding[0]}
+          />
+        </label>
+        <label for={ids.padding + "-right"}>
+          <span class="label-text"
+            >Padding Right ({Math.round($preferences.padding[1] || 0)}px)</span
+          >
+          <input
+            id={ids.padding + "-right"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.padding[1]}
+          />
+        </label>
+        <label for={ids.padding + "-bottom"}>
+          <span class="label-text"
+            >Padding Bottom ({Math.round($preferences.padding[2] || 0)}px)</span
+          >
+          <input
+            id={ids.padding + "-bottom"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.padding[2]}
+          />
+        </label>
+        <label for={ids.padding + "-left"}>
+          <span class="label-text"
+            >Padding Left ({Math.round($preferences.padding[3] || 0)}px)</span
+          >
+          <input
+            id={ids.padding + "-left"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.padding[3]}
+          />
+        </label>
+      {/if}
+    </div>
+    <div>
+      <span class="label-text">
+        Margin {typeof $preferences.margin === "number"
+          ? `(${Math.round($preferences.margin || 0)}px)`
+          : ""}
+        <button on:click={() => (manualAdjustMargin = !manualAdjustMargin)}>
+          {#if !manualAdjustMargin}
+            ▶
+          {:else}
+            ▼
+          {/if}
+        </button>
+      </span>
+      {#if !manualAdjustMargin}
         <input
           id={ids.margin}
           type="range"
@@ -228,57 +228,57 @@
           max="20"
           bind:value={$preferences.margin}
         />
-      </label>
-    {:else if typeof $preferences.margin !== "number"}
-      <label for={ids.margin + "-top"}>
-        <span class="label-text"
-          >Margin Top ({Math.round($preferences.margin[0] || 0)}px)</span
-        >
-        <input
-          id={ids.margin + "-top"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.margin[0]}
-        />
-      </label>
-      <label for={ids.margin + "-right"}>
-        <span class="label-text"
-          >Margin Right ({Math.round($preferences.margin[1] || 0)}px)</span
-        >
-        <input
-          id={ids.margin + "-right"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.margin[1]}
-        />
-      </label>
-      <label for={ids.margin + "-bottom"}>
-        <span class="label-text"
-          >Margin Bottom ({Math.round($preferences.margin[2] || 0)}px)</span
-        >
-        <input
-          id={ids.margin + "-bottom"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.margin[2]}
-        />
-      </label>
-      <label for={ids.margin + "-left"}>
-        <span class="label-text"
-          >Margin Left ({Math.round($preferences.margin[3] || 0)}px)</span
-        >
-        <input
-          id={ids.margin + "-left"}
-          type="range"
-          min="0"
-          max="20"
-          bind:value={$preferences.margin[3]}
-        />
-      </label>
-    {/if}
+      {:else if typeof $preferences.margin !== "number"}
+        <label for={ids.margin + "-top"}>
+          <span class="label-text"
+            >Margin Top ({Math.round($preferences.margin[0] || 0)}px)</span
+          >
+          <input
+            id={ids.margin + "-top"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.margin[0]}
+          />
+        </label>
+        <label for={ids.margin + "-right"}>
+          <span class="label-text"
+            >Margin Right ({Math.round($preferences.margin[1] || 0)}px)</span
+          >
+          <input
+            id={ids.margin + "-right"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.margin[1]}
+          />
+        </label>
+        <label for={ids.margin + "-bottom"}>
+          <span class="label-text"
+            >Margin Bottom ({Math.round($preferences.margin[2] || 0)}px)</span
+          >
+          <input
+            id={ids.margin + "-bottom"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.margin[2]}
+          />
+        </label>
+        <label for={ids.margin + "-left"}>
+          <span class="label-text"
+            >Margin Left ({Math.round($preferences.margin[3] || 0)}px)</span
+          >
+          <input
+            id={ids.margin + "-left"}
+            type="range"
+            min="0"
+            max="20"
+            bind:value={$preferences.margin[3]}
+          />
+        </label>
+      {/if}
+    </div>
     <ColourSettings element={row} {preferences} />
   </div>
 </div>
