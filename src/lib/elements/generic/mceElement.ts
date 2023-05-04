@@ -122,7 +122,7 @@ export default abstract class MceElement extends SelectableElement {
    */
   getNodeById(id: string): HTMLElement | null {
     for (const [node, { name }] of this.watchNodes) {
-      if (name === "id") return node;
+      if (name === id) return node;
     }
     return null;
   }
@@ -231,11 +231,11 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
-    // console.log(
-    //   `\n${mutations
-    //     .map((m) => `${(m.target as HTMLElement).className}:${m.type}`)
-    //     .join(", ")} mutation(s) detected`
-    // );
+    console.log(
+      `\n${mutations
+        .map((m) => `${(m.target as HTMLElement).className}:${m.type}`)
+        .join(", ")} mutation(s) detected`
+    );
     // Get list of changed attributes
     const changedAttributes = mutations.filter(
       (mutation) =>
@@ -308,11 +308,14 @@ export default abstract class MceElement extends SelectableElement {
   }
 
   /**
-   * Starts observing the node for changes.
+   * Starts observing the node for changes, but only if other
+   * StopObserving() calls have not been made
    *
    * **Important: Run this after all changes have been made**
    */
   public startObserving() {
+    this.stopObservingRequests -= 1;
+    if (this.stopObservingRequests > 0) return;
     // if (this.observer)
     //   console.log(
     //     "Started observing:",
@@ -339,20 +342,22 @@ export default abstract class MceElement extends SelectableElement {
         console.debug("Start observing called before observer was created!");
         return;
       }
-      this.observer.observe(node, {
+      const observerOpts = {
         ...(node === this.node
           ? {
               attributes: true,
               attributeOldValue: true,
               attributeFilter: [...this.mergedAttributes.keys()].filter(
-                (key): key is string => typeof key === "string"
+                // Fitler out attributes that are not on the node ("a/b")
+                (attr) => attr.split("/").length === 1
               ),
             }
           : {}),
         childList: true,
         ...options,
-      });
-      // console.log("Observing:", node, this.observer);
+      };
+      this.observer.observe(node, observerOpts);
+      // console.log("Observing:", node, observerOpts);
     });
   }
 
@@ -362,20 +367,16 @@ export default abstract class MceElement extends SelectableElement {
    * **Important: Run this before making changes - otherwise the
    * element will start repairing itself mid-change!**
    */
+  private stopObservingRequests = 0;
   public stopObserving() {
+    this.stopObservingRequests++;
     super.stopObserving();
     if (this.selectUnsubscriber) {
       this.selectUnsubscriber();
       this.selectUnsubscriber = undefined;
     }
-    if (!this.observer) {
-      // console.error("Stop observing called before observer was created!");
-      return;
-    }
+    if (!this.observer) return;
     this.observer.disconnect();
-    // console.log("Stopped observing:", this.node, this.observer);
-    // this.watchNodes.forEach((_, node) => {
-    // });
   }
 
   /**
@@ -420,14 +421,27 @@ export default abstract class MceElement extends SelectableElement {
         const keySplit = key.split("/");
         const attrName = keySplit.pop()!;
         const targetNodeID = keySplit.pop();
-        const targetNode = targetNodeID ? this.getNodeById(targetNodeID) : node;
+        // if (key.split("/").length > 1)
+        //   console.log(
+        //     "Updated:",
+        //     key,
+        //     this.node,
+        //     targetNodeID,
+        //     targetNodeID === undefined
+        //       ? undefined
+        //       : this.getNodeById(targetNodeID)
+        //   );
+        const targetNode =
+          targetNodeID !== undefined ? this.getNodeById(targetNodeID) : node;
         if (!targetNode) return;
         if (MceElement.attrIsStyle(key, value)) {
           const cssText = value.cssText;
+          this.stopObserving();
           if (targetNode.style.cssText !== cssText)
             targetNode.style.cssText = cssText;
           if (targetNode.dataset.mceStyle !== cssText)
             targetNode.dataset.mceStyle = cssText;
+          this.startObserving();
         } else if (MceElement.attrIsClassList(key, value)) {
           if (targetNode.classList.value === value.value) return;
           targetNode.classList.value = value.value;
