@@ -3,7 +3,7 @@
   "name": "Canvas Design Blocks Beta",
   "short_name": "Design Blocks Beta",
   "description": "Quickly create and edit pages, creating grids and other elements without using the HTML editor.",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "action": {
     "default_icon": {
       "16": "icon/beta/logo_icon_16.png",
