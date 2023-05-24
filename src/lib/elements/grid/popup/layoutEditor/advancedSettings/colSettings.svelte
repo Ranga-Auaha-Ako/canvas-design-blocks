@@ -48,6 +48,8 @@
         reflecting,
         [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
       ) {
+        // Height
+        if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
         // Card effect
         if (reflecting.card === ColType.Normal) {
           // if (oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
@@ -56,12 +58,12 @@
         } else if (reflecting.card === ColType.Card) {
           if (
             !oldInnerClassList.contains("uoa_shadowbox") &&
-            reflecting.padding === 0
+            reflecting.padding < 1
           )
             reflecting.padding = 10;
           oldInnerClassList.add("uoa_shadowbox");
           oldInnerClassList.add("uoa_corners_4");
-          oldInnerStyle.height = "100%";
+          oldInnerStyle.display = "flow-root";
         }
         if (oldInnerStyle) {
           // Padding
@@ -101,6 +103,7 @@
         />
       </label>
     </div>
+    <!-- Padding -->
     <label for={column.id + "-pad"}>
       <span class="label-text"
         >Padding ({Math.round($preferences.padding || 0)}px)</span
@@ -113,7 +116,20 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <ColourSettings element={column} {preferences} popupDirection="top" />
+    <!-- Margin -->
+    <label for={column.id + "-margin"}>
+      <span class="label-text"
+        >Margin ({Math.round($preferences.margin || 0)}px)</span
+      >
+      <input
+        id={column.id + "-margin"}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.margin}
+      />
+      <ColourSettings element={column} {preferences} popupDirection="top" />
+    </label>
   </div>
 </div>
 

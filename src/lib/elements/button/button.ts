@@ -69,6 +69,10 @@ export class Button extends MceTextElement {
       }
     });
 
+    this.selected.subscribe((selected) => {
+      console.log("Button selected", selected, selected.has(this));
+    });
+
     this.node.addEventListener("click", (e) => {
       e.preventDefault();
       this.select();

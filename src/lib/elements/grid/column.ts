@@ -89,6 +89,7 @@ export default class Column extends MceElement {
         foundInnerNode = grid.editor.dom.create("div", {
           contenteditable: true,
           class: "cgb-col-inner",
+          style: "height: 100%; display: flow-root;",
         });
         outerNode.appendChild(foundInnerNode);
       }
