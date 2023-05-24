@@ -103,6 +103,7 @@
         />
       </label>
     </div>
+    <!-- Padding -->
     <label for={column.id + "-pad"}>
       <span class="label-text"
         >Padding ({Math.round($preferences.padding || 0)}px)</span
@@ -115,7 +116,20 @@
         bind:value={$preferences.padding}
       />
     </label>
-    <ColourSettings element={column} {preferences} popupDirection="top" />
+    <!-- Margin -->
+    <label for={column.id + "-margin"}>
+      <span class="label-text"
+        >Margin ({Math.round($preferences.margin || 0)}px)</span
+      >
+      <input
+        id={column.id + "-margin"}
+        type="range"
+        min="0"
+        max="20"
+        bind:value={$preferences.margin}
+      />
+      <ColourSettings element={column} {preferences} popupDirection="top" />
+    </label>
   </div>
 </div>
 
