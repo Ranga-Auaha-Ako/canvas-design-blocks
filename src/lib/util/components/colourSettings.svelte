@@ -27,6 +27,13 @@
   $: inferredTextCol =
     $preferences.textColor ||
     getColour(element.window.getComputedStyle(element.node).color);
+
+  // Set text colour to static if background colour is set
+  $: if ($preferences.background && !$preferences.textColor) {
+    $preferences.textColor = getColour(
+      element.window.getComputedStyle(element.node).color
+    );
+  }
 </script>
 
 <div class="cgb-component">
@@ -49,6 +56,7 @@
       bind:contrastColour={$preferences.background}
       {popupDirection}
       showAccessible={false}
+      isText={true}
     />
     <!-- Warning if contrast is dangerously low -->
     {#if contrastLevel && contrastLevel < 7}
