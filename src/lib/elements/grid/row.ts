@@ -72,6 +72,11 @@ export default class Row extends MceElement {
   }
 
   public static import(parentGrid: Grid, node: HTMLElement) {
+    // Remote old ID formats
+    if (node.dataset.cgbId) delete node.dataset.cgbId;
+    if (node.dataset.cgeId) delete node.dataset.cgeId;
+    if (node.dataset.cgbVersion) delete node.dataset.cgbVersion;
+    if (node.dataset.cgbContent) delete node.dataset.cgbContent;
     // Get Row Layout
     const rowLayout = Row.getLayoutFromNode(node);
     const columns = Row.columnNodes(node).map((colNode, index) => {

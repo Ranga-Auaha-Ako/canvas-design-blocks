@@ -1,0 +1,81 @@
+import { defineManifest } from "@crxjs/vite-plugin";
+import packageJson from "./package.json";
+const { version } = packageJson;
+
+// Convert from Semver (example: 0.1.0-beta6)
+const [major, minor, patch, label = "0"] = version
+  // can only contain digits, dots, or dash
+  .replace(/[^\d.-]+/g, "")
+  // split into version parts
+  .split(/[.-]/);
+
+export default defineManifest(async (env) => ({
+  manifest_version: 3,
+  name:
+    env.mode === "staging"
+      ? "[INTERNAL] Canvas Design Blocks"
+      : "Canvas Design Blocks",
+  homepage_url: "https://teachwell.auckland.ac.nz/",
+  host_permissions: ["https://canvas.auckland.ac.nz/*"],
+  permissions: ["storage"],
+  short_name: "Design Blocks",
+  description:
+    "Quickly create and edit pages, creating grids and other elements without using the HTML editor.",
+  // up to four numbers separated by dots
+  version: `${major}.${minor}.${patch}.${label}`,
+  // semver is OK in "version_name"
+  version_name: version,
+  action: {
+    default_icon:
+      env.mode === "staging"
+        ? {
+            "16": "icon/beta/logo_icon_16.png",
+            "24": "icon/beta/logo_icon_24.png",
+            "32": "icon/beta/logo_icon_32.png",
+          }
+        : {
+            "16": "icon/logo_icon_16.png",
+            "24": "icon/logo_icon_24.png",
+            "32": "icon/logo_icon_32.png",
+          },
+    default_title: "Canvas Design Blocks",
+  },
+  icons:
+    env.mode === "staging"
+      ? {
+          "16": "icon/logo_icon_16.png",
+          "32": "icon/logo_icon_32.png",
+          "48": "icon/logo_icon_48.png",
+          "128": "icon/logo_icon_128.png",
+        }
+      : {
+          "16": "icon/beta/logo_icon_16.png",
+          "32": "icon/beta/logo_icon_32.png",
+          "48": "icon/beta/logo_icon_48.png",
+          "128": "icon/beta/logo_icon_128.png",
+        },
+  author: "raa@auckland.ac.nz",
+  web_accessible_resources: [
+    {
+      matches: ["https://canvas.auckland.ac.nz/*"],
+      resources: ["src/main.ts"],
+    },
+  ],
+
+  content_scripts: [
+    {
+      matches: [
+        "https://canvas.auckland.ac.nz/courses/*/pages/*/edit",
+        "https://canvas.auckland.ac.nz/courses/*/pages",
+        "https://canvas.auckland.ac.nz/courses/*/pages/",
+        "https://canvas.auckland.ac.nz/courses/*/discussion_topics/new",
+        "https://canvas.auckland.ac.nz/courses/*/discussion_topics/*/edit",
+        "https://canvas.auckland.ac.nz/courses/*/quizzes/*/edit",
+        "https://canvas.auckland.ac.nz/courses/*/assignments/syllabus",
+        "https://canvas.auckland.ac.nz/courses/*",
+      ],
+      js: ["src/canvas-extend.ts"],
+      css: [],
+    },
+  ],
+}));

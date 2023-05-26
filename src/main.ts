@@ -21,6 +21,12 @@ const state: stateObject = {
   configComponent: writable(null),
 };
 
+if (import.meta.env.DEV) {
+  console.log("Dev mode enabled");
+  window.onbeforeunload = function () {};
+  state.showInterface.set(true);
+}
+
 let attempts = 0;
 const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {

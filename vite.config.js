@@ -3,6 +3,8 @@ import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
+import { crx } from "@crxjs/vite-plugin";
+import manifest from "./manifest.ts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,9 +18,15 @@ export default defineConfig({
     visualizer({
       filename: "./dist/stats.html",
     }),
+    crx({
+      manifest,
+    }),
   ],
   server: {
     origin: "http://localhost:5173",
+    hmr: {
+      port: 5175,
+    },
   },
   build: {
     target: "es2018",

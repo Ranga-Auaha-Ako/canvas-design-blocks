@@ -68,6 +68,7 @@
         if (oldInnerStyle) {
           // Padding
           oldInnerStyle.padding = `${reflecting.padding}px`;
+          oldInnerStyle.margin = `${reflecting.margin}px`;
           // Background
           oldInnerStyle.background = reflecting.background?.toHex() || "";
           // Text Colour

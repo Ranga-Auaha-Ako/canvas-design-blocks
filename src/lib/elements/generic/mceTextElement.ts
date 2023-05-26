@@ -82,7 +82,7 @@ export default abstract class MceTextElement extends MceElement {
       });
       // Move cursor to the new paragraph if it's inside the element
       if (
-        this.editor.selection.getNode().closest("[data-cgb-content]") ===
+        this.editor.selection.getNode().closest("[data-cdb-content]") ===
         outerNode
       ) {
         this.editor.selection.setCursorLocation(target, 0);

@@ -7,7 +7,7 @@ import type MceElement from "$lib/elements/generic/mceElement";
 export class ButtonManager extends ElementManager {
   public elementName = "Button";
   public elementClass: ElementManager["elementClass"] = Button;
-  public selector = ".Button[data-cgb-version]";
+  public selector = ".Button[data-cdb-version],.Button[data-cgb-version]";
 
   constructor(
     public readonly state: stateObject,

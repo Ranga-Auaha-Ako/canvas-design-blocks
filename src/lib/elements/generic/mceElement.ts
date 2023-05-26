@@ -12,7 +12,7 @@ import type { stateObject } from "src/main";
 const voidElementsSet = new Set(htmlVoidElements);
 voidElementsSet.add("iframe");
 
-type observerMap = Map<
+export type observerMap = Map<
   HTMLElement,
   Partial<MutationObserverInit> & { name: string }
 >;
@@ -186,13 +186,13 @@ export default abstract class MceElement extends SelectableElement {
     >([
       ["class", this.classList],
       ["style", this.style],
-      ["data-cgb-id", this._id],
+      ["data-cdb-id", this._id],
       ["data-mce-selected", writable(null)],
-      ["data-cgb-content", writable("element")],
+      ["data-cdb-content", writable("element")],
     ]);
 
     // Set ID of element
-    this.node.dataset.cgeId = this.id;
+    this.node.dataset.cdbId = this.id;
 
     // Determine the window this node is in (for iframe support)
     this.window = deriveWindow(node) || window;
@@ -243,6 +243,7 @@ export default abstract class MceElement extends SelectableElement {
     );
     // Get changed nodes (if any)
     const changedNodes = mutations.filter((m) => {
+      if (m.type !== "characterData" && m.target !== this.node) return true;
       // Only look at childList mutations
       if (m.type !== "childList") return false;
       // Check if any of the nodes matter (filter out bogus elements)

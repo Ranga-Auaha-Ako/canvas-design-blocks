@@ -12,9 +12,9 @@ import { ButtonManager } from "./buttonManager";
 export class Button extends MceTextElement {
   public static markupVersion = "1.0.0";
   public trackInnerText = true;
-  public static staticAttributes = {
-    "data-cgb-version": Button.markupVersion,
-    "data-cgb-content": "Simple",
+  public staticAttributes = {
+    "data-cdb-version": Button.markupVersion,
+    "data-cdb-content": "Simple",
     // contenteditable: "false",
   };
   attributes = new Map([
@@ -101,7 +101,7 @@ export class Button extends MceTextElement {
       editor,
       buttonRoot,
       buttonManager,
-      buttonRoot.dataset.cgeId
+      buttonRoot.dataset.cdbId
     );
     Object.entries(Button.staticAttributes).forEach(([key, value]) => {
       if (buttonRoot.getAttribute(key) !== value) {
@@ -127,7 +127,7 @@ export class Button extends MceTextElement {
     // Add button to page
     if (atCursor) {
       const insertNode = editor.selection.getNode();
-      const inElement = insertNode.closest(`*[data-cgb-content="Simple"]`);
+      const inElement = insertNode.closest(`*[data-cdb-content="Simple"]`);
       // If outside of the body, insert at the end of the body
       if (
         !editor.getBody().contains(insertNode) ||

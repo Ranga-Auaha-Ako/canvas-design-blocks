@@ -66,7 +66,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
       if (e.closest("[data-mce-bogus]")) return false;
       if (returnAll) return true;
       // Get ID
-      const id = (e as HTMLElement)?.dataset.cgeId;
+      const id = (e as HTMLElement)?.dataset.cdbId;
       // No ID Means the element is untracked - we need to track it
       if (!id) return true;
       // If we have an ID, check if we are already tracking it
@@ -81,9 +81,14 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   }
 
   public importAll() {
-    const newElements = this.findAll().map((el) =>
-      this.elementClass.import(this.state, el, this, this.editor)
-    );
+    const newElements = this.findAll().map((el) => {
+      // Cleaning up old IDs
+      if (el.dataset.cgbId) delete el.dataset.cgbId;
+      if (el.dataset.cgeId) delete el.dataset.cgeId;
+      if (el.dataset.cgbVersion) delete el.dataset.cgbVersion;
+      if (el.dataset.cgbContent) delete el.dataset.cgbContent;
+      return this.elementClass.import(this.state, el, this, this.editor);
+    });
     if (newElements.length) this.add(newElements);
   }
 
@@ -92,7 +97,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     // If not, update our internal representation
 
     // Disconnect any deleted elements
-    const elementIds = this.findAll(true).map((el) => el.dataset.cgeId);
+    const elementIds = this.findAll(true).map((el) => el.dataset.cdbId);
     const internalElementIds = get(this._elements).map((el) => el.id);
     const deletedElementIds = internalElementIds.filter(
       (id) => !elementIds.includes(id)

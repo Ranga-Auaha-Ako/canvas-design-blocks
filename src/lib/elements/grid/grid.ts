@@ -56,14 +56,14 @@ export class Grid extends MceElement implements Readable<Row[]> {
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
-      "data-cgb-version": Grid.gridMarkupVersion,
+      "data-cdb-version": Grid.gridMarkupVersion,
     });
     // Add grid to page
     if (atCursor) {
       const insertNode = editor.selection.getNode();
       const inGrid =
         insertNode.closest(".canvas-grid-editor") ||
-        insertNode.closest(`*[data-cgb-content="Simple"]`);
+        insertNode.closest(`*[data-cdb-content="Simple"]`);
       if (inGrid) {
         editor.dom.insertAfter(gridRoot, inGrid);
       } else if (

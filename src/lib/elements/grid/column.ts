@@ -152,12 +152,18 @@ export default class Column extends MceElement {
 
   static import(grid: Grid, node: HTMLElement, width: Required<ColumnLayout>) {
     let [innerNode, isNew] = this.getOrCreateInnerNode(grid, node);
+    // Remote old ID formats
+    if (node.dataset.cgbId) delete node.dataset.cgbId;
+    if (node.dataset.cgeId) delete node.dataset.cgeId;
+    if (node.dataset.cgbVersion) delete node.dataset.cgbVersion;
+    if (node.dataset.cgbContent) delete node.dataset.cgbContent;
+
     return new Column(
       grid,
       width,
       node,
       innerNode,
-      node.dataset.cgbId || undefined
+      node.dataset.cdbId || undefined
     );
   }
 

@@ -11,6 +11,7 @@
     "zip-beta": "vite build && cd ./dist/ && mkdir -p pkg && rimraf ./pkg/* && cp -r icon canvas-extend.js canvas-blocks.min.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.beta.json popup.html ./pkg && mv ./pkg/manifest.beta.json ./pkg/manifest.json && cd pkg && bestzip bundle.beta.zip ./*"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.17",
     "@floating-ui/dom": "^1.1.0",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@tailwindcss/forms": "^0.5.3",
