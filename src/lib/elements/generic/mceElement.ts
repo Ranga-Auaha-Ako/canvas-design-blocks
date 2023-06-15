@@ -276,7 +276,7 @@ export default abstract class MceElement extends SelectableElement {
           // if (target.style !== get(styles)) styles.set(target.style);
           styles.set(target.style);
           this.stopObserving();
-          target.dataset.mceStyle = target.style.cssText;
+          target.dataset.mceStyle = target.getAttribute("style") || "";
           this.startObserving();
         } else if (mutation.attributeName === "class") {
           const classList = <Writable<DOMTokenList | undefined>>attr;
@@ -436,10 +436,8 @@ export default abstract class MceElement extends SelectableElement {
           targetNodeID !== undefined ? this.getNodeById(targetNodeID) : node;
         if (!targetNode) return;
         if (MceElement.attrIsStyle(key, value)) {
-          const cssText = value.cssText;
+          const cssText = targetNode.getAttribute("style") || "";
           this.stopObserving();
-          if (targetNode.style.cssText !== cssText)
-            targetNode.style.cssText = cssText;
           if (targetNode.dataset.mceStyle !== cssText)
             targetNode.dataset.mceStyle = cssText;
           this.startObserving();

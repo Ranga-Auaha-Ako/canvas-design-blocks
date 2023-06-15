@@ -7,6 +7,7 @@ import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
+import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -77,9 +78,13 @@ export const loadApp = async () => {
   // Create Element Managers
   const grids = new GridManager(state, editor);
   const buttons = new ButtonManager(state, editor);
+  const imagecards = new ImageCardManager(state, editor);
 
   // Add button to open grid editor
-  const toolbar = loadToolbar({ state, managers: [grids, buttons] });
+  const toolbar = loadToolbar({
+    state,
+    managers: [grids, buttons, imagecards],
+  });
 
   // Inject our styles into the TinyMCE editor
   const editorStyles = document.createElement("style");
