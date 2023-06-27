@@ -459,7 +459,7 @@ export default abstract class MceElement extends SelectableElement {
    * @returns The popover component
    */
   public setupPopover(
-    contents?: typeof SvelteComponent,
+    contents?: typeof SvelteComponent<any>,
     props?: McePopover["props"],
     placement?: Placement
   ) {

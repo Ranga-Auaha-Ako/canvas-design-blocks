@@ -42,14 +42,14 @@
 
   {#if $open}
     {#if $configComponent}
-      <div class="toolbar-menu advanced-settings" transition:slide>
+      <div class="toolbar-menu advanced-settings" transition:slide|global>
         <svelte:component
           this={$configComponent.component}
           props={$configComponent.props}
         />
       </div>
     {/if}
-    <div class="toolbar-menu" transition:slide>
+    <div class="toolbar-menu" transition:slide|global>
       {#each managers as manager}
         <ElementPanel
           on:add={() => {

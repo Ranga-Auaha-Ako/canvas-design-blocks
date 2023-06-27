@@ -25,7 +25,7 @@ export class McePopover extends SelectableElement {
   constructor(
     public readonly MceElement: MceElement,
     public readonly popoverWindow: Window & typeof globalThis,
-    public readonly contents?: typeof SvelteComponent,
+    public readonly contents?: typeof SvelteComponent<any>,
     public readonly props?: PopoverWrapper["props"],
     public readonly placement?: Placement,
     isDominant: boolean = false

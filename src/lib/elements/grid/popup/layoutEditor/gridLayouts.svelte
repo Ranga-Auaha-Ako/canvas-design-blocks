@@ -79,8 +79,8 @@
   <div
     class="layoutList"
     class:expanded={row && $settingsOpen}
-    in:smartSlide|local
-    out:fade
+    in:smartSlide
+    out:fade|global
     bind:this={popoverEl}
     style:transform
   >

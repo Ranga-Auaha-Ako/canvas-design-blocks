@@ -12,7 +12,7 @@ import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
-    component: typeof SvelteComponent;
+    component: typeof SvelteComponent<any>;
     props: Record<string, any>;
   } | null>;
 }

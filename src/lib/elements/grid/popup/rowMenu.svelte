@@ -65,7 +65,7 @@
   <div
     class="gridMenu"
     bind:this={gridMenuEl}
-    transition:fade={{ delay: 100, duration: 200 }}
+    transition:fade|global={{ delay: 100, duration: 200 }}
   >
     <div class="actions">
       <!-- Delete Row -->
@@ -104,12 +104,12 @@
     </div>
   </div>
   {#if showAddRow}
-    <div class="addRowSelect" transition:slide>
+    <div class="addRowSelect" transition:slide|global>
       <button
         title="Add Row Above"
         class="addAbove"
         on:click={() => addRow(props.row.index, get(props.row.layout))}
-        transition:fade
+        transition:fade|global
       >
         <ArrowOpenUp />
       </button>
@@ -117,7 +117,7 @@
         title="Add Row Below"
         class="addBelow"
         on:click={() => addRow(props.row.index + 1, get(props.row.layout))}
-        transition:fade
+        transition:fade|global
       >
         <ArrowOpenDown />
       </button>

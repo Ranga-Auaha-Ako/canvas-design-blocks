@@ -15,7 +15,7 @@
   import { fade } from "svelte/transition";
   import type { McePopover } from "./popover";
 
-  export let component: typeof SvelteComponent | undefined = undefined;
+  export let component: typeof SvelteComponent<any> | undefined = undefined;
   export let show: boolean = false;
   export let props: Record<string, unknown> | undefined = undefined;
   export let placement: Placement = "top";

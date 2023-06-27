@@ -46,7 +46,7 @@
   <div
     class="gridMenu"
     bind:this={gridMenuEl}
-    transition:fade={{ delay: 100, duration: 200 }}
+    transition:fade|global={{ delay: 100, duration: 200 }}
   >
     <div class="actions">
       <!-- Change Layout -->
@@ -64,7 +64,7 @@
     </div>
   </div>
   {#if showConfig}
-    <div class="layoutConfig" transition:fade>
+    <div class="layoutConfig" transition:fade|global>
       <ColSettings column={props.col} />
     </div>
   {/if}
