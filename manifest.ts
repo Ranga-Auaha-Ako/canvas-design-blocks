@@ -1,6 +1,12 @@
 import { defineManifest } from "@crxjs/vite-plugin";
 import packageJson from "./package.json";
 const { version } = packageJson;
+import "dotenv/config";
+
+// Load basedomains from CANVAS_BLOCKS_BASE_DOMAINS environment variable
+const BaseDomains: string[] = process.env.CANVAS_BLOCKS_BASE_DOMAINS?.split(
+  ","
+) ?? ["canvas.auckland.ac.nz"];
 
 // Convert from Semver (example: 0.1.0-beta6)
 const [major, minor, patch, label = "0"] = version
@@ -16,7 +22,7 @@ export default defineManifest(async (env) => ({
       ? "[INTERNAL] Canvas Design Blocks"
       : "Canvas Design Blocks",
   homepage_url: "https://teachwell.auckland.ac.nz/",
-  host_permissions: ["https://canvas.auckland.ac.nz/*"],
+  host_permissions: BaseDomains.map((d) => `*://${d}/*`),
   permissions: ["storage"],
   short_name: "Design Blocks",
   description:
@@ -57,23 +63,14 @@ export default defineManifest(async (env) => ({
   author: "raa@auckland.ac.nz",
   web_accessible_resources: [
     {
-      matches: ["https://canvas.auckland.ac.nz/*"],
+      matches: BaseDomains.map((d) => `*://${d}/*`),
       resources: ["src/main.ts"],
     },
   ],
 
   content_scripts: [
     {
-      matches: [
-        "https://canvas.auckland.ac.nz/courses/*/pages/*/edit",
-        "https://canvas.auckland.ac.nz/courses/*/pages",
-        "https://canvas.auckland.ac.nz/courses/*/pages/",
-        "https://canvas.auckland.ac.nz/courses/*/discussion_topics/new",
-        "https://canvas.auckland.ac.nz/courses/*/discussion_topics/*/edit",
-        "https://canvas.auckland.ac.nz/courses/*/quizzes/*/edit",
-        "https://canvas.auckland.ac.nz/courses/*/assignments/syllabus",
-        "https://canvas.auckland.ac.nz/courses/*",
-      ],
+      matches: BaseDomains.map((d) => `*://${d}/*`),
       js: ["src/canvas-extend.ts"],
       css: [],
     },

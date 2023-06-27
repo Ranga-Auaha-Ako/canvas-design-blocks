@@ -10,16 +10,14 @@ import manifest from "./manifest.ts";
 export default defineConfig({
   plugins: [
     svelte({
-      emitCss: false,
-      compilerOptions: {
-        customElement: false,
-      },
+      emitCss: true,
     }),
     visualizer({
       filename: "./dist/stats.html",
     }),
     crx({
       manifest,
+      injectCss: true,
     }),
   ],
   server: {
@@ -29,20 +27,21 @@ export default defineConfig({
     },
   },
   build: {
-    target: "es2018",
-    lib: {
-      entry: resolve(__dirname, "src/main.ts"),
-      name: "CanvasBlocks",
-      formats: ["iife"],
-      // the proper extensions will be added
-      fileName: "canvas-blocks",
-    },
-    rollupOptions: {
-      output: {
-        assetFileNames: "canvas-blocks.[ext]",
-        entryFileNames: "canvas-blocks.min.js",
-      },
-    },
+    // target: "es2018",
+    // lib: {
+    //   entry: resolve(__dirname, "src/main.ts"),
+    //   name: "CanvasBlocks",
+    //   // formats: ["iife"],
+    //   formats: ["umd"],
+    //   // the proper extensions will be added
+    //   fileName: "canvas-blocks",
+    // },
+    // rollupOptions: {
+    //   output: {
+    //     assetFileNames: "canvas-blocks.[ext]",
+    //     entryFileNames: "canvas-blocks.min.js",
+    //   },
+    // },
     // watch: true
   },
   resolve: {
@@ -56,6 +55,7 @@ export default defineConfig({
       JSON.stringify(process.env.npm_package_version) || "unknown",
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
   },
+  envPrefix: "CANVAS_BLOCKS_",
   // optimizeDeps: {
   //   exclude: ["svelte-awesome-color-picker"],
   // },
