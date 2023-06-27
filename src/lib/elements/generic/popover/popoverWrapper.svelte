@@ -89,7 +89,7 @@
     &.active {
       @apply visible opacity-100;
     }
-    & > * {
+    & > :global(*) {
       @apply pointer-events-auto;
     }
   }

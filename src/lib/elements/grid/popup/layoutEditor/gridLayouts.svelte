@@ -7,7 +7,7 @@
   import deriveWindow from "$lib/util/deriveWindow";
   import Settings from "$assets/icons/settings.svelte";
   import type Row from "$lib/elements/grid/row";
-  import { writable } from "svelte-local-storage-store";
+  import { persisted } from "svelte-local-storage-store";
   import AdvancedSettings from "./advancedSettings.svelte";
   import { Readable } from "svelte/store";
   import {
@@ -24,7 +24,7 @@
     ? row.layout
     : undefined;
 
-  export let settingsOpen = writable("cgb-preferences-showadvanced", false);
+  export let settingsOpen = persisted("cgb-preferences-showadvanced", false);
 
   // Popover management
   export let sourceTarget: HTMLElement;
