@@ -32,6 +32,8 @@
   let y = 0;
   let popoverEl: HTMLDivElement;
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
+  let editorWidth = "50vw";
+  const editorBody = row ? row.parentGrid.editor.getBody() : undefined;
 
   $: updateFunction = async () => {
     let additionalOffset = [0, 0];
@@ -41,6 +43,7 @@
     });
     x = position.x + additionalOffset[0];
     y = position.y + additionalOffset[1];
+    editorWidth = editorBody ? `${editorBody.offsetWidth}px` : "50vw";
   };
 
   let cleanup: () => void;
@@ -52,37 +55,17 @@
   onDestroy(() => {
     if (cleanup) cleanup();
   });
-
-  // Source: https://stackoverflow.com/a/63424528/3902950
-  const smartSlide = (node: Element) => {
-    const { top, left, bottom, right } = node.getBoundingClientRect();
-    const hostWindow = deriveWindow(node);
-    if (
-      hostWindow &&
-      (node instanceof hostWindow.HTMLElement || node instanceof HTMLElement)
-    ) {
-      const toBottom = hostWindow.innerHeight - bottom;
-      const toRight = hostWindow.innerWidth - right;
-
-      if (toBottom < 0) {
-        node.style.top = `${toBottom}px`;
-      }
-      if (toRight < 0) {
-        node.style.left = `${toRight}px`;
-      }
-    }
-    return slide(node);
-  };
 </script>
 
 <div class="cgb-component">
   <div
     class="layoutList"
     class:expanded={row && $settingsOpen}
-    in:smartSlide
+    in:slide
     out:fade|global
     bind:this={popoverEl}
     style:transform
+    style:--full-width={editorWidth}
   >
     <div class="details">
       <div class="layoutOptions">
@@ -208,7 +191,7 @@
       margin-left: -100%;
       @apply bg-white text-black rounded text-sm h-full overflow-y-auto;
       @apply p-0 relative transition-all z-10 invisible opacity-0 box-border;
-      width: calc(var(--full-width) - 10rem - var(--border-width));
+      width: 0;
     }
 
     &.expanded {
@@ -225,6 +208,7 @@
       & .settings {
         @apply p-2 visible opacity-100;
         margin-left: var(--border-width);
+        width: calc(var(--full-width) - 10rem - var(--border-width));
       }
     }
   }
