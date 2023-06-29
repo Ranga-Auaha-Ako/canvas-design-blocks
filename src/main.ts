@@ -1,18 +1,19 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import GridManager from "$lib/elements/grid/gridManager";
-import pageStyles from "./app.postcss?inline";
+import "./app.postcss";
+import "$lib/util/tailwind.postcss";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
-import { SvelteComponent } from "svelte";
+import { SvelteComponentTyped } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
-    component: typeof SvelteComponent<any>;
+    component: typeof SvelteComponentTyped<any>;
     props: Record<string, any>;
   } | null>;
 }
@@ -29,6 +30,7 @@ if (import.meta.env.DEV) {
 }
 
 let attempts = 0;
+let hasLoaded = false;
 const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
     if (!window.tinymce) {
@@ -42,12 +44,14 @@ const getEditor = () =>
       // Try again once there is an active editor
       window.tinymce.on("AddEditor", ({ editor }: { editor: Editor }) => {
         editor.on("init", () => {
+          hasLoaded = true;
           resolve(editor);
         });
       });
       console.log("No active editor, waiting for one");
     } else {
       console.log("Active editor found");
+      hasLoaded = true;
       resolve(window.tinymce.activeEditor);
     }
   });
@@ -91,10 +95,10 @@ export const loadApp = async () => {
   editorStyles.innerHTML = tinyMCEStyles;
   editor.getBody().insertAdjacentElement("beforebegin", editorStyles);
 
-  // Inject our styles into the page
-  const pageStylesEl = document.createElement("style");
-  pageStylesEl.innerHTML = pageStyles;
-  document.head.insertAdjacentElement("beforeend", pageStylesEl);
+  // // Inject our styles into the page
+  // const pageStylesEl = document.createElement("style");
+  // pageStylesEl.innerHTML = pageStyles;
+  // document.head.insertAdjacentElement("beforeend", pageStylesEl);
 
   // Add class to page body when toolbar is open
   state.showInterface.subscribe((show) => {
@@ -116,7 +120,19 @@ export const loadApp = async () => {
 };
 
 console.log("Loading app");
-window.addEventListener("load", loadApp);
+
+switch (document.readyState) {
+  case "loading":
+    console.log("Page loading, waiting for load");
+    window.addEventListener("DOMContentLoaded", loadApp);
+    break;
+  case "interactive":
+  case "complete":
+    console.log("Page already loaded, loading app");
+    loadApp();
+    break;
+}
+
 // Load the app only on certain pages
 // const loc = window.location.pathname;
 // if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
