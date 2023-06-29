@@ -27,7 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    target: "es2018",
+    // target: "es2018",
     // target: "chrome108",
     // lib: {
     //   entry: resolve(__dirname, "src/main.ts"),

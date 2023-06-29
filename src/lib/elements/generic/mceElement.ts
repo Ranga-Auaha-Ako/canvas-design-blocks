@@ -2,7 +2,7 @@ import deriveWindow from "$lib/util/deriveWindow";
 import { get, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
 import { McePopover } from "./popover/popover";
-import { SvelteComponent } from "svelte";
+import { SvelteComponent, SvelteComponentTyped } from "svelte";
 import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
 import type { Editor } from "tinymce";
@@ -459,7 +459,7 @@ export default abstract class MceElement extends SelectableElement {
    * @returns The popover component
    */
   public setupPopover(
-    contents?: typeof SvelteComponent<any>,
+    contents?: typeof SvelteComponentTyped<any>,
     props?: McePopover["props"],
     placement?: Placement
   ) {

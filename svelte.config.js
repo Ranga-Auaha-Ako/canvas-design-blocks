@@ -17,10 +17,16 @@ export default {
   // Consult https://github.com/sveltejs/svelte-preprocess
   // for more information about preprocessors
   preprocess: sveltePreprocess({
-    postcss: true,
+    postcss: {
+      plugins: [
+        //Some plugins, like tailwindcss/nesting, need to run before Tailwind,
+        PostCSSImport(),
+        postcssFor(),
+        tailwindNesting(postcssNesting),
+        tailwind(tailwindConfig),
+        //But others, like autoprefixer, need to run after,
+        autoprefixer,
+      ],
+    },
   }),
-  // vitePlugin: {
-  //   prebundleSvelteLibraries: false,
-  //   disableDependencyReinclusion: ["svelte-awesome-color-picker"],
-  // },
 };

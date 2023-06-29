@@ -25,7 +25,7 @@
       choice && existing.add(choice);
       return existing;
     };
-    return writableDerived(classWritable, derive, { withOld: reflect });
+    return writableDerived(classWritable, derive, reflect);
   };
 
   const validClasses = [
@@ -54,8 +54,10 @@
   on:focusin={() => button.select("ButtonConfig")}
   on:focusout={() => button.deselect("ButtonConfig")}
 >
-  <p class="text-xs">To configure the button text and link, use the built-in Canvas link options.</p>
-  <hr class="my-1">
+  <p class="text-xs">
+    To configure the button text and link, use the built-in Canvas link options.
+  </p>
+  <hr class="my-1" />
   <!-- <div class="input-group">
     <label for="buttonTextConfig">Button Text</label>
     <input type="text" id="buttonTextConfig" bind:value={$innerText} />

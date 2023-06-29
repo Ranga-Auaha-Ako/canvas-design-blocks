@@ -43,39 +43,42 @@
         card: isCard ? ColType.Card : ColType.Normal,
       };
     },
-    {
-      withOld(
-        reflecting,
-        [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
-      ) {
-        // Height
-        if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
-        // Card effect
-        if (reflecting.card === ColType.Normal) {
-          // if (oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
-          oldInnerClassList.remove("uoa_shadowbox");
-          oldInnerClassList.remove("uoa_corners_4");
-        } else if (reflecting.card === ColType.Card) {
-          if (
-            !oldInnerClassList.contains("uoa_shadowbox") &&
-            reflecting.padding < 1
-          )
-            reflecting.padding = 10;
-          oldInnerClassList.add("uoa_shadowbox");
-          oldInnerClassList.add("uoa_corners_4");
-          oldInnerStyle.display = "flow-root";
-        }
-        if (oldInnerStyle) {
-          // Padding
-          oldInnerStyle.padding = `${reflecting.padding}px`;
-          oldInnerStyle.margin = `${reflecting.margin}px`;
-          // Background
-          oldInnerStyle.background = reflecting.background?.toHex() || "";
-          // Text Colour
-          oldInnerStyle.color = reflecting.textColor?.toHex() || "";
-        }
-        return [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList];
-      },
+    (
+      reflecting,
+      [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
+    ) => {
+      // Height
+      if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
+      // Card effect
+      if (reflecting.card === ColType.Normal) {
+        // if (oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
+        oldInnerClassList.remove("uoa_shadowbox");
+        oldInnerClassList.remove("uoa_corners_4");
+      } else if (reflecting.card === ColType.Card) {
+        if (
+          !oldInnerClassList.contains("uoa_shadowbox") &&
+          reflecting.padding < 1
+        )
+          reflecting.padding = 10;
+        oldInnerClassList.add("uoa_shadowbox");
+        oldInnerClassList.add("uoa_corners_4");
+        oldInnerStyle.display = "flow-root";
+      }
+      if (oldInnerStyle) {
+        // Padding
+        oldInnerStyle.padding = `${reflecting.padding}px`;
+        oldInnerStyle.margin = `${reflecting.margin}px`;
+        // Background
+        oldInnerStyle.background = reflecting.background?.toHex() || "";
+        // Text Colour
+        oldInnerStyle.color = reflecting.textColor?.toHex() || "";
+      }
+      return [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList] as [
+        typeof oldStyle,
+        typeof oldClassList,
+        typeof oldInnerStyle,
+        typeof oldInnerClassList
+      ];
     }
   );
 </script>
