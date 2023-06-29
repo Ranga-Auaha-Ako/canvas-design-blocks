@@ -10,9 +10,9 @@
   import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
   import ConfigureIcon from "$assets/icons/configure.svelte";
-  import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
+  import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
   import Column from "../column";
-  import ColSettings from "./layoutEditor/advancedSettings/colSettings.svelte";
+  import ColSettings from "./advancedSettings/colSettings.svelte";
   import type { McePopover } from "$lib/elements/generic/popover/popover";
 
   export let props: { col: Column };

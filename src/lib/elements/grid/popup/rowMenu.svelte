@@ -10,7 +10,7 @@
   import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
   import ConfigureIcon from "$assets/icons/configure.svelte";
-  import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
+  import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
 
   export let props: { row: Row };
   export let isDominant: Writable<boolean>;

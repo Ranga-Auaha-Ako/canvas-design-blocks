@@ -8,7 +8,7 @@
   import Settings from "$assets/icons/settings.svelte";
   import type Row from "$lib/elements/grid/row";
   import { persisted } from "svelte-local-storage-store";
-  import AdvancedSettings from "./advancedSettings.svelte";
+  import AdvancedSettings from "../advancedSettings/rowSettings.svelte";
   import { Readable } from "svelte/store";
   import {
     autoUpdate,
