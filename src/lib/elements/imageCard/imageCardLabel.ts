@@ -9,6 +9,7 @@ import { ImageCard } from "./imageCard";
 
 export class ImageCardLabel extends MceTextElement {
   attributes: MceElement["attributes"] = new Map([]);
+  public contenteditable = false;
   public static markupVersion = "1.0.0";
   public staticAttributes = {
     "data-cdb-version": ImageCardLabel.markupVersion,
@@ -59,6 +60,7 @@ export class ImageCardLabel extends MceTextElement {
       parentCard,
       node.dataset.cdbId
     );
+    parentCard.childLabel = imageCardLabel;
     return imageCardLabel;
   }
   static create(state: stateObject, parentCard: ImageCard, editor: Editor) {
@@ -72,7 +74,11 @@ export class ImageCardLabel extends MceTextElement {
     parentCard.node.appendChild(node);
 
     // Create instance
-    return new this(state, editor, node, parentCard, undefined);
+    const imageCardLabel = new this(state, editor, node, parentCard, undefined);
+
+    parentCard.childLabel = imageCardLabel;
+
+    return imageCardLabel;
   }
 
   checkSelf() {

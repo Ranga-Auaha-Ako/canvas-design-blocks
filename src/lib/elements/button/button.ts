@@ -10,6 +10,7 @@ import ButtonConfig from "./buttonConfig.svelte";
 import { ButtonManager } from "./buttonManager";
 
 export class Button extends MceTextElement {
+  public contenteditable = true;
   public static markupVersion = "1.0.0";
   public trackInnerText = true;
   static staticAttributes = {

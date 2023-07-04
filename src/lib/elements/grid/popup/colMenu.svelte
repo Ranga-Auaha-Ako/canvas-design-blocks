@@ -45,6 +45,7 @@
 <div class="cgb-component" use:preventBubble>
   <div
     class="gridMenu"
+    class:showConfig
     bind:this={gridMenuEl}
     transition:fade|global={{ delay: 100, duration: 200 }}
   >
@@ -76,6 +77,10 @@
     @apply px-2 py-0.5 h-6;
     @apply bg-uni-blue-light text-white rounded-full shadow select-none;
     @apply mx-auto w-fit;
+    @apply transition-shadow duration-300;
+    &.showConfig {
+      @apply ring-4 ring-uni-blue-light ring-opacity-50;
+    }
     & .actions {
       @apply flex h-full items-stretch;
       & .change {

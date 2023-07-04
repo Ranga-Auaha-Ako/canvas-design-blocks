@@ -2,7 +2,7 @@ import deriveWindow from "$lib/util/deriveWindow";
 import { get, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
 import { McePopover } from "./popover/popover";
-import { SvelteComponent, SvelteComponentTyped } from "svelte";
+import { SvelteComponent } from "svelte";
 import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
 import type { Editor } from "tinymce";
@@ -328,7 +328,7 @@ export default abstract class MceElement extends SelectableElement {
       this.selectUnsubscriber = this._attributes
         .get("data-mce-selected")
         ?.subscribe((value) => {
-          if (value === "inline-boundary") {
+          if (value === "inline-boundary" || value === "1") {
             this.select();
           } else {
             this.deselect();
@@ -459,7 +459,7 @@ export default abstract class MceElement extends SelectableElement {
    * @returns The popover component
    */
   public setupPopover(
-    contents?: typeof SvelteComponentTyped<any>,
+    contents?: typeof SvelteComponent<any>,
     props?: McePopover["props"],
     placement?: Placement
   ) {

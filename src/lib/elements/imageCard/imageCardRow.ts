@@ -5,6 +5,7 @@ import type { Editor } from "tinymce";
 import MceElement from "../generic/mceElement";
 import { ImageCard } from "./imageCard";
 import ImageCardManager from "./imageCardManager";
+import type { McePopover } from "$lib/elements/generic/popover/popover";
 
 export class ImageCardRow extends MceElement {
   selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
@@ -45,6 +46,24 @@ export class ImageCardRow extends MceElement {
     if (highlight) {
       this.highlight();
     }
+
+    // // Monitor selected state and show Editor when selected
+    // this.isSelected.subscribe((selected) => {
+    //   if (selected) {
+    //     this.state.showInterface.set(true);
+    //     this.state.configComponent.set({
+    //       component: ImageCardConfig,
+    //       props: {
+    //         imageCard: this,
+    //       },
+    //     });
+    //   } else {
+    //     this.state.configComponent.update((c) => {
+    //       if (c?.props.imageCard === this) return null;
+    //       return c;
+    //     });
+    //   }
+    // });
 
     this.node.addEventListener("click", (e) => {
       if (e.target === this.node) {

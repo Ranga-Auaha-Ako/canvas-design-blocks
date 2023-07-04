@@ -81,10 +81,31 @@
       ];
     }
   );
+
+  $: editorContainer = column.editor.getContainer();
+  let editorWidth = "50vw";
+  let windowWidth = 0;
+  let offsetLeft = "0px";
+  let popupEl: HTMLDivElement;
+
+  $: if (editorContainer && windowWidth) {
+    editorWidth = `${editorContainer.offsetWidth}px`;
+    offsetLeft = `${
+      (popupEl.offsetParent?.getBoundingClientRect().x || 0) * -1 +
+      editorContainer.getBoundingClientRect().x
+    }px`;
+  }
 </script>
 
+<svelte:window bind:innerWidth={windowWidth} />
+
 <div class="cgb-component">
-  <div class="card">
+  <div
+    class="card"
+    style:--editor-width={editorWidth}
+    style:--offset-left={offsetLeft}
+    bind:this={popupEl}
+  >
     <h5>Column Settings</h5>
     <span class="label-text">Column Type</span>
     <div class="btn-group">
@@ -147,8 +168,11 @@
     }
   }
   .card {
-    @apply p-4 mt-2 shadow-md rounded-lg border-uni-blue-light border-2 bg-white w-screen max-w-sm;
+    @apply p-4 mt-2 shadow-md rounded-lg border-uni-blue-light border-2 bg-white w-screen;
     @apply flex flex-col gap-2;
+    @apply absolute;
+    max-width: var(--editor-width);
+    left: var(--offset-left);
     & .label-text {
       @apply font-bold text-uni-gray-500;
     }

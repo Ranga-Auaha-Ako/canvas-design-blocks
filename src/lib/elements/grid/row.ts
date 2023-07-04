@@ -175,6 +175,7 @@ export default class Row extends MceElement {
     // Disconnects watching devices, removes self from DOM.
     super.delete();
     this.parentGrid.rows.update((rows) => rows.filter((r) => r.id !== this.id));
+    this.selected.set(new Set());
     return true;
   }
 
