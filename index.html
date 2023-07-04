@@ -40,7 +40,7 @@
 
   <body class="primary-nav-expanded course-menu-expanded pages edit">
     <!-- Fake a Canvas LMS layout -->
-    <div class="page-mock">
+    <div class="page-mock" id="application">
       <header class="leftnav ic-app-header"></header>
       <main id="wrapper" class="ic-Layout-wrapper">
         <div class="header-mock">
@@ -152,8 +152,6 @@
     </div>
     <script type="module">
       import { loadApp } from "/src/main.ts";
-      // Force the editor to load
-      window.addEventListener("load", loadApp);
     </script>
   </body>
 </html>

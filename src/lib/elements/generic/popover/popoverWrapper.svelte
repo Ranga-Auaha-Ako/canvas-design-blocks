@@ -10,12 +10,14 @@
     hide,
   } from "@floating-ui/dom";
   import type { Placement } from "@floating-ui/dom";
-  import { onDestroy, SvelteComponent } from "svelte";
+  import { onDestroy } from "svelte";
+  import type { SvelteComponentTyped } from "svelte";
   import type { Readable, Writable } from "svelte/store";
   import { fade } from "svelte/transition";
   import type { McePopover } from "./popover";
 
-  export let component: typeof SvelteComponent | undefined = undefined;
+  export let component: typeof SvelteComponentTyped<any> | undefined =
+    undefined;
   export let show: boolean = false;
   export let props: Record<string, unknown> | undefined = undefined;
   export let placement: Placement = "top";
@@ -89,7 +91,7 @@
     &.active {
       @apply visible opacity-100;
     }
-    &:global(> *) {
+    & > :global(*) {
       @apply pointer-events-auto;
     }
   }

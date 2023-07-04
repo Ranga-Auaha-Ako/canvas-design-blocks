@@ -67,38 +67,34 @@
         card: isCard ? RowType.Card : RowType.Normal,
       };
     },
-    {
-      withOld(reflecting, [oldStyle, oldClassList]) {
-        // Card effect
-        if (reflecting.card === RowType.Normal) {
-          if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "";
-          oldClassList.remove("uoa_shadowbox");
-          oldClassList.remove("uoa_corners_4");
-        } else if (reflecting.card === RowType.Card) {
-          if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
-          oldClassList.add("uoa_shadowbox");
-          oldClassList.add("uoa_corners_4");
-        }
-        if (oldStyle) {
-          // Padding
-          if (typeof reflecting.padding === "number")
-            oldStyle.padding = `${reflecting.padding}px`;
-          else if (Array.isArray(reflecting.padding))
-            oldStyle.padding = reflecting.padding
-              .map((p) => `${p}px`)
-              .join(" ");
-          // Margin
-          if (typeof reflecting.margin === "number")
-            oldStyle.margin = `${reflecting.margin}px`;
-          else if (Array.isArray(reflecting.margin))
-            oldStyle.margin = reflecting.margin.map((m) => `${m}px`).join(" ");
-          // Background
-          oldStyle.background = reflecting.background?.toHex() || "";
-          // Text Colour
-          oldStyle.color = reflecting.textColor?.toHex() || "";
-        }
-        return [oldStyle, oldClassList];
-      },
+    (reflecting, [oldStyle, oldClassList]) => {
+      // Card effect
+      if (reflecting.card === RowType.Normal) {
+        if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "";
+        oldClassList.remove("uoa_shadowbox");
+        oldClassList.remove("uoa_corners_4");
+      } else if (reflecting.card === RowType.Card) {
+        if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
+        oldClassList.add("uoa_shadowbox");
+        oldClassList.add("uoa_corners_4");
+      }
+      if (oldStyle) {
+        // Padding
+        if (typeof reflecting.padding === "number")
+          oldStyle.padding = `${reflecting.padding}px`;
+        else if (Array.isArray(reflecting.padding))
+          oldStyle.padding = reflecting.padding.map((p) => `${p}px`).join(" ");
+        // Margin
+        if (typeof reflecting.margin === "number")
+          oldStyle.margin = `${reflecting.margin}px`;
+        else if (Array.isArray(reflecting.margin))
+          oldStyle.margin = reflecting.margin.map((m) => `${m}px`).join(" ");
+        // Background
+        oldStyle.background = reflecting.background?.toHex() || "";
+        // Text Colour
+        oldStyle.color = reflecting.textColor?.toHex() || "";
+      }
+      return [oldStyle, oldClassList] as [CSSStyleDeclaration, DOMTokenList];
     }
   );
 

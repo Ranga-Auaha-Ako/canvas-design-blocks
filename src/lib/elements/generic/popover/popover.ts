@@ -1,6 +1,6 @@
 import MceElement from "../mceElement";
 import { derived, get, Writable, writable } from "svelte/store";
-import type { SvelteComponent } from "svelte";
+import type { SvelteComponentTyped } from "svelte";
 import PopoverWrapper from "./popoverWrapper.svelte";
 import { SelectableElement } from "../selectableElement";
 import { nanoid } from "nanoid";
@@ -25,7 +25,7 @@ export class McePopover extends SelectableElement {
   constructor(
     public readonly MceElement: MceElement,
     public readonly popoverWindow: Window & typeof globalThis,
-    public readonly contents?: typeof SvelteComponent,
+    public readonly contents?: typeof SvelteComponentTyped<any>,
     public readonly props?: PopoverWrapper["props"],
     public readonly placement?: Placement,
     isDominant: boolean = false

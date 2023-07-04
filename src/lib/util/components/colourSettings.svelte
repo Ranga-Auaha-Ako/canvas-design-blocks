@@ -40,7 +40,7 @@
   <div
     class="colour-alert-box"
     class:alert-active={contrastLevel !== false && !isReadable}
-    transition:slide
+    transition:slide|global
   >
     <ColourPicker
       label="Background Colour"

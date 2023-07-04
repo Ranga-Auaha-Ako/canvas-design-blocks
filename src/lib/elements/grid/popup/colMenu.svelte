@@ -10,9 +10,9 @@
   import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
   import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
   import ConfigureIcon from "$assets/icons/configure.svelte";
-  import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
+  import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
   import Column from "../column";
-  import ColSettings from "./layoutEditor/advancedSettings/colSettings.svelte";
+  import ColSettings from "./advancedSettings/colSettings.svelte";
   import type { McePopover } from "$lib/elements/generic/popover/popover";
 
   export let props: { col: Column };
@@ -46,7 +46,7 @@
   <div
     class="gridMenu"
     bind:this={gridMenuEl}
-    transition:fade={{ delay: 100, duration: 200 }}
+    transition:fade|global={{ delay: 100, duration: 200 }}
   >
     <div class="actions">
       <!-- Change Layout -->
@@ -64,7 +64,7 @@
     </div>
   </div>
   {#if showConfig}
-    <div class="layoutConfig" transition:fade>
+    <div class="layoutConfig" transition:fade|global>
       <ColSettings column={props.col} />
     </div>
   {/if}

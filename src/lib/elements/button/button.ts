@@ -12,7 +12,7 @@ import { ButtonManager } from "./buttonManager";
 export class Button extends MceTextElement {
   public static markupVersion = "1.0.0";
   public trackInnerText = true;
-  public staticAttributes = {
+  static staticAttributes = {
     "data-cdb-version": Button.markupVersion,
     "data-cdb-content": "Simple",
     // contenteditable: "false",

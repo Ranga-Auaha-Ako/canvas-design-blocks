@@ -1,8 +1,9 @@
 const config = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
-  // corePlugins: {
-  //   preflight: false,
-  // },
+  corePlugins: {
+    preflight: false,
+  },
+  important: ".cgb-component",
   theme: {
     extend: {
       colors: {
