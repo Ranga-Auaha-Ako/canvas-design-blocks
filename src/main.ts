@@ -6,14 +6,14 @@ import "$lib/util/tailwind.postcss";
 import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
-import { SvelteComponentTyped } from "svelte";
+import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
-    component: typeof SvelteComponentTyped<any>;
+    component: typeof SvelteComponent<any>;
     props: Record<string, any>;
   } | null>;
 }

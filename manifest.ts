@@ -4,6 +4,7 @@ const { version } = packageJson;
 import "dotenv/config";
 
 // Load basedomains from CANVAS_BLOCKS_BASE_DOMAINS environment variable
+// @ts-ignore
 const BaseDomains: string[] = process.env.CANVAS_BLOCKS_BASE_DOMAINS?.split(
   ","
 ) ?? ["canvas.auckland.ac.nz"];
@@ -18,7 +19,7 @@ const [major, minor, patch, label = "0"] = version
 export default defineManifest(async (env) => ({
   manifest_version: 3,
   name:
-    env.mode === "staging"
+    env.mode === "beta"
       ? "[INTERNAL] Canvas Design Blocks"
       : "Canvas Design Blocks",
   homepage_url: "https://teachwell.auckland.ac.nz/",
@@ -33,7 +34,7 @@ export default defineManifest(async (env) => ({
   version_name: version,
   action: {
     default_icon:
-      env.mode === "staging"
+      env.mode === "beta"
         ? {
             "16": "icon/beta/logo_icon_16.png",
             "24": "icon/beta/logo_icon_24.png",
@@ -47,19 +48,20 @@ export default defineManifest(async (env) => ({
     default_title: "Canvas Design Blocks",
   },
   icons:
-    env.mode === "staging"
+    env.mode === "beta"
       ? {
-          "16": "icon/logo_icon_16.png",
-          "32": "icon/logo_icon_32.png",
-          "48": "icon/logo_icon_48.png",
-          "128": "icon/logo_icon_128.png",
-        }
-      : {
           "16": "icon/beta/logo_icon_16.png",
           "32": "icon/beta/logo_icon_32.png",
           "48": "icon/beta/logo_icon_48.png",
           "128": "icon/beta/logo_icon_128.png",
+        }
+      : {
+          "16": "icon/logo_icon_16.png",
+          "32": "icon/logo_icon_32.png",
+          "48": "icon/logo_icon_48.png",
+          "128": "icon/logo_icon_128.png",
         },
+
   author: "raa@auckland.ac.nz",
   web_accessible_resources: [
     {

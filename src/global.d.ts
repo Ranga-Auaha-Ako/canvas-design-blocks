@@ -5,6 +5,7 @@ export {};
 declare global {
   interface Window {
     tinymce: TinyMCE;
+    ENV: { COURSE_ID: string };
   }
 }
 
