@@ -5,48 +5,43 @@ import MceElement from "../generic/mceElement";
 import ImageCardManager from "./imageCardManager";
 import { ImageCardLabel } from "./imageCardLabel";
 import { ImageCardRow } from "./imageCardRow";
-import { get, Writable } from "svelte/store";
+import { get, writable, Writable } from "svelte/store";
 import ImageCardConfig from "./popup/imageCardConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 
 export class ImageCard extends MceElement {
-  attributes: MceElement["attributes"] = new Map([]);
-  selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
+  attributes: MceElement["attributes"] = new Map([["href", writable("")]]);
+  selectionMethod: "TinyMCE" | "focus" | "clickTinyMCE" = "clickTinyMCE";
   public static markupVersion = "1.0.0";
   public staticAttributes = {
     "data-cdb-version": ImageCard.markupVersion,
-    contenteditable: "false",
+    // contenteditable: "false",
+    // tabindex: "0",
   };
-  public static staticStyle: Partial<CSSStyleDeclaration> = {
-    width: "175px",
-    height: "130px",
-    display: "flex",
-    alignItems: "flex-end",
-    color: "white",
-    textDecoration: "none",
-    overflow: "hidden",
-  };
+  public static staticStyle: Partial<CSSStyleDeclaration> = {};
   public popover: McePopover;
   public childLabel: ImageCardLabel;
 
-  defaultClasses = new Set(["ImageCard", "uoa_shadowbox", "uoa_corners_8"]);
+  defaultClasses = new Set(["ImageCard"]);
 
   public setImage(url: string) {
     const style = this.mergedAttributes.get("style");
-    if (style) {
-      (style as Writable<CSSStyleDeclaration>).update((style) => {
-        // style.backgroundImage = `linear-gradient(to top, #000000a1, #00000029), url('${url}')`;
-        // style.backgroundSize = "cover";
-        style.backgroundPosition = "center";
-        // style.setProperty("background", `center / cover`);
-        style.setProperty("background-image", `url("${url}")`);
-        // this.node.setAttribute(
-        //   "style",
-        //   `${style.cssText} background: center / cover; background-image: url('${url}');`
-        // );
-        return style;
-      });
-    }
+    this.node.setAttribute("style", `background-image: url('${url}');`);
+    // if (style) {
+    //   (style as Writable<CSSStyleDeclaration>).update((style) => {
+    //     // style.backgroundImage = `linear-gradient(to top, #000000a1, #00000029), url('${url}')`;
+    //     // style.backgroundSize = "cover";
+    //     // style.backgroundPosition = "center";
+    //     // style.setProperty("background", `center / cover`);
+    //     // style.setProperty("background-image", `url('${url}')`);
+    //     // this.node.setAttribute(
+    //     //   "style",
+    //     //   `${style.cssText} background: center / cover; background-image: url('${url}');`
+    //     // );
+    //     style.cssText = `background-image: url('${url}');`;
+    //     return style;
+    //   });
+    // }
   }
 
   public openImageSelector() {
@@ -71,13 +66,6 @@ export class ImageCard extends MceElement {
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
 
-    this.node.addEventListener("click", (e) => {
-      e.preventDefault();
-      // this.select();
-      // this.delete();
-      return false;
-    });
-
     // Set up popover
     this.popover = this.setupPopover(
       ImageCardConfig,
@@ -88,11 +76,19 @@ export class ImageCard extends MceElement {
     );
     this.isSelected.subscribe((selected) => {
       if (selected) {
+        this.node.dataset.cbeSelected = "true";
         !this.popover.isActive && this.popover.show();
       } else {
+        delete this.node.dataset.cbeSelected;
         if (this.popover.isActive) {
           this.popover.hide();
         }
+      }
+    });
+
+    (this.attributes.get("href") as Writable<string>).subscribe((href) => {
+      if (this.node.dataset.mceHref !== href) {
+        this.node.dataset.mceHref = href;
       }
     });
 

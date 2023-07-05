@@ -7,8 +7,10 @@ type DialogSpec = Parameters<WindowManager["open"]>[0];
 export class ModalDialog<T extends ComponentType> {
   options: DialogSpec;
   id = nanoid();
-  componentInstance?: SvelteComponent;
+  componentInstance?: InstanceType<T>;
   openDialog?: ReturnType<WindowManager["open"]>;
+  submitHandlers: ((modal: this) => void)[] = [];
+  actionHandlers: ((modal: this) => void)[] = [];
   constructor(
     public component: T,
     public editor: Editor,
@@ -26,6 +28,14 @@ export class ModalDialog<T extends ComponentType> {
           },
         ],
       },
+      onSubmit: (api) => {
+        this.submitHandlers.forEach((handler) => handler(this));
+        options.onSubmit?.(api);
+      },
+      onAction: (api, details) => {
+        this.actionHandlers.forEach((handler) => handler(this));
+        options.onAction?.(api, details);
+      },
     };
   }
   open(): InstanceType<T> {
@@ -37,11 +47,20 @@ export class ModalDialog<T extends ComponentType> {
     this.componentInstance = new this.component({
       target,
       props: this.props,
-    });
-    return this.componentInstance as InstanceType<T>;
+    }) as InstanceType<T>;
+
+    return this.componentInstance;
   }
+
   close() {
     this.componentInstance?.$destroy();
     this.openDialog?.close();
+  }
+
+  onSubmit(callback: (modal: this) => void) {
+    this.submitHandlers.push(callback);
+  }
+  onAction(callback: (modal: this) => void) {
+    this.actionHandlers.push(callback);
   }
 }

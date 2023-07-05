@@ -83,8 +83,9 @@ export default abstract class MceElement extends SelectableElement {
    * Determines approach to detecting element selection
    * - TinyMCE: Uses TinyMCE's selection API to detect selection
    * - focus: Uses the focus event to detect selection
+   * - clickTinyMCE: Uses the click event to detect selection, and TinyMCE's selection API to detect deselection. Used for when the element is not focusable or selectable by TinyMCE (e.g. a child within a contenteditable=false element)
    */
-  abstract selectionMethod: "TinyMCE" | "focus";
+  abstract selectionMethod: "TinyMCE" | "focus" | "clickTinyMCE";
 
   /**
    * ID will reflect what this.node has
@@ -323,19 +324,36 @@ export default abstract class MceElement extends SelectableElement {
     //     this.watchNodes,
     //     this.watchNodes.entries().next().value[0] === this.node
     //   );
-    if (this.selectionMethod === "TinyMCE") {
-      // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
-      this.selectUnsubscriber = this._attributes
-        .get("data-mce-selected")
-        ?.subscribe((value) => {
-          if (value === "inline-boundary" || value === "1") {
-            this.select();
-          } else {
-            this.deselect();
-          }
+    switch (this.selectionMethod) {
+      case "TinyMCE":
+        // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
+        this.selectUnsubscriber = this._attributes
+          .get("data-mce-selected")
+          ?.subscribe((value) => {
+            if (value === "inline-boundary" || value === "1") {
+              this.select();
+            } else {
+              this.deselect();
+            }
+          });
+        break;
+      case "clickTinyMCE":
+        this.node.addEventListener("click", (e) => {
+          e.preventDefault();
+          this.select(this);
+          this.editor.once("NodeChange", () => {
+            this.deselect(this);
+          });
+          this.editor.once("blur", () => {
+            this.deselect(this);
+          });
+          // this.delete();
+          return false;
         });
-    } else {
-      super.startObserving();
+        break;
+      default:
+        super.startObserving();
+        break;
     }
 
     this.watchNodes.forEach((options, node) => {

@@ -10,7 +10,7 @@ import MceElement from "./mceElement";
  * - Modifies TinyMCE selection behaviour to prevent deleting the element when text inside is deleted
  */
 export default abstract class MceTextElement extends MceElement {
-  public abstract contenteditable: boolean;
+  public abstract contenteditable: boolean | undefined;
   /**
    * Inner text - will reflect what this.node has
    */
@@ -41,7 +41,9 @@ export default abstract class MceTextElement extends MceElement {
       ) as HTMLDivElement;
       if (!foundInnerNode) {
         foundInnerNode = this.editor.dom.create("span", {
-          contenteditable: this.contenteditable,
+          ...(this.contenteditable === undefined
+            ? {}
+            : { contenteditable: this.contenteditable }),
           class: "cgb-el-inner",
         });
         outerNode.appendChild(foundInnerNode);
@@ -50,11 +52,13 @@ export default abstract class MceTextElement extends MceElement {
     } else {
       foundInnerNode = innerNode;
     }
-    this.editor.dom.setAttrib(
-      foundInnerNode,
-      "contenteditable",
-      `${this.contenteditable}`
-    );
+    if (this.contenteditable !== undefined) {
+      this.editor.dom.setAttrib(
+        foundInnerNode,
+        "contenteditable",
+        `${this.contenteditable}`
+      );
+    }
 
     // Move any other children into the inner node - we don't need them
     [...outerNode.childNodes].forEach((n) => {

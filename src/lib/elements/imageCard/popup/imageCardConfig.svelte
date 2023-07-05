@@ -10,6 +10,9 @@
   // export let dominantPopover: Readable<boolean> | undefined = undefined;
   $: imageCard = props.imageCard;
   $: innerText = imageCard.childLabel.innerText;
+  $: cardLink = imageCard.attributes.get("href") as
+    | Writable<string>
+    | undefined;
   let configEl: HTMLElement;
 
   const openPicker = () => () => {
@@ -18,14 +21,16 @@
       imageCard.editor,
       {
         title: "Select Image",
-        buttons: [],
+        buttons: [
+          {
+            type: "cancel",
+            text: "Cancel",
+          },
+        ],
       },
       {}
     );
     const pickerInst = picker.open();
-    // const picker = new ImageSearch({
-    //   target: document.body,
-    // });
     pickerInst.$on("selectImage", ({ detail }) => {
       imageCard.setImage(detail);
       picker.close();
@@ -41,7 +46,11 @@
     id={`${imageCard.id}-text`}
     bind:value={$innerText}
     rows="3"
+    maxlength="100"
   />
+
+  <p>Image Card Link:</p>
+  <input type="text" id={`${imageCard.id}-url`} bind:value={$cardLink} />
 
   <p>Image Card Image:</p>
   <button class="Button" on:click={openPicker()}>Select Image</button>

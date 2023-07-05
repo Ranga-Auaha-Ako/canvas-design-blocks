@@ -20,9 +20,16 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   public subscribe = this._elements.subscribe;
   constructor(
     public readonly state: stateObject,
-    public readonly editor = window.tinymce.activeEditor
+    public readonly editor = window.tinymce.activeEditor,
+    private readonly editorStyles?: string
   ) {
     this.watchEditor();
+    if (editorStyles) {
+      // Inject our styles into the TinyMCE editor
+      const editorStyleEl = document.createElement("style");
+      editorStyleEl.innerHTML = editorStyles;
+      editor.getBody().insertAdjacentElement("beforebegin", editorStyleEl);
+    }
   }
   public create(atCursor = false, highlight = false) {
     const element = this.elementClass.create(

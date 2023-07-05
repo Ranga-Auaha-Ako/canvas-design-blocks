@@ -9,18 +9,13 @@ import { ImageCard } from "./imageCard";
 
 export class ImageCardLabel extends MceTextElement {
   attributes: MceElement["attributes"] = new Map([]);
-  public contenteditable = false;
+  public contenteditable = undefined;
   public static markupVersion = "1.0.0";
   public staticAttributes = {
     "data-cdb-version": ImageCardLabel.markupVersion,
   };
 
-  public static staticStyle: Partial<CSSStyleDeclaration> = {
-    padding: "0.5em",
-    lineHeight: "1.1",
-    background: "#00000029",
-    flexGrow: "1",
-  };
+  public static staticStyle: Partial<CSSStyleDeclaration> = {};
   defaultClasses = new Set(["ImageCardLabel"]);
 
   constructor(
@@ -83,12 +78,8 @@ export class ImageCardLabel extends MceTextElement {
 
   checkSelf() {
     this.stopObserving();
-    if (!this.editor.getBody().contains(this.node)) {
-      const newChild = ImageCardLabel.create(
-        this.state,
-        this.parentCard,
-        this.editor
-      );
+    if (!this.editor.getBody().contains(this.node) && this.parentCard) {
+      ImageCardLabel.create(this.state, this.parentCard, this.editor);
       return this.delete();
     }
     this.startObserving();

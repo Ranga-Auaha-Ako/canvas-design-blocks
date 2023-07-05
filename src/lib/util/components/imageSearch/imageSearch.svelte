@@ -44,117 +44,77 @@
     return `/courses/${COURSE_ID}/files/${file.id}/preview`;
   };
 
-  let dialog: HTMLDialogElement;
   let searchInput: HTMLInputElement;
 
   const truncate = (str: string, n: number) => {
     return str.length > n ? str.substr(0, n - 1) + "..." : str;
   };
-
-  const close = () => {
-    dialog.close();
-  };
-
-  onMount(() => {
-    dialog.showModal();
-  });
-  onDestroy(() => {
-    dialog.close();
-  });
 </script>
 
-<Portal>
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-  <dialog
-    bind:this={dialog}
-    class="imagesearch-popup"
-    on:close
-    on:click={(e) => {
-      if (e.target === dialog) close();
-    }}
-    in:fade
-    out:fade
-  >
-    <div class="wrapper">
-      <input
-        type="search"
-        class="imageSearch"
-        placeholder="Search for an image"
-        bind:this={searchInput}
-        on:input={(e) => setQuery(e.currentTarget.value)}
-      />
-      <div class="imageResults">
-        {#await results}
-          <div class="status-msg">
-            <p>Loading...</p>
-          </div>
-        {:then files}
-          {#if files.length === 0}
-            <div class="status-msg">
-              <p>No results found</p>
-              <button
-                class="Button"
-                on:click={() => {
-                  imageQuery = "";
-                  searchInput.value = "";
-                }}>Clear Search</button
-              >
-            </div>
-          {:else}
-            {#each files as file}
-              <div class="imageResult" in:fade|global>
-                <button
-                  class="imageChoice"
-                  on:click={() => dispatch("selectImage", getFileURL(file))}
-                  style:--image-url={`url(${file.thumbnail_url})`}
-                />
-                <div class="caption">
-                  <div class="filename">
-                    {truncate(file.display_name, 20)}
-                  </div>
-                  <div class="filesize">
-                    {filesize(file.size)}
-                  </div>
-                  <div class="date-created">
-                    {new Date(file.created_at).toLocaleDateString()}
-                  </div>
-                </div>
-              </div>
-            {/each}
-          {/if}
-        {:catch error}
-          <div class="status-msg">
-            <strong>An error occured</strong>
-            <p>{error.message}</p>
-          </div>
-        {/await}
+<div class="wrapper cgb-component">
+  <input
+    type="search"
+    class="imageSearch"
+    placeholder="Search for an image"
+    bind:this={searchInput}
+    on:input={(e) => setQuery(e.currentTarget.value)}
+  />
+  <div class="imageResults">
+    {#await results}
+      <div class="status-msg">
+        <p>Loading...</p>
       </div>
-      <form method="dialog" class="dialogActions">
-        <button class="Button cancelSearch">Cancel</button>
-      </form>
-    </div>
-  </dialog>
-</Portal>
+    {:then files}
+      {#if files.length === 0}
+        <div class="status-msg">
+          <p>No results found</p>
+          <button
+            class="tox-button tox-button--secondary"
+            on:click={() => {
+              imageQuery = "";
+              searchInput.value = "";
+            }}>Clear Search</button
+          >
+        </div>
+      {:else}
+        {#each files as file}
+          <div class="imageResult" in:fade|global>
+            <button
+              class="imageChoice"
+              on:click={() => dispatch("selectImage", getFileURL(file))}
+              style:--image-url={`url(${file.thumbnail_url})`}
+            />
+            <div class="caption">
+              <div class="filename">
+                {truncate(file.display_name, 20)}
+              </div>
+              <div class="filesize">
+                {filesize(file.size)}
+              </div>
+              <div class="date-created">
+                {new Date(file.created_at).toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+        {/each}
+      {/if}
+    {:catch error}
+      <div class="status-msg">
+        <strong>An error occured</strong>
+        <p>{error.message}</p>
+      </div>
+    {/await}
+  </div>
+</div>
 
 <style lang="postcss">
-  .imagesearch-popup {
-    @apply rounded-md shadow-lg w-full max-w-lg p-0;
-    @apply opacity-0 transition-opacity duration-300;
-    &[open] {
-      @apply opacity-100;
-    }
-    &::backdrop {
-      @apply bg-black bg-opacity-75 backdrop-blur;
-    }
-    .wrapper {
-      @apply p-4 flex flex-col gap-2;
-      z-index: 120;
-    }
+  .wrapper {
+    @apply flex flex-col gap-2;
+    z-index: 120;
   }
 
   .imageSearch {
-    @apply w-full box-border py-5 m-0;
+    @apply w-full box-border py-2 px-2 m-0 border;
   }
   .imageResults {
     @apply grid grid-cols-4 gap-2 content-baseline;
@@ -195,12 +155,6 @@
     &:hover .caption,
     &:focus-within .caption {
       @apply opacity-100;
-    }
-  }
-
-  .dialogActions {
-    @apply flex flex-row-reverse mb-0;
-    .cancelSearch {
     }
   }
 </style>

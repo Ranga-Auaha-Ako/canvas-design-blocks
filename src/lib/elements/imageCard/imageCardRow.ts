@@ -21,7 +21,7 @@ export class ImageCardRow extends MceElement {
     justifyContent: "flex-start",
     gap: "1em",
   };
-  defaultClasses = new Set(["ImageCardRow"]);
+  defaultClasses = new Set(["ImageCardRow", "cgb-component"]);
   cards = writable(new Map<string, ImageCard>());
 
   constructor(

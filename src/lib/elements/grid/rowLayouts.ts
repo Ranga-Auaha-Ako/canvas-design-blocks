@@ -57,43 +57,43 @@ export const rowTemplates = {
     { md: 4, xs: 12 },
   ]),
   "1/4 + 1/4 + 1/4 + 1/4": new RowLayout([
-    { md: 3, xs: 6 },
-    { md: 3, xs: 6 },
-    { md: 3, xs: 6 },
-    { md: 3, xs: 6 },
+    { md: 6, xs: 12 },
+    { md: 6, xs: 12 },
+    { md: 6, xs: 12 },
+    { md: 6, xs: 12 },
   ]),
   // "Sidebar + Content"
   "1/3 + 2/3": new RowLayout([
-    { md: 4, xs: 6 },
-    { md: 8, xs: 6 },
+    { lg: 4, md: 6, xs: 12 },
+    { lg: 8, md: 6, xs: 12 },
   ]),
   "2/3 + 1/3": new RowLayout([
-    { md: 8, xs: 6 },
-    { md: 4, xs: 6 },
+    { lg: 8, md: 6, xs: 12 },
+    { lg: 4, md: 6, xs: 12 },
   ]),
   "1/4 + 3/4": new RowLayout([
-    { md: 3, xs: 6 },
-    { md: 9, xs: 6 },
+    { lg: 3, md: 6, xs: 12 },
+    { lg: 9, md: 6, xs: 12 },
   ]),
   "3/4 + 1/4": new RowLayout([
-    { md: 9, xs: 6 },
-    { md: 3, xs: 6 },
+    { lg: 9, md: 6, xs: 12 },
+    { lg: 3, md: 6, xs: 12 },
   ]),
   // "Sidebar + Content + Sidebar"
   "1/4 + 1/2 + 1/4": new RowLayout([
-    { md: 3, xs: 12 },
-    { md: 6, xs: 12 },
-    { md: 3, xs: 12 },
+    { lg: 3, md: 4, xs: 12 },
+    { lg: 6, md: 4, xs: 12 },
+    { lg: 3, md: 4, xs: 12 },
   ]),
   // "Small + Small + Large"
   "1/4 + 1/4 + 1/2": new RowLayout([
-    { md: 3, xs: 12 },
-    { md: 3, xs: 12 },
-    { md: 6, xs: 12 },
+    { lg: 3, md: 4, xs: 12 },
+    { lg: 3, md: 4, xs: 12 },
+    { lg: 6, md: 4, xs: 12 },
   ]),
   "1/2 + 1/4 + 1/4": new RowLayout([
-    { md: 6, xs: 12 },
-    { md: 3, xs: 12 },
-    { md: 3, xs: 12 },
+    { lg: 6, md: 4, xs: 12 },
+    { lg: 3, md: 4, xs: 12 },
+    { lg: 3, md: 4, xs: 12 },
   ]),
 };
