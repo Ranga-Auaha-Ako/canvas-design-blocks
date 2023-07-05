@@ -3,7 +3,7 @@ import type { Editor } from "tinymce";
 import GridManager from "$lib/elements/grid/gridManager";
 import "./app.postcss";
 import "$lib/util/tailwind.postcss";
-import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
+import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
@@ -90,15 +90,10 @@ export const loadApp = async () => {
     managers: [grids, buttons, imagecards],
   });
 
-  // Inject our styles into the TinyMCE editor
-  const editorStyles = document.createElement("style");
-  editorStyles.innerHTML = tinyMCEStyles;
-  editor.getBody().insertAdjacentElement("beforebegin", editorStyles);
-
-  // // Inject our styles into the page
-  // const pageStylesEl = document.createElement("style");
-  // pageStylesEl.innerHTML = pageStyles;
-  // document.head.insertAdjacentElement("beforeend", pageStylesEl);
+  // Inject tailwind base styles into editor
+  const pageStylesEl = editor.getDoc().createElement("style");
+  pageStylesEl.innerHTML = tailwindStyles;
+  editor.getBody().insertAdjacentElement("beforebegin", pageStylesEl);
 
   // Add class to page body when toolbar is open
   state.showInterface.subscribe((show) => {
