@@ -76,13 +76,20 @@ export class ImageCard extends MceElement {
     );
     this.isSelected.subscribe((selected) => {
       if (selected) {
-        this.node.dataset.cbeSelected = "true";
+        this.node.dataset.mceSelected = "cbe";
         !this.popover.isActive && this.popover.show();
+        cardRow.select(this);
       } else {
-        delete this.node.dataset.cbeSelected;
+        delete this.node.dataset.mceSelected;
         if (this.popover.isActive) {
           this.popover.hide();
         }
+        cardRow.deselect(this);
+      }
+    });
+    cardRow.selected.subscribe((sel) => {
+      if (!sel.has(this) && get(this.isSelected)) {
+        this.deselect();
       }
     });
 
@@ -147,5 +154,10 @@ export class ImageCard extends MceElement {
       this.cardRow.removeCard(this);
     }
     this.startObserving();
+  }
+
+  delete() {
+    this.popover.hide();
+    super.delete();
   }
 }
