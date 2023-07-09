@@ -114,7 +114,10 @@
   }
 
   .imageSearch {
-    @apply w-full box-border py-2 px-2 m-0 border;
+    @apply w-full box-border py-2 px-2 m-0 border border-gray-300 border-solid;
+    &:hover {
+      @apply ring-2;
+    }
   }
   .imageResults {
     @apply grid grid-cols-4 gap-2 content-baseline;
@@ -132,6 +135,7 @@
       @apply w-full aspect-square;
       @apply bg-cover bg-center rounded shadow border-0;
       @apply transition-all duration-300;
+      @apply cursor-pointer;
       background-image: var(--image-url);
       &:hover {
         @apply scale-105;
