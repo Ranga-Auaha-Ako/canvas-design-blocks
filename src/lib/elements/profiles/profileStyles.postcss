@@ -1,0 +1,42 @@
+#tinymce .Profiles {
+  @apply cursor-pointer;
+  &[data-mce-selected] {
+    @apply rounded-2xl;
+  }
+}
+.Profiles[data-cdb-version] {
+  .profileItem {
+    @apply flex flex-wrap mx-auto gap-4 mb-4;
+    .card {
+      @apply rounded-2xl shadow-xl bg-uni-blue text-white p-4 text-center w-60 grow;
+      @apply flex flex-row flex-wrap content-start;
+      img.profile-photo {
+        @apply rounded-full mx-auto shadow-md;
+      }
+      .details {
+        @apply grow basis-0;
+        & > .title {
+          @apply text-sm uppercase mb-0;
+        }
+        .name {
+          @apply text-xl;
+        }
+        .position {
+          .title {
+            @apply my-0;
+          }
+          .department {
+            @apply my-0 text-xs;
+          }
+        }
+      }
+    }
+    .bio {
+      @apply p-4 rounded-2xl shadow-xl w-72 shrink;
+      flex-grow: 999;
+    }
+  }
+  .no-people {
+    @apply text-center text-2xl text-gray-500 m-4;
+  }
+}

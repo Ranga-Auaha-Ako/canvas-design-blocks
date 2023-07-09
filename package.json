@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "filesize": "^10.0.7",
+    "perfect-debounce": "^1.0.0",
     "svelte-portal": "^2.2.0"
   }
 }
