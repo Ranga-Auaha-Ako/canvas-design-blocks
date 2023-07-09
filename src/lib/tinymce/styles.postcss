@@ -180,13 +180,15 @@
   }
 }
 @for $i from 1 to 12 {
-  .mce-content-body .canvas-grid-editor .col-md-$i {
+  .mce-content-body .canvas-grid-editor .col-lg-$i {
     width: calc(100% / 12 * $(i));
   }
 }
 
 .mce-content-body .canvas-grid-editor {
-  & [data-mce-selected] {
+  .grid-row[data-mce-selected],
+  .cgb-col[data-mce-selected],
+  .cgb-empty-placeholder[data-mce-selected] {
     @apply outline-0 cursor-auto !important;
   }
 }
