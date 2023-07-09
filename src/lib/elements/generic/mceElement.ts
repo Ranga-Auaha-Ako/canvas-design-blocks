@@ -2,7 +2,7 @@ import deriveWindow from "$lib/util/deriveWindow";
 import { get, writable, Writable } from "svelte/store";
 import { nanoid } from "nanoid";
 import { McePopover } from "./popover/popover";
-import { SvelteComponent, SvelteComponentTyped } from "svelte";
+import { SvelteComponent } from "svelte";
 import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
 import type { Editor } from "tinymce";
@@ -83,8 +83,9 @@ export default abstract class MceElement extends SelectableElement {
    * Determines approach to detecting element selection
    * - TinyMCE: Uses TinyMCE's selection API to detect selection
    * - focus: Uses the focus event to detect selection
+   * - clickTinyMCE: Uses the click event to detect selection, and TinyMCE's selection API to detect deselection. Used for when the element is not focusable or selectable by TinyMCE (e.g. a child within a contenteditable=false element)
    */
-  abstract selectionMethod: "TinyMCE" | "focus";
+  abstract selectionMethod: "TinyMCE" | "focus" | "clickTinyMCE";
 
   /**
    * ID will reflect what this.node has
@@ -158,13 +159,15 @@ export default abstract class MceElement extends SelectableElement {
    * @param watchNodes Any additional nodes to watch for changes
    * @param children Children MceElements
    * @param id The ID (captured from import or manually created)
+   * @param isSimpleEl Whether this is a simple element (e.g. a text node or can contain other CGB elements)
    */
   constructor(
     public node: HTMLElement,
     public editor: Editor = window.tinymce.activeEditor,
     public watchNodes: observerMap = new Map([[node, { name: "" }]]),
     children: MceElement[] = [],
-    public readonly id = nanoid()
+    public readonly id = nanoid(),
+    isSimpleEl = false
   ) {
     super(node, children);
     // Watch ID for changes
@@ -188,7 +191,7 @@ export default abstract class MceElement extends SelectableElement {
       ["style", this.style],
       ["data-cdb-id", this._id],
       ["data-mce-selected", writable(null)],
-      ["data-cdb-content", writable("element")],
+      ["data-cdb-content", writable(isSimpleEl ? "Simple" : "element")],
     ]);
 
     // Set ID of element
@@ -224,6 +227,34 @@ export default abstract class MceElement extends SelectableElement {
           }
         }))
     );
+  }
+
+  /**
+   * Creates a node in the TinyMCE DOM for placing the MceElement within. Avoids placing within a non-block element or a simple MceElement.
+   * @param atCursor Whether to place the node at the cursor
+   * @param editor The TinyMCE editor instance
+   * @returns The created node
+   */
+  public static createInsertNode(atCursor: boolean, editor: Editor) {
+    const node = editor.dom.create("div");
+    if (atCursor) {
+      const insertNode = editor.selection.getNode();
+      const inBlock = insertNode.closest(`*[data-cdb-content="Simple"]`);
+      if (inBlock) {
+        editor.dom.insertAfter(node, inBlock);
+      } else if (
+        insertNode.nodeName === "BODY" ||
+        insertNode.closest("body") === null
+      ) {
+        editor.dom.add(editor.dom.getRoot(), node);
+      } else if (!editor.dom.isBlock(insertNode)) {
+        //  If the cursor is in a non-block element, insert the grid after the element
+        editor.dom.insertAfter(node, insertNode);
+      } else {
+        editor.dom.add(insertNode, node);
+      }
+    } else editor.dom.add(editor.dom.getRoot(), node);
+    return node;
   }
 
   /**
@@ -323,19 +354,36 @@ export default abstract class MceElement extends SelectableElement {
     //     this.watchNodes,
     //     this.watchNodes.entries().next().value[0] === this.node
     //   );
-    if (this.selectionMethod === "TinyMCE") {
-      // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
-      this.selectUnsubscriber = this._attributes
-        .get("data-mce-selected")
-        ?.subscribe((value) => {
-          if (value === "inline-boundary") {
-            this.select();
-          } else {
-            this.deselect();
-          }
+    switch (this.selectionMethod) {
+      case "TinyMCE":
+        // Some MCE Elements won't trigger focus events, so we need to watch for the data-mce-selected attribute
+        this.selectUnsubscriber = this._attributes
+          .get("data-mce-selected")
+          ?.subscribe((value) => {
+            if (value === "inline-boundary" || value === "1") {
+              this.select();
+            } else {
+              this.deselect();
+            }
+          });
+        break;
+      case "clickTinyMCE":
+        this.node.addEventListener("click", (e) => {
+          e.preventDefault();
+          this.select(this);
+          this.editor.once("NodeChange", () => {
+            this.deselect(this);
+          });
+          this.editor.once("blur", () => {
+            this.deselect(this);
+          });
+          // this.delete();
+          return false;
         });
-    } else {
-      super.startObserving();
+        break;
+      default:
+        super.startObserving();
+        break;
     }
 
     this.watchNodes.forEach((options, node) => {
@@ -459,15 +507,23 @@ export default abstract class MceElement extends SelectableElement {
    * @returns The popover component
    */
   public setupPopover(
-    contents?: typeof SvelteComponentTyped<any>,
+    contents?: typeof SvelteComponent<any>,
     props?: McePopover["props"],
-    placement?: Placement
+    placement?: Placement,
+    middleware?: McePopover["middleware"]
   ) {
     if (this.popover) {
       this.popover.hostComponent.$set({ component: contents, props });
     } else {
       // Create a popover for the node
-      const popover = new McePopover(this, window, contents, props, placement);
+      const popover = new McePopover(
+        this,
+        window,
+        contents,
+        props,
+        placement,
+        middleware
+      );
       this.popover = popover;
       this.children.update((children) => {
         children.push(popover);

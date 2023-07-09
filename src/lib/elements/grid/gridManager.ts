@@ -13,9 +13,7 @@ import type { Editor } from "tinymce";
 import { SvelteComponent } from "svelte";
 import { stateObject } from "src/main";
 import ElementManager from "../generic/elementManager";
-import MceElement, {
-  MceElementStatics,
-} from "$lib/elements/generic/mceElement";
+import editorStyles from "$lib/tinymce/styles.postcss?inline";
 
 export class GridManager extends ElementManager {
   public elementName: string = "Grid";
@@ -26,7 +24,7 @@ export class GridManager extends ElementManager {
     public readonly state: stateObject,
     public readonly editor = window.tinymce.activeEditor
   ) {
-    super(state, editor);
+    super(state, editor, editorStyles);
 
     this.importAll();
   }

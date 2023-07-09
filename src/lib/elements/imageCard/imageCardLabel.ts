@@ -9,17 +9,13 @@ import { ImageCard } from "./imageCard";
 
 export class ImageCardLabel extends MceTextElement {
   attributes: MceElement["attributes"] = new Map([]);
+  public contenteditable = undefined;
   public static markupVersion = "1.0.0";
   public staticAttributes = {
     "data-cdb-version": ImageCardLabel.markupVersion,
   };
 
-  public static staticStyle: Partial<CSSStyleDeclaration> = {
-    padding: "0.5em",
-    lineHeight: "1.1",
-    background: "#00000029",
-    flexGrow: "1",
-  };
+  public static staticStyle: Partial<CSSStyleDeclaration> = {};
   defaultClasses = new Set(["ImageCardLabel"]);
 
   constructor(
@@ -59,6 +55,7 @@ export class ImageCardLabel extends MceTextElement {
       parentCard,
       node.dataset.cdbId
     );
+    parentCard.childLabel = imageCardLabel;
     return imageCardLabel;
   }
   static create(state: stateObject, parentCard: ImageCard, editor: Editor) {
@@ -72,17 +69,17 @@ export class ImageCardLabel extends MceTextElement {
     parentCard.node.appendChild(node);
 
     // Create instance
-    return new this(state, editor, node, parentCard, undefined);
+    const imageCardLabel = new this(state, editor, node, parentCard, undefined);
+
+    parentCard.childLabel = imageCardLabel;
+
+    return imageCardLabel;
   }
 
   checkSelf() {
     this.stopObserving();
-    if (!this.editor.getBody().contains(this.node)) {
-      const newChild = ImageCardLabel.create(
-        this.state,
-        this.parentCard,
-        this.editor
-      );
+    if (!this.editor.getBody().contains(this.node) && this.parentCard) {
+      ImageCardLabel.create(this.state, this.parentCard, this.editor);
       return this.delete();
     }
     this.startObserving();

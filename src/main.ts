@@ -3,12 +3,13 @@ import type { Editor } from "tinymce";
 import GridManager from "$lib/elements/grid/gridManager";
 import "./app.postcss";
 import "$lib/util/tailwind.postcss";
-import tinyMCEStyles from "$lib/tinymce/styles.postcss?inline";
+import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
+import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -83,22 +84,18 @@ export const loadApp = async () => {
   const grids = new GridManager(state, editor);
   const buttons = new ButtonManager(state, editor);
   const imagecards = new ImageCardManager(state, editor);
+  const profiles = new ProfilesManager(state, editor);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({
     state,
-    managers: [grids, buttons, imagecards],
+    managers: [grids, buttons, imagecards, profiles],
   });
 
-  // Inject our styles into the TinyMCE editor
-  const editorStyles = document.createElement("style");
-  editorStyles.innerHTML = tinyMCEStyles;
-  editor.getBody().insertAdjacentElement("beforebegin", editorStyles);
-
-  // // Inject our styles into the page
-  // const pageStylesEl = document.createElement("style");
-  // pageStylesEl.innerHTML = pageStyles;
-  // document.head.insertAdjacentElement("beforeend", pageStylesEl);
+  // Inject tailwind base styles into editor
+  const pageStylesEl = editor.getDoc().createElement("style");
+  pageStylesEl.innerHTML = tailwindStyles;
+  editor.getBody().insertAdjacentElement("beforebegin", pageStylesEl);
 
   // Add class to page body when toolbar is open
   state.showInterface.subscribe((show) => {

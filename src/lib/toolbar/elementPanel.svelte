@@ -19,9 +19,9 @@
     @apply bg-white border-b p-3 py-2 relative w-full;
     @apply grid justify-items-start;
     grid-template-columns: 1fr auto;
-    & .icon-help {
+    /* & .icon-help {
       @apply block w-4 h-4 leading-none;
-    }
+    } */
     & h3 {
       @apply block m-0 text-base;
     }

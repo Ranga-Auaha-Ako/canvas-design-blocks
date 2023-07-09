@@ -33,7 +33,7 @@
   let popoverEl: HTMLDivElement;
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
   let editorWidth = "50vw";
-  const editorBody = row ? row.parentGrid.editor.getBody() : undefined;
+  $: editorBody = row ? row.editor.getBody() : undefined;
 
   $: updateFunction = async () => {
     let additionalOffset = [0, 0];

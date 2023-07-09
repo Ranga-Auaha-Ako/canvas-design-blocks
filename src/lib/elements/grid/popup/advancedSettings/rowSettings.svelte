@@ -291,13 +291,6 @@
       content: " ";
     }
   }
-  .card {
-    @apply p-4 shadow-md rounded;
-    @apply flex flex-col gap-2;
-    & .label-text {
-      @apply font-bold text-uni-gray-500;
-    }
-  }
   label {
     @apply flex flex-col items-start gap-1;
     & input {
