@@ -9,6 +9,7 @@ import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
+import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -83,11 +84,12 @@ export const loadApp = async () => {
   const grids = new GridManager(state, editor);
   const buttons = new ButtonManager(state, editor);
   const imagecards = new ImageCardManager(state, editor);
+  const profiles = new ProfilesManager(state, editor);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({
     state,
-    managers: [grids, buttons, imagecards],
+    managers: [grids, buttons, imagecards, profiles],
   });
 
   // Inject tailwind base styles into editor
