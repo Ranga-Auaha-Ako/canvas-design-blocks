@@ -251,7 +251,12 @@ export default class Column extends MceElement {
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
     // Set up popover
-    this.popover = this.setupPopover(ColMenu, { col: this }, "bottom");
+    this.popover = this.setupPopover(ColMenu, { col: this }, "bottom", {
+      shift: {
+        crossAxis: true,
+        padding: 30,
+      },
+    });
     this.isSelected.subscribe((selected) => {
       if (selected && get(this.showPopover)) {
         !this.popover.isActive && this.popover.show();
