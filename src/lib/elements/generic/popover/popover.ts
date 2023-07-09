@@ -28,6 +28,7 @@ export class McePopover extends SelectableElement {
     public readonly contents?: typeof SvelteComponent<any>,
     public readonly props?: PopoverWrapper["props"],
     public readonly placement?: Placement,
+    public middleware?: PopoverWrapper["middleware"],
     isDominant: boolean = false
   ) {
     super();
@@ -62,6 +63,7 @@ export class McePopover extends SelectableElement {
       props: this.props,
       placement: this.placement,
       isDominant: this.isDominant,
+      middleware: this.middleware,
       dominantPopover: derived(
         activePopover,
         (activePopover) => activePopover === this

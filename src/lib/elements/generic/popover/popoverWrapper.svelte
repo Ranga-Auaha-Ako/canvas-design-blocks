@@ -12,9 +12,7 @@
   import type { Placement } from "@floating-ui/dom";
   import { onDestroy } from "svelte";
   import type { SvelteComponent } from "svelte";
-  import type { Readable, Writable } from "svelte/store";
-  import { fade } from "svelte/transition";
-  import type { McePopover } from "./popover";
+  import { writable, type Readable, type Writable } from "svelte/store";
 
   export let component: typeof SvelteComponent<any> | undefined = undefined;
   export let show: boolean = false;
@@ -23,6 +21,37 @@
   export let target: HTMLElement | undefined = undefined;
   export let isDominant: Writable<boolean> | undefined = undefined;
   export let dominantPopover: Readable<boolean> | undefined = undefined;
+  export let middleware:
+    | {
+        flip?: true | Parameters<typeof flip>[0];
+        offset?: true | Parameters<typeof offset>[0];
+        shift?: true | Parameters<typeof shift>[0];
+        hide?: true | Parameters<typeof hide>[0];
+      }
+    | undefined = undefined;
+
+  $: middlewareMap = Object.entries(
+    middleware || { shift: { crossAxis: true } }
+  ).map(([middleware, props]) => {
+    switch (middleware) {
+      case "flip":
+        return props === true
+          ? flip()
+          : flip(props as Parameters<typeof flip>[0]);
+      case "offset":
+        return props === true
+          ? offset()
+          : offset(props as Parameters<typeof offset>[0]);
+      case "shift":
+        return props === true
+          ? shift()
+          : shift(props as Parameters<typeof shift>[0]);
+      case "hide":
+        return props === true
+          ? hide()
+          : hide(props as Parameters<typeof hide>[0]);
+    }
+  });
 
   let cleanup: () => void;
   export let popoverEl: HTMLElement;
@@ -36,12 +65,7 @@
     if (!target || !popoverEl) return;
     const position = await computePosition(target, popoverEl, {
       placement,
-      middleware: [
-        shift(),
-        // hide({
-        //   strategy: "escaped",
-        // }),
-      ],
+      middleware: middlewareMap,
     });
     const { middlewareData } = position;
     isVisible = !middlewareData.hide?.escaped ?? false;
