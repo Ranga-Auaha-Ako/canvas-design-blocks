@@ -15,7 +15,6 @@ export class Button extends MceTextElement {
   public trackInnerText = true;
   static staticAttributes = {
     "data-cdb-version": Button.markupVersion,
-    "data-cdb-content": "Simple",
     // contenteditable: "false",
   };
   attributes = new Map([

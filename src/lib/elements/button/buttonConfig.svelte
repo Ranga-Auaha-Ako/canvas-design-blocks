@@ -118,9 +118,6 @@
   input {
     @apply block w-full h-auto px-2 py-1 text-sm;
   }
-  button.Button {
-    @apply border w-full block;
-  }
   select {
     @apply block w-full h-auto px-2 py-1 text-sm border border-[#c7cdd1];
   }

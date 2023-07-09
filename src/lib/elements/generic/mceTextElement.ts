@@ -115,7 +115,8 @@ export default abstract class MceTextElement extends MceElement {
       editor,
       new Map([[node, { ...modifiedObserverConfig, name: "" }]]),
       undefined,
-      id
+      id,
+      true
     );
 
     // Bind to keydown event to prevent deleting the element when text is deleted
