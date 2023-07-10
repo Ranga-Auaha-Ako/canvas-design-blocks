@@ -5,13 +5,14 @@ import { nanoid } from "nanoid";
 import type ElementManager from "./elementManager";
 import type { ComponentType, SvelteComponent } from "svelte";
 
-/**
- * SafeState is a container for any data that can be safely rendered as HTML
- * without the risk of XSS attacks.
- */
-export interface SafeState {
-  safeState: Record<any, any>;
+export interface SvelteState<State> extends Writable<State> {
+  state: Writable<State>;
+  get stateString(): string;
 }
+export type SvelteStateClass<State> = new (
+  unsafeState: Partial<State> | undefined,
+  node?: HTMLElement
+) => SvelteState<State>;
 
 /**
  * SvelteElement is a generic element that can be used to render any Svelte
@@ -19,16 +20,14 @@ export interface SafeState {
  * @extends MceElement
  * @template StateData The type of the data that the Svelte component will receive.
  */
-export abstract class SvelteElement<
-  StateData extends SafeState
-> extends MceElement {
+export abstract class SvelteElement<stateDataType> extends MceElement {
   selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
   public staticAttributes = {
     "data-cdb-version": SvelteElement.markupVersion,
     contenteditable: "false",
   };
   public static markupVersion = "1.0.0";
-  public SvelteState: Writable<StateData | undefined> = writable();
+  public SvelteState: SvelteState<stateDataType>;
   private dataEl: HTMLElement | undefined;
 
   constructor(
@@ -36,8 +35,9 @@ export abstract class SvelteElement<
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<
-      SvelteComponent<{ cdbData: StateData }>
+      SvelteComponent<{ cdbData: stateDataType }>
     >,
+    public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
     highlight = false
   ) {
@@ -49,23 +49,36 @@ export abstract class SvelteElement<
       }
     });
 
-    let lastContents: SvelteComponent<{ cdbData: StateData }> | undefined;
-    const updateDataEl = (state: StateData) => {
+    let lastContents: SvelteComponent<{ cdbData: stateDataType }> | undefined;
+    const updateDataEl = () => {
       if (!this.dataEl || this.dataEl.parentElement !== this.node) {
         this.dataEl = document.createElement("div");
         this.dataEl.classList.add("cdbData");
         this.dataEl.style.display = "none";
       }
-      this.dataEl.innerText = JSON.stringify(state);
+      this.dataEl.innerText = this.SvelteState.stateString;
       return this.dataEl;
     };
 
+    let dataEl = this.node.querySelector(".cdbData");
+    const stateString = dataEl?.textContent;
+    let parsedStateData: Partial<stateDataType> | undefined;
+    try {
+      if (stateString) {
+        parsedStateData = JSON.parse(stateString) as Partial<stateDataType>;
+      }
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.log("Failed to load data for SvelteElement:", this);
+      }
+    }
+    this.SvelteState = new stateClass(parsedStateData, node);
     this.SvelteState.subscribe((elState) => {
       if (elState) {
         this.stopObserving();
         this.node.innerHTML = "";
         this.dataEl = undefined;
-        this.node.appendChild(updateDataEl(elState));
+        this.node.appendChild(updateDataEl());
         lastContents?.$destroy();
         lastContents = new svelteComponent({
           target: this.node,
@@ -75,38 +88,14 @@ export abstract class SvelteElement<
         });
         lastContents.$on("update", ({ detail }) => {
           if (detail) {
-            updateDataEl(detail);
+            updateDataEl();
           }
         });
         this.startObserving();
       }
     });
+
     if (highlight) this.highlight();
-  }
-  abstract get safeState(): SafeState["safeState"];
-  /**
-   * This method is called when the element is first created. It should be used
-   * to instantiate the Svelte element and load data from the DOM.
-   * @returns Whether the element was successfully loaded.
-   */
-  loadData() {
-    let dataEl = this.node.querySelector(".cdbData");
-    const stateString = dataEl?.textContent;
-    try {
-      if (stateString) {
-        const parsedStateData = JSON.parse(stateString) as StateData;
-        const { safeState: _, ...unsafeState } = parsedStateData;
-        this.SvelteState.set({
-          ...unsafeState,
-          safeState: this.safeState,
-        } as StateData);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return false;
-    }
   }
   checkChildren(): void {}
   checkSelf(): void {
