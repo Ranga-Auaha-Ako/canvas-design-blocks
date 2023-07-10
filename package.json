@@ -17,6 +17,7 @@
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
     "@types/css": "^0.0.33",
+    "@types/sortablejs": "^1.15.1",
     "@types/to-px": "^1.1.2",
     "autoprefixer": "10.4.14",
     "bestzip": "^2.2.1",
@@ -48,6 +49,7 @@
   "dependencies": {
     "filesize": "^10.0.7",
     "perfect-debounce": "^1.0.0",
+    "sortablejs": "^1.15.0",
     "svelte-portal": "^2.2.0"
   }
 }
