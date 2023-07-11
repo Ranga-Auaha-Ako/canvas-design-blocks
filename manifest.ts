@@ -21,6 +21,8 @@ export default defineManifest(async (env) => ({
   name:
     env.mode === "beta"
       ? "[INTERNAL] Canvas Design Blocks"
+      : env.mode === "theme-beta"
+      ? "[CANVAS THEME] Canvas Design Blocks"
       : "Canvas Design Blocks",
   homepage_url: "https://teachwell.auckland.ac.nz/",
   host_permissions: BaseDomains.map((d) => `*://${d}/*`),
@@ -34,7 +36,7 @@ export default defineManifest(async (env) => ({
   version_name: version,
   action: {
     default_icon:
-      env.mode === "beta"
+      env.mode === "beta" || env.mode === "theme-beta"
         ? {
             "16": "icon/beta/logo_icon_16.png",
             "24": "icon/beta/logo_icon_24.png",
@@ -48,7 +50,7 @@ export default defineManifest(async (env) => ({
     default_title: "Canvas Design Blocks",
   },
   icons:
-    env.mode === "beta"
+    env.mode === "beta" || env.mode === "theme-beta"
       ? {
           "16": "icon/beta/logo_icon_16.png",
           "32": "icon/beta/logo_icon_32.png",
