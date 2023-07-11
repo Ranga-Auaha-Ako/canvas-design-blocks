@@ -18,7 +18,7 @@ import type { MceElementStatics } from "$lib/elements/generic/mceElement";
 import { stateObject } from "src/main";
 
 export class Grid extends MceElement implements Readable<Row[]> {
-  public static gridMarkupVersion = "1.0.0";
+  public static gridMarkupVersion = "1.1.0";
   public selectionMethod: "TinyMCE" | "focus" = "focus";
   public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
@@ -40,6 +40,33 @@ export class Grid extends MceElement implements Readable<Row[]> {
         get(row.columns).forEach((col) => {
           col.checkChildren();
         });
+      });
+    }
+    // SINCE beta: Move away from using UoA styles on any row/col elements. Instead use "cdb-card" to give shadow and rounded edges
+    if (grid.node.dataset.cgeVersion === "1.0.0") {
+      const removeUoaStyles = (node: HTMLElement, innerNode?: HTMLElement) => {
+        if (
+          node.classList.contains("uoa_shadowbox") &&
+          node.classList.contains("uoa_corners_4")
+        ) {
+          node.classList.remove("uoa_shadowbox");
+          node.classList.remove("uoa_corners_4");
+          (innerNode || node).classList.add("cdb-card");
+        } else if (
+          innerNode &&
+          innerNode.classList.contains("uoa_shadowbox") &&
+          innerNode.classList.contains("uoa_corners_4")
+        ) {
+          innerNode.classList.remove("uoa_shadowbox");
+          innerNode.classList.remove("uoa_corners_4");
+          innerNode.classList.add("cdb-card");
+        }
+      };
+      get(grid).forEach((row) => {
+        get(row.columns).forEach((col) => {
+          removeUoaStyles(col.node, col.innerNode);
+        });
+        removeUoaStyles(row.node);
       });
     }
     // Migrate row to new version

@@ -3,6 +3,7 @@ import { Button } from "./button";
 import type { stateObject } from "src/main";
 import type { MceElementStatics } from "$lib/elements/generic/mceElement";
 import type MceElement from "$lib/elements/generic/mceElement";
+import editorStyles from "./buttonEditor.postcss?inline";
 
 export class ButtonManager extends ElementManager {
   public elementName = "Button";
@@ -13,7 +14,7 @@ export class ButtonManager extends ElementManager {
     public readonly state: stateObject,
     public readonly editor = window.tinymce.activeEditor
   ) {
-    super(state, editor);
+    super(state, editor, editorStyles);
 
     this.importAll();
   }

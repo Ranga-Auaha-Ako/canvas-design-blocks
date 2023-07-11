@@ -56,9 +56,7 @@
         padding = 0;
       }
       // Card
-      const isCard =
-        $classList.contains("uoa_shadowbox") &&
-        $classList.contains("uoa_corners_4");
+      const isCard = $classList.contains("cdb-card");
       return {
         padding: padding,
         margin: margin,
@@ -69,14 +67,15 @@
     },
     (reflecting, [oldStyle, oldClassList]) => {
       // Card effect
-      if (reflecting.card === RowType.Normal) {
-        if (oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "";
-        oldClassList.remove("uoa_shadowbox");
-        oldClassList.remove("uoa_corners_4");
-      } else if (reflecting.card === RowType.Card) {
-        if (!oldClassList.contains("uoa_shadowbox")) oldStyle.margin = "10px";
-        oldClassList.add("uoa_shadowbox");
-        oldClassList.add("uoa_corners_4");
+      switch (reflecting.card) {
+        case RowType.Normal:
+          oldClassList.remove("cdb-card");
+          break;
+        case RowType.Card:
+          oldClassList.add("cdb-card");
+          break;
+        default:
+          break;
       }
       if (oldStyle) {
         // Padding

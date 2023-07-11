@@ -217,6 +217,9 @@ export default abstract class MceElement extends SelectableElement {
                 (child as HTMLElement).classList.contains(
                   "cgb-empty-placeholder"
                 ) ||
+                (child as HTMLElement).classList.contains(
+                  "cdb-empty-placeholder"
+                ) ||
                 (child as HTMLElement).dataset.mceBogus ||
                 this.isEmpty(child as HTMLElement)
               );

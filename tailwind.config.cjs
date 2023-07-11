@@ -47,6 +47,10 @@ const config = {
           "teal-alt": "#006990",
         },
       },
+      boxShadow: {
+        strong:
+          "0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a, 0 0px 4px -2px #0000004f",
+      },
     },
   },
 };

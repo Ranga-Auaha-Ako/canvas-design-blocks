@@ -13,7 +13,8 @@ import type { Editor } from "tinymce";
 import { SvelteComponent } from "svelte";
 import { stateObject } from "src/main";
 import ElementManager from "../generic/elementManager";
-import editorStyles from "$lib/tinymce/styles.postcss?inline";
+import "./grid.postcss";
+import editorStyles from "./gridEditor.postcss?inline";
 
 export class GridManager extends ElementManager {
   public elementName: string = "Grid";

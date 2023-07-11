@@ -29,9 +29,7 @@
   $: preferences = writableDerived(
     [style, classList, innerStyle, innerClassList],
     ([$style, $classList, $innerStyle, $innerClassList]) => {
-      const isCard =
-        $innerClassList.contains("uoa_shadowbox") &&
-        $innerClassList.contains("uoa_corners_4");
+      const isCard = $innerClassList.contains("cdb-card");
       return {
         padding:
           $innerStyle.padding && (toPx($innerStyle.padding) || 0) > 0
@@ -49,20 +47,16 @@
     ) => {
       // Height
       if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
-      // Card effect
-      if (reflecting.card === ColType.Normal) {
-        // if (oldInnerClassList.contains("uoa_shadowbox")) oldStyle.margin = "0";
-        oldInnerClassList.remove("uoa_shadowbox");
-        oldInnerClassList.remove("uoa_corners_4");
-      } else if (reflecting.card === ColType.Card) {
-        if (
-          !oldInnerClassList.contains("uoa_shadowbox") &&
-          reflecting.padding < 1
-        )
-          reflecting.padding = 10;
-        oldInnerClassList.add("uoa_shadowbox");
-        oldInnerClassList.add("uoa_corners_4");
-        oldInnerStyle.display = "flow-root";
+      // Card
+      switch (reflecting.card) {
+        case ColType.Normal:
+          oldInnerClassList.remove("cdb-card");
+          break;
+        case ColType.Card:
+          oldInnerClassList.add("cdb-card");
+          break;
+        default:
+          break;
       }
       if (oldInnerStyle) {
         // Padding
