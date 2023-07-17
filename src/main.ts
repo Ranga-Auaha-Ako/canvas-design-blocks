@@ -10,6 +10,7 @@ import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
+import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -85,11 +86,12 @@ export const loadApp = async () => {
   const buttons = new ButtonManager(state, editor);
   const imagecards = new ImageCardManager(state, editor);
   const profiles = new ProfilesManager(state, editor);
+  const courseHeader = new CourseHeaderManager(state, editor);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({
     state,
-    managers: [grids, buttons, imagecards, profiles],
+    managers: [grids, buttons, imagecards, profiles, courseHeader],
   });
 
   // Inject tailwind base styles into editor
