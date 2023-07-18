@@ -51,9 +51,12 @@
     }
     .headerLinks {
       @apply flex flex-wrap justify-start gap-4;
+      a:not(.headerLink) {
+        display: none;
+      }
       .headerLink {
         @apply text-lg bg-black bg-opacity-30 text-white rounded-md px-4 py-2;
-        text-decoration: none;
+        text-decoration: none !important;
       }
     }
   }
