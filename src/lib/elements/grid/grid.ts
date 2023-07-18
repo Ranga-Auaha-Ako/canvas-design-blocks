@@ -28,14 +28,14 @@ export class Grid extends MceElement implements Readable<Row[]> {
   public rows: Writable<Row[]> = writable([]);
 
   public static migrate(grid: Grid) {
-    if (grid.node.dataset.cgbVersion === Grid.gridMarkupVersion) return;
+    if (grid.node.dataset.cdbVersion === Grid.gridMarkupVersion) return;
     console.log(
-      `Migrating grid from ${grid.node.dataset.cgbVersion || "alpha"} to v${
-        Grid.gridMarkupVersion
-      }`
+      `Migrating grid from ${
+        grid.node.dataset.cgbVersion || grid.node.dataset.cdbVersion || "alpha"
+      } to v${Grid.gridMarkupVersion}`
     );
     // SINCE alpha: Columns might have direct text decendants of innernode. This is no longer allowed, so we need to wrap them in a paragraph
-    if (grid.node.dataset.cgeVersion === undefined) {
+    if (grid.node.dataset.cdbVersion === undefined) {
       get(grid).forEach((row) => {
         get(row.columns).forEach((col) => {
           col.checkChildren();
@@ -43,7 +43,10 @@ export class Grid extends MceElement implements Readable<Row[]> {
       });
     }
     // SINCE beta: Move away from using UoA styles on any row/col elements. Instead use "cdb-card" to give shadow and rounded edges
-    if (grid.node.dataset.cgeVersion === "1.0.0") {
+    if (
+      grid.node.dataset.cdbVersion === "1.0.0" ||
+      grid.node.dataset.cgbVersion === "1.0.0"
+    ) {
       const removeUoaStyles = (node: HTMLElement, innerNode?: HTMLElement) => {
         if (
           node.classList.contains("uoa_shadowbox") &&
@@ -70,7 +73,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
       });
     }
     // Migrate row to new version
-    grid.node.dataset.cgbVersion = Grid.gridMarkupVersion;
+    grid.node.dataset.cdbVersion = Grid.gridMarkupVersion;
   }
 
   public static create(
