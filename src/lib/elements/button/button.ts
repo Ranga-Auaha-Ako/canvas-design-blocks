@@ -52,7 +52,6 @@ export class Button extends MceTextElement {
     // Monitor selected state and show Button Editor when selected
     this.isSelected.subscribe((selected) => {
       if (selected) {
-        console.log("Showing Interface for button");
         this.state.showInterface.set(true);
         this.state.configComponent.set({
           component: ButtonConfig,
@@ -61,7 +60,6 @@ export class Button extends MceTextElement {
           },
         });
       } else {
-        console.log("Hiding Interface for button", selected);
         this.state.configComponent.update((c) => {
           if (c?.props.button === this) return null;
           return c;
@@ -70,7 +68,7 @@ export class Button extends MceTextElement {
     });
 
     this.selected.subscribe((selected) => {
-      console.log("Button selected", selected, selected.has(this));
+      // console.log("Button selected", selected, selected.has(this));
     });
 
     this.node.addEventListener("click", (e) => {

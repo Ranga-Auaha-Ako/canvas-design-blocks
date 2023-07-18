@@ -265,11 +265,11 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
-    console.log(
-      `\n${mutations
-        .map((m) => `${(m.target as HTMLElement).className}:${m.type}`)
-        .join(", ")} mutation(s) detected`
-    );
+    // console.log(
+    //   `\n${mutations
+    //     .map((m) => `${(m.target as HTMLElement).className}:${m.type}`)
+    //     .join(", ")} mutation(s) detected`
+    // );
     // Get list of changed attributes
     const changedAttributes = mutations.filter(
       (mutation) =>

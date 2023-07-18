@@ -45,6 +45,7 @@
         url: "#",
       },
     ];
+    newLinkText.value = "";
   };
 
   let editLinkId: string | undefined;
@@ -104,6 +105,9 @@
         <div class="manageActions">
           <input
             bind:this={newLinkText}
+            on:keydown={(e) => {
+              if (e.key === "Enter") addLink();
+            }}
             type="text"
             placeholder="Link title..."
           />

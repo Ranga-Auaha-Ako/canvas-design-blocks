@@ -76,10 +76,6 @@ class HeaderState implements SvelteState<HeaderData> {
     state.overview =
       node?.querySelector(".headerOverview")?.innerHTML ||
       HeaderState.defaultState.overview;
-    console.log(
-      node?.querySelector(".headerOverview") ||
-        HeaderState.defaultState.overview
-    );
     this.state.set(state);
   }
   get stateString() {

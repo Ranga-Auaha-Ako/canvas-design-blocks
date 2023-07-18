@@ -110,7 +110,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
       (id) => !elementIds.includes(id)
     );
     deletedElementIds.forEach((id) => {
-      console.log("Removing element", id);
+      // console.log("Removing element", id);
       const element = this.get(id);
       if (element) element.delete();
     });
@@ -118,10 +118,10 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     // Check existing elements for changes
     const nodeUpdated = get(this._elements).filter((el) => {
       if (!el.editor.getDoc().contains(el.node)) {
-        console.log(
-          `Element (${this.elementName}) no longer in DOM, removing`,
-          el.id
-        );
+        // console.log(
+        //   `Element (${this.elementName}) no longer in DOM, removing`,
+        //   el.id
+        // );
         el.delete();
         return true;
       }
@@ -140,7 +140,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   }
 
   public watchEditor() {
-    console.log("Watching editor", this.editor.getBody());
+    // console.log("Watching editor", this.editor.getBody());
     // Keep an eye on TinyMCE in case operations within the tool cause the "real" grids to be removed, added, moved, or otherwise modified.
 
     // Events where we know to check for changes

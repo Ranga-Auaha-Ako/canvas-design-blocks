@@ -59,11 +59,7 @@ export class ImageCardLabel extends MceTextElement {
     return imageCardLabel;
   }
   static create(state: stateObject, parentCard: ImageCard, editor: Editor) {
-    const node = editor.dom.create(
-      "span",
-      {},
-      "This text should be at the bottom"
-    );
+    const node = editor.dom.create("span", {}, "Insert label here..");
     Object.assign(node.style, this.staticStyle);
 
     parentCard.node.appendChild(node);

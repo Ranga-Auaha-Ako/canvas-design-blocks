@@ -107,7 +107,7 @@ export default class Column extends MceElement {
         n.nodeType !== Node.COMMENT_NODE &&
         (n as HTMLElement)?.dataset.cgbNoMove !== "true" // Allow some nodes to be left in place if the author wants
       ) {
-        console.log("Moving incorrectly placed element into inner node", n);
+        // console.log("Moving incorrectly placed element into inner node", n);
         (foundInnerNode as HTMLElement).appendChild(n);
       }
     });
@@ -220,7 +220,6 @@ export default class Column extends MceElement {
       if (MceElement.isEmpty(this.innerNode)) {
         e.preventDefault();
         this.checkChildren();
-        console.log("Trying to fix things!");
         return false;
       } else {
         // If selection is at the start of the column, don't do anything

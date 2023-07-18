@@ -37,7 +37,7 @@ export default {
     //         ".mce-content-body",
     //         ":root",
     //         "body.edit",
-    //         "body.edit.cgb-toolbar-open",
+    //         "body.edit.cdb-toolbar-open",
     //       ],
     //     }),
     //   ],

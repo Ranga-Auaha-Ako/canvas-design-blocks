@@ -68,7 +68,7 @@ export default abstract class MceTextElement extends MceElement {
         (n.nodeType !== Node.ELEMENT_NODE ||
           (n as HTMLElement)?.dataset.cgbNoMove !== "true") // Allow some nodes to be left in place if the author wants)
       ) {
-        console.log("Moving incorrectly placed element into inner node", n);
+        // console.log("Moving incorrectly placed element into inner node", n);
         (foundInnerNode as HTMLElement).appendChild(n);
       }
       this.startObserving();
@@ -120,7 +120,7 @@ export default abstract class MceTextElement extends MceElement {
     );
 
     // Bind to keydown event to prevent deleting the element when text is deleted
-    console.log(node);
+    // console.log(node);
     this.node.parentElement?.addEventListener(
       "keydown",
       this.keyHandler.bind(this)

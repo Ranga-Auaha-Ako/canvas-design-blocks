@@ -50,9 +50,7 @@ const getEditor = () =>
           resolve(editor);
         });
       });
-      console.log("No active editor, waiting for one");
     } else {
-      console.log("Active editor found");
       hasLoaded = true;
       resolve(window.tinymce.activeEditor);
     }
@@ -102,9 +100,9 @@ export const loadApp = async () => {
   // Add class to page body when toolbar is open
   state.showInterface.subscribe((show) => {
     if (show) {
-      document.body.classList.add("cgb-toolbar-open");
+      document.body.classList.add("cdb-toolbar-open");
     } else {
-      document.body.classList.remove("cgb-toolbar-open");
+      document.body.classList.remove("cdb-toolbar-open");
     }
   });
   // Hide app when TinyMCE editor is removed
