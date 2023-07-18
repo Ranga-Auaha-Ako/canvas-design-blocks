@@ -6,12 +6,13 @@
   import { getColour } from "$lib/util/components/colourPicker.svelte";
   import ColourSettings from "$lib/util/components/colourSettings.svelte";
   import preventBubble from "$lib/util/preventBubble";
+  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
 
   export let row: Row;
 
   enum RowType {
-    Normal = "normal",
-    Card = "card",
+    Normal = "Default",
+    Card = "Card",
   }
 
   $: columns = row.columns;
@@ -109,27 +110,12 @@
 <div class="cgb-component">
   <div class="advancedSettings" use:preventBubble>
     <h5>Row Settings</h5>
-    <span class="label-text">Row Type</span>
-    <div class="btn-group">
-      <label class="btn" class:active={$preferences.card === RowType.Normal}>
-        <span>Default</span>
-        <input
-          name={ids.card}
-          type="radio"
-          value="normal"
-          bind:group={$preferences.card}
-        />
-      </label>
-      <label class="btn" class:active={$preferences.card === RowType.Card}>
-        <span>Card</span>
-        <input
-          name={ids.card}
-          type="radio"
-          value="card"
-          bind:group={$preferences.card}
-        />
-      </label>
-    </div>
+    <ButtonRadio
+      title="Row Type"
+      bind:value={$preferences.card}
+      choices={Object.values(RowType)}
+      id={ids.card}
+    />
     <div>
       <span class="label-text">
         Padding {typeof $preferences.padding === "number"
@@ -305,25 +291,4 @@
   input[type="color"] {
     @apply rounded border-none;
   } */
-  .btn {
-    @apply flex items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;
-  }
-  .btn-group {
-    @apply flex;
-    & .btn {
-      @apply bg-gray-200 text-black rounded-none;
-      &.active {
-        @apply bg-uni-blue text-white font-bold;
-      }
-      &:first-child {
-        @apply rounded-l;
-      }
-      &:last-child {
-        @apply rounded-r;
-      }
-      & input {
-        @apply invisible absolute;
-      }
-    }
-  }
 </style>

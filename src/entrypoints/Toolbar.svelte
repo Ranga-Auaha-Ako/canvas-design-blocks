@@ -97,7 +97,7 @@
   }
 
   .toolbar-menu {
-    @apply border-uni-gray-200 border rounded mt-2;
+    @apply border-uni-gray-200 border rounded mt-2 overflow-clip;
     & .info-panel {
       @apply text-xs p-2 flex;
       & .version {

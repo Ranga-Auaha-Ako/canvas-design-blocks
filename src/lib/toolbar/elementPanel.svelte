@@ -10,7 +10,7 @@
     <h3 class="element-name">
       <slot name="name" />
     </h3>
-    <div class="">+</div>
+    <div class="add-button">+</div>
   </button>
 </div>
 
@@ -18,12 +18,16 @@
   .pane {
     @apply bg-white border-b p-3 py-2 relative w-full;
     @apply grid justify-items-start;
+    @apply gap-2;
     grid-template-columns: 1fr auto;
     /* & .icon-help {
       @apply block w-4 h-4 leading-none;
     } */
     & h3 {
-      @apply block m-0 text-base;
+      @apply block m-0 text-base text-left;
     }
+    /* .add-button {
+      @apply h-full px-2;
+    } */
   }
 </style>

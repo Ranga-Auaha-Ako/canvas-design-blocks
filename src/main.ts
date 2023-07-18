@@ -10,6 +10,7 @@ import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
+import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -38,9 +39,9 @@ const getEditor = () =>
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
         attempts++;
-        if (attempts < 6) resolve(getEditor());
+        if (attempts < 10) resolve(getEditor());
         else reject("Could not find TinyMCE editor");
-      }, 5000);
+      }, 50 * Math.pow(1.8, attempts - 1));
     } else if (!window.tinymce?.activeEditor) {
       // Try again once there is an active editor
       window.tinymce.on("AddEditor", ({ editor }: { editor: Editor }) => {
@@ -49,9 +50,7 @@ const getEditor = () =>
           resolve(editor);
         });
       });
-      console.log("No active editor, waiting for one");
     } else {
-      console.log("Active editor found");
       hasLoaded = true;
       resolve(window.tinymce.activeEditor);
     }
@@ -85,11 +84,12 @@ export const loadApp = async () => {
   const buttons = new ButtonManager(state, editor);
   const imagecards = new ImageCardManager(state, editor);
   const profiles = new ProfilesManager(state, editor);
+  const courseHeader = new CourseHeaderManager(state, editor);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({
     state,
-    managers: [grids, buttons, imagecards, profiles],
+    managers: [grids, buttons, imagecards, profiles, courseHeader],
   });
 
   // Inject tailwind base styles into editor
@@ -100,9 +100,9 @@ export const loadApp = async () => {
   // Add class to page body when toolbar is open
   state.showInterface.subscribe((show) => {
     if (show) {
-      document.body.classList.add("cgb-toolbar-open");
+      document.body.classList.add("cdb-toolbar-open");
     } else {
-      document.body.classList.remove("cgb-toolbar-open");
+      document.body.classList.remove("cdb-toolbar-open");
     }
   });
   // Hide app when TinyMCE editor is removed
