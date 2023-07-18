@@ -92,7 +92,7 @@
         @apply cursor-pointer;
       }
       .itemlabel {
-        @apply flex-1;
+        @apply flex-1 truncate;
       }
       .actions {
         @apply flex gap-x-2;
