@@ -50,7 +50,7 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
     });
 
     let lastContents: SvelteComponent<{ cdbData: stateDataType }> | undefined;
-    const updateDataEl = () => {
+    const createDataEl = () => {
       if (!this.dataEl || this.dataEl.parentElement !== this.node) {
         this.dataEl = document.createElement("div");
         this.dataEl.classList.add("cdbData");
@@ -78,7 +78,7 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
         this.stopObserving();
         this.node.innerHTML = "";
         this.dataEl = undefined;
-        this.node.appendChild(updateDataEl());
+        this.node.appendChild(createDataEl());
         lastContents?.$destroy();
         lastContents = new svelteComponent({
           target: this.node,
@@ -88,7 +88,7 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
         });
         lastContents.$on("update", ({ detail }) => {
           if (detail) {
-            updateDataEl();
+            createDataEl();
           }
         });
         this.startObserving();
@@ -97,7 +97,18 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
 
     if (highlight) this.highlight();
   }
-  checkChildren(): void {}
+
+  public updateDataEl() {
+    if (!this.dataEl || !this.dataEl.parentElement) {
+      this.SvelteState.update((state) => state);
+      return;
+    }
+    this.dataEl.innerText = this.SvelteState.stateString;
+  }
+  checkChildren() {
+    // Children are monitored in other ways
+    this.updateDataEl();
+  }
   checkSelf(): void {
     // Self is perfect
   }
