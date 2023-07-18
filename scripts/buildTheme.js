@@ -33,6 +33,9 @@ ${themeJs.toString()}`;
 
   fs.writeFileSync(path.resolve(__dirname, "../dist/theme.css"), css);
   fs.writeFileSync(path.resolve(__dirname, "../dist/theme.js"), js);
+  console.log("✓ Theme files merged.");
+  console.log("dist/theme.css");
+  console.log("dist/theme.js");
 } catch (e) {
   console.log("No theme files to merge.");
 }
