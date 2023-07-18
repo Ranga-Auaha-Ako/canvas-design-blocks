@@ -5,10 +5,9 @@
   import { fade } from "svelte/transition";
   import { debounce } from "perfect-debounce";
   import Sortable from "sortablejs";
+  import OrderableList from "$lib/util/components/orderableList.svelte";
 
   export let props: { profileGrid: ProfileGrid };
-  // export let isDominant: Writable<boolean>;
-  // export let dominantPopover: Readable<boolean> | undefined = undefined;
   $: profileGrid = props.profileGrid;
   $: people = profileGrid.SvelteState;
   let configEl: HTMLElement;
@@ -91,44 +90,6 @@
       searchQuery = "";
     }
   };
-
-  const deletePerson = (person: ProfileData) => {
-    profileGrid.SvelteState.update((people) => {
-      if (people) {
-        return people.filter((p) => p !== person);
-      } else {
-        return [];
-      }
-    });
-  };
-
-  const handlePersonOrder = (
-    event:
-      | { oldIndex: number | undefined; newIndex: number | undefined }
-      | undefined
-  ) => {
-    const { oldIndex, newIndex } = event || {};
-    if (oldIndex !== undefined && newIndex !== undefined) {
-      profileGrid.SvelteState.update((people) => {
-        const input = [...people];
-        const elm = input.splice(oldIndex, 1)[0];
-        input.splice(newIndex, 0, elm);
-        return [...input];
-      });
-    }
-  };
-
-  let personList: HTMLElement;
-
-  $: sortable =
-    personList &&
-    new Sortable(personList, {
-      animation: 200,
-      handle: ".dragHandle",
-      onEnd: (event) => {
-        handlePersonOrder(event);
-      },
-    });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -137,33 +98,12 @@
   class="cgb-component"
   in:fade|global={{ duration: 200 }}
 >
-  <div
-    class="personList"
-    class:emptyPersonList={$people.length === 0}
-    bind:this={personList}
-  >
-    {#if $people}
-      {#each $people as person, _ (person.discoveryUrlId)}
-        <div class="person">
-          <div class="dragHandle">
-            <i class="icon-solid icon-drag-handle" />
-          </div>
-          <div class="name">
-            {person.firstNameLastName}
-          </div>
-          <div class="actions">
-            <button
-              aria-label="Delete {person.firstNameLastName}"
-              on:click={() => {
-                deletePerson(person);
-              }}
-            >
-              <i class="icon-trash" />
-            </button>
-          </div>
-        </div>
-      {/each}
-    {/if}
+  <div class="personList">
+    <OrderableList
+      labelKey="firstNameLastName"
+      idKey="discoveryUrlId"
+      bind:items={$people}
+    />
   </div>
   <div class="searchBox">
     <input
@@ -195,25 +135,6 @@
       @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
       @apply border-b border-r bg-white -z-10;
       content: " ";
-    }
-    .personList {
-      @apply flex flex-col gap-y-2;
-      width: 100%;
-      &.emptyPersonList {
-        @apply hidden;
-      }
-      .person {
-        @apply flex items-center gap-x-2;
-        .dragHandle {
-          @apply cursor-pointer;
-        }
-        .name {
-          @apply flex-1;
-        }
-        .actions {
-          @apply flex gap-x-2;
-        }
-      }
     }
     .searchBox {
       .results {

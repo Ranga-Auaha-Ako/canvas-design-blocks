@@ -25,11 +25,31 @@ export interface HeaderData {
   links: {
     title: string;
     url: string;
+    id: string;
   }[];
   theme: HeaderTheme;
 }
 
 class HeaderState implements SvelteState<HeaderData> {
+  static defaultState: HeaderData = {
+    title: "Course Header Title",
+    overview:
+      "<p>Welcome to this course! You can put any content you want here...</p>",
+    image: "",
+    links: [
+      {
+        title: "Link 1",
+        url: "#",
+        id: nanoid(),
+      },
+      {
+        title: "Link 2",
+        url: "#",
+        id: nanoid(),
+      },
+    ],
+    theme: DefaultTheme,
+  };
   state: Writable<HeaderData> = writable();
   public set = this.state.set;
   public update = this.state.update;
@@ -42,18 +62,24 @@ class HeaderState implements SvelteState<HeaderData> {
       ? unsafeState?.theme
       : DefaultTheme;
     let state: HeaderData = {
-      title: unsafeState?.title || "",
+      title: unsafeState?.title || HeaderState.defaultState.title,
       overview: "",
-      image: unsafeState?.image || "",
+      image: unsafeState?.image || HeaderState.defaultState.image,
       links:
         unsafeState?.links?.map((l) => ({
           title: l?.title || "",
           url: l?.url || "",
-        })) || [],
+          id: l?.id || nanoid(),
+        })) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
     };
     state.overview =
-      node?.querySelector(".headerOverview")?.innerHTML || "<p></p>";
+      node?.querySelector(".headerOverview")?.innerHTML ||
+      HeaderState.defaultState.overview;
+    console.log(
+      node?.querySelector(".headerOverview") ||
+        HeaderState.defaultState.overview
+    );
     this.state.set(state);
   }
   get stateString() {

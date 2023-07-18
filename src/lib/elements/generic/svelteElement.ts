@@ -39,7 +39,8 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
-    highlight = false
+    highlight = false,
+    defaultState?: Partial<stateDataType>
   ) {
     super(node, editor, undefined, undefined, id, true);
 
@@ -71,6 +72,9 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
       if (import.meta.env.DEV) {
         console.log("Failed to load data for SvelteElement:", this);
       }
+    }
+    if (!parsedStateData) {
+      parsedStateData = defaultState || undefined;
     }
     this.SvelteState = new stateClass(parsedStateData, node);
     this.SvelteState.subscribe((elState) => {

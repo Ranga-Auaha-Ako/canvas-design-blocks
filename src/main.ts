@@ -39,9 +39,9 @@ const getEditor = () =>
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
         attempts++;
-        if (attempts < 6) resolve(getEditor());
+        if (attempts < 10) resolve(getEditor());
         else reject("Could not find TinyMCE editor");
-      }, 5000);
+      }, 50 * Math.pow(1.8, attempts - 1));
     } else if (!window.tinymce?.activeEditor) {
       // Try again once there is an active editor
       window.tinymce.on("AddEditor", ({ editor }: { editor: Editor }) => {
