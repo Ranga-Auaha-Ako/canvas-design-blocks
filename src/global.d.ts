@@ -6,6 +6,7 @@ declare global {
   interface Window {
     tinymce: TinyMCE;
     ENV: { COURSE_ID: string };
+    _LOADED_DESIGNBLOCKS?: boolean;
   }
 }
 

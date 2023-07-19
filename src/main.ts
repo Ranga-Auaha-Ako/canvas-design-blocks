@@ -71,6 +71,7 @@ const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
 };
 
 export const loadApp = async () => {
+  // If tool is already loaded, exit
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
     console.error(e);
@@ -116,21 +117,25 @@ export const loadApp = async () => {
   });
 };
 
-console.log("Loading app");
+if (!window._LOADED_DESIGNBLOCKS) {
+  window._LOADED_DESIGNBLOCKS = true;
 
-switch (document.readyState) {
-  case "loading":
-    console.log("Page loading, waiting for load");
-    window.addEventListener("DOMContentLoaded", loadApp);
-    break;
-  case "interactive":
-  case "complete":
-    console.log("Page already loaded, loading app");
-    loadApp();
-    break;
+  console.log("Loading app");
+
+  switch (document.readyState) {
+    case "loading":
+      console.log("Page loading, waiting for load");
+      window.addEventListener("DOMContentLoaded", loadApp);
+      break;
+    case "interactive":
+    case "complete":
+      console.log("Page already loaded, loading app");
+      loadApp();
+      break;
+  }
+
+  // Load the app only on certain pages
+  // const loc = window.location.pathname;
+  // if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
+  // }
 }
-
-// Load the app only on certain pages
-// const loc = window.location.pathname;
-// if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
-// }
