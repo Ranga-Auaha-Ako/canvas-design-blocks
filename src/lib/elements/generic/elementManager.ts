@@ -69,9 +69,9 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     // Filter to only elements we haven't already discovered
     const existingIDs = get(this._elements).map((el) => el.id);
     return Array.from(root.querySelectorAll(this.selector)).filter((e) => {
+      if (returnAll) return true;
       // Discard TinyMCE Fake Elements
       if (e.closest("[data-mce-bogus]")) return false;
-      if (returnAll) return true;
       // Get ID
       const id = (e as HTMLElement)?.dataset.cdbId;
       // No ID Means the element is untracked - we need to track it
