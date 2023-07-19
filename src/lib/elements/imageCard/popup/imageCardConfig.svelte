@@ -15,6 +15,7 @@
     | Writable<string>
     | undefined;
   let configEl: HTMLElement;
+  let urlInput: HTMLInputElement;
 
   const openPicker = () => {
     const picker = new ModalDialog(
@@ -29,7 +30,8 @@
           },
         ],
       },
-      {}
+      {},
+      imageCard
     );
     const pickerInst = picker.open();
     pickerInst.$on("selectImage", ({ detail }) => {
@@ -41,6 +43,9 @@
   const deleteCard = () => {
     imageCard.delete();
   };
+  const addCard = () => {
+    imageCard.cardRow.createCard();
+  };
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -49,30 +54,44 @@
   class="cgb-component"
   in:fade|global={{ duration: 200 }}
 >
-  <div>
-    <label for={`${imageCard.id}-text`}>Card Label:</label>
-    <textarea
-      class="cardName"
-      id={`${imageCard.id}-text`}
-      bind:value={$innerText}
-      rows="3"
-      maxlength="100"
-    />
-  </div>
-  <div>
-    <div class="form-group">
-      <label class="block" for={`${imageCard.id}-url`}>Card Link (URL):</label>
-      <input
-        type="url"
-        placeholder="https://canvas.auckland.ac.nz/..."
-        id={`${imageCard.id}-url`}
-        bind:value={$cardLink}
+  <div class="flex gap-x-2 items-baseline">
+    <div>
+      <label for={`${imageCard.id}-text`}>Card Label:</label>
+      <textarea
+        class="cardName"
+        id={`${imageCard.id}-text`}
+        bind:value={$innerText}
+        rows="3"
+        maxlength="100"
       />
     </div>
+    <div>
+      <div class="form-group">
+        <label class="block" for={`${imageCard.id}-url`}>Card Link (URL):</label
+        >
+        <input
+          type="url"
+          placeholder="https://canvas.auckland.ac.nz/..."
+          id={`${imageCard.id}-url`}
+          bind:value={$cardLink}
+          on:input={() => urlInput.reportValidity()}
+          bind:this={urlInput}
+        />
+      </div>
 
-    <button class="Button" on:click={() => openPicker()}>Select Image</button>
-    <button class="Button Button--danger" on:click={() => deleteCard()}
-      >Remove</button
+      <button class="Button Button--block" on:click={() => openPicker()}
+        >Select Image</button
+      >
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    <button class="Button Button--danger" on:click={() => deleteCard()}>
+      <i class="icon-trash" aria-hidden="true" />
+      Remove
+    </button>
+    <button class="Button" on:click={() => addCard()}>
+      <i class="icon-plus" aria-hidden="true" />
+      Add Card</button
     >
   </div>
 </div>
@@ -80,7 +99,6 @@
 <style lang="postcss">
   .cgb-component {
     @apply bg-white border border-gray-300 rounded p-2 shadow mb-2;
-    @apply flex gap-x-2;
     &:after {
       @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
       @apply border-b border-r bg-white -z-10;

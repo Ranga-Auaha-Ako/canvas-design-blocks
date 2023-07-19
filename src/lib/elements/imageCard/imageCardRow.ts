@@ -67,7 +67,8 @@ export class ImageCardRow extends MceElement {
 
     this.node.addEventListener("click", (e) => {
       if (e.target === this.node) {
-        this.createCard();
+        const cards = [...get(this.cards)];
+        cards[cards.length - 1][1].node.click();
       }
     });
 
