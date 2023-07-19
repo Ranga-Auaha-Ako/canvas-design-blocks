@@ -1,3 +1,4 @@
+import { SelectableElement } from "$lib/elements/generic/selectableElement";
 import { nanoid } from "nanoid";
 import type { SvelteComponent, ComponentType } from "svelte";
 import type { Editor, WindowManager } from "tinymce";
@@ -15,7 +16,8 @@ export class ModalDialog<T extends ComponentType> {
     public component: T,
     public editor: Editor,
     options: Omit<DialogSpec, "body">,
-    public props: ConstructorParameters<T>[0]["props"]
+    public props: ConstructorParameters<T>[0]["props"],
+    public selectParent: SelectableElement | undefined = undefined
   ) {
     this.options = {
       ...options,
@@ -29,16 +31,19 @@ export class ModalDialog<T extends ComponentType> {
         ],
       },
       onSubmit: (api) => {
+        this.selectParent?.deselect("modal");
         this.submitHandlers.forEach((handler) => handler(this));
         options.onSubmit?.(api);
       },
       onAction: (api, details) => {
+        this.selectParent?.deselect("modal");
         this.actionHandlers.forEach((handler) => handler(this));
         options.onAction?.(api, details);
       },
     };
   }
   open(): InstanceType<T> {
+    this.selectParent?.select("modal");
     this.openDialog = this.editor.windowManager.open(this.options);
     const target = document.getElementById(`svelte-modal-dialog-${this.id}`);
     if (!target) {
@@ -53,6 +58,7 @@ export class ModalDialog<T extends ComponentType> {
   }
 
   close() {
+    this.selectParent?.deselect("modal");
     this.componentInstance?.$destroy();
     this.openDialog?.close();
   }
