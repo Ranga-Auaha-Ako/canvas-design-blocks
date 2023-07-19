@@ -14,6 +14,8 @@
   $: headerData = courseHeader.SvelteState;
   let configEl: HTMLElement;
   let newLinkText: HTMLInputElement;
+  let newLinkTextLabel: HTMLInputElement;
+  let newLinkTextUrl: HTMLInputElement;
 
   const openPicker = () => {
     const picker = new ModalDialog(
@@ -36,7 +38,12 @@
       picker.close();
     });
   };
+  let requireLinkText: boolean = false;
   const addLink = () => {
+    if (!newLinkText.value) {
+      requireLinkText = true;
+      return;
+    }
     $headerData.links = [
       ...$headerData.links,
       {
@@ -46,6 +53,7 @@
       },
     ];
     newLinkText.value = "";
+    requireLinkText = false;
   };
 
   let editLinkId: string | undefined;
@@ -77,12 +85,22 @@
       <div class="editLink">
         <div class="editActions">
           <button
-            title="Return"
+            title="Finish editing link"
             on:click={() => {
-              editLinkId = undefined;
+              if (
+                newLinkTextUrl.checkValidity() &&
+                newLinkTextLabel.value.length > 0
+              ) {
+                editLinkId = undefined;
+                newLinkTextLabel.removeAttribute("required");
+              } else {
+                newLinkTextUrl.reportValidity();
+                newLinkTextLabel.setAttribute("required", "");
+              }
             }}
           >
-            <i class="icon-solid icon-arrow-start" aria-hidden="true" />
+            Save
+            <i class="icon-solid icon-check pl-1" aria-hidden="true" />
           </button>
         </div>
         <div class="linkOptions">
@@ -91,12 +109,14 @@
             type="text"
             id="linkTitle-{editLinkId}"
             bind:value={$headerData.links[editLinkIndex].title}
+            bind:this={newLinkTextLabel}
           />
           <label for="linkUrl-{editLinkId}">URL</label>
           <input
             type="url"
             id="linkUrl-{editLinkId}"
             bind:value={$headerData.links[editLinkIndex].url}
+            bind:this={newLinkTextUrl}
           />
         </div>
       </div>
@@ -108,6 +128,7 @@
             on:keydown={(e) => {
               if (e.key === "Enter") addLink();
             }}
+            required={requireLinkText}
             type="text"
             placeholder="Link title..."
           />
@@ -152,7 +173,7 @@
       @apply rounded border border-gray-300 overflow-clip;
       .editActions,
       .manageActions {
-        @apply flex gap-2;
+        @apply flex gap-2 justify-end;
         @apply bg-gray-100 border-b p-1 px-2;
       }
       & .manageActions {
@@ -168,7 +189,7 @@
         @apply pt-2 px-2;
       }
       & .linkList {
-        @apply p-2;
+        @apply p-2 max-h-60 overflow-y-auto;
       }
       & input,
       & label {
