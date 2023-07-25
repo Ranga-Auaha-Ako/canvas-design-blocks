@@ -1,6 +1,6 @@
 <script lang="ts">
   import writableDerived from "svelte-writable-derived";
-  import type { Writable } from "svelte/store";
+  import { get, type Writable } from "svelte/store";
   import type { ImageCard } from "../imageCard";
   import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
@@ -44,7 +44,10 @@
     imageCard.delete();
   };
   const addCard = () => {
-    imageCard.cardRow.createCard();
+    const newCard = imageCard.cardRow.createCard();
+    imageCard.deselect("Popover");
+    console.log(newCard);
+    newCard.select("Popover");
   };
 </script>
 

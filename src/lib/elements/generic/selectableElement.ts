@@ -60,6 +60,17 @@ export class SelectableElement {
     );
   }
 
+  public deselectAll(): void {
+    this.selected.set(new Set());
+    const parent = get(this.parent);
+    if (parent && this.selectsParent) {
+      parent.selected.update((el) => {
+        el.delete(this);
+        return el;
+      });
+    }
+  }
+
   constructor(node?: HTMLElement, children: SelectableElement[] = []) {
     this.node = node;
 

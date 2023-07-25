@@ -148,8 +148,10 @@ export class ImageCardRow extends MceElement {
   }
 
   public createCard() {
+    this.stopObserving();
     const card = ImageCard.create(this.state, this, this.editor);
     this.addCard(card);
+    this.startObserving();
     return card;
   }
 
@@ -179,10 +181,10 @@ export class ImageCardRow extends MceElement {
     if (this.node.children.length === 0) this.delete();
     // Check if the row is in the body
     if (!this.node.parentNode) {
-      const position = get(this.imageCardManager).findIndex(
+      const position = get(this.imageCardManager)?.findIndex(
         (r) => r.id === this.id
       );
-      if (position == -1) {
+      if (position == -1 || position === undefined) {
         // Uncaught delete!
         this.delete();
         return;

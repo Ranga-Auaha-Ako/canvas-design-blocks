@@ -542,6 +542,7 @@ export default abstract class MceElement extends SelectableElement {
    */
   public delete() {
     this.stopObserving();
+    this.deselectAll();
     this.node.remove();
   }
 
