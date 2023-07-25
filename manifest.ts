@@ -26,7 +26,7 @@ export default defineManifest(async (env) => ({
       : "Canvas Design Blocks",
   homepage_url: "https://teachwell.auckland.ac.nz/",
   host_permissions: BaseDomains.map((d) => `*://${d}/*`),
-  permissions: ["storage"],
+  permissions: [],
   short_name: "Design Blocks",
   description:
     "Quickly create and edit pages, creating grids and other elements without using the HTML editor.",
