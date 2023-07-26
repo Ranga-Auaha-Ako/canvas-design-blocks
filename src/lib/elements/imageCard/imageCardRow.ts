@@ -1,12 +1,36 @@
 import { nanoid } from "nanoid";
 import type { stateObject } from "src/main";
-import { get, writable } from "svelte/store";
+import { Writable, get, writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import MceElement from "../generic/mceElement";
 import { ImageCard } from "./imageCard";
 import ImageCardManager from "./imageCardManager";
 import type { McePopover } from "$lib/elements/generic/popover/popover";
+import writableDerived from "svelte-writable-derived";
 
+export enum ImageCardTheme {
+  Overlay = "imageCardTheme--overlay",
+  Subtitle = "imageCardTheme--subtitle",
+}
+export const ValidThemes = Object.values(ImageCardTheme);
+export const DefaultTheme = ImageCardTheme.Overlay;
+export const DerivedCardTheme = (classes: Writable<DOMTokenList>) => {
+  return writableDerived<typeof classes, ImageCardTheme>(
+    classes,
+    ($classes) => {
+      return (
+        Object.values(ImageCardTheme).find((theme) =>
+          $classes.contains(theme)
+        ) || DefaultTheme
+      );
+    },
+    (reflecting, oldClasses) => {
+      oldClasses.remove(...Object.values(ImageCardTheme));
+      oldClasses.add(reflecting);
+      return oldClasses;
+    }
+  );
+};
 export class ImageCardRow extends MceElement {
   selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
   attributes: MceElement["attributes"] = new Map([]);

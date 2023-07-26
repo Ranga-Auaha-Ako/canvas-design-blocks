@@ -8,6 +8,7 @@ import { ImageCardRow } from "./imageCardRow";
 import { get, writable, Writable } from "svelte/store";
 import ImageCardConfig from "./popup/imageCardConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
+import writableDerived from "svelte-writable-derived";
 
 export class ImageCard extends MceElement {
   attributes: MceElement["attributes"] = new Map([["href", writable("")]]);

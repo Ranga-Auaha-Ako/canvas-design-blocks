@@ -68,6 +68,15 @@
   class="cgb-component"
   in:fade|global={{ duration: 200 }}
 >
+  <button
+    class="close"
+    title="Close"
+    on:click={() => {
+      courseHeader.deselectAll();
+    }}
+  >
+    <i class="icon-end" />
+  </button>
   <div class="col">
     <div>
       <ButtonRadio
@@ -88,7 +97,8 @@
             title="Finish editing link"
             on:click={() => {
               if (
-                newLinkTextUrl.checkValidity() &&
+                (newLinkTextUrl.value.startsWith("#") ||
+                  newLinkTextUrl.checkValidity()) &&
                 newLinkTextLabel.value.length > 0
               ) {
                 editLinkId = undefined;
@@ -158,12 +168,21 @@
 
 <style lang="postcss">
   .cgb-component {
-    @apply bg-white border border-gray-300 rounded p-2 shadow mb-2;
+    @apply bg-white border border-gray-300 rounded pt-6 p-2 shadow mb-2;
     @apply grid grid-cols-2 max-w-lg w-screen gap-4;
     &:after {
       @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
       @apply border-b border-r bg-white -z-10;
       content: " ";
+    }
+    & > .close {
+      @apply absolute top-0 right-0 p-1 z-20;
+      @apply opacity-100;
+      line-height: 0;
+      i {
+        @apply text-gray-600;
+        line-height: 0;
+      }
     }
     .col {
       @apply flex flex-col gap-2;
