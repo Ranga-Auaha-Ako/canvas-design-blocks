@@ -7,6 +7,7 @@ import { ImageCard } from "./imageCard";
 import ImageCardManager from "./imageCardManager";
 import type { McePopover } from "$lib/elements/generic/popover/popover";
 import writableDerived from "svelte-writable-derived";
+import classTheme from "../generic/elementClassTheme";
 
 export enum ImageCardTheme {
   Overlay = "imageCardTheme--overlay",
@@ -14,23 +15,19 @@ export enum ImageCardTheme {
 }
 export const ValidThemes = Object.values(ImageCardTheme);
 export const DefaultTheme = ImageCardTheme.Overlay;
-export const DerivedCardTheme = (classes: Writable<DOMTokenList>) => {
-  return writableDerived<typeof classes, ImageCardTheme>(
-    classes,
-    ($classes) => {
-      return (
-        Object.values(ImageCardTheme).find((theme) =>
-          $classes.contains(theme)
-        ) || DefaultTheme
-      );
-    },
-    (reflecting, oldClasses) => {
-      oldClasses.remove(...Object.values(ImageCardTheme));
-      oldClasses.add(reflecting);
-      return oldClasses;
-    }
-  );
-};
+export const DerivedCardTheme = classTheme(ImageCardTheme, DefaultTheme);
+
+export enum ImageCardSize {
+  Small = "imageCardSize--small",
+  Large = "imageCardSize--large",
+  "Grid-3" = "imageCardSize--grid-3",
+  "Grid-4" = "imageCardSize--grid-4",
+  "Grid-5" = "imageCardSize--grid-5",
+}
+export const ValidSizes = Object.values(ImageCardSize);
+export const DefaultSize = ImageCardSize.Small;
+export const DerivedCardSize = classTheme(ImageCardSize, DefaultSize);
+
 export class ImageCardRow extends MceElement {
   selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
   attributes: MceElement["attributes"] = new Map([]);

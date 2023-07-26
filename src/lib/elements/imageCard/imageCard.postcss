@@ -1,9 +1,41 @@
-.ImageCardRow.imageCardTheme--subtitle {
-  @apply justify-center !important;
-  .ImageCard {
-    @apply bg-white text-black w-56 h-52 max-w-sm grow;
-    .ImageCardLabel {
-      @apply bg-white bg-opacity-100 px-4 py-2;
+.ImageCardRow {
+  &.imageCardTheme--subtitle {
+    .ImageCard {
+      @apply bg-white text-black;
+      .ImageCardLabel {
+        @apply bg-white bg-opacity-100 px-4 py-2;
+      }
+    }
+  }
+  &.imageCardSize--large {
+    @apply justify-center !important;
+    .ImageCard {
+      @apply w-56 h-52 max-w-sm grow;
+    }
+  }
+  &.imageCardSize--grid-3,
+  &.imageCardSize--grid-4,
+  &.imageCardSize--grid-5 {
+    @apply grid !important;
+    .ImageCard {
+      @apply w-full h-auto;
+      aspect-ratio: 4 / 3;
+    }
+  }
+  &.imageCardSize--grid-3 {
+    @apply grid-cols-3;
+  }
+  &.imageCardSize--grid-4 {
+    @apply grid-cols-4;
+  }
+  &.imageCardSize--grid-5 {
+    @apply grid-cols-5;
+  }
+  @media (max-width: 640px) {
+    &.imageCardSize--grid-3,
+    &.imageCardSize--grid-4,
+    &.imageCardSize--grid-5 {
+      @apply grid-cols-1;
     }
   }
 }

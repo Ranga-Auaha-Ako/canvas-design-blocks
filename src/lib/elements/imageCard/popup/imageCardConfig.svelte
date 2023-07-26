@@ -2,8 +2,11 @@
   import { get, type Writable } from "svelte/store";
   import { ImageCard } from "../imageCard";
   import {
+    DerivedCardSize,
     DerivedCardTheme,
+    ImageCardSize,
     ImageCardTheme,
+    ValidSizes,
     ValidThemes,
   } from "../imageCardRow";
   import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
@@ -18,6 +21,7 @@
   $: innerText = imageCard.childLabel.innerText;
   $: classes = imageCard.cardRow.classList;
   $: theme = DerivedCardTheme(classes);
+  $: size = DerivedCardSize(classes);
   $: cardLink = imageCard.attributes.get("href") as
     | Writable<string>
     | undefined;
@@ -80,6 +84,12 @@
       labels={Object.keys(ImageCardTheme)}
       bind:value={$theme}
     />
+    <ButtonRadio
+      title="Row Size"
+      choices={ValidSizes}
+      labels={Object.keys(ImageCardSize)}
+      bind:value={$size}
+    />
   </div>
   <div class="cardSettings">
     <div class="flex gap-x-2 items-baseline">
@@ -128,7 +138,7 @@
 
 <style lang="postcss">
   .cgb-component {
-    @apply bg-white border border-gray-300 rounded p-2 shadow mb-2;
+    @apply bg-white border border-gray-300 rounded p-2 pt-5 shadow mb-2;
     &:after {
       @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
       @apply border-b border-r bg-white -z-10;
@@ -141,6 +151,13 @@
       & > i {
         @apply text-gray-600;
         line-height: 0;
+      }
+    }
+    .rowTheme {
+      @apply flex gap-x-2 items-center;
+      @apply mb-2;
+      & > * {
+        @apply flex-1;
       }
     }
 
