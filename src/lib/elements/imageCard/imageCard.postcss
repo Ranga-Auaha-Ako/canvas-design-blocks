@@ -31,7 +31,27 @@
   &.imageCardSize--grid-5 {
     @apply grid-cols-5;
   }
+
+  @container (width < 640px) {
+    &.imageCardSize--grid-5 {
+      @apply grid-cols-3;
+    }
+  }
   @media (max-width: 640px) {
+    &.imageCardSize--grid-3,
+    &.imageCardSize--grid-4,
+    &.imageCardSize--grid-5 {
+      @apply grid-cols-2;
+    }
+  }
+  @container (width < 400px) {
+    &.imageCardSize--grid-3,
+    &.imageCardSize--grid-4,
+    &.imageCardSize--grid-5 {
+      @apply grid-cols-1;
+    }
+  }
+  @media (max-width: 350px) {
     &.imageCardSize--grid-3,
     &.imageCardSize--grid-4,
     &.imageCardSize--grid-5 {

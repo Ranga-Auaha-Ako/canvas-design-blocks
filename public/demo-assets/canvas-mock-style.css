@@ -7038,10 +7038,8 @@ a[class^="icon-"].icon-Line:before {
 }
 @font-face {
   font-family: "InstructureIcons-Solid";
-  src: url("/dist/fonts/instructure_icons/Solid/InstructureIcons-Solid-5759c220c3.woff2")
-      format("woff2"),
-    url("/dist/fonts/instructure_icons/Solid/InstructureIcons-Solid-e6e7241fee.woff")
-      format("woff");
+  src: url("InstructureIcons-Solid.woff2") format("woff2"),
+    url("InstructureIcons-Solid.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -11469,23 +11467,31 @@ select.ic-Input {
     background: transparent;
   }
   .ic-Form-group.ic-Form-group--inline
-    .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio),
+    .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    ),
   .ic-Form-group.ic-Form-group--inline .ic-Checkbox-group {
     flex: 1;
     margin: 0 6px;
   }
   .ic-Form-group.ic-Form-group--inline
-    .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio):first-child,
+    .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    ):first-child,
   .ic-Form-group.ic-Form-group--inline .ic-Checkbox-group:first-child {
     margin-left: 0;
   }
   .ic-Form-group.ic-Form-group--inline
-    .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio):last-child,
+    .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    ):last-child,
   .ic-Form-group.ic-Form-group--inline .ic-Checkbox-group:last-child {
     margin-right: 0;
   }
   .ic-Form-group.ic-Form-group--inline
-    .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     .ic-Form-message,
   .ic-Form-group.ic-Form-group--inline .ic-Checkbox-group .ic-Form-message {
     margin-left: 0;
@@ -11493,52 +11499,72 @@ select.ic-Input {
 }
 @media only screen and (min-width: 768px) {
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio) {
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    ) {
     display: flex;
     flex-wrap: wrap;
   }
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Label {
     margin-bottom: 0;
     flex: 0 0 192px;
     padding-right: 24px;
   }
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Input,
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Input-group,
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Multi-input,
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Forms-component {
     flex: 1;
   }
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Form-message {
     display: block;
     margin-left: 0;
     width: 100%;
   }
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Form-message
     .ic-Form-message__Layout {
     margin-left: 204px;
     display: inline-flex;
   }
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio)
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    )
     > .ic-Form-help-text {
     padding-left: 192px;
   }
   .ic-Form-group.ic-Form-group--horizontal
-    > .ic-Form-control:not(.ic-Form-control--checkbox):not(.ic-Form-control--radio):not(.ic-Form-control--top-align-label) {
+    > .ic-Form-control:not(.ic-Form-control--checkbox):not(
+      .ic-Form-control--radio
+    ):not(.ic-Form-control--top-align-label) {
     align-items: center;
   }
   .ic-Form-group.ic-Form-group--horizontal
@@ -11993,9 +12019,13 @@ form.ic-Form-group {
   border-bottom-right-radius: 0;
 }
 .ic-Input-group
-  .Button:first-child:not(.Button--primary):not(.Button--secondary):not(.Button--success):not(.Button--warning):not(.Button--danger),
+  .Button:first-child:not(.Button--primary):not(.Button--secondary):not(
+    .Button--success
+  ):not(.Button--warning):not(.Button--danger),
 .ic-Input-group
-  .ui-button:first-child:not(.Button--primary):not(.Button--secondary):not(.Button--success):not(.Button--warning):not(.Button--danger) {
+  .ui-button:first-child:not(.Button--primary):not(.Button--secondary):not(
+    .Button--success
+  ):not(.Button--warning):not(.Button--danger) {
   border-right: none;
 }
 .ic-Input-group .Button:last-child,
@@ -12004,9 +12034,13 @@ form.ic-Form-group {
   border-bottom-left-radius: 0;
 }
 .ic-Input-group
-  .Button:last-child:not(.Button--primary):not(.Button--secondary):not(.Button--success):not(.Button--warning):not(.Button--danger),
+  .Button:last-child:not(.Button--primary):not(.Button--secondary):not(
+    .Button--success
+  ):not(.Button--warning):not(.Button--danger),
 .ic-Input-group
-  .ui-button:last-child:not(.Button--primary):not(.Button--secondary):not(.Button--success):not(.Button--warning):not(.Button--danger) {
+  .ui-button:last-child:not(.Button--primary):not(.Button--secondary):not(
+    .Button--success
+  ):not(.Button--warning):not(.Button--danger) {
   border-left: none;
 }
 .ic-Input-group .ic-Input-group__add-on,
@@ -12507,11 +12541,15 @@ body:not(.ic-no-flex-layout):not(.embedded):not(.is-inside-submission-frame)
   min-width: 1px;
 }
 @media (min-width: 768px) {
-  body.course-menu-expanded:not(.ic-no-flex-layout):not(.embedded):not(.is-inside-submission-frame)
+  body.course-menu-expanded:not(.ic-no-flex-layout):not(.embedded):not(
+      .is-inside-submission-frame
+    )
     .ic-Layout-columns {
     margin-left: 192px;
   }
-  body.course-menu-expanded:not(.ic-no-flex-layout):not(.embedded):not(.is-inside-submission-frame)
+  body.course-menu-expanded:not(.ic-no-flex-layout):not(.embedded):not(
+      .is-inside-submission-frame
+    )
     .ic-Layout-columns
     .ic-Layout-watermark {
     left: -192px;
@@ -12723,7 +12761,9 @@ body:not(.primary-nav-expanded)
   padding: 0.25rem 0;
 }
 @media only screen and (min-height: 400px) {
-  .ic-app-header__menu-list-link:not(.ic-app-header__menu-list-link--nav-toggle) {
+  .ic-app-header__menu-list-link:not(
+      .ic-app-header__menu-list-link--nav-toggle
+    ) {
     padding: 0.4375rem 0;
   }
 }
@@ -13490,23 +13530,33 @@ a:hover {
   text-decoration: underline;
 }
 .Underline-All-Links__enabled
-  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(.ui-tabs-anchor) {
+  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(
+    .ui-tabs-anchor
+  ) {
   text-decoration: underline;
 }
 .Underline-All-Links__enabled
-  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(.ui-tabs-anchor):focus,
+  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(
+    .ui-tabs-anchor
+  ):focus,
 .Underline-All-Links__enabled
-  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(.ui-tabs-anchor):hover {
+  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(
+    .ui-tabs-anchor
+  ):hover {
   text-decoration: none;
 }
 .Underline-All-Links__enabled
-  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(.ui-tabs-anchor):not([data-cid*="Button"]) {
+  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(
+    .ui-tabs-anchor
+  ):not([data-cid*="Button"]) {
   outline-width: 0.125rem;
   outline-color: transparent;
   outline-style: solid;
 }
 .Underline-All-Links__enabled
-  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(.ui-tabs-anchor):not([data-cid*="Button"]):focus {
+  a:not(.Button):not(.ui-button):not(.btn):not(.ui-button):not(
+    .ui-tabs-anchor
+  ):not([data-cid*="Button"]):focus {
   outline-offset: 0;
   outline-color: var(--ic-link-color);
 }
@@ -14046,17 +14096,25 @@ address {
   margin-top: 12px;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error),
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error),
 #flash_message_holder .ui-effects-wrapper,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error),
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error),
 #flash_message_buffer .ui-effects-wrapper {
   margin: 0 auto !important;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error),
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error),
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error) {
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error) {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
   border-bottom-color: rgba(0, 0, 0, 0.5);
   padding: 4px 40px 4px 8px;
@@ -14069,25 +14127,37 @@ address {
   width: 400px;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).static_message,
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).static_message,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).static_message {
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).static_message {
   width: auto;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error)
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error)
   a,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error)
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error)
   a {
   text-decoration: underline;
   color: inherit;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error)
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error)
   .close_link,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error)
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error)
   .close_link {
   position: absolute;
   right: 10px;
@@ -14100,10 +14170,14 @@ address {
   text-decoration: none;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error)
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error)
   i,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error)
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error)
   i {
   display: inline-block;
   vertical-align: middle;
@@ -14114,24 +14188,36 @@ address {
   background-repeat: no-repeat;
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).ui-state-error
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).ui-state-error
   i,
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).ui-state-warning
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).ui-state-warning
   i,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).ui-state-error
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).ui-state-error
   i,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).ui-state-warning
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).ui-state-warning
   i {
   background-image: url(/dist/images/warning_16-bdc795aad1.png);
 }
 #flash_message_holder
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).no_close
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).no_close
   .close_link,
 #flash_message_buffer
-  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(.ic-flash-warning):not(.ic-flash-error).no_close
+  .flash-message-container:not(.ic-flash-info):not(.ic-flash-success):not(
+    .ic-flash-warning
+  ):not(.ic-flash-error).no_close
   .close_link {
   display: none;
 }

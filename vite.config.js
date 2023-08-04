@@ -6,21 +6,43 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { crx } from "@crxjs/vite-plugin";
 import manifest from "./manifest.ts";
 
+const shared = {
+  server: {
+    origin: "http://localhost:5173",
+    hmr: {
+      port: 5175,
+    },
+  },
+  resolve: {
+    alias: {
+      $lib: path.resolve("./src/lib"),
+      $assets: path.resolve("./src/assets"),
+    },
+  },
+  define: {
+    __APP_VERSION__:
+      JSON.stringify(process.env.npm_package_version) || "unknown",
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+    __USES_CANVAS_ICONS__: JSON.stringify(
+      !!(
+        process.env.CANVAS_BLOCKS_ICONS_ASSET_HOST &&
+        process.env.CANVAS_BLOCKS_ICONS_HOST
+      )
+    ),
+  },
+  envPrefix: "CANVAS_BLOCKS_",
+};
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   if (mode === "theme") {
     return {
+      ...shared,
       plugins: [
         svelte({
           emitCss: true,
         }),
       ],
-      server: {
-        origin: "http://localhost:5173",
-        hmr: {
-          port: 5175,
-        },
-      },
       build: {
         target: "es2018",
         lib: {
@@ -39,21 +61,10 @@ export default defineConfig(({ mode }) => {
         },
         // watch: true
       },
-      resolve: {
-        alias: {
-          $lib: path.resolve("./src/lib"),
-          $assets: path.resolve("./src/assets"),
-        },
-      },
-      define: {
-        __APP_VERSION__:
-          JSON.stringify(process.env.npm_package_version) || "unknown",
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      },
-      envPrefix: "CANVAS_BLOCKS_",
     };
   }
   return {
+    ...shared,
     plugins: [
       svelte({
         emitCss: true,
@@ -71,23 +82,5 @@ export default defineConfig(({ mode }) => {
           ]
         : []
     ),
-    server: {
-      origin: "http://localhost:5173",
-      hmr: {
-        port: 5175,
-      },
-    },
-    resolve: {
-      alias: {
-        $lib: path.resolve("./src/lib"),
-        $assets: path.resolve("./src/assets"),
-      },
-    },
-    define: {
-      __APP_VERSION__:
-        JSON.stringify(process.env.npm_package_version) || "unknown",
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-    },
-    envPrefix: "CANVAS_BLOCKS_",
   };
 });

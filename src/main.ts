@@ -7,7 +7,7 @@ import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
-import ButtonManager from "$lib/elements/button/buttonManager";
+import { ButtonManager } from "$lib/elements/svelteButton/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
 import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";

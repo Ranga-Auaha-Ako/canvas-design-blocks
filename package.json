@@ -1,6 +1,6 @@
 {
   "name": "canvas-design-blocks",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "filesize": "^10.0.7",
+    "inst-icons-meta": "file:./lib/InstIcons",
     "perfect-debounce": "^1.0.0",
     "sortablejs": "^1.15.0",
     "svelte-portal": "^2.2.0"

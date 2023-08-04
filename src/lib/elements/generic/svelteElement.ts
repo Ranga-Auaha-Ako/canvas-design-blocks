@@ -21,7 +21,7 @@ export type SvelteStateClass<State> = new (
  * @template StateData The type of the data that the Svelte component will receive.
  */
 export abstract class SvelteElement<stateDataType> extends MceElement {
-  selectionMethod: "TinyMCE" | "focus" = "TinyMCE";
+  selectionMethod: MceElement["selectionMethod"] = "TinyMCE";
   public staticAttributes = {
     "data-cdb-version": SvelteElement.markupVersion,
     contenteditable: "false",
