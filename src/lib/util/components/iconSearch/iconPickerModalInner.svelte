@@ -18,6 +18,7 @@
 
   let filterQuery = "";
   let results = iconPicker.choices;
+  console.log("!!!!!", results);
   const filterIcons = debounce(
     (query: string) => {
       resultsWrapperScroll = resultsWrapperScroll; // Bump to force refresh of scroll hint indicator

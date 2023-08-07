@@ -1,7 +1,8 @@
-import * as instructureIcons from "@instructure/ui-icons";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "url";
+import * as instructureIcons from "@instructure/ui-icons/lib/font/index.js";
+// import path from "node:path";
+// import { fileURLToPath } from "url";
+
+// import fs from "node:fs";
 
 export interface IconFile {
   id: string;
@@ -15,7 +16,12 @@ export interface IconFile {
   collections?: string[];
 }
 
-export type BuiltinIcon = string;
+/**
+ * BuiltinIcon is a tuple of [className, codepoint]
+ * - `className` is the class name of the icon
+ * - `codepoint` is the unicode codepoint of the icon
+ */
+export type BuiltinIcon = [string, string];
 
 export interface Category<T = IconFile | BuiltinIcon> {
   name: string;
@@ -26,22 +32,29 @@ export default async () => {
   const builtinList = Object.entries(instructureIcons).map(([name, icon]) => ({
     name: icon.glyphName,
     variant: icon.variant,
+    variantClass: icon.classes?.find((c) => c !== icon.className),
+    cssFile: icon.cssFile,
+    codepoint: icon.codepoint,
+    className: icon.className,
+    classes: icon.classes,
+    deprecated: icon.deprecated,
   }));
 
   const builtinIcons = builtinList.reduce((acc, icon) => {
-    const { variant, name } = icon;
+    if (icon.deprecated) return acc;
+    const { variant, className } = icon;
     const category = acc.find((c) => c.name === variant);
     if (category) {
-      category.icons.push(name);
+      category.icons.push([className, icon.codepoint]);
     } else if (variant) {
       acc.push({
         name: variant,
-        icons: [name],
+        icons: [className],
       });
     }
     return acc;
   }, [] as Category<BuiltinIcon>[]);
-  return builtinIcons;
+  return { data: builtinIcons };
 };
 
 // if (false) {
