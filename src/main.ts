@@ -12,7 +12,7 @@ import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
 import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
 
-if (document.location.hostname === "localhost") {
+if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
 }
 
