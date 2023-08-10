@@ -10,7 +10,7 @@ try {
     path.resolve(__dirname, "../dist/canvas-blocks.css")
   );
   const blocksJs = fs.readFileSync(
-    path.resolve(__dirname, "../dist/canvas-blocks.min.js")
+    path.resolve(__dirname, "../dist/theme-loader.umd.cjs")
   );
   const themeCss = fs.readFileSync(
     path.resolve(__dirname, "../themeStyles.css")

@@ -75,7 +75,7 @@ export default defineManifest(async (env) => ({
   content_scripts: [
     {
       matches: BaseDomains.map((d) => `*://${d}/*`),
-      js: ["src/canvas-extend.ts"],
+      js: ["src/extension-loader.ts"],
       css: [],
     },
   ],

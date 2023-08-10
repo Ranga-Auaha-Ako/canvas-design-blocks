@@ -18,7 +18,7 @@ ENV CANVAS_BLOCKS_THEME_CONTACT_NAME=$CANVAS_BLOCKS_THEME_CONTACT_NAME
 ARG CANVAS_BLOCKS_THEME_CONTACT_EMAIL
 ENV CANVAS_BLOCKS_THEME_CONTACT_EMAIL=$CANVAS_BLOCKS_THEME_CONTACT_EMAIL
 
-RUN yarn build --mode theme
+RUN yarn build-theme
 
 FROM joseluisq/static-web-server:latest as prod
 COPY --from=build /usr/src/app/dist /public

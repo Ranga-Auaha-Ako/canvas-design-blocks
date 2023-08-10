@@ -45,7 +45,26 @@ const sharedPlugins = [
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  if (mode === "theme") {
+  if (mode === "theme-loader") {
+    return {
+      ...shared(mode),
+      plugins: [...sharedPlugins, libAssetsPlugin(), vitePluginCanvasStyles()],
+
+      build: {
+        target: "es2018",
+        lib: {
+          entry: resolve(__dirname, "src/theme-loader.ts"),
+          name: "CanvasBlocksLoader",
+          // formats: ["iife"],
+          formats: ["umd"],
+          // the proper extensions will be added
+          fileName: "theme-loader",
+        },
+        emptyOutDir: false,
+      },
+    };
+  }
+  if (mode.includes("theme")) {
     return {
       ...shared(mode),
       plugins: [
@@ -54,7 +73,15 @@ export default defineConfig(({ mode }) => {
           // publicUrl: process.env.CANVAS_BLOCKS_THEME_HOST || "",
         }),
         vitePluginCanvasStyles(),
-      ],
+      ].concat(
+        mode.includes("beta")
+          ? [
+              visualizer({
+                filename: "./dist/stats.html",
+              }),
+            ]
+          : []
+      ),
       build: {
         target: "es2018",
         lib: {
@@ -67,7 +94,12 @@ export default defineConfig(({ mode }) => {
         },
         rollupOptions: {
           output: {
-            assetFileNames: "canvas-blocks.[ext]",
+            assetFileNames: (assetInfo) => {
+              if (assetInfo.name.endsWith(".css")) {
+                return "canvas-blocks.css";
+              }
+              return "cb.[ext]";
+            },
             entryFileNames: "canvas-blocks.min.js",
           },
         },
