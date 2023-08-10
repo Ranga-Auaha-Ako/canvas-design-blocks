@@ -19,9 +19,13 @@
   $: buttonData = button.SvelteState;
   let configEl: HTMLElement;
 
-  $: iconPicker = new IconPicker(button.editor, undefined, button);
-  $: selectedIcon = iconPicker.icon;
-  $: $buttonData.icon = $selectedIcon;
+  let iconPicker: IconPicker;
+  $: {
+    iconPicker = new IconPicker(button.editor, $buttonData.icon, button);
+    iconPicker.subscribe((icon) => {
+      $buttonData.icon = icon;
+    });
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

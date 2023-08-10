@@ -8,7 +8,8 @@ import { ButtonManager } from "./buttonManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import ButtonConfig from "./popup/buttonConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
-import builtinIcons from "inst-icons-meta";
+import { IconType, icons } from "$lib/util/components/iconSearch/iconPicker";
+import { IconState } from "$lib/util/components/iconSearch/iconElement.svelte";
 
 export enum ButtonTheme {
   Default = "Button--default",
@@ -37,7 +38,7 @@ export interface ButtonData {
   target: string;
   theme: ButtonTheme;
   size: ButtonSize;
-  icon: string | undefined;
+  icon: IconState | undefined;
 }
 
 class ButtonState implements SvelteState<ButtonData> {
@@ -64,13 +65,19 @@ class ButtonState implements SvelteState<ButtonData> {
     let size = ValidSizes.includes(unsafeState?.size as ButtonSize)
       ? unsafeState?.size
       : DefaultSize;
-    let icon: string | undefined;
-    if (
-      builtinIcons.some((cat) =>
-        cat.icons.includes(unsafeState?.icon as string)
-      )
-    ) {
-      icon = unsafeState?.icon;
+    let icon: IconState | undefined;
+    const foundIcon = unsafeState?.icon?.class
+      ? icons.get(unsafeState?.icon?.class)
+      : undefined;
+    let iconType = unsafeState?.icon?.type || IconType.Line;
+    let iconClass = unsafeState?.icon?.class;
+    let iconUrl = foundIcon ? foundIcon[iconType] : undefined;
+    if (foundIcon && iconType && iconClass && iconUrl) {
+      icon = {
+        url: iconUrl,
+        class: iconClass,
+        type: iconType,
+      };
     } else {
       icon = undefined;
     }

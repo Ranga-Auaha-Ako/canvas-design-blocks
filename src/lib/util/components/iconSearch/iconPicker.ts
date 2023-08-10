@@ -3,38 +3,42 @@ import { ModalDialog } from "../modalDialog/modal";
 import IconPickerModalInner from "./iconPickerModalInner.svelte";
 import type { Editor } from "tinymce";
 import type { SelectableElement } from "$lib/elements/generic/selectableElement";
-const icons = import.meta.glob(
-  "/node_modules/@instructure/ui-icons/svg/**/*.svg",
-  {
-    as: "url",
-    eager: true,
+import { IconState } from "./iconElement.svelte";
+import { icons as InstIcons } from "virtual:inst-icons";
+
+export enum IconType {
+  Solid = 0,
+  Line = 1,
+}
+
+let icons: Map<string, Record<IconType, string>> = new Map();
+const allIcons = InstIcons as Record<string, string>;
+console.log(allIcons);
+Object.entries(allIcons).forEach(([iconPath, url]) => {
+  const [type, ...nameArr] = iconPath.split(".");
+  const name = nameArr.join(".");
+  if (!type || !name) return;
+  let typeEnum: IconType;
+  if (type === "Solid") typeEnum = IconType.Solid;
+  else if (type === "Line") typeEnum = IconType.Line;
+  else return;
+  const icon = icons.get(name);
+  if (!icon) {
+    icons.set(name, {
+      [typeEnum]: url,
+    } as Record<IconType, string>);
+  } else {
+    icon[typeEnum] = url;
   }
-);
-// This is not a good way to do this, but Instructure does not provide the icon list in a way that can be imported at compile time or by accessing global variables.
-const canvasStyles = Array.from(document.styleSheets).filter((e) =>
-  e.href?.includes(window.ENV.ASSET_HOST)
-);
+});
 
-console.log(choices);
-// if (__USES_CANVAS_ICONS__) {
-//   const icons = fetch(`https://${__USES_CANVAS_ICONS__}/meta.json`).then(
-//     (r) => r.json()
-//   );
-//   icons.then((icons) => {
-//     choices.push(...icons);
-//   });
-// }
+export { icons };
 
-export default class IconPicker implements Writable<string | undefined> {
-  public icon: Writable<string | undefined> = writable();
-  public choices: Awaited<ReturnType<typeof builtinIcons>> = choices;
+export default class IconPicker implements Writable<IconState | undefined> {
+  public icon: Writable<IconState> = writable();
+  public choices = icons;
   public modal: ModalDialog<typeof IconPickerModalInner>;
-  public static getUrl(path: string, color = "000000") {
-    return `https://${
-      import.meta.env.CANVAS_BLOCKS_ICONS_ASSET_HOST
-    }/colour/${path.replace(/.svg$/, `.${color}.svg`)}`;
-  }
-  constructor(editor: Editor, icon?: string, parent?: SelectableElement) {
+  constructor(editor: Editor, icon?: IconState, parent?: SelectableElement) {
     if (icon) this.icon.set(icon);
     this.modal = new ModalDialog(
       IconPickerModalInner,
@@ -47,6 +51,7 @@ export default class IconPicker implements Writable<string | undefined> {
             text: "Cancel",
           },
         ],
+        size: "medium",
       },
       {
         iconPicker: this,

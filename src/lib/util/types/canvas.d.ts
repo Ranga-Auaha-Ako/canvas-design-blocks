@@ -46,4 +46,5 @@ export interface ENV {
   };
   FULL_STORY_ENABLED: boolean;
   RAILS_ENVIRONMENT: string;
+  COURSE_ID?: string;
 }

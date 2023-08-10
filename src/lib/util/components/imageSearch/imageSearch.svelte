@@ -10,7 +10,7 @@
 
   const setQuery = (value: string) => {
     if (debounce !== undefined) clearTimeout(debounce);
-    debounce = setTimeout(() => {
+    debounce = window.setTimeout(() => {
       if (value.length > 2) imageQuery = value;
       else imageQuery = "";
     }, 200);

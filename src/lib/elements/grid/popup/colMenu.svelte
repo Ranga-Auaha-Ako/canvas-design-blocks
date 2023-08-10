@@ -7,9 +7,6 @@
   import preventBubble from "$lib/util/preventBubble";
   import { fade, fly, slide } from "svelte/transition";
   import Row from "$lib/elements/grid/row";
-  import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
-  import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
-  import ConfigureIcon from "$assets/icons/configure.svelte";
   import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
   import Column from "../column";
   import ColSettings from "./advancedSettings/colSettings.svelte";
@@ -59,8 +56,12 @@
           showAddRow = false;
         }}
       >
-        <!-- &#8801; -->
-        <ConfigureIcon />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-configure"
+            aria-hidden="true"
+          />
+        </span>
       </button>
     </div>
   </div>
