@@ -6,8 +6,15 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { crx } from "@crxjs/vite-plugin";
 import manifest from "./manifest.ts";
 import libAssetsPlugin from "@laynezh/vite-plugin-lib-assets";
+import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
+import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
 
-const shared = {
+/**
+ * Returns a shared configuration object for Vite.
+ * @param {string} mode - The current mode of Vite.
+ * @returns {object} - The shared configuration object.
+ */
+const shared = (mode) => ({
   server: {
     origin: "http://localhost:5173",
     hmr: {
@@ -24,32 +31,29 @@ const shared = {
     __APP_VERSION__:
       JSON.stringify(process.env.npm_package_version) || "unknown",
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-    __USES_CANVAS_ICONS__: JSON.stringify(
-      !!(
-        process.env.CANVAS_BLOCKS_ICONS_ASSET_HOST &&
-        process.env.CANVAS_BLOCKS_ICONS_HOST
-      )
-    ),
+    __ISTHEME__: JSON.stringify(mode.includes("theme")),
   },
   envPrefix: "CANVAS_BLOCKS_",
-};
+});
 
 const sharedPlugins = [
   svelte({
     emitCss: true,
   }),
+  getInstIconsPlugin(),
 ];
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   if (mode === "theme") {
     return {
-      ...shared,
+      ...shared(mode),
       plugins: [
         ...sharedPlugins,
         libAssetsPlugin({
           // publicUrl: process.env.CANVAS_BLOCKS_THEME_HOST || "",
         }),
+        vitePluginCanvasStyles(),
       ],
       build: {
         target: "es2018",
@@ -72,13 +76,14 @@ export default defineConfig(({ mode }) => {
     };
   }
   return {
-    ...shared,
+    ...shared(mode),
     plugins: [
       ...sharedPlugins,
       crx({
         manifest,
         injectCss: true,
       }),
+      vitePluginCanvasStyles(),
     ].concat(
       mode === "beta"
         ? [

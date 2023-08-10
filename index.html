@@ -3,13 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Mock Styles -->
-    <link rel="stylesheet" href="/demo-assets/canvas-mock-style.css" />
     <!-- TinyMCE -->
-    <link
-      rel="stylesheet"
-      media="all"
-      href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_normal_contrast/bundles/tinymce-59c32fac15.css" />
     <link rel="stylesheet" href="/demo-assets/variables.css" />
     <link
       rel="stylesheet"
@@ -39,8 +33,26 @@
   <body class="primary-nav-expanded course-menu-expanded pages edit">
     <!-- Fake a Canvas LMS layout -->
     <div class="page-mock" id="application">
-      <header class="leftnav ic-app-header">
+      <header class="leftnav ic-app-header" id="header">
         <img src="/icon/icon-512.png" alt="" />
+      </header>
+      <header id="mobile-header" class="no-print">
+        <button
+          type="button"
+          class="Button Button--icon-action-rev Button--large mobile-header-hamburger"
+          style="cursor: not-allowed">
+          <i class="icon-solid icon-hamburger"></i>
+          <span class="screenreader-only">Dashboard</span>
+        </button>
+        <div class="mobile-header-space"></div>
+        <a
+          class="mobile-header-title expandable"
+          style="cursor: not-allowed"
+          role="button"
+          aria-controls="mobileContextNavContainer">
+          <div>Canvas Design Blocks</div>
+          <div>Testing App: Mobile Header</div>
+        </a>
       </header>
       <main id="wrapper" class="ic-Layout-wrapper">
         <div class="header-mock">
@@ -54,7 +66,13 @@
               <nav id="breadcrumbs">
                 <ul>
                   <li class="home">
-                    <a style="cursor: not-allowed"> >My dashboard</a>
+                    <a href="/"
+                      ><span class="ellipsible"
+                        ><i class="icon-home" title="My dashboard">
+                          <span class="screenreader-only">My dashboard</span>
+                        </i>
+                      </span></a
+                    >
                   </li>
                   <li>
                     <a style="cursor: not-allowed">GRID100</a>

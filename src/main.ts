@@ -12,6 +12,10 @@ import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
 import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
 
+if (document.location.hostname === "localhost") {
+  await import("virtual:inst-env");
+}
+
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
@@ -35,7 +39,7 @@ let attempts = 0;
 let hasLoaded = false;
 const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
-    if (!window.tinymce) {
+    if (!window.tinymce || window.tinymce?.activeEditor.getBody() === null) {
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
         attempts++;
