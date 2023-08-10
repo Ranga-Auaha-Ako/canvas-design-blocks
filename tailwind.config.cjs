@@ -10,7 +10,8 @@ const config = {
         "uni-blue": {
           silver: "#8D9091",
           light: "#009AC7",
-          DEFAULT: "#00467F",
+          // DEFAULT: "#00467F",
+          DEFAULT: "var(--ic-brand-primary)",
         },
         "uni-gray": {
           100: "#F2F2F2",

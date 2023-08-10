@@ -6,7 +6,12 @@ COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "yarn.lock",
 RUN yarn
 COPY . .
 
-RUN yarn build
+ENV CANVAS_BLOCKS_BASE_DOMAINS=$CANVAS_BLOCKS_BASE_DOMAINS
+ENV CANVAS_BLOCKS_THEME_HOST=$CANVAS_BLOCKS_THEME_HOST
+ENV CANVAS_BLOCKS_THEME_CONTACT_NAME=$CANVAS_BLOCKS_THEME_CONTACT_NAME
+ENV CANVAS_BLOCKS_THEME_CONTACT_EMAIL=$CANVAS_BLOCKS_THEME_CONTACT_EMAIL
+
+RUN yarn build --mode theme
 
 FROM joseluisq/static-web-server:latest as prod
 COPY --from=build /usr/src/app/dist /public
