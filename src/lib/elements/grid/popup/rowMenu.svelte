@@ -7,9 +7,6 @@
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
   import Row from "$lib/elements/grid/row";
-  import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
-  import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
-  import ConfigureIcon from "$assets/icons/configure.svelte";
   import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
 
   export let props: { row: Row };
@@ -77,7 +74,9 @@
           props.row.delete();
         }}
       >
-        &times;
+        <span class="icon">
+          <i class="icon-Line icon-TextSize icon-x" aria-hidden="true" />
+        </span>
       </button>
       <!-- Change Layout -->
       <button
@@ -88,8 +87,12 @@
           showAddRow = false;
         }}
       >
-        <!-- &#8801; -->
-        <ConfigureIcon />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-configure"
+            aria-hidden="true"
+          />
+        </span>
       </button>
       <!-- Add above/below -->
       <button
@@ -100,7 +103,9 @@
           showChangeLayout = false;
         }}
       >
-        +
+        <span class="icon">
+          <i class="icon-Solid icon-TextSize icon-add" aria-hidden="true" />
+        </span>
       </button>
     </div>
   </div>
@@ -112,7 +117,12 @@
         on:click={() => addRow(props.row.index, get(props.row.layout))}
         transition:fade|global
       >
-        <ArrowOpenUp />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-arrow-open-up"
+            aria-hidden="true"
+          />
+        </span>
       </button>
       <button
         title="Add Row Below"
@@ -120,7 +130,12 @@
         on:click={() => addRow(props.row.index + 1, get(props.row.layout))}
         transition:fade|global
       >
-        <ArrowOpenDown />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-arrow-open-down"
+            aria-hidden="true"
+          />
+        </span>
       </button>
     </div>
   {/if}

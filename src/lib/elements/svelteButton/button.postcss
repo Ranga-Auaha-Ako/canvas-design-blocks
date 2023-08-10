@@ -1,3 +1,4 @@
+@import "../../util/components/iconSearch/iconElement.postcss";
 #tinymce .CDB--Button[data-cdb-version] {
   .Button {
     background: #f5f5f5;
@@ -133,10 +134,19 @@
       border-color: var(--ic-brand-button--secondary-bgd-darkened-15);
     }
   }
+  .Button--primary,
+  .Button--secondary,
+  .Button--warning,
+  .Button--danger,
+  .Button--success {
+    i[class*="icon-"]:after {
+      @apply invert;
+    }
+  }
 }
 .CDB--Button[data-cdb-version] {
   @apply inline-block;
-  .Button i[class*="icon-"]:before {
+  .Button i[class*="icon-"]:after {
     @apply text-sm leading-4;
   }
 }

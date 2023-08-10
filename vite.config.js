@@ -5,6 +5,7 @@ import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import { crx } from "@crxjs/vite-plugin";
 import manifest from "./manifest.ts";
+import libAssetsPlugin from "@laynezh/vite-plugin-lib-assets";
 
 const shared = {
   server: {
@@ -33,14 +34,21 @@ const shared = {
   envPrefix: "CANVAS_BLOCKS_",
 };
 
+const sharedPlugins = [
+  svelte({
+    emitCss: true,
+  }),
+];
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   if (mode === "theme") {
     return {
       ...shared,
       plugins: [
-        svelte({
-          emitCss: true,
+        ...sharedPlugins,
+        libAssetsPlugin({
+          // publicUrl: process.env.CANVAS_BLOCKS_THEME_HOST || "",
         }),
       ],
       build: {
@@ -66,9 +74,7 @@ export default defineConfig(({ mode }) => {
   return {
     ...shared,
     plugins: [
-      svelte({
-        emitCss: true,
-      }),
+      ...sharedPlugins,
       crx({
         manifest,
         injectCss: true,

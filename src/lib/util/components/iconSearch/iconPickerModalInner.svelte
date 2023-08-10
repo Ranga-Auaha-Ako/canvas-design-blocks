@@ -1,11 +1,11 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import IconPicker from "./iconPicker";
-  import { fade } from "svelte/transition";
+  import IconPicker, { IconType } from "./iconPicker";
   import { createEventDispatcher } from "svelte";
+  import { IconState } from "./iconElement.svelte";
 
   const dispatch = createEventDispatcher();
-  const selectIcon = (icon: string) => {
+  const selectIcon = (icon: IconState) => {
     dispatch("selectIcon", icon);
   };
 
@@ -13,24 +13,19 @@
 
   let iconPickerFrame: HTMLIFrameElement;
 
-  const iconHost = import.meta.env.CANVAS_BLOCKS_ICONS_HOST;
-  const usesCanvasIcons = __USES_CANVAS_ICONS__;
-
   let filterQuery = "";
+  let iconType = IconType.Line;
   let results = iconPicker.choices;
   const filterIcons = debounce(
     (query: string) => {
       resultsWrapperScroll = resultsWrapperScroll; // Bump to force refresh of scroll hint indicator
       if (query.length < 3) results = iconPicker.choices;
-      results = iconPicker.choices.map((category) => {
-        const { name, icons } = category;
-        return {
-          name,
-          icons: icons.filter((icon) => {
-            return icon.includes(query);
-          }),
-        };
-      });
+      results = new Map(
+        [...iconPicker.choices].filter(
+          ([key, value]) =>
+            key.toLowerCase().includes(query.toLowerCase()) && iconType in value
+        )
+      );
     },
     50,
     { trailing: true }
@@ -53,56 +48,66 @@
     }, 50);
 </script>
 
-{#if usesCanvasIcons}
-  <iframe
-    class="iconPickerFrame"
-    src="https://{iconHost}/"
-    frameborder="0"
-    title="Canvas Icons"
-    bind:this={iconPickerFrame}
-  />
-{:else}
+<div class="searchFilter">
   <input
     type="search"
-    class="imageSearch"
     placeholder="Search for an image"
     bind:value={filterQuery}
   />
-  <div class="overflow" class:active={scrollDistance > 0}>
-    <div
-      class="search-container"
-      bind:this={resultsWrapper}
-      on:scroll={() => {
-        resultsWrapperScroll = resultsWrapper.scrollTop;
-      }}
-    >
-      <div class="results" bind:this={resultsList}>
-        {#each results as category}
-          <h4>{category.name}</h4>
-          <div class="iconList">
-            {#each category.icons as choice}
-              {#key choice}
-                <button
-                  class="icon"
-                  title={choice}
-                  on:click={() => {
-                    selectIcon(`icon-${category.name} icon-${choice}`);
-                  }}
-                >
-                  <i class="icon-{category.name} icon-{choice}" />
-                </button>
-              {/key}
-            {/each}
-          </div>
-        {/each}
-      </div>
+  <button
+    class="toggle-icons"
+    title="Toggle Line/Solid Icons"
+    on:click={() => {
+      iconType = iconType === IconType.Line ? IconType.Solid : IconType.Line;
+    }}
+  >
+    <i
+      class="icon-{iconType === IconType.Solid ? 'Solid' : 'Line'} icon-paint"
+    />
+    {iconType === IconType.Solid ? "Solid" : "Line"}
+  </button>
+</div>
+<div class="overflow" class:active={scrollDistance > 0}>
+  <div
+    class="search-container"
+    bind:this={resultsWrapper}
+    on:scroll={() => {
+      resultsWrapperScroll = resultsWrapper.scrollTop;
+    }}
+  >
+    <div class="results iconList" bind:this={resultsList}>
+      {#each results.entries() as [name, urls] (name)}
+        <button
+          class="icon"
+          title={name}
+          on:click={() => {
+            selectIcon({
+              class: name,
+              url: urls[iconType],
+              type: iconType,
+            });
+          }}
+        >
+          <i
+            class="icon-{iconType === IconType.Solid
+              ? 'Solid'
+              : 'Line'} icon-{name}"
+          />
+        </button>
+      {/each}
     </div>
   </div>
-{/if}
+</div>
 
 <style lang="postcss">
-  input[type="search"] {
-    @apply w-full p-3 border border-solid border-gray-200;
+  .searchFilter {
+    @apply flex gap-1 mb-2;
+    input[type="search"] {
+      @apply w-full p-3 border border-solid border-gray-200;
+    }
+    button.toggle-icons {
+      @apply p-3 leading-4 rounded text-white bg-uni-blue shrink-0 cursor-pointer;
+    }
   }
   .overflow {
     @apply relative rounded overflow-clip shadow;
@@ -119,11 +124,6 @@
   .search-container {
     @apply overflow-y-auto relative p-2;
     max-height: 50vh;
-  }
-  .results {
-    h4 {
-      @apply text-lg font-bold mx-2 border-b border-solid border-gray-200 mb-2;
-    }
   }
   .iconList {
     @apply grid gap-1;

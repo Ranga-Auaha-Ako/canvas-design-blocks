@@ -1,0 +1,11 @@
+#tinymce [data-cdb-version] i {
+  display: inline-block;
+  line-height: 1;
+  &:after {
+    content: " ";
+    line-height: 1;
+    vertical-align: top;
+    background-image: var(--cdb-icon);
+    @apply bg-contain bg-no-repeat bg-center w-4 h-4 inline-block;
+  }
+}

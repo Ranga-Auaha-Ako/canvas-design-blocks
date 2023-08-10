@@ -5,7 +5,6 @@
   const dispatch = createEventDispatcher();
   import { clickOutside } from "svelte-use-click-outside";
   import deriveWindow from "$lib/util/deriveWindow";
-  import Settings from "$assets/icons/settings.svelte";
   import type Row from "$lib/elements/grid/row";
   import { persisted } from "svelte-local-storage-store";
   import AdvancedSettings from "../advancedSettings/rowSettings.svelte";
@@ -102,8 +101,14 @@
         <button
           class="open-advanced"
           on:click={() => ($settingsOpen = !$settingsOpen)}
+          title="settings"
         >
-          <Settings />
+          <span class="icon">
+            <i
+              class="icon-Line icon-TextSize icon-settings"
+              aria-hidden="true"
+            />
+          </span>
           {$settingsOpen ? "Hide" : ""} Advanced Settings
         </button>
       </div>

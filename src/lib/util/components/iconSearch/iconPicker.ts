@@ -1,32 +1,44 @@
-import type { Category } from "inst-icons-meta";
-import builtinIcons from "inst-icons-meta";
 import { writable, type Writable } from "svelte/store";
 import { ModalDialog } from "../modalDialog/modal";
 import IconPickerModalInner from "./iconPickerModalInner.svelte";
 import type { Editor } from "tinymce";
 import type { SelectableElement } from "$lib/elements/generic/selectableElement";
+import { IconState } from "./iconElement.svelte";
+import { icons as InstIcons } from "virtual:inst-icons";
 
-const choices = __USES_CANVAS_ICONS__ ? [] : builtinIcons;
+export enum IconType {
+  Solid = 0,
+  Line = 1,
+}
 
-// if (__USES_CANVAS_ICONS__) {
-//   const icons = fetch(`https://${__USES_CANVAS_ICONS__}/meta.json`).then(
-//     (r) => r.json()
-//   );
-//   icons.then((icons) => {
-//     choices.push(...icons);
-//   });
-// }
-
-export default class IconPicker implements Writable<string | undefined> {
-  public icon: Writable<string | undefined> = writable();
-  public choices: typeof builtinIcons = choices;
-  public modal: ModalDialog<typeof IconPickerModalInner>;
-  public static getUrl(path: string, color = "000000") {
-    return `https://${
-      import.meta.env.CANVAS_BLOCKS_ICONS_ASSET_HOST
-    }/colour/${path.replace(/.svg$/, `.${color}.svg`)}`;
+let icons: Map<string, Record<IconType, string>> = new Map();
+const allIcons = InstIcons as Record<string, string>;
+console.log(allIcons);
+Object.entries(allIcons).forEach(([iconPath, url]) => {
+  const [type, ...nameArr] = iconPath.split(".");
+  const name = nameArr.join(".");
+  if (!type || !name) return;
+  let typeEnum: IconType;
+  if (type === "Solid") typeEnum = IconType.Solid;
+  else if (type === "Line") typeEnum = IconType.Line;
+  else return;
+  const icon = icons.get(name);
+  if (!icon) {
+    icons.set(name, {
+      [typeEnum]: url,
+    } as Record<IconType, string>);
+  } else {
+    icon[typeEnum] = url;
   }
-  constructor(editor: Editor, icon?: string, parent?: SelectableElement) {
+});
+
+export { icons };
+
+export default class IconPicker implements Writable<IconState | undefined> {
+  public icon: Writable<IconState> = writable();
+  public choices = icons;
+  public modal: ModalDialog<typeof IconPickerModalInner>;
+  constructor(editor: Editor, icon?: IconState, parent?: SelectableElement) {
     if (icon) this.icon.set(icon);
     this.modal = new ModalDialog(
       IconPickerModalInner,
@@ -39,6 +51,7 @@ export default class IconPicker implements Writable<string | undefined> {
             text: "Cancel",
           },
         ],
+        size: "medium",
       },
       {
         iconPicker: this,
