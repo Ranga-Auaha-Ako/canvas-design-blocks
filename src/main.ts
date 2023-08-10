@@ -39,7 +39,7 @@ let attempts = 0;
 let hasLoaded = false;
 const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
-    if (!window.tinymce || window.tinymce?.activeEditor.getBody() === null) {
+    if (!window.tinymce || window.tinymce?.activeEditor?.getBody() === null) {
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
         attempts++;
