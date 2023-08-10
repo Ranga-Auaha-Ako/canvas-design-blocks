@@ -1,3 +1,7 @@
+[general]
+cors-allow-origins = "*"
+
+
 [advanced]
 
 [[advanced.headers]]
