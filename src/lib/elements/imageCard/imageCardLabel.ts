@@ -75,8 +75,10 @@ export class ImageCardLabel extends MceTextElement {
   checkSelf() {
     this.stopObserving();
     if (!this.editor.getBody().contains(this.node) && this.parentCard) {
-      ImageCardLabel.create(this.state, this.parentCard, this.editor);
-      return this.delete();
+      this.delete();
+      if (this.editor.getBody().contains(this.parentCard.node))
+        ImageCardLabel.create(this.state, this.parentCard, this.editor);
+      return;
     }
     this.startObserving();
   }
