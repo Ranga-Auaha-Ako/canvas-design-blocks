@@ -63,7 +63,8 @@
       {/each}
       <div class="info-panel">
         <a
-          href="mailto:z.millerwaugh@auckland.ac.nz?subject=Canvas%20Design%20Blocks"
+          href="mailto:{import.meta.env
+            .CANVAS_BLOCKS_THEME_CONTACT_EMAIL}?subject=Canvas%20Design%20Blocks"
         >
           <span class="text-uni-blue">Feedback</span>
         </a>
