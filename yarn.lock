@@ -1879,6 +1879,13 @@ magic-string@^0.30.0:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.13"
 
+magic-string@^0.30.2:
+  version "0.30.2"
+  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.30.2.tgz#dcf04aad3d0d1314bc743d076c50feb29b3c7aca"
+  integrity sha512-lNZdu7pewtq/ZvWUp9Wpf/x7WzMTsR26TWV03BRZrXFsv+BI6dy8RAiKgm1uM/kyR0rCfUcqvOlXKG66KhIGug==
+  dependencies:
+    "@jridgewell/sourcemap-codec" "^1.4.15"
+
 mdn-data@2.0.30:
   version "2.0.30"
   resolved "https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.30.tgz"

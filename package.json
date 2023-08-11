@@ -33,6 +33,7 @@
     "filesize": "^10.0.7",
     "html-void-elements": "3.0.0",
     "jsdom": "^22.1.0",
+    "magic-string": "^0.30.2",
     "nanoid": "4.0.2",
     "perfect-debounce": "^1.0.0",
     "postcss": "8.4.24",

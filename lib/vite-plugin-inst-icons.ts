@@ -3,6 +3,8 @@ import path from "path";
 import type { PluginOption, ResolvedConfig, UserConfig } from "vite";
 import fs from "fs";
 import "dotenv/config";
+import { nanoid } from "nanoid";
+import MagicString from "magic-string";
 
 const icons = glob.sync("@instructure/ui-icons/svg/**/*.svg", {
   cwd: path.join(__dirname, "../", "./node_modules/"),
@@ -17,6 +19,14 @@ export default function vitePluginInstIcons(): PluginOption {
     configResolved(resolvedConfig) {
       // store the resolved config
       config = resolvedConfig;
+    },
+    renderChunk(code, chunk, opts) {
+      const s = new MagicString(code);
+      s.prepend(`const __HOST__="${process.env.CANVAS_BLOCKS_THEME_HOST}";\n`);
+      return {
+        code: s.toString(),
+        map: s.generateMap({ hires: true }),
+      };
     },
     resolveId(id: string) {
       if (id === virtualModuleId) {
@@ -34,7 +44,7 @@ export default function vitePluginInstIcons(): PluginOption {
               [`${type}.${name}`]: `import.meta.ROLLUP_FILE_URL_${_this.emitFile(
                 {
                   type: "asset",
-                  name: path.basename(icon),
+                  name: `ic/${nanoid(5)}.svg`,
                   needsCodeReference: true,
                   source: fs.readFileSync(
                     path.join(__dirname, "../", "./node_modules/", icon)
@@ -67,9 +77,9 @@ export default function vitePluginInstIcons(): PluginOption {
       if (config.command == "serve" || !config.mode.includes("theme"))
         return null;
       // return `new URL('${fileName}', "${process.env.CANVAS_BLOCKS_THEME_HOST}").href`;
-      return `"${
-        new URL(fileName, process.env.CANVAS_BLOCKS_THEME_HOST).href
-      }"`;
+      return `
+        new URL("${fileName}", __HOST__).href
+      `;
     },
   };
 }

@@ -63,14 +63,14 @@ export default defineConfig(({ mode }) => {
         emptyOutDir: false,
       },
     };
-  }
-  if (mode.includes("theme")) {
+  } else if (mode.includes("theme")) {
     return {
       ...shared(mode),
       plugins: [
         ...sharedPlugins,
         libAssetsPlugin({
           // publicUrl: process.env.CANVAS_BLOCKS_THEME_HOST || "",
+          name: "[contenthash].[ext]",
         }),
         vitePluginCanvasStyles(),
       ].concat(
@@ -84,10 +84,12 @@ export default defineConfig(({ mode }) => {
       ),
       build: {
         target: "es2018",
+        manifest: true,
+        minify: true,
         lib: {
           entry: resolve(__dirname, "src/main.ts"),
           name: "CanvasBlocks",
-          // formats: ["iife"],
+          // formats: ["es"],
           formats: ["umd"],
           // the proper extensions will be added
           fileName: "canvas-blocks",
@@ -98,7 +100,7 @@ export default defineConfig(({ mode }) => {
               if (assetInfo.name.endsWith(".css")) {
                 return "canvas-blocks.css";
               }
-              return "cb.[ext]";
+              return "[hash].[ext]";
             },
             entryFileNames: "canvas-blocks.min.js",
           },
