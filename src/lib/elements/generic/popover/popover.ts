@@ -41,6 +41,9 @@ export class McePopover extends SelectableElement {
       popoverWindow.document.createElement("Div")
     );
     this.hostComponent = new PopoverWrapper({
+      props: {
+        host: this,
+      },
       target: this.node,
       intro: true,
     });

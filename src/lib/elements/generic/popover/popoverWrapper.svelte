@@ -13,8 +13,10 @@
   import { onDestroy } from "svelte";
   import type { SvelteComponent } from "svelte";
   import { writable, type Readable, type Writable } from "svelte/store";
+  import type { McePopover } from "./popover";
 
   export let component: typeof SvelteComponent<any> | undefined = undefined;
+  export let host: McePopover | undefined = undefined;
   export let show: boolean = false;
   export let props: Record<string, unknown> | undefined = undefined;
   export let placement: Placement = "top";
@@ -54,7 +56,7 @@
   });
 
   let cleanup: () => void;
-  export let popoverEl: HTMLElement;
+  export let popoverEl: HTMLElement | undefined = undefined;
 
   let x = 0;
   let y = 0;
@@ -62,7 +64,16 @@
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
 
   $: updateFunction = async () => {
-    if (!target || !popoverEl) return;
+    if (!target || !popoverEl) {
+      return;
+    }
+    if (
+      show &&
+      (!target || !popoverEl || !target.ownerDocument.contains(target))
+    ) {
+      host?.hide();
+      return;
+    }
     const position = await computePosition(target, popoverEl, {
       placement,
       middleware: middlewareMap,
