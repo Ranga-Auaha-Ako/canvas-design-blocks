@@ -57,8 +57,8 @@
         <div class="actions">
           {#if showEdit}
             <button
-              aria-label="Edit {item[labelKey]}"
-              on:click={() => {
+              title="Edit {item[labelKey]}"
+              on:click|stopPropagation={() => {
                 dispatch("edit", item[idKey]);
               }}
             >
@@ -66,7 +66,7 @@
             </button>
           {/if}
           <button
-            aria-label="Delete {item[labelKey]}"
+            title="Delete {item[labelKey]}"
             on:click={() => {
               deleteItem(item);
             }}

@@ -1,10 +1,7 @@
 <script lang="ts">
-  import type { Writable } from "svelte/store";
   import type { ProfileData, ProfileGrid } from "../profileGrid";
-  import { ModalDialog } from "$lib/util/components/modalDialog/modal";
   import { fade } from "svelte/transition";
   import { debounce } from "perfect-debounce";
-  import Sortable from "sortablejs";
   import OrderableList from "$lib/util/components/orderableList.svelte";
 
   export let props: { profileGrid: ProfileGrid };
