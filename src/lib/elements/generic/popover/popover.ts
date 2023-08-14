@@ -47,22 +47,27 @@ export class McePopover extends SelectableElement {
       target: this.node,
       intro: true,
     });
+    this.MceElement.node?.addEventListener("keydown", (e) => {
+      console.log("keydown!", e);
+      if (e.key === "Escape") {
+        this.hide();
+      } else if (e.key === "e" && e.metaKey) {
+        this.show(true);
+      } else {
+        return;
+      }
+      e.preventDefault();
+    });
   }
 
-  public show() {
-    // console.log(
-    //   "Showing popover",
-    //   this.MceElement.id,
-    //   this.MceElement.node,
-    //   this.props,
-    //   this.placement
-    // );
+  public show(focus = false) {
     if (this.isActive) return;
     this._isActive = true;
     this.hostComponent.$set({
       component: this.contents,
       target: this.MceElement.node,
       show: true,
+      focus,
       props: this.props,
       placement: this.placement,
       isDominant: this.isDominant,

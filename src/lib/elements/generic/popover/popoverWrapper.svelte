@@ -23,6 +23,7 @@
   export let target: HTMLElement | undefined = undefined;
   export let isDominant: Writable<boolean> | undefined = undefined;
   export let dominantPopover: Readable<boolean> | undefined = undefined;
+  export let focus: boolean = false;
   export let middleware:
     | {
         flip?: true | Parameters<typeof flip>[0];
@@ -88,6 +89,14 @@
 
   $: if (component && show && target && popoverEl) {
     cleanup = autoUpdate(target, popoverEl, updateFunction);
+    if (focus) {
+      console.log("Focusing!");
+      (
+        popoverEl.querySelector(
+          "a, button, input:not([type='hidden']), select, textarea, [tabindex]"
+        ) as HTMLElement
+      )?.focus();
+    }
   } else {
     if (cleanup) cleanup();
   }
