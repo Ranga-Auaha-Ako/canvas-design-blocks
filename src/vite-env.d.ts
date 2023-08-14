@@ -6,6 +6,4 @@ declare const __ISTHEME__: boolean;
 
 interface ImportMetaEnv {
   readonly CANVAS_BLOCKS_BASE_DOMAINS: string;
-  readonly CANVAS_BLOCKS_ICONS_ASSET_HOST: string;
-  readonly CANVAS_BLOCKS_ICONS_HOST: string;
 }
