@@ -68,17 +68,19 @@
         {/if}
       </div>
     </div>
-    <div class="bio">
-      <h4>Bio</h4>
-      <div
-        contenteditable="true"
-        class="bioContent"
-        bind:innerHTML={profile.overview}
-        on:input={() => {
-          dispatch("update", cdbData);
-        }}
-      />
-    </div>
+    {#if profile.showOverview}
+      <div class="bio">
+        <h4>Bio</h4>
+        <div
+          contenteditable="true"
+          class="bioContent"
+          bind:innerHTML={profile.overview}
+          on:input={() => {
+            dispatch("update", cdbData);
+          }}
+        />
+      </div>
+    {/if}
   </div>
 {:else}
   <div data-mce-bogus="all" class="no-people">

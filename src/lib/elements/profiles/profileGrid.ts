@@ -32,6 +32,7 @@ export interface ProfileData {
     address: string;
   };
   discoveryUrlId: string;
+  showOverview: boolean;
 }
 
 class ProfileState implements SvelteState<ProfileData[]> {
@@ -61,6 +62,7 @@ class ProfileState implements SvelteState<ProfileData[]> {
           address: p?.emailAddress?.address || "",
         },
         overview: "",
+        showOverview: p?.showOverview || true,
       })) || [];
     const personNodes = node?.querySelectorAll(".profileItem");
     personNodes?.forEach((pNode, index) => {

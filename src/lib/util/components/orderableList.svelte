@@ -6,6 +6,11 @@
   export let idKey: string;
   export let items: Record<any, any>[];
   export let showEdit: boolean = false;
+  export let actions: (item: any) => {
+    title: string;
+    icon: string;
+    event: string;
+  }[] = () => [];
   let itemList: HTMLElement;
 
   const dispatch = createEventDispatcher();
@@ -65,6 +70,16 @@
               <i class="icon-edit" />
             </button>
           {/if}
+          {#each actions(item) as action}
+            <button
+              title={action.title}
+              on:click|stopPropagation={() => {
+                dispatch(action.event, item[idKey]);
+              }}
+            >
+              <i class={action.icon} />
+            </button>
+          {/each}
           <button
             title="Delete {item[labelKey]}"
             on:click={() => {

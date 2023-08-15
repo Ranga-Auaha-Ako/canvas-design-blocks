@@ -72,6 +72,7 @@
                   .join("</p><p>")
               : "No bio available..."
           }</p>`,
+          showOverview: true,
           positions: person.positions,
           emailAddress: person.emailAddress,
           thumbnail: person.hasThumbnail
@@ -100,6 +101,24 @@
       labelKey="firstNameLastName"
       idKey="discoveryUrlId"
       bind:items={$people}
+      on:toggleOverview={({ detail: id }) => {
+        profileGrid.SvelteState.update((people) => {
+          const person = people.find((p) => p.discoveryUrlId === id);
+          if (person) {
+            person.showOverview = !person.showOverview;
+          }
+          return people;
+        });
+      }}
+      actions={(item) => [
+        {
+          title: "Show/Hide Overview",
+          icon: item.showOverview
+            ? "icon-Solid icon-syllabus"
+            : "icon-Line icon-syllabus",
+          event: "toggleOverview",
+        },
+      ]}
     />
   </div>
   <div class="searchBox">
