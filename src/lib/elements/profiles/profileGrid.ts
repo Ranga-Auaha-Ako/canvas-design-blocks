@@ -62,7 +62,7 @@ class ProfileState implements SvelteState<ProfileData[]> {
           address: p?.emailAddress?.address || "",
         },
         overview: "",
-        showOverview: !!p?.showOverview,
+        showOverview: p?.showOverview === undefined ? true : p?.showOverview,
       })) || [];
     const personNodes = node?.querySelectorAll(".profileItem");
     personNodes?.forEach((pNode, index) => {
