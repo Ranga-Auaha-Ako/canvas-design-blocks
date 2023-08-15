@@ -514,7 +514,8 @@ export default abstract class MceElement extends SelectableElement {
     contents?: typeof SvelteComponent<any>,
     props?: McePopover["props"],
     placement?: Placement,
-    middleware?: McePopover["middleware"]
+    middleware?: McePopover["middleware"],
+    options?: McePopover["options"]
   ) {
     if (this.popover) {
       this.popover.hostComponent.$set({ component: contents, props });
@@ -526,7 +527,9 @@ export default abstract class MceElement extends SelectableElement {
         contents,
         props,
         placement,
-        middleware
+        middleware,
+        undefined,
+        options
       );
       this.popover = popover;
       this.children.update((children) => {

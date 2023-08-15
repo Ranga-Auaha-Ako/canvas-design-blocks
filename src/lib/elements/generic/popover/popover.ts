@@ -29,7 +29,10 @@ export class McePopover extends SelectableElement {
     public readonly props?: PopoverWrapper["props"],
     public readonly placement?: Placement,
     public middleware?: PopoverWrapper["middleware"],
-    isDominant: boolean = false
+    isDominant: boolean = false,
+    public options?: {
+      showArrow?: boolean;
+    }
   ) {
     super();
     this.isDominant = writable(isDominant);
@@ -59,6 +62,7 @@ export class McePopover extends SelectableElement {
     // );
     if (this.isActive) return;
     this._isActive = true;
+
     this.hostComponent.$set({
       component: this.contents,
       target: this.MceElement.node,
@@ -71,6 +75,7 @@ export class McePopover extends SelectableElement {
         activePopover,
         (activePopover) => activePopover === this
       ),
+      ...this.options,
     });
     this.startObserving();
     if (get(this.isDominant)) {

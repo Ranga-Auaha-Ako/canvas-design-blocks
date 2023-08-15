@@ -149,6 +149,16 @@ export class Button extends SvelteElement<ButtonData> {
         shift: {
           crossAxis: true,
         },
+        autoPlacement: {
+          allowedPlacements: ["top", "bottom"],
+        },
+        offset: 15,
+        // flip: {
+        //   crossAxis: true,
+        // },
+      },
+      {
+        showArrow: true,
       }
     );
     this.isSelected.subscribe((selected) => {

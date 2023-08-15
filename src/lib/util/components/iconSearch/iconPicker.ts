@@ -13,7 +13,6 @@ export enum IconType {
 
 let icons: Map<string, Record<IconType, string>> = new Map();
 const allIcons = InstIcons as Record<string, string>;
-console.log(allIcons);
 Object.entries(allIcons).forEach(([iconPath, url]) => {
   const [type, ...nameArr] = iconPath.split(".");
   const name = nameArr.join(".");
