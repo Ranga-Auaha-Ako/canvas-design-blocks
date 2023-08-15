@@ -56,6 +56,17 @@
       labels={Object.keys(ButtonSize)}
       bind:value={$buttonData.size}
     />
+    <input
+      type="text"
+      bind:value={$buttonData.label}
+      placeholder="Button Label..."
+    />
+    <input
+      type="text"
+      bind:value={$buttonData.title}
+      placeholder="Button Title..."
+    />
+    <input type="url" bind:value={$buttonData.url} placeholder="Button URL" />
     <button
       class="Button"
       on:click={() => {
@@ -69,11 +80,6 @@
   .cgb-component {
     @apply bg-white border border-gray-300 rounded pt-6 p-2 shadow mb-2;
     @apply grid grid-cols-1 max-w-lg w-screen gap-4;
-    &:after {
-      @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
-      @apply border-b border-r bg-white -z-10;
-      content: " ";
-    }
     & > .close {
       @apply absolute top-0 right-0 p-1 z-20;
       @apply opacity-100;
@@ -85,6 +91,13 @@
     }
     .col {
       @apply flex flex-col gap-2;
+    }
+  }
+  input[type="text"],
+  input[type="url"] {
+    @apply border border-gray-300 rounded px-2 py-3 w-full;
+    &:focus {
+      @apply outline-none border-blue-500;
     }
   }
 </style>
