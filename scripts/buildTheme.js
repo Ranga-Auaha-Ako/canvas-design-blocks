@@ -14,12 +14,16 @@ try {
   const blocksJs = fs.readFileSync(
     path.resolve(__dirname, "../dist/theme-loader.umd.cjs")
   );
-  const themeCss = fs.readFileSync(
-    path.resolve(__dirname, "../themeStyles.css")
-  );
-  const themeJs = fs.readFileSync(
-    path.resolve(__dirname, "../themeScripts.js")
-  );
+  let themeCss = "";
+  let themeJs = "";
+  try {
+    themeCss = fs
+      .readFileSync(path.resolve(__dirname, "../themeStyles.css"))
+      .toString();
+    themeJs = fs
+      .readFileSync(path.resolve(__dirname, "../themeScripts.js"))
+      .toString();
+  } catch (e) {}
 
   // const css = `/* Design Blocks Start */
   const css = `${blocksCss.toString()}
