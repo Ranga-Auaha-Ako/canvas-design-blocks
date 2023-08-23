@@ -50,18 +50,24 @@ export class Grid extends MceElement implements Readable<Row[]> {
       const removeUoaStyles = (node: HTMLElement, innerNode?: HTMLElement) => {
         if (
           node.classList.contains("uoa_shadowbox") &&
-          node.classList.contains("uoa_corners_4")
+          Array.from(node.classList).find((c) => c.startsWith("uoa_corners_"))
         ) {
           node.classList.remove("uoa_shadowbox");
-          node.classList.remove("uoa_corners_4");
+          Array.from(node.classList)
+            .filter((c) => c.startsWith("uoa_corners_"))
+            .forEach((c) => node.classList.remove(c));
           (innerNode || node).classList.add("cdb-card");
         } else if (
           innerNode &&
           innerNode.classList.contains("uoa_shadowbox") &&
-          innerNode.classList.contains("uoa_corners_4")
+          Array.from(innerNode.classList).find((c) =>
+            c.startsWith("uoa_corners_")
+          )
         ) {
           innerNode.classList.remove("uoa_shadowbox");
-          innerNode.classList.remove("uoa_corners_4");
+          Array.from(innerNode.classList)
+            .filter((c) => c.startsWith("uoa_corners_"))
+            .forEach((c) => innerNode.classList.remove(c));
           innerNode.classList.add("cdb-card");
         }
       };
