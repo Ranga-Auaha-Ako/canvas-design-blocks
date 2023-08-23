@@ -47,33 +47,34 @@ export class Grid extends MceElement implements Readable<Row[]> {
       grid.node.dataset.cdbVersion === "1.0.0" ||
       grid.node.dataset.cgbVersion === "1.0.0"
     ) {
-      const removeUoaStyles = (node: HTMLElement, innerNode?: HTMLElement) => {
+      const removeUoaStyles = (
+        node: HTMLElement,
+        targetNode: HTMLElement = node
+      ) => {
         if (
           node.classList.contains("uoa_shadowbox") &&
-          Array.from(node.classList).find((c) => c.startsWith("uoa_corners_"))
+          Array.from(node.classList).find((c) =>
+            c.startsWith("uoa_corners_")
+          ) !== undefined
         ) {
           node.classList.remove("uoa_shadowbox");
-          Array.from(node.classList)
-            .filter((c) => c.startsWith("uoa_corners_"))
-            .forEach((c) => node.classList.remove(c));
-          (innerNode || node).classList.add("cdb-card");
-        } else if (
-          innerNode &&
-          innerNode.classList.contains("uoa_shadowbox") &&
-          Array.from(innerNode.classList).find((c) =>
+          const cornerSizeStr = Array.from(node.classList).find((c) =>
             c.startsWith("uoa_corners_")
-          )
-        ) {
-          innerNode.classList.remove("uoa_shadowbox");
-          Array.from(innerNode.classList)
-            .filter((c) => c.startsWith("uoa_corners_"))
-            .forEach((c) => innerNode.classList.remove(c));
-          innerNode.classList.add("cdb-card");
+          );
+          const cornerSize = cornerSizeStr?.replace("uoa_corners_", "")
+            ? parseInt(cornerSizeStr.replace("uoa_corners_", ""))
+            : 4;
+          if (cornerSize > 4) targetNode.classList.add("cdb-card--round-lg");
+          else if (cornerSize < 4)
+            targetNode.classList.add("cdb-card--round-sm");
+          if (cornerSizeStr) node.classList.remove(cornerSizeStr);
+          targetNode.classList.add("cdb-card");
         }
       };
       get(grid).forEach((row) => {
         get(row.columns).forEach((col) => {
-          removeUoaStyles(col.node, col.innerNode);
+          removeUoaStyles(col.node);
+          removeUoaStyles(col.innerNode, col.node);
         });
         removeUoaStyles(row.node);
       });

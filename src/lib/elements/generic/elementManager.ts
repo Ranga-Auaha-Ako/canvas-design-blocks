@@ -92,7 +92,10 @@ export abstract class ElementManager implements Writable<MceElement[]> {
       // Cleaning up old IDs
       if (el.dataset.cgbId) delete el.dataset.cgbId;
       if (el.dataset.cgeId) delete el.dataset.cgeId;
-      if (el.dataset.cgbVersion) delete el.dataset.cgbVersion;
+      if (el.dataset.cgbVersion) {
+        el.dataset.cdbVersion = el.dataset.cgbVersion;
+        delete el.dataset.cgbVersion;
+      }
       if (el.dataset.cgbContent) delete el.dataset.cgbContent;
       return this.elementClass.import(this.state, el, this, this.editor);
     });
