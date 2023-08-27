@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
-  import IconWhite from "$assets/brand/Icon_White.svg?inline";
+  import IconWhite from "$assets/brand/Icon_White.svg";
   import { slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { version } from "$lib/util/constants";
