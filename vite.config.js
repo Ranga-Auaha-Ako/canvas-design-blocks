@@ -69,7 +69,7 @@ export default defineConfig(({ mode }) => {
       plugins: [
         ...sharedPlugins,
         libAssetsPlugin({
-          // publicUrl: process.env.CANVAS_BLOCKS_THEME_HOST || "",
+          publicUrl: process.env.CANVAS_BLOCKS_THEME_HOST || "",
           name: "[contenthash].[ext]",
         }),
         vitePluginCanvasStyles(),
