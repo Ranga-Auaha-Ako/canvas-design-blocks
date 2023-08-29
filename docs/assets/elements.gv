@@ -1,0 +1,55 @@
+digraph G {
+  graph [fontsize = 10; fontname = "Helvetica"; splines = ortho; overlap = false;];
+  node [shape = box; fontname = "Helvetica"; fontsize = 10; color = "#cdcdcd";];
+  edge [fontsize = 10; fontname = "Helvetica"; weight = 1; color = "#cdcdcd";];
+  compound = true;
+  concentrate = true;
+  newrank = true;
+  subgraph cluster_generics {
+    label = "Abstract Element Classes";
+    color = "green";
+    style = dashed;
+    node [style = dashed;];
+    edge [style = dashed;];
+    selectableElement -> mceElement;
+    mceElement -> mceTextElement;
+    mceElement -> svelteElement;
+    elementManager;
+    subgraph cluster_popover {
+      label = "Abstract Popover Classes";
+      sveltePopover;
+      popover;
+    }
+    popover -> selectableElement;
+  }
+  subgraph cluster_lowlevel {
+    label = "Low Level Elements";
+    subgraph cluster_grid {
+      gridManager -> grid -> row -> column;
+      label = "Grid";
+    }
+    subgraph cluster_imageCard {
+      imageCardManager -> imageCardRow -> imageCard -> imageCardLabel;
+      label = "Image Card";
+    }
+  }
+  subgraph cluster_highlevel {
+    label = "Svelte-Component Based Elements";
+    
+    subgraph "cluster_svelteButton" {
+      svelteButtonManager -> svelteButton -> "svelteButtonInner.svelte";
+      label = "svelteButton";
+    }
+    subgraph "cluster_profiles" {
+      profilesManager -> profiles -> "profilesInner.svelte";
+      label = "profiles";
+    }
+    subgraph "cluster_courseHeader" {
+      courseHeaderManager -> courseHeader -> "courseHeaderInner.svelte";
+      label = "courseHeader";
+    }
+  }
+  mceElement -> column [lhead = "cluster_lowlevel";];
+  svelteElement -> courseHeader [lhead = "cluster_highlevel";];
+  elementManager -> gridManager [lhead = "cluster_lowlevel";];
+}
