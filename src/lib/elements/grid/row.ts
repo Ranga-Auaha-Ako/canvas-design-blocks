@@ -10,7 +10,6 @@ import Grid from "./grid";
 import Column from "./column";
 import { ColumnLayout, gridSize, RowLayout, rowTemplates } from "./rowLayouts";
 import { nanoid } from "nanoid";
-import writableDerived from "svelte-writable-derived";
 import confirmDialog from "$lib/util/confirmDialog";
 import deriveWindow from "$lib/util/deriveWindow";
 import MceElement from "$lib/elements/generic/mceElement";
@@ -72,6 +71,11 @@ export default class Row extends MceElement {
   }
 
   public static import(parentGrid: Grid, node: HTMLElement) {
+    // Remote old ID formats
+    if (node.dataset.cgbId) delete node.dataset.cgbId;
+    if (node.dataset.cgeId) delete node.dataset.cgeId;
+    if (node.dataset.cgbVersion) delete node.dataset.cgbVersion;
+    if (node.dataset.cgbContent) delete node.dataset.cgbContent;
     // Get Row Layout
     const rowLayout = Row.getLayoutFromNode(node);
     const columns = Row.columnNodes(node).map((colNode, index) => {
@@ -171,6 +175,7 @@ export default class Row extends MceElement {
     // Disconnects watching devices, removes self from DOM.
     super.delete();
     this.parentGrid.rows.update((rows) => rows.filter((r) => r.id !== this.id));
+    this.selected.set(new Set());
     return true;
   }
 

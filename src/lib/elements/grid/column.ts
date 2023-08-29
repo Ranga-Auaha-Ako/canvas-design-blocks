@@ -5,7 +5,7 @@ import type Grid from "./grid";
 import ColMenu from "./popup/colMenu.svelte";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
-import { writable as localStorageWritable } from "svelte-local-storage-store";
+import { persisted as localStorageWritable } from "svelte-local-storage-store";
 import type { Editor } from "tinymce";
 
 export default class Column extends MceElement {
@@ -53,8 +53,11 @@ export default class Column extends MceElement {
     );
     if (isNew) {
       this.watchNodes.clear();
-      this.watchNodes.set(this.node, {});
-      this.watchNodes.set(this.innerNode, {});
+      this.watchNodes.set(this.node, { name: "" });
+      this.watchNodes.set(this.innerNode, {
+        name: "innerNode",
+        attributeFilter: ["style", "class"],
+      });
     }
     this.startObserving();
   }
@@ -86,6 +89,7 @@ export default class Column extends MceElement {
         foundInnerNode = grid.editor.dom.create("div", {
           contenteditable: true,
           class: "cgb-col-inner",
+          style: "height: 100%; display: flow-root;",
         });
         outerNode.appendChild(foundInnerNode);
       }
@@ -103,7 +107,7 @@ export default class Column extends MceElement {
         n.nodeType !== Node.COMMENT_NODE &&
         (n as HTMLElement)?.dataset.cgbNoMove !== "true" // Allow some nodes to be left in place if the author wants
       ) {
-        console.log("Moving incorrectly placed element into inner node", n);
+        // console.log("Moving incorrectly placed element into inner node", n);
         (foundInnerNode as HTMLElement).appendChild(n);
       }
     });
@@ -148,12 +152,18 @@ export default class Column extends MceElement {
 
   static import(grid: Grid, node: HTMLElement, width: Required<ColumnLayout>) {
     let [innerNode, isNew] = this.getOrCreateInnerNode(grid, node);
+    // Remote old ID formats
+    if (node.dataset.cgbId) delete node.dataset.cgbId;
+    if (node.dataset.cgeId) delete node.dataset.cgeId;
+    if (node.dataset.cgbVersion) delete node.dataset.cgbVersion;
+    if (node.dataset.cgbContent) delete node.dataset.cgbContent;
+
     return new Column(
       grid,
       width,
       node,
       innerNode,
-      node.dataset.cgbId || undefined
+      node.dataset.cdbId || undefined
     );
   }
 
@@ -210,7 +220,6 @@ export default class Column extends MceElement {
       if (MceElement.isEmpty(this.innerNode)) {
         e.preventDefault();
         this.checkChildren();
-        console.log("Trying to fix things!");
         return false;
       } else {
         // If selection is at the start of the column, don't do anything
@@ -232,11 +241,21 @@ export default class Column extends MceElement {
       }
     });
     // Watch innernode for changes (just to be safe)
-    this.watchNodes.set(this.innerNode, {});
+    this.watchNodes.set(this.innerNode, {
+      name: "innerNode",
+      attributeFilter: ["style", "class"],
+    });
+    this.attributes.set("innerNode/style", writable(this.innerNode.style));
+    this.attributes.set("innerNode/class", writable(this.innerNode.classList));
     // Start watching for changes in the TinyMCE DOM
     this.setupObserver();
     // Set up popover
-    this.popover = this.setupPopover(ColMenu, { col: this }, "bottom");
+    this.popover = this.setupPopover(ColMenu, { col: this }, "bottom", {
+      shift: {
+        crossAxis: true,
+        padding: 30,
+      },
+    });
     this.isSelected.subscribe((selected) => {
       if (selected && get(this.showPopover)) {
         !this.popover.isActive && this.popover.show();
@@ -249,13 +268,13 @@ export default class Column extends MceElement {
     let curSel: any;
     this.isSelected.subscribe(() => {
       const par = get(this.parent);
-      console.log(
-        this.id,
-        "Selected",
-        Array.from(get(this.selected)),
-        par !== false ? Array.from(get(par.selected)) : null,
-        this.popover.isActive
-      );
+      // console.log(
+      //   this.id,
+      //   "Selected",
+      //   Array.from(get(this.selected)),
+      //   par !== false ? Array.from(get(par.selected)) : null,
+      //   this.popover.isActive
+      // );
     });
   }
   toString() {

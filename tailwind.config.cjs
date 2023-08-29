@@ -1,15 +1,17 @@
 const config = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
-  // corePlugins: {
-  //   preflight: false,
-  // },
+  corePlugins: {
+    preflight: false,
+  },
+  important: ".cgb-component",
   theme: {
     extend: {
       colors: {
         "uni-blue": {
           silver: "#8D9091",
           light: "#009AC7",
-          DEFAULT: "#00467F",
+          // DEFAULT: "#00467F",
+          DEFAULT: "var(--ic-brand-primary)",
         },
         "uni-gray": {
           100: "#F2F2F2",
@@ -45,6 +47,10 @@ const config = {
           rose: "#BA4482",
           "teal-alt": "#006990",
         },
+      },
+      boxShadow: {
+        strong:
+          "0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a, 0 0px 4px -2px #0000004f",
       },
     },
   },

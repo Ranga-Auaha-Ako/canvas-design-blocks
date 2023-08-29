@@ -7,18 +7,29 @@
   import preventBubble from "$lib/util/preventBubble";
   import { fade, fly, slide } from "svelte/transition";
   import Row from "$lib/elements/grid/row";
-  import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
-  import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
-  import ConfigureIcon from "$assets/icons/configure.svelte";
-  import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
+  import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
   import Column from "../column";
-  import ColSettings from "./layoutEditor/advancedSettings/colSettings.svelte";
+  import ColSettings from "./advancedSettings/colSettings.svelte";
+  import type { McePopover } from "$lib/elements/generic/popover/popover";
 
   export let props: { col: Column };
+  export let isDominant: Writable<boolean>;
+  export let dominantPopover: Readable<boolean> | undefined = undefined;
 
   // Either false or the id of the row to change layout for
   let showConfig: boolean = false;
   let showAddRow: boolean = false;
+
+  $: if (showConfig) {
+    isDominant.set(true);
+  } else {
+    isDominant.set(false);
+  }
+
+  $: if (!$dominantPopover) {
+    showConfig = false;
+    showAddRow = false;
+  }
 
   let gridMenuEl: HTMLElement;
 
@@ -31,8 +42,9 @@
 <div class="cgb-component" use:preventBubble>
   <div
     class="gridMenu"
+    class:showConfig
     bind:this={gridMenuEl}
-    transition:fade={{ delay: 100, duration: 200 }}
+    transition:fade|global={{ delay: 100, duration: 200 }}
   >
     <div class="actions">
       <!-- Change Layout -->
@@ -44,13 +56,17 @@
           showAddRow = false;
         }}
       >
-        <!-- &#8801; -->
-        <ConfigureIcon />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-configure"
+            aria-hidden="true"
+          />
+        </span>
       </button>
     </div>
   </div>
   {#if showConfig}
-    <div class="layoutConfig" transition:fade>
+    <div class="layoutConfig" transition:fade|global>
       <ColSettings column={props.col} />
     </div>
   {/if}
@@ -60,8 +76,12 @@
 <style lang="postcss">
   .gridMenu {
     @apply px-2 py-0.5 h-6;
-    @apply bg-uni-blue-light text-white rounded-full shadow;
+    @apply bg-uni-blue-light text-white rounded-full shadow select-none;
     @apply mx-auto w-fit;
+    @apply transition-shadow duration-300;
+    &.showConfig {
+      @apply ring-4 ring-uni-blue-light ring-opacity-50;
+    }
     & .actions {
       @apply flex h-full items-stretch;
       & .change {

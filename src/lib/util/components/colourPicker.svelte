@@ -36,6 +36,7 @@
   export let colour: Colord | undefined = undefined;
   export let contrastColour: Colord | undefined = undefined;
   export let showAccessible: boolean = true;
+  export let isText: boolean = false;
   export let label: string;
   export let popupDirection: Placement = "bottom-start";
 
@@ -204,25 +205,27 @@
         >
           {#if edit}
             {#each options as option}
-              {@const inaccessible =
-                showAccessible &&
-                contrastColour &&
-                option.code &&
-                !option.code.isReadable(contrastColour, { level: "AAA" })}
+              {#if !(option.code === undefined && contrastColour !== undefined && isText)}
+                {@const inaccessible =
+                  showAccessible &&
+                  contrastColour &&
+                  option.code &&
+                  !option.code.isReadable(contrastColour, { level: "AAA" })}
 
-              <button
-                class="colour colour-option"
-                class:unset={option.code === undefined}
-                class:white={option.code?.isLight()}
-                class:inaccessible
-                class:dark={option.code?.isDark()}
-                title={`${option.name}${
-                  inaccessible ? " (Warning! inaccessible)" : ""
-                }`}
-                style:background-color={option.code?.toHex()}
-                class:selected={colour?.toHex() === option.code?.toHex()}
-                on:click={(e) => select(option.code)}
-              />
+                <button
+                  class="colour colour-option"
+                  class:unset={option.code === undefined}
+                  class:white={option.code?.isLight()}
+                  class:inaccessible
+                  class:dark={option.code?.isDark()}
+                  title={`${option.name}${
+                    inaccessible ? " (Warning! inaccessible)" : ""
+                  }`}
+                  style:background-color={option.code?.toHex()}
+                  class:selected={colour?.toHex() === option.code?.toHex()}
+                  on:click={(e) => select(option.code)}
+                />
+              {/if}
             {/each}
             <div class="colour-custom" class:selected={customColour}>
               <div class="editor">

@@ -1,0 +1,58 @@
+@import "./grid.postcss";
+
+.mce-content-body [data-cdb-id] {
+  &.canvas-grid-editor {
+    @apply flex flex-col gap-3 relative;
+    @apply p-3 m-3 outline-dashed outline-2 outline-gray-200 transition duration-300;
+    @apply bg-uni-blue-light bg-opacity-0 transition duration-300;
+    @apply cursor-pointer !important;
+    transition-property: outline-color;
+    &:hover,
+    &:focus-within {
+      @apply outline-gray-300;
+    }
+    &[contentEditable="false"][data-mce-selected] {
+      @apply outline-uni-blue-light outline-dashed outline-2 bg-opacity-10;
+    }
+    & .grid-row {
+      @apply flex gap-3 relative;
+      & [class=^="col-"],
+      & .cgb-col {
+        @apply outline-dashed outline-2 outline-gray-200 cursor-text;
+        @apply transition duration-300;
+        transition-property: outline;
+        @nest [data-mce-selected] &, &:hover, &:focus, &:focus-within {
+          @apply outline-dashed outline-2 outline-uni-blue-light;
+        }
+        & .cgb-col-inner {
+          @apply p-3;
+        }
+        & [contentEditable="true"] {
+          @apply outline-none;
+        }
+      }
+    }
+    /* Required to fix iframes to not escape the bounds of a col. Only works in editor, but iframes will resize to fit in main page. */
+    & iframe.lti-embed,
+    & .mce-preview-object,
+    & .mce-preview-object iframe {
+      max-width: 100% !important;
+      /* These are disabled as not all iframes will be video and need a 16:9 ratio */
+      /* aspect-ratio: 16 / 9 !important;
+    height: auto !important;
+    min-height: 100px !important; */
+    }
+
+    .grid-row[data-mce-selected],
+    .cgb-col[data-mce-selected],
+    .cgb-empty-placeholder[data-mce-selected] {
+      @apply outline-0 cursor-auto !important;
+    }
+  }
+}
+
+@for $i from 1 to 12 {
+  .mce-content-body .canvas-grid-editor .col-lg-$i {
+    width: calc(100% / 12 * $(i));
+  }
+}

@@ -1,17 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Create context to query against for container queries */
+.user_content,
+.mceContentBody {
+  container-type: inline-size;
+}
 
-/* body.edit {
-  & #left-side #section-tabs li {
-    @apply transition visible;
-  }
-  &.cgb-toolbar-open {
-    & #left-side #section-tabs li {
-      @apply opacity-0 invisible;
-      &:first-child {
-        @apply opacity-100 visible h-auto;
-      }
-    }
-  }
-} */
+.cgb-component i[class*="icon-"].icon-TextSize:before {
+  font-size: 1em;
+}

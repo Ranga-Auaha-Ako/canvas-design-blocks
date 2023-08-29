@@ -1,3 +1,4 @@
+import { ENV } from "$lib/util/types/canvas";
 import type { TinyMCE } from "tinymce";
 
 export {};
@@ -5,9 +6,7 @@ export {};
 declare global {
   interface Window {
     tinymce: TinyMCE;
+    ENV: ENV;
+    _LOADED_DESIGNBLOCKS?: boolean;
   }
-}
-
-declare module "unit-to-px" {
-  export default function unitToPx(cssLength: string): number;
 }

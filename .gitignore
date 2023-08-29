@@ -1,3 +1,6 @@
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
@@ -144,3 +147,7 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node
 
 **/.DS_Store
+
+# Merge styles and scripts
+themeStyles.css
+themeScripts.js

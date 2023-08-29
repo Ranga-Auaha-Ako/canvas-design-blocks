@@ -7,16 +7,26 @@
   import preventBubble from "$lib/util/preventBubble";
   import { fade, slide } from "svelte/transition";
   import Row from "$lib/elements/grid/row";
-  import ArrowOpenDown from "$assets/icons/arrow-open-down.svelte";
-  import ArrowOpenUp from "$assets/icons/arrow-open-up.svelte";
-  import ConfigureIcon from "$assets/icons/configure.svelte";
-  import AdvancedSettings from "./layoutEditor/advancedSettings.svelte";
+  import AdvancedSettings from "./advancedSettings/rowSettings.svelte";
 
   export let props: { row: Row };
+  export let isDominant: Writable<boolean>;
+  export let dominantPopover: Readable<boolean> | undefined = undefined;
 
   // Either false or the id of the row to change layout for
   let showChangeLayout: boolean = false;
   let showAddRow: boolean = false;
+
+  $: if (showChangeLayout) {
+    isDominant.set(true);
+  } else {
+    isDominant.set(false);
+  }
+
+  $: if (!$dominantPopover) {
+    showChangeLayout = false;
+    showAddRow = false;
+  }
 
   let gridMenuEl: HTMLElement;
 
@@ -51,8 +61,9 @@
 <div class="cgb-component" use:preventBubble>
   <div
     class="gridMenu"
+    class:showChangeLayout
     bind:this={gridMenuEl}
-    transition:fade={{ delay: 100, duration: 200 }}
+    transition:fade|global={{ delay: 100, duration: 200 }}
   >
     <div class="actions">
       <!-- Delete Row -->
@@ -63,7 +74,9 @@
           props.row.delete();
         }}
       >
-        &times;
+        <span class="icon">
+          <i class="icon-Line icon-TextSize icon-x" aria-hidden="true" />
+        </span>
       </button>
       <!-- Change Layout -->
       <button
@@ -74,8 +87,12 @@
           showAddRow = false;
         }}
       >
-        <!-- &#8801; -->
-        <ConfigureIcon />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-configure"
+            aria-hidden="true"
+          />
+        </span>
       </button>
       <!-- Add above/below -->
       <button
@@ -86,27 +103,39 @@
           showChangeLayout = false;
         }}
       >
-        +
+        <span class="icon">
+          <i class="icon-Solid icon-TextSize icon-add" aria-hidden="true" />
+        </span>
       </button>
     </div>
   </div>
   {#if showAddRow}
-    <div class="addRowSelect" transition:slide>
+    <div class="addRowSelect" transition:slide|global>
       <button
         title="Add Row Above"
         class="addAbove"
         on:click={() => addRow(props.row.index, get(props.row.layout))}
-        transition:fade
+        transition:fade|global
       >
-        <ArrowOpenUp />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-arrow-open-up"
+            aria-hidden="true"
+          />
+        </span>
       </button>
       <button
         title="Add Row Below"
         class="addBelow"
         on:click={() => addRow(props.row.index + 1, get(props.row.layout))}
-        transition:fade
+        transition:fade|global
       >
-        <ArrowOpenDown />
+        <span class="icon">
+          <i
+            class="icon-Line icon-TextSize icon-arrow-open-down"
+            aria-hidden="true"
+          />
+        </span>
       </button>
     </div>
   {/if}
@@ -135,8 +164,12 @@
 <style lang="postcss">
   .gridMenu {
     @apply px-2 py-0.5 h-6;
-    @apply bg-uni-blue text-white rounded-full shadow;
+    @apply bg-uni-blue text-white rounded-full shadow select-none;
     @apply mx-auto w-fit;
+    @apply transition-shadow duration-300;
+    &.showChangeLayout {
+      @apply ring-4 ring-uni-blue ring-opacity-50;
+    }
     & .actions {
       @apply flex h-full items-stretch;
       & .change {

@@ -1,0 +1,63 @@
+#tinymce .CourseHeader {
+}
+.CourseHeader[data-cdb-version] {
+  .headerInner {
+    @apply relative box-border overflow-clip w-full rounded-md shadow-strong p-4;
+    @apply bg-cover bg-center;
+    &:before {
+      @apply absolute inset-0 rounded-md;
+
+      content: "";
+    }
+    &.HeaderTheme-dark {
+      @apply text-white bg-uni-gray-500;
+      &:before {
+        background-image: linear-gradient(
+          to bottom left,
+          rgba(0, 0, 0, 0.3),
+          rgba(0, 0, 0, 0.5)
+        );
+      }
+    }
+    &.HeaderTheme-blur {
+      @apply text-white bg-uni-gray-500;
+      &:before {
+        @apply backdrop-blur;
+        background-image: linear-gradient(
+          to bottom left,
+          rgba(0, 0, 0, 0.3),
+          rgba(0, 0, 0, 0.5)
+        );
+      }
+    }
+    &.HeaderTheme-light {
+      @apply text-black bg-uni-gray-100;
+      &:before {
+        background-image: linear-gradient(
+          to bottom left,
+          rgba(255, 255, 255, 0.7),
+          rgba(255, 255, 255, 0.7)
+        );
+      }
+    }
+    .overlay {
+      @apply z-10 relative;
+    }
+    .headerTitle {
+      @apply text-3xl font-bold max-w-prose;
+    }
+    .headerOverview {
+      @apply max-w-prose;
+    }
+    .headerLinks {
+      @apply flex flex-wrap justify-start gap-4;
+      a:not(.headerLink) {
+        display: none;
+      }
+      .headerLink {
+        @apply text-lg bg-black bg-opacity-30 text-white rounded-md px-4 py-2;
+        text-decoration: none !important;
+      }
+    }
+  }
+}

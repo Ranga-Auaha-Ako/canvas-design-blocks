@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "Node",
-    "target": "ES6",
+    "target": "ES2018",
     "module": "ESNext",
     "allowJs": true,
     "checkJs": true,
@@ -24,6 +24,7 @@
     "./public/**/*",
     "./node_modules/**/*",
     "./*.config.js",
-    "./*.config.cjs"
+    "./*.config.cjs",
+    "./themeScripts.js"
   ]
 }

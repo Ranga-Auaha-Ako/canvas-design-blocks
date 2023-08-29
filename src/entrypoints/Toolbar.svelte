@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
-  import IconWhite from "$assets/brand/Icon_White.svg";
+  import IconWhite from "$assets/brand/Icon_White.svg?inline";
   import { slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { version } from "$lib/util/constants";
@@ -42,14 +42,14 @@
 
   {#if $open}
     {#if $configComponent}
-      <div class="toolbar-menu advanced-settings" transition:slide>
+      <div class="toolbar-menu advanced-settings" transition:slide|global>
         <svelte:component
           this={$configComponent.component}
           props={$configComponent.props}
         />
       </div>
     {/if}
-    <div class="toolbar-menu" transition:slide>
+    <div class="toolbar-menu" transition:slide|global>
       {#each managers as manager}
         <ElementPanel
           on:add={() => {
@@ -61,8 +61,16 @@
           >
         </ElementPanel>
       {/each}
-      <div class="version">
-        v{version}<i>b</i>
+      <div class="info-panel">
+        <a
+          href="mailto:{import.meta.env
+            .CANVAS_BLOCKS_THEME_CONTACT_EMAIL}?subject=Canvas%20Design%20Blocks"
+        >
+          <span class="text-uni-blue">Feedback</span>
+        </a>
+        <span class="version">
+          v{version}<i>b</i>
+        </span>
       </div>
     </div>
   {/if}
@@ -90,9 +98,12 @@
   }
 
   .toolbar-menu {
-    @apply border-uni-gray-200 border rounded mt-2;
-    & .version {
-      @apply text-xs text-right p-2;
+    @apply border-uni-gray-200 border rounded mt-2 overflow-clip;
+    & .info-panel {
+      @apply text-xs p-2 flex;
+      & .version {
+        @apply text-right flex-grow;
+      }
       & i {
         @apply text-xs;
       }

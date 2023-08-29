@@ -20,9 +20,16 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   public subscribe = this._elements.subscribe;
   constructor(
     public readonly state: stateObject,
-    public readonly editor = window.tinymce.activeEditor
+    public readonly editor = window.tinymce.activeEditor,
+    private readonly editorStyles?: string
   ) {
     this.watchEditor();
+    if (editorStyles) {
+      // Inject our styles into the TinyMCE editor
+      const editorStyleEl = document.createElement("style");
+      editorStyleEl.innerHTML = editorStyles;
+      editor.getBody().insertAdjacentElement("beforebegin", editorStyleEl);
+    }
   }
   public create(atCursor = false, highlight = false) {
     const element = this.elementClass.create(
@@ -62,11 +69,11 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     // Filter to only elements we haven't already discovered
     const existingIDs = get(this._elements).map((el) => el.id);
     return Array.from(root.querySelectorAll(this.selector)).filter((e) => {
+      if (returnAll) return true;
       // Discard TinyMCE Fake Elements
       if (e.closest("[data-mce-bogus]")) return false;
-      if (returnAll) return true;
       // Get ID
-      const id = (e as HTMLElement)?.dataset.cgeId;
+      const id = (e as HTMLElement)?.dataset.cdbId;
       // No ID Means the element is untracked - we need to track it
       if (!id) return true;
       // If we have an ID, check if we are already tracking it
@@ -81,9 +88,17 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   }
 
   public importAll() {
-    const newElements = this.findAll().map((el) =>
-      this.elementClass.import(this.state, el, this, this.editor)
-    );
+    const newElements = this.findAll().map((el) => {
+      // Cleaning up old IDs
+      if (el.dataset.cgbId) delete el.dataset.cgbId;
+      if (el.dataset.cgeId) delete el.dataset.cgeId;
+      if (el.dataset.cgbVersion) {
+        el.dataset.cdbVersion = el.dataset.cgbVersion;
+        delete el.dataset.cgbVersion;
+      }
+      if (el.dataset.cgbContent) delete el.dataset.cgbContent;
+      return this.elementClass.import(this.state, el, this, this.editor);
+    });
     if (newElements.length) this.add(newElements);
   }
 
@@ -92,13 +107,13 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     // If not, update our internal representation
 
     // Disconnect any deleted elements
-    const elementIds = this.findAll(true).map((el) => el.dataset.cgeId);
+    const elementIds = this.findAll(true).map((el) => el.dataset.cdbId);
     const internalElementIds = get(this._elements).map((el) => el.id);
     const deletedElementIds = internalElementIds.filter(
       (id) => !elementIds.includes(id)
     );
     deletedElementIds.forEach((id) => {
-      console.log("Removing element", id);
+      // console.log("Removing element", id);
       const element = this.get(id);
       if (element) element.delete();
     });
@@ -106,10 +121,10 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     // Check existing elements for changes
     const nodeUpdated = get(this._elements).filter((el) => {
       if (!el.editor.getDoc().contains(el.node)) {
-        console.log(
-          `Element (${this.elementName}) no longer in DOM, removing`,
-          el.id
-        );
+        // console.log(
+        //   `Element (${this.elementName}) no longer in DOM, removing`,
+        //   el.id
+        // );
         el.delete();
         return true;
       }
@@ -128,7 +143,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   }
 
   public watchEditor() {
-    console.log("Watching editor", this.editor.getBody());
+    // console.log("Watching editor", this.editor.getBody());
     // Keep an eye on TinyMCE in case operations within the tool cause the "real" grids to be removed, added, moved, or otherwise modified.
 
     // Events where we know to check for changes

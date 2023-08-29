@@ -18,7 +18,7 @@ import type { MceElementStatics } from "$lib/elements/generic/mceElement";
 import { stateObject } from "src/main";
 
 export class Grid extends MceElement implements Readable<Row[]> {
-  public static gridMarkupVersion = "1.0.0";
+  public static gridMarkupVersion = "1.1.0";
   public selectionMethod: "TinyMCE" | "focus" = "focus";
   public trackInnerText = false;
   public attributes: MceElement["attributes"] = new Map([]);
@@ -28,22 +28,59 @@ export class Grid extends MceElement implements Readable<Row[]> {
   public rows: Writable<Row[]> = writable([]);
 
   public static migrate(grid: Grid) {
-    if (grid.node.dataset.cgbVersion === Grid.gridMarkupVersion) return;
+    if (grid.node.dataset.cdbVersion === Grid.gridMarkupVersion) return;
     console.log(
-      `Migrating grid from ${grid.node.dataset.cgbVersion || "alpha"} to v${
-        Grid.gridMarkupVersion
-      }`
+      `Migrating grid from ${
+        grid.node.dataset.cgbVersion || grid.node.dataset.cdbVersion || "alpha"
+      } to v${Grid.gridMarkupVersion}`
     );
     // SINCE alpha: Columns might have direct text decendants of innernode. This is no longer allowed, so we need to wrap them in a paragraph
-    if (grid.node.dataset.cgeVersion === undefined) {
+    if (grid.node.dataset.cdbVersion === undefined) {
       get(grid).forEach((row) => {
         get(row.columns).forEach((col) => {
           col.checkChildren();
         });
       });
     }
+    // SINCE beta: Move away from using UoA styles on any row/col elements. Instead use "cdb-card" to give shadow and rounded edges
+    if (
+      grid.node.dataset.cdbVersion === "1.0.0" ||
+      grid.node.dataset.cgbVersion === "1.0.0"
+    ) {
+      const removeUoaStyles = (
+        node: HTMLElement,
+        targetNode: HTMLElement = node
+      ) => {
+        if (
+          node.classList.contains("uoa_shadowbox") &&
+          Array.from(node.classList).find((c) =>
+            c.startsWith("uoa_corners_")
+          ) !== undefined
+        ) {
+          node.classList.remove("uoa_shadowbox");
+          const cornerSizeStr = Array.from(node.classList).find((c) =>
+            c.startsWith("uoa_corners_")
+          );
+          const cornerSize = cornerSizeStr?.replace("uoa_corners_", "")
+            ? parseInt(cornerSizeStr.replace("uoa_corners_", ""))
+            : 4;
+          if (cornerSize > 4) targetNode.classList.add("cdb-card--round-lg");
+          else if (cornerSize < 4)
+            targetNode.classList.add("cdb-card--round-sm");
+          if (cornerSizeStr) node.classList.remove(cornerSizeStr);
+          targetNode.classList.add("cdb-card");
+        }
+      };
+      get(grid).forEach((row) => {
+        get(row.columns).forEach((col) => {
+          removeUoaStyles(col.node);
+          removeUoaStyles(col.innerNode, col.node);
+        });
+        removeUoaStyles(row.node);
+      });
+    }
     // Migrate row to new version
-    grid.node.dataset.cgbVersion = Grid.gridMarkupVersion;
+    grid.node.dataset.cdbVersion = Grid.gridMarkupVersion;
   }
 
   public static create(
@@ -56,14 +93,14 @@ export class Grid extends MceElement implements Readable<Row[]> {
     // Creates a new grid at the specified location
     const gridRoot = editor.dom.create("div", {
       class: "canvas-grid-editor",
-      "data-cgb-version": Grid.gridMarkupVersion,
+      "data-cdb-version": Grid.gridMarkupVersion,
     });
     // Add grid to page
     if (atCursor) {
       const insertNode = editor.selection.getNode();
       const inGrid =
         insertNode.closest(".canvas-grid-editor") ||
-        insertNode.closest(`*[data-cgb-content="Simple"]`);
+        insertNode.closest(`*[data-cdb-content="Simple"]`);
       if (inGrid) {
         editor.dom.insertAfter(gridRoot, inGrid);
       } else if (
