@@ -1,6 +1,15 @@
-# Canvas Design Blocks
-
-Create and edit no-code design elements built right into your Canvas Pages!
+<p align="center">
+  <img src="src/assets/brand/Icon_Col.svg" style="max-width: 6ch" />
+</p>
+<h1 align="center">Canvas Design Blocks</h1>
+<p align="center">
+  <img alt="Version" src="https://img.shields.io/github/package-json/v/Ranga-Auaha-Ako/canvas-design-blocks" />
+  <a href="#">
+    <img alt="License: GPL-3.0" src="https://img.shields.io/github/license/Ranga-Auaha-Ako/canvas-design-blocks" />
+  </a>
+  
+</p>
+<p align="center">Create and edit no-code design elements built right into your Canvas Pages!</p>
 
 ## Table of Contents
 
