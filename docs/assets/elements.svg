@@ -1,0 +1,310 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="797pt" height="572pt" viewBox="0.00 0.00 797.00 572.00">
+<g id="graph0" class="graph" transform="translate(4,568) scale(1)" data-name="G">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-568 793,-568 793,4 -4,4" style=""/>
+<g id="clust1" class="cluster" data-name="cluster_generics">
+
+<polygon fill="none" stroke="green" stroke-dasharray="5,2" points="534,-160 534,-556 781,-556 781,-160 534,-160" style=""/>
+<text text-anchor="middle" x="657.5" y="-543" font-family="Helvetica,sans-Serif" font-size="10.00" style="">Abstract Element Classes</text>
+</g>
+<g id="clust2" class="cluster" data-name="cluster_popover">
+
+<polygon fill="none" stroke="green" stroke-dasharray="5,2" points="642,-384 642,-528 773,-528 773,-384 642,-384" style=""/>
+<text text-anchor="middle" x="707.5" y="-515" font-family="Helvetica,sans-Serif" font-size="10.00" style="">Abstract Popover Classes</text>
+</g>
+<g id="clust3" class="cluster" data-name="cluster_lowlevel">
+
+<polygon fill="none" stroke="black" points="294,-152 294,-556 526,-556 526,-152 294,-152" style=""/>
+<text text-anchor="middle" x="410" y="-543" font-family="Helvetica,sans-Serif" font-size="10.00" style="">Low Level Elements</text>
+</g>
+<g id="clust4" class="cluster" data-name="cluster_grid">
+
+<polygon fill="none" stroke="black" points="430,-160 430,-456 518,-456 518,-160 430,-160" style=""/>
+<text text-anchor="middle" x="474" y="-443" font-family="Helvetica,sans-Serif" font-size="10.00" style="">Grid</text>
+</g>
+<g id="clust5" class="cluster" data-name="cluster_imageCard">
+
+<polygon fill="none" stroke="black" points="302,-240 302,-528 422,-528 422,-240 302,-240" style=""/>
+<text text-anchor="middle" x="362" y="-515" font-family="Helvetica,sans-Serif" font-size="10.00" style="">Image Card</text>
+</g>
+<g id="clust6" class="cluster" data-name="cluster_highlevel">
+
+<polygon fill="none" stroke="black" points="8,-8 8,-556 286,-556 286,-8 8,-8" style=""/>
+<text text-anchor="middle" x="147" y="-543" font-family="Helvetica,sans-Serif" font-size="10.00" style="">Svelte-Component Based Elements</text>
+</g>
+<g id="clust7" class="cluster" data-name="cluster_svelteButton">
+
+<polygon fill="none" stroke="black" points="140,-312 140,-528 278,-528 278,-312 140,-312" style=""/>
+<text text-anchor="middle" x="209" y="-515" font-family="Helvetica,sans-Serif" font-size="10.00" style="">svelteButton</text>
+</g>
+<g id="clust8" class="cluster" data-name="cluster_profiles">
+
+<polygon fill="none" stroke="black" points="16,-312 16,-528 132,-528 132,-312 16,-312" style=""/>
+<text text-anchor="middle" x="74" y="-515" font-family="Helvetica,sans-Serif" font-size="10.00" style="">profiles</text>
+</g>
+<g id="clust9" class="cluster" data-name="cluster_courseHeader">
+
+<polygon fill="none" stroke="black" points="132,-16 132,-232 278,-232 278,-16 132,-16" style=""/>
+<text text-anchor="middle" x="205" y="-219" font-family="Helvetica,sans-Serif" font-size="10.00" style="">courseHeader</text>
+</g>
+<!-- selectableElement -->
+<g id="node1" class="node" pointer-events="visible" data-name="selectableElement">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="682.71,-356 585.29,-356 585.29,-320 682.71,-320 682.71,-356" style=""/>
+<text text-anchor="middle" x="634" y="-335" font-family="Helvetica,sans-Serif" font-size="10.00" style="">selectableElement</text>
+</g>
+<!-- mceElement -->
+<g id="node2" class="node" pointer-events="visible" data-name="mceElement">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="646.58,-284 575.42,-284 575.42,-248 646.58,-248 646.58,-284" style=""/>
+<text text-anchor="middle" x="611" y="-263" font-family="Helvetica,sans-Serif" font-size="10.00" style="">mceElement</text>
+</g>
+<!-- selectableElement&#45;&gt;mceElement -->
+<g id="edge1" class="edge" data-name="selectableElement-&gt;mceElement">
+
+<path fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" d="M615.97,-319.83C615.97,-319.83 615.97,-295.93 615.97,-295.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="619.47,-295.93 615.97,-285.93 612.47,-295.93 619.47,-295.93" style=""/>
+</g>
+<!-- mceTextElement -->
+<g id="node3" class="node" pointer-events="visible" data-name="mceTextElement">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="633.52,-204 542.48,-204 542.48,-168 633.52,-168 633.52,-204" style=""/>
+<text text-anchor="middle" x="588" y="-183" font-family="Helvetica,sans-Serif" font-size="10.00" style="">mceTextElement</text>
+</g>
+<!-- mceElement&#45;&gt;mceTextElement -->
+<g id="edge2" class="edge" data-name="mceElement-&gt;mceTextElement">
+
+<path fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" d="M604.36,-247.85C604.36,-247.85 604.36,-215.87 604.36,-215.87" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="607.86,-215.87 604.36,-205.87 600.86,-215.87 607.86,-215.87" style=""/>
+</g>
+<!-- svelteElement -->
+<g id="node4" class="node" pointer-events="visible" data-name="svelteElement">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="730.31,-204 651.69,-204 651.69,-168 730.31,-168 730.31,-204" style=""/>
+<text text-anchor="middle" x="691" y="-183" font-family="Helvetica,sans-Serif" font-size="10.00" style="">svelteElement</text>
+</g>
+<!-- mceElement&#45;&gt;svelteElement -->
+<g id="edge3" class="edge" data-name="mceElement-&gt;svelteElement">
+
+<path fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" d="M640.15,-247.85C640.15,-224.24 640.15,-186 640.15,-186 640.15,-186 641.28,-186 641.28,-186" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="639.92,-189.5 649.92,-186 639.92,-182.5 639.92,-189.5" style=""/>
+</g>
+<!-- column -->
+<g id="node11" class="node" pointer-events="visible" data-name="column">
+
+<polygon fill="none" stroke="#cdcdcd" points="508,-204 454,-204 454,-168 508,-168 508,-204" style=""/>
+<text text-anchor="middle" x="481" y="-183" font-family="Helvetica,sans-Serif" font-size="10.00" style="">column</text>
+</g>
+<!-- mceElement&#45;&gt;column -->
+<g id="edge17" class="edge" data-name="mceElement-&gt;column">
+
+<path fill="none" stroke="#cdcdcd" d="M575.07,-266C551.98,-266 526.27,-266 526.27,-266 526.27,-266 526.27,-219.58 526.15,-197.46" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="529.65,-197.47 526.02,-187.51 522.65,-197.56 529.65,-197.47" style=""/>
+</g>
+<!-- courseHeader -->
+<g id="node23" class="node" pointer-events="visible" data-name="courseHeader">
+
+<polygon fill="none" stroke="#cdcdcd" points="247.31,-132 168.69,-132 168.69,-96 247.31,-96 247.31,-132" style=""/>
+<text text-anchor="middle" x="208" y="-111" font-family="Helvetica,sans-Serif" font-size="10.00" style="">courseHeader</text>
+</g>
+<!-- svelteElement&#45;&gt;courseHeader -->
+<g id="edge18" class="edge" data-name="svelteElement-&gt;courseHeader">
+
+<path fill="none" stroke="#cdcdcd" d="M691,-167.83C691,-146.5 691,-114 691,-114 691,-114 403.11,-114 297.38,-114" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="297.51,-110.5 287.51,-114 297.51,-117.5 297.51,-110.5" style=""/>
+</g>
+<!-- elementManager -->
+<g id="node5" class="node" pointer-events="visible" data-name="elementManager">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="633.54,-500 542.46,-500 542.46,-464 633.54,-464 633.54,-500" style=""/>
+<text text-anchor="middle" x="588" y="-479" font-family="Helvetica,sans-Serif" font-size="10.00" style="">elementManager</text>
+</g>
+<!-- gridManager -->
+<g id="node8" class="node" pointer-events="visible" data-name="gridManager">
+
+<polygon fill="none" stroke="#cdcdcd" points="510.14,-428 437.86,-428 437.86,-392 510.14,-392 510.14,-428" style=""/>
+<text text-anchor="middle" x="474" y="-407" font-family="Helvetica,sans-Serif" font-size="10.00" style="">gridManager</text>
+</g>
+<!-- elementManager&#45;&gt;gridManager -->
+<g id="edge19" class="edge" data-name="elementManager-&gt;gridManager">
+
+<path fill="none" stroke="#cdcdcd" d="M558.85,-463.83C558.85,-442.5 558.85,-410 558.85,-410 558.85,-410 547.58,-410 537.51,-410" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="537.51,-406.5 527.51,-410 537.51,-413.5 537.51,-406.5" style=""/>
+</g>
+<!-- sveltePopover -->
+<g id="node6" class="node" pointer-events="visible" data-name="sveltePopover">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="747.87,-500 668.13,-500 668.13,-464 747.87,-464 747.87,-500" style=""/>
+<text text-anchor="middle" x="708" y="-479" font-family="Helvetica,sans-Serif" font-size="10.00" style="">sveltePopover</text>
+</g>
+<!-- popover -->
+<g id="node7" class="node" pointer-events="visible" data-name="popover">
+
+<polygon fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" points="704,-428 650,-428 650,-392 704,-392 704,-428" style=""/>
+<text text-anchor="middle" x="677" y="-407" font-family="Helvetica,sans-Serif" font-size="10.00" style="">popover</text>
+</g>
+<!-- popover&#45;&gt;selectableElement -->
+<g id="edge4" class="edge" data-name="popover-&gt;selectableElement">
+
+<path fill="none" stroke="#cdcdcd" stroke-dasharray="5,2" d="M666.43,-391.83C666.43,-391.83 666.43,-367.93 666.43,-367.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="669.93,-367.93 666.43,-357.93 662.93,-367.93 669.93,-367.93" style=""/>
+</g>
+<!-- grid -->
+<g id="node9" class="node" pointer-events="visible" data-name="grid">
+
+<polygon fill="none" stroke="#cdcdcd" points="502,-356 448,-356 448,-320 502,-320 502,-356" style=""/>
+<text text-anchor="middle" x="475" y="-335" font-family="Helvetica,sans-Serif" font-size="10.00" style="">grid</text>
+</g>
+<!-- gridManager&#45;&gt;grid -->
+<g id="edge5" class="edge" data-name="gridManager-&gt;grid">
+
+<path fill="none" stroke="#cdcdcd" d="M475,-391.83C475,-391.83 475,-367.93 475,-367.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="478.5,-367.93 475,-357.93 471.5,-367.93 478.5,-367.93" style=""/>
+</g>
+<!-- row -->
+<g id="node10" class="node" pointer-events="visible" data-name="row">
+
+<polygon fill="none" stroke="#cdcdcd" points="506,-284 452,-284 452,-248 506,-248 506,-284" style=""/>
+<text text-anchor="middle" x="479" y="-263" font-family="Helvetica,sans-Serif" font-size="10.00" style="">row</text>
+</g>
+<!-- grid&#45;&gt;row -->
+<g id="edge6" class="edge" data-name="grid-&gt;row">
+
+<path fill="none" stroke="#cdcdcd" d="M477,-319.83C477,-319.83 477,-295.93 477,-295.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="480.5,-295.93 477,-285.93 473.5,-295.93 480.5,-295.93" style=""/>
+</g>
+<!-- row&#45;&gt;column -->
+<g id="edge7" class="edge" data-name="row-&gt;column">
+
+<path fill="none" stroke="#cdcdcd" d="M480,-247.85C480,-247.85 480,-215.87 480,-215.87" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="483.5,-215.87 480,-205.87 476.5,-215.87 483.5,-215.87" style=""/>
+</g>
+<!-- imageCardManager -->
+<g id="node12" class="node" pointer-events="visible" data-name="imageCardManager">
+
+<polygon fill="none" stroke="#cdcdcd" points="414.38,-500 309.62,-500 309.62,-464 414.38,-464 414.38,-500" style=""/>
+<text text-anchor="middle" x="362" y="-479" font-family="Helvetica,sans-Serif" font-size="10.00" style="">imageCardManager</text>
+</g>
+<!-- imageCardRow -->
+<g id="node13" class="node" pointer-events="visible" data-name="imageCardRow">
+
+<polygon fill="none" stroke="#cdcdcd" points="404.42,-428 319.58,-428 319.58,-392 404.42,-392 404.42,-428" style=""/>
+<text text-anchor="middle" x="362" y="-407" font-family="Helvetica,sans-Serif" font-size="10.00" style="">imageCardRow</text>
+</g>
+<!-- imageCardManager&#45;&gt;imageCardRow -->
+<g id="edge8" class="edge" data-name="imageCardManager-&gt;imageCardRow">
+
+<path fill="none" stroke="#cdcdcd" d="M362,-463.83C362,-463.83 362,-439.93 362,-439.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="365.5,-439.93 362,-429.93 358.5,-439.93 365.5,-439.93" style=""/>
+</g>
+<!-- imageCard -->
+<g id="node14" class="node" pointer-events="visible" data-name="imageCard">
+
+<polygon fill="none" stroke="#cdcdcd" points="394.41,-356 329.59,-356 329.59,-320 394.41,-320 394.41,-356" style=""/>
+<text text-anchor="middle" x="362" y="-335" font-family="Helvetica,sans-Serif" font-size="10.00" style="">imageCard</text>
+</g>
+<!-- imageCardRow&#45;&gt;imageCard -->
+<g id="edge9" class="edge" data-name="imageCardRow-&gt;imageCard">
+
+<path fill="none" stroke="#cdcdcd" d="M362,-391.83C362,-391.83 362,-367.93 362,-367.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="365.5,-367.93 362,-357.93 358.5,-367.93 365.5,-367.93" style=""/>
+</g>
+<!-- imageCardLabel -->
+<g id="node15" class="node" pointer-events="visible" data-name="imageCardLabel">
+
+<polygon fill="none" stroke="#cdcdcd" points="406.88,-284 317.12,-284 317.12,-248 406.88,-248 406.88,-284" style=""/>
+<text text-anchor="middle" x="362" y="-263" font-family="Helvetica,sans-Serif" font-size="10.00" style="">imageCardLabel</text>
+</g>
+<!-- imageCard&#45;&gt;imageCardLabel -->
+<g id="edge10" class="edge" data-name="imageCard-&gt;imageCardLabel">
+
+<path fill="none" stroke="#cdcdcd" d="M362,-319.83C362,-319.83 362,-295.93 362,-295.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="365.5,-295.93 362,-285.93 358.5,-295.93 365.5,-295.93" style=""/>
+</g>
+<!-- svelteButtonManager -->
+<g id="node16" class="node" pointer-events="visible" data-name="svelteButtonManager">
+
+<polygon fill="none" stroke="#cdcdcd" points="264,-500 154,-500 154,-464 264,-464 264,-500" style=""/>
+<text text-anchor="middle" x="209" y="-479" font-family="Helvetica,sans-Serif" font-size="10.00" style="">svelteButtonManager</text>
+</g>
+<!-- svelteButton -->
+<g id="node17" class="node" pointer-events="visible" data-name="svelteButton">
+
+<polygon fill="none" stroke="#cdcdcd" points="244.53,-428 173.47,-428 173.47,-392 244.53,-392 244.53,-428" style=""/>
+<text text-anchor="middle" x="209" y="-407" font-family="Helvetica,sans-Serif" font-size="10.00" style="">svelteButton</text>
+</g>
+<!-- svelteButtonManager&#45;&gt;svelteButton -->
+<g id="edge11" class="edge" data-name="svelteButtonManager-&gt;svelteButton">
+
+<path fill="none" stroke="#cdcdcd" d="M209,-463.83C209,-463.83 209,-439.93 209,-439.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="212.5,-439.93 209,-429.93 205.5,-439.93 212.5,-439.93" style=""/>
+</g>
+<!-- svelteButtonInner.svelte -->
+<g id="node18" class="node" pointer-events="visible" data-name="svelteButtonInner.svelte">
+
+<polygon fill="none" stroke="#cdcdcd" points="270.23,-356 147.77,-356 147.77,-320 270.23,-320 270.23,-356" style=""/>
+<text text-anchor="middle" x="209" y="-335" font-family="Helvetica,sans-Serif" font-size="10.00" style="">svelteButtonInner.svelte</text>
+</g>
+<!-- svelteButton&#45;&gt;svelteButtonInner.svelte -->
+<g id="edge12" class="edge" data-name="svelteButton-&gt;svelteButtonInner.svelte">
+
+<path fill="none" stroke="#cdcdcd" d="M209,-391.83C209,-391.83 209,-367.93 209,-367.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="212.5,-367.93 209,-357.93 205.5,-367.93 212.5,-367.93" style=""/>
+</g>
+<!-- profilesManager -->
+<g id="node19" class="node" pointer-events="visible" data-name="profilesManager">
+
+<polygon fill="none" stroke="#cdcdcd" points="117.7,-500 30.3,-500 30.3,-464 117.7,-464 117.7,-500" style=""/>
+<text text-anchor="middle" x="74" y="-479" font-family="Helvetica,sans-Serif" font-size="10.00" style="">profilesManager</text>
+</g>
+<!-- profiles -->
+<g id="node20" class="node" pointer-events="visible" data-name="profiles">
+
+<polygon fill="none" stroke="#cdcdcd" points="101,-428 47,-428 47,-392 101,-392 101,-428" style=""/>
+<text text-anchor="middle" x="74" y="-407" font-family="Helvetica,sans-Serif" font-size="10.00" style="">profiles</text>
+</g>
+<!-- profilesManager&#45;&gt;profiles -->
+<g id="edge13" class="edge" data-name="profilesManager-&gt;profiles">
+
+<path fill="none" stroke="#cdcdcd" d="M74,-463.83C74,-463.83 74,-439.93 74,-439.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="77.5,-439.93 74,-429.93 70.5,-439.93 77.5,-439.93" style=""/>
+</g>
+<!-- profilesInner.svelte -->
+<g id="node21" class="node" pointer-events="visible" data-name="profilesInner.svelte">
+
+<polygon fill="none" stroke="#cdcdcd" points="123.93,-356 24.07,-356 24.07,-320 123.93,-320 123.93,-356" style=""/>
+<text text-anchor="middle" x="74" y="-335" font-family="Helvetica,sans-Serif" font-size="10.00" style="">profilesInner.svelte</text>
+</g>
+<!-- profiles&#45;&gt;profilesInner.svelte -->
+<g id="edge14" class="edge" data-name="profiles-&gt;profilesInner.svelte">
+
+<path fill="none" stroke="#cdcdcd" d="M74,-391.83C74,-391.83 74,-367.93 74,-367.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="77.5,-367.93 74,-357.93 70.5,-367.93 77.5,-367.93" style=""/>
+</g>
+<!-- courseHeaderManager -->
+<g id="node22" class="node" pointer-events="visible" data-name="courseHeaderManager">
+
+<polygon fill="none" stroke="#cdcdcd" points="267.28,-204 148.72,-204 148.72,-168 267.28,-168 267.28,-204" style=""/>
+<text text-anchor="middle" x="208" y="-183" font-family="Helvetica,sans-Serif" font-size="10.00" style="">courseHeaderManager</text>
+</g>
+<!-- courseHeaderManager&#45;&gt;courseHeader -->
+<g id="edge15" class="edge" data-name="courseHeaderManager-&gt;courseHeader">
+
+<path fill="none" stroke="#cdcdcd" d="M208,-167.83C208,-167.83 208,-143.93 208,-143.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="211.5,-143.93 208,-133.93 204.5,-143.93 211.5,-143.93" style=""/>
+</g>
+<!-- courseHeaderInner.svelte -->
+<g id="node24" class="node" pointer-events="visible" data-name="courseHeaderInner.svelte">
+
+<polygon fill="none" stroke="#cdcdcd" points="270.01,-60 139.99,-60 139.99,-24 270.01,-24 270.01,-60" style=""/>
+<text text-anchor="middle" x="205" y="-39" font-family="Helvetica,sans-Serif" font-size="10.00" style="">courseHeaderInner.svelte</text>
+</g>
+<!-- courseHeader&#45;&gt;courseHeaderInner.svelte -->
+<g id="edge16" class="edge" data-name="courseHeader-&gt;courseHeaderInner.svelte">
+
+<path fill="none" stroke="#cdcdcd" d="M208,-95.83C208,-95.83 208,-71.93 208,-71.93" style=""/>
+<polygon fill="#cdcdcd" stroke="#cdcdcd" points="211.5,-71.93 208,-61.93 204.5,-71.93 211.5,-71.93" style=""/>
+</g>
+</g>
+</svg>

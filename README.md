@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/brand/Icon_Col.svg" style="max-width: 6ch" />
+  <img src="src/assets/brand/Icon_Col.svg" width="100" />
 </p>
 <h1 align="center">Canvas Design Blocks</h1>
 <p align="center">
@@ -149,3 +149,7 @@ New elements have the following high-level components:
 4. A **Styles** file, which is used to style the element in the TinyMCE editor and on the page.
 
 5. A **Popup Component**, which is used to render the element's settings popup. This is only required if you have additional settings which should be displayed in a popup.
+
+For a visual overview of how the existing components fit together, see the component diagram here:
+
+[![Component Diagram](docs/assets/elements.svg)](docs/assets/elements.svg)
