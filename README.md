@@ -117,8 +117,12 @@ This project is built on [Vite](https://vitejs.dev/) and [Svelte](https://svelte
 2. Create a `.env` file in the root of the project with the following contents, replacing the values with your own:
 
 ```Shell
+# Your domain, e.g. https://canvas.instructure.com
+# NOTE: This will be used to pull styles from the Canvas theme, so it must be a valid Canvas domain.
 CANVAS_BLOCKS_BASE_DOMAINS={YOUR_CANVAS_DOMAIN}
+# For production, what domain are you hosting this theme on?
 CANVAS_BLOCKS_THEME_HOST=http://localhost:5173/
+# What contact details do you want to display in the sidebar for support?
 CANVAS_BLOCKS_THEME_CONTACT_NAME={YOUR_CONTACT_NAME}
 CANVAS_BLOCKS_THEME_CONTACT_EMAIL={YOUR_CONTACT_EMAIL}
 ```

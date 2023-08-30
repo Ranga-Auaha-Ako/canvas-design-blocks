@@ -1,7 +1,7 @@
 digraph G {
-  graph [fontsize = 10; fontname = "Helvetica"; splines = ortho; overlap = false;];
-  node [shape = box; fontname = "Helvetica"; fontsize = 10; color = "#cdcdcd";];
-  edge [fontsize = 10; fontname = "Helvetica"; weight = 1; color = "#cdcdcd";];
+  graph [fontsize = 14; fontname = "Helvetica"; splines = ortho; overlap = false; ratio = 0.75; rankdir = "LR";];
+  node [shape = box; fontname = "Helvetica"; color = "#cdcdcd";];
+  edge [weight = 1; color = "#cdcdcd";];
   compound = true;
   concentrate = true;
   newrank = true;
@@ -22,34 +22,45 @@ digraph G {
     }
     popover -> selectableElement;
   }
-  subgraph cluster_lowlevel {
-    label = "Low Level Elements";
-    subgraph cluster_grid {
-      gridManager -> grid -> row -> column;
-      label = "Grid";
+  subgraph implemented {
+    color = "#cdcdcd";
+    subgraph cluster_lowlevel {
+      label = "Low Level Elements";
+      subgraph cluster_grid {
+        color = "black";
+        gridManager -> grid -> row -> column;
+        label = "Grid";
+      }
+      subgraph cluster_imageCard {
+        color = "black";
+        imageCardManager -> imageCardRow -> imageCard -> imageCardLabel;
+        label = "Image Card";
+      }
+      // Invisible nodes to make the edges look nice
+      lowLevel [shape = point;style = invis;];
     }
-    subgraph cluster_imageCard {
-      imageCardManager -> imageCardRow -> imageCard -> imageCardLabel;
-      label = "Image Card";
+    subgraph cluster_highlevel {
+      label = "Svelte-Component Based Elements";
+      
+      subgraph "cluster_svelteButton" {
+        color = "black";
+        svelteButtonManager -> svelteButton -> "svelteButtonInner.svelte";
+        label = "svelteButton";
+      }
+      subgraph "cluster_profiles" {
+        color = "black";
+        profilesManager -> profiles -> "profilesInner.svelte";
+        label = "profiles";
+      }
+      subgraph "cluster_courseHeader" {
+        color = "black";
+        courseHeaderManager -> courseHeader -> "courseHeaderInner.svelte";
+        label = "courseHeader";
+      }
+      // Invisible nodes to make the edges look nice
+      highLevel [shape = point;style = invis;];
     }
   }
-  subgraph cluster_highlevel {
-    label = "Svelte-Component Based Elements";
-    
-    subgraph "cluster_svelteButton" {
-      svelteButtonManager -> svelteButton -> "svelteButtonInner.svelte";
-      label = "svelteButton";
-    }
-    subgraph "cluster_profiles" {
-      profilesManager -> profiles -> "profilesInner.svelte";
-      label = "profiles";
-    }
-    subgraph "cluster_courseHeader" {
-      courseHeaderManager -> courseHeader -> "courseHeaderInner.svelte";
-      label = "courseHeader";
-    }
-  }
-  mceElement -> column [lhead = "cluster_lowlevel";];
-  svelteElement -> courseHeader [lhead = "cluster_highlevel";];
-  elementManager -> gridManager [lhead = "cluster_lowlevel";];
+  mceElement -> lowLevel [lhead = "cluster_lowlevel";];
+  svelteElement -> highLevel [lhead = "cluster_highlevel";];
 }
