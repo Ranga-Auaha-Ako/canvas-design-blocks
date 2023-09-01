@@ -41,7 +41,10 @@
     if (import.meta.env.DEV && window.location.hostname === "localhost") {
       return `https://canvas.auckland.ac.nz/courses/77467/files/${file.id}/preview`;
     }
-    return `/courses/${COURSE_ID}/files/${file.id}/preview`;
+    return new URL(
+      `/courses/${COURSE_ID}/files/${file.id}/preview`,
+      document.URL
+    ).toString();
   };
 
   let searchInput: HTMLInputElement;
