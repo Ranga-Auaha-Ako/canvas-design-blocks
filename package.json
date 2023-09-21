@@ -1,6 +1,6 @@
 {
   "name": "canvas-design-blocks",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
@@ -28,6 +28,7 @@
     "autoprefixer": "10.4.14",
     "bestzip": "^2.2.1",
     "colord": "^2.9.3",
+    "compare-versions": "^6.1.0",
     "dotenv": "^16.1.4",
     "fast-glob": "^3.3.1",
     "filesize": "^10.0.7",

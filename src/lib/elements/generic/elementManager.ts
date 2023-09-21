@@ -142,16 +142,38 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     get(this._elements).forEach((el) => el.checkChildren());
   }
 
-  public watchEditor() {
+  public detatch() {
+    // Detach the manager from the editor - this is used when the editor is destroyed
+    // console.log("Detatching", this.elementName);
+
+    const potentialChangeEvents = ["Undo", "Redo", "BeforeAddUndo"];
+    potentialChangeEvents.forEach((evtName) => {
+      this.editor.off(evtName, this._watchFunc);
+    });
+
+    this._elements.update((elements) => {
+      elements.forEach((el) => {
+        el.stopObserving();
+        el.deselectAll();
+      });
+      return [];
+    });
+  }
+
+  private _watchFunc() {
+    this.checkElements();
+  }
+
+  private watchEditor() {
     // console.log("Watching editor", this.editor.getBody());
     // Keep an eye on TinyMCE in case operations within the tool cause the "real" grids to be removed, added, moved, or otherwise modified.
+
+    this._watchFunc = this._watchFunc.bind(this);
 
     // Events where we know to check for changes
     const potentialChangeEvents = ["Undo", "Redo", "BeforeAddUndo"];
     potentialChangeEvents.forEach((evtName) => {
-      this.editor.on(evtName, (e) => {
-        this.checkElements();
-      });
+      this.editor.on(evtName, this._watchFunc);
     });
 
     // // Events where we need to hide the interface
