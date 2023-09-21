@@ -63,8 +63,8 @@
       {/each}
       <div class="info-panel">
         <a
-          href="mailto:{import.meta.env
-            .CANVAS_BLOCKS_THEME_CONTACT_EMAIL}?subject=Canvas%20Design%20Blocks"
+          href={import.meta.env.CANVAS_BLOCKS_THEME_CONTACT_LINK}
+          target="_blank"
         >
           <span class="text-uni-blue">Feedback</span>
         </a>
