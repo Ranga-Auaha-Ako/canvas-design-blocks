@@ -172,6 +172,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="cgb-component">
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div
     class="container"
     bind:this={container}
@@ -229,6 +230,7 @@
             {/each}
             <div class="colour-custom" class:selected={customColour}>
               <div class="editor">
+                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
                 <label
                   class="colour colour-option"
                   title="Custom colour"
