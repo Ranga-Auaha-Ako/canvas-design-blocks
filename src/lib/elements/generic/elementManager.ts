@@ -33,6 +33,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     }
   }
   public create(atCursor = false, highlight = false) {
+    if (this.detached) return;
     const element = this.elementClass.create(
       this.state,
       this,
@@ -44,6 +45,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     return element;
   }
   public add(element: MceElement | MceElement[]) {
+    if (this.detached) return;
     if (Array.isArray(element)) {
       this.update((elements) => {
         return [...elements, ...element];
@@ -53,6 +55,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     }
   }
   public remove(element: MceElement | string) {
+    if (this.detached) return;
     let foundElement: MceElement | undefined;
     if (typeof element === "string") foundElement = this.get(element);
     else foundElement = element;
@@ -89,6 +92,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   }
 
   public importAll() {
+    if (this.detached) return;
     const newElements = this.findAll().map((el) => {
       // Cleaning up old IDs
       if (el.dataset.cgbId) delete el.dataset.cgbId;
@@ -104,6 +108,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   }
 
   public checkElements() {
+    if (this.detached) return;
     // Check to see if our internal representation of elements matches the DOM
     // If not, update our internal representation
 
@@ -143,6 +148,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
     get(this._elements).forEach((el) => el.checkChildren());
   }
 
+  detached = false;
   public detatch() {
     // Detach the manager from the editor - this is used when the editor is destroyed
     console.log("Detatching", this.elementName);
@@ -152,13 +158,13 @@ export abstract class ElementManager implements Writable<MceElement[]> {
       this.editor.off(evtName, this._watchFunc);
     });
 
-    this.importAll = () => {};
+    this.detached = true;
 
     this._elements.update((elements) => {
       elements.forEach((el) => {
-        el.deselectAll();
         el.stopObserving();
         el.shouldObserve = false;
+        el.deselectAll();
       });
       return [];
     });
