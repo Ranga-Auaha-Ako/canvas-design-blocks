@@ -128,7 +128,7 @@ export const loadApp = async () => {
   // Register unload function
   window._UNLOAD_DESIGNBLOCKS = () => {
     if (hasLoaded) {
-      console.log("Unloading app");
+      console.log(`Unloading app: ${__APP_VERSION__}`);
       toolbar?.$destroy();
       loaded_blocks.forEach((block) => block.detatch());
       hasLoaded = false;
