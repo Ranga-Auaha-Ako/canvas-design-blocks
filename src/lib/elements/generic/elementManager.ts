@@ -152,9 +152,12 @@ export abstract class ElementManager implements Writable<MceElement[]> {
       this.editor.off(evtName, this._watchFunc);
     });
 
+    this.importAll = () => {};
+
     this._elements.update((elements) => {
       elements.forEach((el) => {
         el.stopObserving();
+        el.startObserving = () => {};
         el.deselectAll();
       });
       return [];

@@ -169,6 +169,8 @@ const beginLaunch = () => {
     // const loc = window.location.pathname;
     // if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
     // }
+  } else {
+    console.log("App already loaded");
   }
 };
 
