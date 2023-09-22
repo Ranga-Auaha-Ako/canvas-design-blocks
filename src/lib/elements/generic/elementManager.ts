@@ -162,9 +162,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
 
     this._elements.update((elements) => {
       elements.forEach((el) => {
-        el.stopObserving();
-        el.shouldObserve = false;
-        el.deselectAll();
+        el.detach();
       });
       return [];
     });

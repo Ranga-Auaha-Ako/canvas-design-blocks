@@ -105,13 +105,6 @@ export default abstract class MceElement extends SelectableElement {
   private selectUnsubscriber?: () => void;
 
   /**
-   * Whether the element should be observed for changes
-   * - True: Observe the element
-   * - False: Do not observe the element - used when the element is deleted
-   */
-  shouldObserve = true;
-
-  /**
    * Merged attributes - includes the default attributes and the subclass-implemented ones
    */
   get mergedAttributes() {
@@ -273,7 +266,7 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
-    if (!this.shouldObserve) {
+    if (this.detached) {
       this.stopObserving();
       return;
     }
