@@ -145,7 +145,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
 
   public detatch() {
     // Detach the manager from the editor - this is used when the editor is destroyed
-    // console.log("Detatching", this.elementName);
+    console.log("Detatching", this.elementName);
 
     const potentialChangeEvents = ["Undo", "Redo", "BeforeAddUndo"];
     potentialChangeEvents.forEach((evtName) => {
