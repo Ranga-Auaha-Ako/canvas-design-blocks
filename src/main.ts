@@ -7,6 +7,7 @@ import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
 import ButtonManager from "$lib/elements/button/buttonManager";
+import Depreciate from "./entrypoints/Depreciate.svelte";
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -66,6 +67,22 @@ export const loadApp = async () => {
     return null;
   });
   if (!editor) return;
+  if (window._LOADED_DESIGNBLOCKS) {
+    setTimeout(() => {
+      const target = document.querySelector("#left-side #section-tabs");
+      if (!target) return;
+      // Create list item at start of target
+      const li = document.createElement("li");
+      li.classList.add("section");
+      target.insertAdjacentElement("afterbegin", li);
+
+      return new Depreciate({
+        target: li,
+      });
+    }, 400);
+    return;
+  }
+  window._LOADED_DESIGNBLOCKS = true;
   console.log("Editor loaded", editor);
 
   // Create Element Managers
@@ -100,12 +117,16 @@ export const loadApp = async () => {
     // Load the app again when the editor is reloaded
     setTimeout(() => {
       loadApp();
-    }, 100);
+    }, 200);
   });
 };
 
 console.log("Loading app");
-window.addEventListener("load", loadApp);
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    loadApp();
+  }, 400);
+});
 // Load the app only on certain pages
 // const loc = window.location.pathname;
 // if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {

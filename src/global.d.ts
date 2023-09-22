@@ -5,6 +5,7 @@ export {};
 declare global {
   interface Window {
     tinymce: TinyMCE;
+    _LOADED_DESIGNBLOCKS?: boolean;
   }
 }
 

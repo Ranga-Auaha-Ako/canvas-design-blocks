@@ -1,0 +1,381 @@
+/*login box*/
+
+body.modal #modal-box.login-box {
+  background: url(https://s3.amazonaws.com/SSL_Assets/Auckland/Styles/Images/logo.svg)
+    no-repeat 30% 30%;
+  background-size: 70%;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+.headerbreakline {
+  width: 100%;
+  float: left;
+  height: 1px;
+  background-color: #fff;
+}
+
+#register_link {
+  display: none;
+}
+
+/*this will remove the extra canvas logo*/
+body.modal #modal-box.login-box h1 {
+  background: none;
+  height: 200px;
+}
+
+/*resize the login box to fit my image and change the color of 'stay signed in'*/
+body.modal #modal-box.login-box {
+  height: 405px;
+  width: 623px;
+  color: #071135;
+}
+
+#modal-box .btn {
+  margin-right: 10px !important;
+}
+
+/*change the color of the login button*/
+
+body.modal #modal-box .button,
+body.modal #login-box .button {
+  background-color: #8cc63f !important;
+  background-image: none !important;
+  border-color: #8cc63f;
+}
+
+#login_form .btn-primary {
+  background-color: #003f7f;
+  background-image: none;
+  border-color: #003f7f;
+  color: #fff;
+  -webkit-transition: all 500ms ease-out 0.5s;
+  -moz-transition: all 500ms ease-out 0.5s;
+  -o-transition: all 500ms ease-out 0.5s;
+  transition: all 500ms ease-out 0.5s;
+}
+
+#login_form .btn-primary:hover {
+  background-color: #203c56;
+  background-image: none;
+  border-color: #203c56;
+  color: #fff;
+  -webkit-transition: all 500ms ease-out 0.5s;
+  -moz-transition: all 500ms ease-out 0.5s;
+  -o-transition: all 500ms ease-out 0.5s;
+  transition: all 500ms ease-out 0.5s;
+}
+
+#modal-box.login-box {
+  background-color: transparent;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  webkit-box-shadow: none;
+}
+
+#login_form .login-options {
+  color: gray;
+}
+
+/*change the color of 'don't know your password'*/
+body.modal #modal-box.login-box a {
+  color: gray !important;
+}
+
+body.modal.no-headers {
+  background: url(https://s3.amazonaws.com/SSL_Assets/Auckland/Styles/Images/login_background.jpg)
+    no-repeat transparent right top;
+  background-size: cover;
+}
+
+/* Canvas Icons class fontsize inherit vs fixed */
+.user_content a[class*="icon-"],
+a[class^="icon-"] {
+  font-size: inherit;
+}
+
+/* Hidden features */
+.profile_settings #right-side a.button-sidebar-wide:nth-child(4) {
+  display: none;
+}
+
+#right-side
+  > div:nth-child(7)
+  > a.btn.button-sidebar-wide[href="/epub_exports"] {
+  display: -webkit-box;
+}
+
+a.add_email_link.icon-add {
+  display: none;
+}
+
+a.add_contact_link.icon-add {
+  display: none;
+}
+
+a.delete_channel_link.no-hover > i {
+  display: none;
+}
+
+td.email_actions.hidden_for_single > a {
+  display: none;
+}
+
+#footer-links {
+  display: none;
+}
+
+span#footer-links.old {
+  display: none;
+}
+
+#footer-links-new {
+  color: #035085;
+}
+
+#footer-links-new a {
+  float: right;
+  border-right: 1px solid #035085;
+  color: #035085 !important;
+  padding-left: 30px;
+  padding-right: 30px;
+  text-align: center;
+}
+
+#footer-links-new a:first-child {
+  border-right: none;
+}
+
+@media only screen and (max-width: 768px) {
+  #footer-links-new {
+    clear: both;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  #footer-links-new a {
+    border-right: none;
+    display: block;
+  }
+}
+
+#footer .footer-logo {
+  float: right;
+  margin-right: 50px;
+}
+
+/* SpeedGrader Rubric Marking */
+button.btn-map {
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+/* SpeedGrader Loading Animation */
+#loadingAnimationContainer {
+  height: 15em;
+  position: relative;
+}
+
+#loadingAnimation {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
+  margin: 6px;
+  border: 6px solid #cef;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #cef transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fix Canvas Design Template */
+.uoa_grid div {
+  width: 175px;
+  float: left;
+  margin: 15px 10px;
+  background-color: #ebebeb;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: box-shadow 0.3s;
+}
+
+.uoa_grid div:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.uoa_grid img {
+  width: 100%;
+}
+
+.uoa_grid p {
+  margin: 0px;
+  padding: 12px 14px;
+  text-align: center;
+  line-height: 20px;
+}
+
+.uoa_grid a {
+  text-decoration: none !important;
+}
+
+.uoa_grid_wide div {
+  width: 230px;
+  margin: 20px 15px;
+}
+
+.uoa_grid_smalltext p {
+  font-size: 10pt;
+}
+
+.uoa_grid_light div {
+  background-color: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  transition: none;
+}
+
+.uoa_grid_light div:hover {
+  box-shadow: none;
+}
+
+.uoa_grid_fade img {
+  filter: grayscale(80%);
+}
+
+.uoa_grid_fade img:hover {
+  filter: grayscale(0%);
+}
+
+.uoa_grid_over a,
+.uoa_grid_over a:hover,
+.uoa_grid_over a:visited {
+  color: #ffffff;
+}
+
+.uoa_grid_over p {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  word-wrap: break-word;
+  background: black; /* fallback for old browsers */
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.uoa_grid_roomy div {
+  margin: 25px 20px;
+}
+
+.uoa_shadowbox {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.uoa_shadowline {
+  box-shadow: 0 10px 5px -5px rgba(0, 0, 0, 0.35);
+}
+
+.uoa_table td,
+.uoa_table th {
+  padding: 10px !important;
+}
+
+.uoa_table th {
+  background-color: #ebebeb;
+}
+
+.uoa_img_left {
+  float: left;
+  margin: 7px 14px 7px 0;
+}
+
+.uoa_img_topleft {
+  float: left;
+  margin: 0 14px 7px 0;
+}
+
+.uoa_img_right {
+  float: right;
+  margin: 7px 0 7px 14px;
+}
+
+.uoa_img_topright {
+  float: right;
+  margin: 0 0 7px 14px;
+}
+
+.uoa_corners_4 {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.uoa_corners_8 {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.uoa_corners_12 {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.uoa_opacity_40 {
+  opacity: 0.4;
+}
+
+.uoa_opacity_60 {
+  opacity: 0.6;
+}
+
+.uoa_opacity_80 {
+  opacity: 0.8;
+}
