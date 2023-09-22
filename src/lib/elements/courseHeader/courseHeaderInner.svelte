@@ -7,10 +7,11 @@
   export let cdbData: HeaderData;
 </script>
 
-<div
-  class="headerInner {cdbData.theme}"
-  style:background-image="url('{cdbData.image}')"
->
+<div class="headerInner {cdbData.theme}">
+  {#if cdbData.image}
+    <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
+    <div class="imageOverlay">&nbsp;</div>
+  {/if}
   <div class="overlay">
     <!-- svelte-ignore a11y-missing-content -->
     <h3

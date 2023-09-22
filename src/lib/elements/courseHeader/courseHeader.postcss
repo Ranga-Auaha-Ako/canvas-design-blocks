@@ -4,14 +4,13 @@
   .headerInner {
     @apply relative box-border overflow-clip w-full rounded-md shadow-strong p-4;
     @apply bg-cover bg-center;
-    &:before {
-      @apply absolute inset-0 rounded-md;
-
+    .imageOverlay {
+      @apply absolute inset-0 rounded-md z-10;
       content: "";
     }
     &.HeaderTheme-dark {
       @apply text-white bg-uni-gray-500;
-      &:before {
+      .imageOverlay {
         background-image: linear-gradient(
           to bottom left,
           rgba(0, 0, 0, 0.3),
@@ -21,7 +20,7 @@
     }
     &.HeaderTheme-blur {
       @apply text-white bg-uni-gray-500;
-      &:before {
+      .imageOverlay {
         @apply backdrop-blur;
         background-image: linear-gradient(
           to bottom left,
@@ -32,7 +31,7 @@
     }
     &.HeaderTheme-light {
       @apply text-black bg-uni-gray-100;
-      &:before {
+      .imageOverlay {
         background-image: linear-gradient(
           to bottom left,
           rgba(255, 255, 255, 0.7),
@@ -41,7 +40,11 @@
       }
     }
     .overlay {
-      @apply z-10 relative;
+      @apply z-20 relative;
+    }
+    .headerImage {
+      @apply absolute inset-0 w-full h-full rounded-md z-0;
+      object-fit: cover;
     }
     .headerTitle {
       @apply text-3xl font-bold max-w-prose;
