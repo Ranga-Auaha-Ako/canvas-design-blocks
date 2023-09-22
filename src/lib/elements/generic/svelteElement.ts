@@ -29,6 +29,7 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
   public static markupVersion = "1.0.0";
   public SvelteState: SvelteState<stateDataType>;
   private dataEl: HTMLElement | undefined;
+  public customEvents?: Map<string, (detail: any) => any>;
 
   constructor(
     public editor: Editor = window.tinymce.activeEditor,
@@ -94,6 +95,11 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
           if (detail) {
             createDataEl();
           }
+        });
+        [...(this.customEvents?.entries() || [])].forEach((event) => {
+          lastContents?.$on(event[0], (detail) => {
+            event[1](detail);
+          });
         });
         this.startObserving();
       }
