@@ -374,6 +374,7 @@ export default abstract class MceElement extends SelectableElement {
       case "clickTinyMCE":
         this.node.addEventListener("click", (e) => {
           e.preventDefault();
+          e.stopPropagation();
           this.select(this);
           this.editor.once("NodeChange", () => {
             this.deselect(this);
