@@ -11,21 +11,25 @@
   <div class="profileItem">
     <div class="card">
       {#if profile.thumbnail}
+        <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
         <img
           class="profile-photo"
           src={profile.thumbnail}
-          alt="Photo of {profile.firstName}"
+          alt="Photo of {profile.firstNameLastName}"
+          on:click={() => {
+            dispatch("changePhoto", profile);
+          }}
+          on:keydown={(e) => {
+            if (e.key === "Enter") {
+              e.stopPropagation();
+              dispatch("changePhoto", profile);
+            }
+          }}
+          tabindex="0"
+          role="button"
         />
       {/if}
       <div class="details">
-        <p
-          class="title"
-          contenteditable="true"
-          bind:innerText={profile.title}
-          on:input={() => {
-            dispatch("update", cdbData);
-          }}
-        />
         <!-- svelte-ignore a11y-missing-content -->
         <h4
           class="name"
@@ -40,15 +44,7 @@
             <p
               class="title"
               contenteditable="true"
-              bind:innerText={profile.positions[0].position}
-              on:input={() => {
-                dispatch("update", cdbData);
-              }}
-            />
-            <p
-              class="department"
-              contenteditable="true"
-              bind:innerText={profile.positions[0].department}
+              bind:innerText={profile.positions[0]}
               on:input={() => {
                 dispatch("update", cdbData);
               }}

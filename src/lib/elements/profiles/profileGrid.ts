@@ -16,22 +16,21 @@ import { ProfilesManager } from "./profilesManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import ProfileConfig from "./popup/profileConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
+import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
+import { ModalDialog } from "$lib/util/components/modalDialog/modal";
 
 export interface ProfileData {
-  title?: string;
+  id: string;
+  canvasId?: string;
   firstName: string;
   lastName: string;
   firstNameLastName: string;
   thumbnail: false | string;
   overview: string;
-  positions?: {
-    position: string;
-    department: string;
-  }[];
+  positions?: string[];
   emailAddress?: {
     address: string;
   };
-  discoveryUrlId: string;
   showOverview: boolean;
 }
 
@@ -47,17 +46,21 @@ class ProfileState implements SvelteState<ProfileData[]> {
     let state: ProfileData[] =
       unsafeState?.map((p) => ({
         // Import strings from unsafe state
+        id: p?.id || nanoid(),
+        canvasId: p?.canvasId || "",
         firstName: p?.firstName || "",
         lastName: p?.lastName || "",
         firstNameLastName: p?.firstNameLastName || "",
         thumbnail: p?.thumbnail || "",
-        discoveryUrlId: p?.discoveryUrlId || "",
-        title: p?.title || "",
-        positions:
-          p?.positions?.map((pos) => ({
-            position: pos.position || "",
-            department: pos.department || "",
-          })) || [],
+        positions: (
+          p?.positions as
+            | string[]
+            | undefined
+            | {
+                position: string;
+                department: string;
+              }[]
+        )?.map((pos) => (typeof pos === "string" ? pos : pos.position)) || [""],
         emailAddress: {
           address: p?.emailAddress?.address || "",
         },
@@ -106,6 +109,30 @@ export class ProfileGrid extends SvelteElement<ProfileData[]> {
     return new this(state, editor, manager, node);
   }
 
+  public async changePhoto({ detail: profile }: { detail: ProfileData }) {
+    const picker = new ModalDialog(
+      ImageSearch,
+      this.editor,
+      {
+        title: "Select Image",
+        buttons: [
+          {
+            type: "cancel",
+            text: "Cancel",
+          },
+        ],
+      },
+      {}
+    );
+    const pickerInst = picker.open();
+    pickerInst.$on("selectImage", ({ detail: url }) => {
+      profile.thumbnail = url;
+      console.log(profile);
+      this.SvelteState.update((state) => state);
+      picker.close();
+    });
+  }
+
   constructor(
     public state: stateObject,
     public editor: Editor = window.tinymce.activeEditor,
@@ -115,8 +142,11 @@ export class ProfileGrid extends SvelteElement<ProfileData[]> {
     highlight = false
   ) {
     super(editor, manager, node, ProfileInner, ProfileState, id, highlight);
+    this.customEvents = new Map([["changePhoto", this.changePhoto.bind(this)]]);
     if (get(this.SvelteState) === undefined) {
       this.SvelteState.set([]);
+    } else {
+      this.SvelteState.update((state) => state);
     }
 
     // Set up popover
