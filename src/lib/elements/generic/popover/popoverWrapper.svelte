@@ -190,6 +190,6 @@
   }
   .popover--Arrow {
     @apply block absolute rounded w-4 h-4 rotate-45;
-    @apply bg-uni-blue shadow -z-10;
+    @apply bg-primary shadow -z-10;
   }
 </style>

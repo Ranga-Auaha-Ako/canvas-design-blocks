@@ -29,17 +29,17 @@
     }
   }
   .btn {
-    @apply flex justify-center items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;
+    @apply flex justify-center items-center gap-2 px-2 py-1 bg-primary text-white rounded border-none cursor-pointer;
   }
   .btn-group {
     @apply flex flex-wrap overflow-clip rounded transition w-fit;
     &:has(:focus-visible) {
-      @apply ring-2 ring-uni-blue;
+      @apply ring-2 ring-primary;
     }
     & .btn {
       @apply bg-gray-200 text-black rounded-none;
       &.active {
-        @apply bg-uni-blue text-white font-bold;
+        @apply bg-primary text-white font-bold;
       }
       & input {
         @apply absolute opacity-0;

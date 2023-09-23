@@ -4,7 +4,7 @@
   &.canvas-grid-editor {
     @apply flex flex-col gap-3 relative;
     @apply p-3 m-3 outline-dashed outline-2 outline-gray-200 transition duration-300;
-    @apply bg-uni-blue-light bg-opacity-0 transition duration-300;
+    @apply bg-secondary bg-opacity-0 transition duration-300;
     @apply cursor-pointer !important;
     transition-property: outline-color;
     &:hover,
@@ -12,7 +12,7 @@
       @apply outline-gray-300;
     }
     &[contentEditable="false"][data-mce-selected] {
-      @apply outline-uni-blue-light outline-dashed outline-2 bg-opacity-10;
+      @apply outline-secondary outline-dashed outline-2 bg-opacity-10;
     }
     & .grid-row {
       @apply flex gap-3 relative;
@@ -22,7 +22,7 @@
         @apply transition duration-300;
         transition-property: outline;
         @nest [data-mce-selected] &, &:hover, &:focus, &:focus-within {
-          @apply outline-dashed outline-2 outline-uni-blue-light;
+          @apply outline-dashed outline-2 outline-secondary;
         }
         & .cgb-col-inner {
           @apply p-3;

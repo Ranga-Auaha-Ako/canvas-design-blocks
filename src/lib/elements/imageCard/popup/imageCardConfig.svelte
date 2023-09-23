@@ -156,9 +156,6 @@
     .rowTheme {
       @apply flex gap-x-2 items-center;
       @apply mb-2;
-      & > * {
-        @apply flex-1;
-      }
     }
 
     input[type="url"] {

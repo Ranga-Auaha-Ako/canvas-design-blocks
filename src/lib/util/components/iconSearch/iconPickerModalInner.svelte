@@ -105,11 +105,11 @@
     input[type="search"] {
       @apply w-full p-3 border border-solid border-gray-200;
       &:focus {
-        @apply outline-none border-uni-blue;
+        @apply outline-none border-primary;
       }
     }
     button.toggle-icons {
-      @apply p-3 leading-4 rounded text-white bg-uni-blue shrink-0 cursor-pointer transition;
+      @apply p-3 leading-4 rounded text-white bg-primary shrink-0 cursor-pointer transition;
       &:hover {
         @apply bg-slate-800;
       }

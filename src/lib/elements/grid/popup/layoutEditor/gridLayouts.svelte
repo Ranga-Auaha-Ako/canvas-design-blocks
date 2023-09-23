@@ -124,7 +124,7 @@
     @apply absolute top-0 left-0;
     @apply mx-auto z-20 overflow-hidden cursor-auto box-content;
     @apply h-52 transition duration-300;
-    @apply bg-uni-blue-light rounded-md shadow-lg border-solid border-uni-blue-light;
+    @apply bg-secondary rounded-md shadow-lg border-solid border-secondary;
     @apply grid;
     transition-property: color, background-color, border-color, opacity,
       box-shadow, filter, backdrop-filter, width, height;
@@ -161,11 +161,11 @@
           }
           & .col {
             @apply h-full;
-            @apply bg-uni-blue-light rounded;
+            @apply bg-secondary rounded;
             width: var(--gridViewColWidth);
           }
           &.active {
-            @apply border-2 border-solid border-uni-blue-light;
+            @apply border-2 border-solid border-secondary;
             & .col {
             }
           }
@@ -200,7 +200,7 @@
     }
 
     &.expanded {
-      @apply bg-uni-blue border-uni-blue;
+      @apply bg-primary border-primary;
       --full-width: calc(var(--col-width) * 2 + var(--border-width));
       height: min(260px, calc(100vh - 3.5rem));
       width: var(--full-width);
