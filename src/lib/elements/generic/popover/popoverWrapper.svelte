@@ -124,6 +124,7 @@
       placement,
       middleware: middlewareMap,
     });
+    console.log(position);
     const { middlewareData } = position;
     isVisible = !middlewareData.hide?.escaped ?? false;
     if (isVisible) {

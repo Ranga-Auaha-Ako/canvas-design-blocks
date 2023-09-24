@@ -52,6 +52,23 @@ export class McePopover extends SelectableElement {
     });
   }
 
+  public setTarget(target: HTMLElement) {
+    this.hostComponent.$set({
+      component: this.contents,
+      target: target,
+      show: this._isActive,
+      props: this.props,
+      placement: this.placement,
+      isDominant: this.isDominant,
+      middleware: this.middleware,
+      dominantPopover: derived(
+        activePopover,
+        (activePopover) => activePopover === this
+      ),
+      ...this.options,
+    });
+  }
+
   public show() {
     // console.log(
     //   "Showing popover",

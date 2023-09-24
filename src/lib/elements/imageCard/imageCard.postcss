@@ -1,83 +1,94 @@
-.ImageCardRow {
-  &.imageCardTheme--subtitle {
-    .ImageCard {
-      @apply bg-white text-black;
-      .ImageCardLabel {
-        @apply bg-white bg-opacity-100 px-4 py-2;
-      }
-    }
-  }
-  &.imageCardSize--large {
-    @apply justify-center !important;
-    .ImageCard {
-      @apply w-56 h-52 max-w-sm grow;
-    }
-  }
-  &.imageCardSize--grid-3,
-  &.imageCardSize--grid-4,
-  &.imageCardSize--grid-5 {
-    @apply grid !important;
-    .ImageCard {
-      @apply w-full h-auto;
-      aspect-ratio: 4 / 3;
-    }
-  }
-  &.imageCardSize--grid-3 {
-    @apply grid-cols-3;
-  }
-  &.imageCardSize--grid-4 {
-    @apply grid-cols-4;
-  }
-  &.imageCardSize--grid-5 {
-    @apply grid-cols-5;
-  }
-
-  @container (width < 640px) {
-    &.imageCardSize--grid-5 {
-      @apply grid-cols-3;
-    }
-  }
-  @media (max-width: 640px) {
-    &.imageCardSize--grid-3,
-    &.imageCardSize--grid-4,
-    &.imageCardSize--grid-5 {
-      @apply grid-cols-2;
-    }
-  }
-  @container (width < 400px) {
-    &.imageCardSize--grid-3,
-    &.imageCardSize--grid-4,
-    &.imageCardSize--grid-5 {
-      @apply grid-cols-1;
-    }
-  }
-  @media (max-width: 350px) {
-    &.imageCardSize--grid-3,
-    &.imageCardSize--grid-4,
-    &.imageCardSize--grid-5 {
-      @apply grid-cols-1;
-    }
-  }
+#tinymce .ImageCards {
 }
 
-.ImageCard[data-cdb-version] {
-  @apply rounded-lg shadow-strong bg-cover bg-center overflow-hidden;
-  @apply text-white bg-slate-600;
-  @apply flex items-end h-32;
-  @apply transition transform;
-  width: 175px;
-  text-decoration: none !important;
-  &[data-mce-selected="cbe"] {
-    @apply scale-95 opacity-95;
-  }
-  .ImageCardLabel {
-    @apply px-2 py-1 bg-black bg-opacity-50 grow leading-5;
-    text-wrap: balance;
-  }
-  .external_link_icon {
-    display: none !important;
-  }
-  & > span:has(.ImageCardLabel) {
-    display: contents;
+.ImageCards[data-cdb-version] {
+  .ImageCards--row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1em;
+    &.imageCardTheme--subtitle {
+      .ImageCard {
+        @apply bg-white text-black;
+        .ImageCardLabel {
+          @apply bg-white bg-opacity-100 px-4 py-2;
+        }
+      }
+    }
+    &.imageCardSize--large {
+      @apply justify-center !important;
+      .ImageCard {
+        @apply w-56 h-52 max-w-sm grow;
+      }
+    }
+    &.imageCardSize--grid-3,
+    &.imageCardSize--grid-4,
+    &.imageCardSize--grid-5 {
+      @apply grid !important;
+      .ImageCard {
+        @apply w-full h-auto;
+        aspect-ratio: 4 / 3;
+      }
+    }
+    &.imageCardSize--grid-3 {
+      @apply grid-cols-3;
+    }
+    &.imageCardSize--grid-4 {
+      @apply grid-cols-4;
+    }
+    &.imageCardSize--grid-5 {
+      @apply grid-cols-5;
+    }
+
+    @container (width < 640px) {
+      &.imageCardSize--grid-5 {
+        @apply grid-cols-3;
+      }
+    }
+    @media (max-width: 640px) {
+      &.imageCardSize--grid-3,
+      &.imageCardSize--grid-4,
+      &.imageCardSize--grid-5 {
+        @apply grid-cols-2;
+      }
+    }
+    @container (width < 400px) {
+      &.imageCardSize--grid-3,
+      &.imageCardSize--grid-4,
+      &.imageCardSize--grid-5 {
+        @apply grid-cols-1;
+      }
+    }
+    @media (max-width: 350px) {
+      &.imageCardSize--grid-3,
+      &.imageCardSize--grid-4,
+      &.imageCardSize--grid-5 {
+        @apply grid-cols-1;
+      }
+    }
+    .ImageCard {
+      @apply rounded-lg shadow-strong overflow-hidden;
+      @apply text-white bg-slate-600;
+      @apply flex items-end h-32;
+      @apply transition transform;
+      width: 175px;
+      text-decoration: none !important;
+      &[data-mce-selected="cbe"] {
+        @apply scale-95 opacity-95;
+      }
+      .ImageCardImage {
+        @apply absolute inset-0 w-full h-full object-cover z-0;
+      }
+      .ImageCardLabel {
+        @apply px-2 py-1 bg-black bg-opacity-50 grow leading-5 relative z-10;
+        text-wrap: balance;
+      }
+      .external_link_icon {
+        display: none !important;
+      }
+      & > span:has(.ImageCardLabel) {
+        display: contents;
+      }
+    }
   }
 }

@@ -1,30 +1,31 @@
 <script lang="ts">
-  import { get, type Writable } from "svelte/store";
-  import { ImageCard } from "../imageCard";
   import {
-    DerivedCardSize,
-    DerivedCardTheme,
+    RowData,
     ImageCardSize,
     ImageCardTheme,
     ValidSizes,
     ValidThemes,
-  } from "../imageCardRow";
+    ImageCard,
+    LocalState,
+  } from "../imageCard";
+  import { createEventDispatcher } from "svelte";
   import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
+  import { Writable } from "svelte/store";
 
-  export let props: { imageCard: ImageCard };
-  // export let isDominant: Writable<boolean>;
-  // export let dominantPopover: Readable<boolean> | undefined = undefined;
+  const dispatch = createEventDispatcher();
+
+  export let props: {
+    imageCard: ImageCard;
+    localState: Writable<LocalState | undefined>;
+  };
+
   $: imageCard = props.imageCard;
-  $: innerText = imageCard.childLabel.innerText;
-  $: classes = imageCard.cardRow.classList;
-  $: theme = DerivedCardTheme(classes);
-  $: size = DerivedCardSize(classes);
-  $: cardLink = imageCard.attributes.get("href") as
-    | Writable<string>
-    | undefined;
+  $: rowData = imageCard.SvelteState;
+  $: localState = props.localState;
+
   let configEl: HTMLElement;
   let urlInput: HTMLInputElement;
 
@@ -45,20 +46,31 @@
       imageCard
     );
     const pickerInst = picker.open();
-    pickerInst.$on("selectImage", ({ detail }) => {
-      imageCard.setImage(detail);
+    pickerInst.$on("selectImage", ({ detail: url }) => {
+      if (!$localState) return;
+      $rowData.cards[$localState.selectedCard].image = url;
       picker.close();
     });
   };
 
-  const deleteCard = () => {
-    imageCard.delete();
+  const deleteCard = (cardId?: number) => {
+    let id = cardId || $localState?.selectedCard;
+    if (id === undefined) return;
+    $rowData.cards.splice(id, 1);
+    if ($localState) {
+      if ($localState.selectedCard > 0) $localState.selectedCard--;
+      else $localState.selectedCard = 0;
+    }
+    $rowData.cards = $rowData.cards;
   };
   const addCard = () => {
-    const newCard = imageCard.cardRow.createCard();
-    imageCard.deselect("Popover");
-    console.log(newCard);
-    newCard.select("Popover");
+    $rowData.cards.push({
+      label: "Insert Label Here",
+      link: "#",
+      image: "",
+    });
+    if ($localState) $localState.selectedCard = $rowData.cards.length - 1;
+    $rowData.cards = $rowData.cards;
   };
 </script>
 
@@ -82,58 +94,71 @@
       title="Row Theme"
       choices={ValidThemes}
       labels={Object.keys(ImageCardTheme)}
-      bind:value={$theme}
+      bind:value={$rowData.theme}
     />
     <ButtonRadio
       title="Row Size"
       choices={ValidSizes}
       labels={Object.keys(ImageCardSize)}
-      bind:value={$size}
+      bind:value={$rowData.size}
     />
   </div>
-  <div class="cardSettings">
-    <div class="flex gap-x-2 items-baseline">
-      <div>
-        <label for={`${imageCard.id}-text`}>Card Label:</label>
-        <textarea
-          class="cardName"
-          id={`${imageCard.id}-text`}
-          bind:value={$innerText}
-          rows="3"
-          maxlength="100"
-        />
-      </div>
-      <div>
-        <div class="form-group">
-          <label class="block" for={`${imageCard.id}-url`}
-            >Card Link (URL):</label
-          >
-          <input
-            type="url"
-            placeholder="https://canvas.auckland.ac.nz/..."
-            id={`${imageCard.id}-url`}
-            bind:value={$cardLink}
-            on:input={() => urlInput.reportValidity()}
-            bind:this={urlInput}
+  {#if $localState && $rowData.cards[$localState.selectedCard]}
+    <div class="cardSettings">
+      <div class="flex gap-x-2 items-baseline">
+        <div>
+          <label for={`${imageCard.id}-text`}>Card Label:</label>
+          <textarea
+            class="cardName"
+            id={`${imageCard.id}-text`}
+            bind:value={$rowData.cards[$localState.selectedCard].label}
+            rows="3"
+            maxlength="100"
           />
         </div>
+        <div>
+          <div class="form-group">
+            <label class="block" for={`${imageCard.id}-url`}
+              >Card Link (URL):</label
+            >
+            <input
+              type="url"
+              placeholder="https://canvas.auckland.ac.nz/..."
+              id={`${imageCard.id}-url`}
+              bind:value={$rowData.cards[$localState.selectedCard].link}
+              on:input={() => urlInput.reportValidity()}
+              bind:this={urlInput}
+            />
+          </div>
 
-        <button class="Button Button--block" on:click={() => openPicker()}
-          >Select Image</button
+          <button class="Button Button--block" on:click={() => openPicker()}
+            >Select Image</button
+          >
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="Button Button--danger" on:click={() => deleteCard()}>
+          <i class="icon-trash" aria-hidden="true" />
+          Remove
+        </button>
+        <button class="Button" on:click={() => addCard()}>
+          <i class="icon-plus" aria-hidden="true" />
+          Add Card</button
         >
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-2">
-      <button class="Button Button--danger" on:click={() => deleteCard()}>
-        <i class="icon-trash" aria-hidden="true" />
-        Remove
-      </button>
+  {:else}
+    <div class="cardSettings">
+      <p>
+        Select a card to edit its settings. You can add a new card by clicking
+        the "Add Card" button.
+      </p>
       <button class="Button" on:click={() => addCard()}>
         <i class="icon-plus" aria-hidden="true" />
         Add Card</button
       >
     </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="postcss">
