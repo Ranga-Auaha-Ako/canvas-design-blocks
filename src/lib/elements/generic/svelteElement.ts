@@ -20,7 +20,10 @@ export type SvelteStateClass<State> = new (
  * @extends MceElement
  * @template StateData The type of the data that the Svelte component will receive.
  */
-export abstract class SvelteElement<stateDataType> extends MceElement {
+export abstract class SvelteElement<
+  stateDataType,
+  localState = Record<string, string>
+> extends MceElement {
   selectionMethod: MceElement["selectionMethod"] = "TinyMCE";
   public staticAttributes = {
     "data-cdb-version": SvelteElement.markupVersion,
@@ -36,12 +39,18 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<
-      SvelteComponent<{ cdbData: stateDataType }>
+      SvelteComponent<{
+        cdbData: stateDataType;
+        localState: Writable<localState>;
+      }>
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
     highlight = false,
-    defaultState?: Partial<stateDataType>
+    defaultState?: Partial<stateDataType>,
+    public localState: Writable<localState> = writable<localState>(
+      {} as localState
+    )
   ) {
     super(node, editor, undefined, undefined, id, true);
 
@@ -51,7 +60,12 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
       }
     });
 
-    let lastContents: SvelteComponent<{ cdbData: stateDataType }> | undefined;
+    let lastContents:
+      | SvelteComponent<{
+          cdbData: stateDataType;
+          localState?: Writable<localState>;
+        }>
+      | undefined;
     const createDataEl = () => {
       if (!this.dataEl || this.dataEl.parentElement !== this.node) {
         this.dataEl = document.createElement("div");
@@ -89,6 +103,7 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
           target: this.node,
           props: {
             cdbData: elState,
+            localState: localState,
           },
         });
         lastContents.$on("update", ({ detail }) => {

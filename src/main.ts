@@ -14,6 +14,7 @@ import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderMana
 import { version } from "$lib/util/constants";
 import { compareVersions } from "compare-versions";
 import type ElementManager from "$lib/elements/generic/elementManager";
+import { ImageCardLegacy } from "$lib/elements/imageCard/imageCardLegacy";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -96,6 +97,8 @@ export const loadApp = async () => {
     new ProfilesManager(state, editor),
     new CourseHeaderManager(state, editor),
   ];
+  // Migrate old blocks
+  new ImageCardLegacy(state, editor, loaded_blocks[2] as ImageCardManager);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({

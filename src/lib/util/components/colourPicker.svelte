@@ -39,6 +39,7 @@
   export let isText: boolean = false;
   export let label: string;
   export let popupDirection: Placement = "bottom-start";
+  export let zIndex = 10;
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     const c = colord(colour);
@@ -199,6 +200,7 @@
         <div
           {id}
           class="colourPicker"
+          style:z-index={zIndex}
           aria-hidden={!edit}
           class:edit
           bind:this={popoverEl}
@@ -289,7 +291,7 @@
     display: inline-block;
   }
   .colourPicker {
-    @apply absolute top-0 left-0 p-4 z-10 box-content;
+    @apply absolute top-0 left-0 p-4 box-content;
     @apply shadow-lg bg-white rounded;
     @apply grid gap-1;
     grid-template-columns: repeat(4, var(--size));

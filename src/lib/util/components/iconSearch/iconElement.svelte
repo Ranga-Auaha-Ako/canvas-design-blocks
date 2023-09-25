@@ -3,6 +3,7 @@
     url: string;
     class: string;
     type: IconType;
+    color?: string;
   }
 </script>
 
@@ -16,7 +17,7 @@
   $: typeClass = icon.type == IconType.Solid ? "icon-Solid" : "icon-Line";
 </script>
 
-<span class="icon">
+<span class="icon" style:color={icon.color}>
   <i
     class="{typeClass} icon-{icon.class}"
     style:--cdb-icon="url({icon.url})"

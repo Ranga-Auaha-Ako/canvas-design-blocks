@@ -1,8 +1,11 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import IconPicker, { IconType } from "./iconPicker";
+  import IconPicker, { IconPickerOptions, IconType } from "./iconPicker";
   import { createEventDispatcher } from "svelte";
   import { IconState } from "./iconElement.svelte";
+  import ColourPicker from "../colourPicker.svelte";
+  import { nanoid } from "nanoid";
+  import { colord } from "colord";
 
   const dispatch = createEventDispatcher();
   const selectIcon = (icon: IconState) => {
@@ -10,11 +13,13 @@
   };
 
   export let iconPicker: IconPicker;
+  export let options: IconPickerOptions;
 
   let iconPickerFrame: HTMLIFrameElement;
 
   let filterQuery = "";
   let iconType = IconType.Line;
+  let iconColor = colord("#000000");
   let results = iconPicker.choices;
   const filterIcons = debounce(
     (query: string) => {
@@ -66,6 +71,16 @@
     />
     {iconType === IconType.Solid ? "Solid" : "Line"}
   </button>
+  {#if options.editColor}
+    <ColourPicker
+      label="Icon Colour"
+      id={nanoid() + "-setting-background"}
+      bind:colour={iconColor}
+      contrastColour={colord("#ffffff")}
+      popupDirection={"top"}
+      zIndex={12000}
+    />
+  {/if}
 </div>
 <div class="overflow" class:active={scrollDistance > 0}>
   <div
@@ -81,11 +96,20 @@
           class="icon"
           title={name}
           on:click={() => {
-            selectIcon({
-              class: name,
-              url: urls[iconType],
-              type: iconType,
-            });
+            if (options.editColor) {
+              selectIcon({
+                class: name,
+                url: urls[iconType],
+                type: iconType,
+                color: iconColor.toHex(),
+              });
+            } else {
+              selectIcon({
+                class: name,
+                url: urls[iconType],
+                type: iconType,
+              });
+            }
           }}
         >
           <i
