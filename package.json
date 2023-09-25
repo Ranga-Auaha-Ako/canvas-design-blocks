@@ -1,6 +1,6 @@
 {
   "name": "canvas-design-blocks",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
@@ -34,6 +34,7 @@
     "filesize": "^10.0.7",
     "html-void-elements": "3.0.0",
     "jsdom": "^22.1.0",
+    "lightningcss": "^1.22.0",
     "magic-string": "^0.30.2",
     "nanoid": "4.0.2",
     "perfect-debounce": "^1.0.0",
