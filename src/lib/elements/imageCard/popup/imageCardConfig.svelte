@@ -14,6 +14,8 @@
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { Writable } from "svelte/store";
+  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import { nanoid } from "nanoid";
 
   const dispatch = createEventDispatcher();
 
@@ -25,6 +27,8 @@
   $: imageCard = props.imageCard;
   $: rowData = imageCard.SvelteState;
   $: localState = props.localState;
+  $: cardIndex =
+    $localState && ImageCard.getCardIndex($rowData, $localState.selectedCard);
 
   let configEl: HTMLElement;
   let urlInput: HTMLInputElement;
@@ -48,18 +52,20 @@
     const pickerInst = picker.open();
     pickerInst.$on("selectImage", ({ detail: url }) => {
       if (!$localState) return;
-      $rowData.cards[$localState.selectedCard].image = url;
+      const index = ImageCard.getCardIndex($rowData, $localState.selectedCard);
+      $rowData.cards[index].image = url;
       picker.close();
     });
   };
 
-  const deleteCard = (cardId?: number) => {
+  const deleteCard = (cardId?: string) => {
     let id = cardId || $localState?.selectedCard;
     if (id === undefined) return;
-    $rowData.cards.splice(id, 1);
+    const index = ImageCard.getCardIndex($rowData, id);
+    $rowData.cards.splice(index, 1);
     if ($localState) {
-      if ($localState.selectedCard > 0) $localState.selectedCard--;
-      else $localState.selectedCard = 0;
+      if (index > 0) $localState.selectedCard = $rowData.cards[index - 1].id;
+      else $localState.selectedCard = $rowData.cards[0].id;
     }
     $rowData.cards = $rowData.cards;
   };
@@ -68,8 +74,10 @@
       label: "Insert Label Here",
       link: "#",
       image: "",
+      id: nanoid(),
     });
-    if ($localState) $localState.selectedCard = $rowData.cards.length - 1;
+    if ($localState)
+      $localState.selectedCard = $rowData.cards[$rowData.cards.length - 1].id;
     $rowData.cards = $rowData.cards;
   };
 </script>
@@ -103,62 +111,84 @@
       bind:value={$rowData.size}
     />
   </div>
-  {#if $localState && $rowData.cards[$localState.selectedCard]}
-    <div class="cardSettings">
-      <div class="flex gap-x-2 items-baseline">
-        <div>
-          <label for={`${imageCard.id}-text`}>Card Label:</label>
-          <textarea
-            class="cardName"
-            id={`${imageCard.id}-text`}
-            bind:value={$rowData.cards[$localState.selectedCard].label}
-            rows="3"
-            maxlength="100"
-          />
-        </div>
-        <div>
-          <div class="form-group">
-            <label class="block" for={`${imageCard.id}-url`}
-              >Card Link (URL):</label
-            >
-            <input
-              type="url"
-              placeholder="https://canvas.auckland.ac.nz/..."
-              id={`${imageCard.id}-url`}
-              bind:value={$rowData.cards[$localState.selectedCard].link}
-              on:input={() => urlInput.reportValidity()}
-              bind:this={urlInput}
-            />
-          </div>
-
-          <button class="Button Button--block" on:click={() => openPicker()}
-            >Select Image</button
-          >
-        </div>
+  <div class="flex gap-4">
+    <div class="ImageCard--elements">
+      <div class="ImageCard--list">
+        <OrderableList
+          labelKey="label"
+          idKey="id"
+          bind:items={$rowData.cards}
+          on:edit={({ detail: id }) => {
+            if ($localState) $localState.selectedCard = id;
+          }}
+          on:delete={({ detail: id }) => {
+            const index = ImageCard.getCardIndex($rowData, id);
+            if ($localState && $localState.selectedCard === id) {
+              if (index > 0)
+                $localState.selectedCard = $rowData.cards[index - 1].id;
+              else $localState.selectedCard = $rowData.cards[0].id;
+            }
+          }}
+          showEdit={true}
+          canDelete={$rowData.cards.length > 1}
+          activeClass="ImageCard--active"
+          activeId={$localState?.selectedCard}
+        />
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <button class="Button Button--danger" on:click={() => deleteCard()}>
-          <i class="icon-trash" aria-hidden="true" />
-          Remove
-        </button>
-        <button class="Button" on:click={() => addCard()}>
-          <i class="icon-plus" aria-hidden="true" />
-          Add Card</button
-        >
-      </div>
-    </div>
-  {:else}
-    <div class="cardSettings">
-      <p>
-        Select a card to edit its settings. You can add a new card by clicking
-        the "Add Card" button.
-      </p>
-      <button class="Button" on:click={() => addCard()}>
+      <button class="Button Button--small" on:click={() => addCard()}>
         <i class="icon-plus" aria-hidden="true" />
         Add Card</button
       >
     </div>
-  {/if}
+    <div class="config flex-grow">
+      {#if $localState && cardIndex !== undefined && cardIndex >= 0 && $rowData.cards[cardIndex]}
+        <div class="cardSettings">
+          <div class="flex gap-x-2 items-baseline">
+            <div>
+              <label for={`${imageCard.id}-text`}>Card Label:</label>
+              <textarea
+                class="cardName"
+                id={`${imageCard.id}-text`}
+                bind:value={$rowData.cards[cardIndex].label}
+                rows="3"
+                maxlength="100"
+              />
+            </div>
+            <div>
+              <div class="form-group">
+                <label class="block" for={`${imageCard.id}-url`}
+                  >Card Link (URL):</label
+                >
+                <input
+                  type="url"
+                  placeholder="https://canvas.auckland.ac.nz/..."
+                  id={`${imageCard.id}-url`}
+                  bind:value={$rowData.cards[cardIndex].link}
+                  on:input={() => urlInput.reportValidity()}
+                  bind:this={urlInput}
+                />
+              </div>
+
+              <button class="Button Button--block" on:click={() => openPicker()}
+                >Select Image</button
+              >
+            </div>
+          </div>
+        </div>
+      {:else}
+        <div class="cardSettings">
+          <p>
+            Select a card to edit its settings. You can add a new card by
+            clicking the "Add Card" button.
+          </p>
+          <button class="Button" on:click={() => addCard()}>
+            <i class="icon-plus" aria-hidden="true" />
+            Add Card</button
+          >
+        </div>
+      {/if}
+    </div>
+  </div>
 </div>
 
 <style lang="postcss">
@@ -185,6 +215,21 @@
 
     input[type="url"] {
       @apply py-3;
+    }
+
+    .ImageCard--elements {
+      @apply flex flex-col rounded shadow-inner bg-gray-100 p-2 gap-4;
+    }
+
+    .ImageCard--list {
+      max-width: 20ch;
+      max-height: 20ch;
+      @apply overflow-y-auto overflow-x-clip p-1;
+      & :global(.ImageCard--active) {
+        @apply bg-white;
+        padding: 0.25rem 0.5rem;
+        margin: -0.25rem -0.5rem;
+      }
     }
   }
   .cardName {

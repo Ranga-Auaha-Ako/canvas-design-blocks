@@ -30,6 +30,7 @@ export interface CardData {
   label: string;
   link: string;
   image: string;
+  id: string;
 }
 
 export interface RowData {
@@ -39,7 +40,7 @@ export interface RowData {
 }
 
 export interface LocalState {
-  selectedCard: number;
+  selectedCard: string;
   isSelected: boolean;
 }
 
@@ -50,6 +51,7 @@ class CardRowState implements SvelteState<RowData> {
         label: "Insert Label Here",
         link: "#",
         image: "",
+        id: nanoid(),
       },
     ],
     theme: DefaultTheme,
@@ -77,11 +79,19 @@ class CardRowState implements SvelteState<RowData> {
           label: card.label || "",
           link: card.link || "",
           image: card.image || "",
+          id: card.id || nanoid(),
         };
       });
     }
     if (state.cards.length === 0) {
-      state.cards = CardRowState.defaultState.cards;
+      state.cards = [
+        {
+          label: "Insert Label Here",
+          link: "#",
+          image: "",
+          id: nanoid(),
+        },
+      ];
     }
     this.state.set(state);
   }
@@ -96,6 +106,9 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
   attributes: MceElement["attributes"] = new Map([]);
   defaultClasses = new Set(["ImageCards"]);
   public popover: McePopover;
+  static getCardIndex(state: RowData, id: string) {
+    return state.cards.findIndex((card) => card.id === id);
+  }
 
   public static import(
     state: stateObject,
@@ -124,7 +137,7 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
     public readonly id = nanoid(),
     highlight = false,
     public localState = writable<LocalState>({
-      selectedCard: 0,
+      selectedCard: "",
       isSelected: false,
     })
   ) {
@@ -156,26 +169,6 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
       },
       "top"
     );
-    let selectedCard: HTMLAnchorElement | undefined;
-    this.localState.subscribe((state) => {
-      if (get(this.isSelected)) {
-        const selectedIndex = state.selectedCard;
-        const newSelectedCard =
-          this.node.querySelector<HTMLAnchorElement>(
-            `.ImageCards--row > a.ImageCard:nth-child(${selectedIndex + 1})`
-          ) || undefined;
-        if (selectedCard !== newSelectedCard) {
-          console.log(
-            "Showing popover",
-            selectedIndex,
-            newSelectedCard,
-            this.node
-          );
-          if (newSelectedCard) this.popover.setTarget(newSelectedCard);
-          selectedCard = newSelectedCard;
-        }
-      }
-    });
     this.isSelected.subscribe((selected) => {
       if (selected) {
         if (!this.popover.isActive) {

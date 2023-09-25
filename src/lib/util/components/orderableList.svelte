@@ -6,11 +6,14 @@
   export let idKey: string;
   export let items: Record<any, any>[];
   export let showEdit: boolean = false;
+  export let canDelete: boolean = true;
   export let actions: (item: any) => {
     title: string;
     icon: string;
     event: string;
   }[] = () => [];
+  export let activeClass: string = "active";
+  export let activeId: string | undefined = undefined;
   let itemList: HTMLElement;
 
   const dispatch = createEventDispatcher();
@@ -18,6 +21,7 @@
   const deleteItem = (item: any) => {
     items = items.filter((p) => p !== item);
     dispatch("update");
+    dispatch("delete", item[idKey]);
   };
 
   const handleItemOrder = (
@@ -52,13 +56,28 @@
 >
   {#if items}
     {#each items as item, _ (item[idKey])}
-      <div class="item">
+      <div
+        class="item {activeId !== undefined && item[idKey] === activeId
+          ? activeClass
+          : ''}"
+      >
         <div class="dragHandle">
           <i class="icon-solid icon-drag-handle" />
         </div>
-        <div class="itemlabel">
-          {item[labelKey]}
-        </div>
+        {#if showEdit}
+          <button
+            class="itemlabel"
+            on:click|stopPropagation={() => {
+              dispatch("edit", item[idKey]);
+            }}
+          >
+            {item[labelKey]}
+          </button>
+        {:else}
+          <div class="itemlabel">
+            {item[labelKey]}
+          </div>
+        {/if}
         <div class="actions">
           {#if showEdit}
             <button
@@ -67,7 +86,11 @@
                 dispatch("edit", item[idKey]);
               }}
             >
-              <i class="icon-edit" />
+              <i
+                class:icon-Solid={activeId !== undefined &&
+                  item[idKey] === activeId}
+                class="icon-edit"
+              />
             </button>
           {/if}
           {#each actions(item) as action}
@@ -80,14 +103,16 @@
               <i class={action.icon} />
             </button>
           {/each}
-          <button
-            title="Delete {item[labelKey]}"
-            on:click={() => {
-              deleteItem(item);
-            }}
-          >
-            <i class="icon-trash" />
-          </button>
+          {#if canDelete}
+            <button
+              title="Delete {item[labelKey]}"
+              on:click={() => {
+                deleteItem(item);
+              }}
+            >
+              <i class="icon-trash" />
+            </button>
+          {/if}
         </div>
       </div>
     {/each}
@@ -103,11 +128,13 @@
     }
     .item {
       @apply flex items-center gap-x-2;
+      @apply transition;
+      transition-property: background-color, padding, margin;
       .dragHandle {
         @apply cursor-pointer;
       }
       .itemlabel {
-        @apply flex-1 truncate;
+        @apply flex-1 truncate text-base;
       }
       .actions {
         @apply flex gap-x-2;

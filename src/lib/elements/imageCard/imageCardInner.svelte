@@ -12,17 +12,18 @@
 
 <div class="ImageCards--row {cdbData.theme} {cdbData.size}">
   {#each cdbData.cards as card, index}
+    {@const labelLines = card.label.split("\n")}
     <a
       href={card.link}
       class="ImageCard"
-      data-mce-selected={$localState?.selectedCard == index && isSelected
+      data-mce-selected={$localState?.selectedCard == card.id && isSelected
         ? "cbe"
         : undefined}
       on:click|preventDefault={() => {
         localState?.update((state) => {
           return {
             ...state,
-            selectedCard: index,
+            selectedCard: card.id,
           };
         });
       }}
@@ -36,9 +37,13 @@
         />
       {/if}
       <span class="ImageCardLabel">
-        {card.label}
+        {#each labelLines as line, index}
+          <span class="ImageCardLabelLine">{line}</span>
+          {#if index < labelLines.length - 1}
+            <br />
+          {/if}
+        {/each}
       </span>
     </a>
   {/each}
 </div>
-{JSON.stringify($localState)}

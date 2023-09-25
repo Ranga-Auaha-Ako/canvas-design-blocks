@@ -13,6 +13,7 @@ import {
   ValidSizes,
   ValidThemes,
 } from "./imageCard";
+import { nanoid } from "nanoid";
 
 export class ImageCardLegacy {
   public selector = ".ImageCardRow[data-cdb-version]";
@@ -78,6 +79,7 @@ export class ImageCardLegacy {
               ?.innerText || "",
           link: card.getAttribute("href") || "#",
           image: imageUrl || "",
+          id: card.dataset.cdbId || nanoid(),
         };
         state.cards.push(cardState);
       });
