@@ -131,7 +131,7 @@
       bind:value={$rowData.size}
     />
   </div>
-  <div class="flex gap-4">
+  <div class="cardPanel">
     <div class="ImageCard--elements">
       <div class="ImageCard--list">
         <OrderableList
@@ -160,9 +160,13 @@
         Add Card</button
       >
     </div>
-    <div class="config flex-grow">
-      {#if $localState && cardIndex !== undefined && cardIndex >= 0 && $rowData.cards[cardIndex]}
-        <div class="cardSettings">
+    {#if $localState && cardIndex !== undefined && cardIndex >= 0 && $rowData.cards[cardIndex]}
+      {#key $localState.selectedCard}
+        <div
+          class="cardSettings"
+          in:fade={{ duration: 300, delay: 100 }}
+          out:fade={{ duration: 150 }}
+        >
           <div class="flex gap-x-2 items-baseline">
             <div>
               <label for={`${imageCard.id}-text`}>Card Label:</label>
@@ -189,7 +193,7 @@
                 />
               </div>
 
-              {#if $rowData.theme === ImageCardTheme.Icon}
+              {#if $rowData.theme === ImageCardTheme.Icon && iconPicker}
                 <button
                   class="Button Button--block"
                   on:click={() => {
@@ -205,19 +209,19 @@
             </div>
           </div>
         </div>
-      {:else}
-        <div class="cardSettings">
-          <p class="max-w-sm italic">
-            Select a card to edit its settings. You can add a new card by
-            clicking the "Add Card" button.
-          </p>
-          <button class="Button" on:click={() => addCard()}>
-            <i class="icon-plus" aria-hidden="true" />
-            Add Card</button
-          >
-        </div>
-      {/if}
-    </div>
+      {/key}
+    {:else}
+      <div class="config cardSettings">
+        <p class="max-w-sm italic">
+          Select a card to edit its settings. You can add a new card by clicking
+          the "Add Card" button.
+        </p>
+        <button class="Button" on:click={() => addCard()}>
+          <i class="icon-plus" aria-hidden="true" />
+          Add Card</button
+        >
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -262,8 +266,19 @@
         margin: -0.25rem 0;
       }
     }
-  }
-  .cardName {
-    @apply w-full border border-gray-300 rounded p-2;
+    .cardName {
+      @apply w-full border border-gray-300 rounded p-2;
+    }
+    .cardPanel {
+      @apply grid gap-4;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: "list config";
+      .ImageCard--elements {
+        grid-area: list;
+      }
+      .cardSettings {
+        grid-area: config;
+      }
+    }
   }
 </style>

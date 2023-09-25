@@ -6,6 +6,7 @@
   import ColourPicker from "../colourPicker.svelte";
   import { nanoid } from "nanoid";
   import { colord } from "colord";
+  import { persisted as localStorageWritable } from "svelte-local-storage-store";
 
   const dispatch = createEventDispatcher();
   const selectIcon = (icon: IconState) => {
@@ -19,7 +20,16 @@
 
   let filterQuery = "";
   let iconType = IconType.Line;
-  let iconColor = colord("#000000");
+  let iconColor = localStorageWritable(
+    "cdb-preferences-iconColor",
+    colord("#000000"),
+    {
+      serializer: {
+        stringify: (value) => value.toHex(),
+        parse: (value) => colord(value),
+      },
+    }
+  );
   let results = iconPicker.choices;
   const filterIcons = debounce(
     (query: string) => {
@@ -53,72 +63,81 @@
     }, 50);
 </script>
 
-<div class="searchFilter">
-  <input
-    type="search"
-    placeholder="Search for an image"
-    bind:value={filterQuery}
-  />
-  <button
-    class="toggle-icons"
-    title="Toggle Line/Solid Icons"
-    on:click={() => {
-      iconType = iconType === IconType.Line ? IconType.Solid : IconType.Line;
-    }}
-  >
-    <i
-      class="icon-{iconType === IconType.Solid ? 'Solid' : 'Line'} icon-paint"
+<div class="modal-wrap">
+  <div class="searchFilter">
+    <input
+      type="search"
+      placeholder="Search for an image"
+      bind:value={filterQuery}
     />
-    {iconType === IconType.Solid ? "Solid" : "Line"}
-  </button>
-  {#if options.editColor}
-    <ColourPicker
-      label="Icon Colour"
-      id={nanoid() + "-setting-background"}
-      bind:colour={iconColor}
-      contrastColour={colord("#ffffff")}
-      popupDirection={"top"}
-      zIndex={12000}
-    />
-  {/if}
-</div>
-<div class="overflow" class:active={scrollDistance > 0}>
-  <div
-    class="search-container"
-    bind:this={resultsWrapper}
-    on:scroll={() => {
-      resultsWrapperScroll = resultsWrapper.scrollTop;
-    }}
-  >
-    <div class="results iconList" bind:this={resultsList}>
-      {#each results.entries() as [name, urls] (name)}
-        <button
-          class="icon"
-          title={name}
-          on:click={() => {
-            if (options.editColor) {
-              selectIcon({
-                class: name,
-                url: urls[iconType],
-                type: iconType,
-                color: iconColor.toHex(),
-              });
-            } else {
-              selectIcon({
-                class: name,
-                url: urls[iconType],
-                type: iconType,
-              });
-            }
-          }}
-        >
-          <i
-            class="icon-{iconType === IconType.Solid
-              ? 'Solid'
-              : 'Line'} icon-{name}"
-          />
-        </button>
-      {/each}
+    <button
+      class="toggle-icons"
+      title="Toggle Line/Solid Icons"
+      on:click={() => {
+        iconType = iconType === IconType.Line ? IconType.Solid : IconType.Line;
+      }}
+    >
+      <i
+        class="icon-{iconType === IconType.Solid ? 'Solid' : 'Line'} icon-paint"
+      />
+      {iconType === IconType.Solid ? "Solid" : "Line"}
+    </button>
+    {#if options.editColor}
+      <div class="colourPicker">
+        <ColourPicker
+          label="Icon Colour"
+          id={nanoid() + "-setting-background"}
+          bind:colour={$iconColor}
+          contrastColour={colord("#ffffff")}
+          popupDirection={"top"}
+          zIndex={12000}
+          showNone={false}
+        />
+      </div>
+    {/if}
+  </div>
+  <div class="overflow" class:active={scrollDistance > 0}>
+    <div
+      class="search-container"
+      bind:this={resultsWrapper}
+      on:scroll={() => {
+        resultsWrapperScroll = resultsWrapper.scrollTop;
+      }}
+    >
+      <div
+        class="results iconList"
+        bind:this={resultsList}
+        style:color={$iconColor.toHex()}
+      >
+        {#each results.entries() as [name, urls] (name)}
+          <button
+            class="icon"
+            title={name}
+            on:click={() => {
+              if (options.editColor) {
+                selectIcon({
+                  class: name,
+                  url: urls[iconType],
+                  type: iconType,
+                  color: $iconColor.toHex(),
+                });
+              } else {
+                selectIcon({
+                  class: name,
+                  url: urls[iconType],
+                  type: iconType,
+                });
+              }
+            }}
+          >
+            <i
+              class="icon-{iconType === IconType.Solid
+                ? 'Solid'
+                : 'Line'} icon-{name}"
+            />
+          </button>
+        {/each}
+      </div>
     </div>
   </div>
 </div>
@@ -141,7 +160,11 @@
         @apply ring-2;
       }
     }
+    .colourPicker {
+      @apply shrink-0 flex items-center pl-3;
+    }
   }
+
   .overflow {
     @apply relative rounded overflow-clip shadow;
     &:after {
@@ -156,7 +179,7 @@
   }
   .search-container {
     @apply overflow-y-auto relative p-2;
-    max-height: 50vh;
+    max-height: calc(650px - 9rem);
   }
   .iconList {
     @apply grid gap-1;

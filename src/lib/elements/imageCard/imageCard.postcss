@@ -3,6 +3,7 @@
 
 .ImageCards[data-cdb-version] {
   .ImageCards--row {
+    @apply my-4;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -88,7 +89,10 @@
       width: 175px;
       text-decoration: none !important;
       &[data-mce-selected="cbe"] {
-        @apply scale-110 opacity-95;
+        @apply shadow ring-2 ring-primary;
+      }
+      &:hover {
+        @apply scale-105;
       }
       .ImageCardImage {
         @apply absolute inset-0 w-full h-full object-cover z-0;

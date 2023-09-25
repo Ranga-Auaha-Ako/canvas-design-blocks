@@ -40,6 +40,7 @@
   export let label: string;
   export let popupDirection: Placement = "bottom-start";
   export let zIndex = 10;
+  export let showNone = true;
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     const c = colord(colour);
@@ -114,8 +115,13 @@
       code: smartColour("#ffffff", contrastColour),
       name: "White",
     },
-    { code: undefined, name: "None" },
-  ];
+  ] as {
+    code: Colord | undefined;
+    name: string;
+  }[];
+  $: if (showNone) {
+    options.push({ code: undefined, name: "None" });
+  }
 
   const select = (c: Colord | undefined) => {
     colour = getColour(c);
