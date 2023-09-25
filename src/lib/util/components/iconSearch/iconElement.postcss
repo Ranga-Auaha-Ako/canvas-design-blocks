@@ -5,7 +5,11 @@
     content: " ";
     line-height: 1;
     vertical-align: top;
-    background-image: var(--cdb-icon);
-    @apply bg-contain bg-no-repeat bg-center w-4 h-4 inline-block;
+    background-color: currentColor;
+    mask: var(--cdb-icon);
+    mask-size: contain;
+    @apply bg-contain bg-no-repeat bg-center inline-block;
+    width: 1em;
+    height: 1em;
   }
 }

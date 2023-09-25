@@ -8,10 +8,13 @@ import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import type { McePopover } from "../generic/popover/popover";
 import ImageCardInner from "./imageCardInner.svelte";
 import ImageCardConfig from "./popup/imageCardConfig.svelte";
+import { IconState } from "$lib/util/components/iconSearch/iconElement.svelte";
+import { getIconState } from "$lib/util/components/iconSearch/iconPicker";
 
 export enum ImageCardTheme {
   Overlay = "imageCardTheme--overlay",
   Subtitle = "imageCardTheme--subtitle",
+  Icon = "imageCardTheme--icon",
 }
 export const ValidThemes = Object.values(ImageCardTheme);
 export const DefaultTheme = ImageCardTheme.Overlay;
@@ -31,6 +34,7 @@ export interface CardData {
   link: string;
   image: string;
   id: string;
+  icon?: IconState;
 }
 
 export interface RowData {
@@ -75,11 +79,13 @@ class CardRowState implements SvelteState<RowData> {
     };
     if (unsafeState?.cards) {
       state.cards = unsafeState.cards.map((card) => {
+        let icon = getIconState(card.icon);
         return {
           label: card.label || "",
           link: card.link || "",
           image: card.image || "",
           id: card.id || nanoid(),
+          icon: icon,
         };
       });
     }
@@ -158,6 +164,22 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
         ...state,
         isSelected: selected,
       }));
+    });
+    console.log("Node", node);
+    node.addEventListener("pointerdown", (e) => {
+      console.log(e);
+      const target = e.target as HTMLElement;
+      const inCard = target.closest<HTMLAnchorElement>("a.ImageCard");
+      if (inCard) {
+        const cardId = inCard.dataset.cdbId;
+        if (cardId) {
+          if (get(localState).selectedCard !== cardId)
+            localState.update((state) => ({
+              ...state,
+              selectedCard: cardId,
+            }));
+        }
+      }
     });
 
     // Set up popover

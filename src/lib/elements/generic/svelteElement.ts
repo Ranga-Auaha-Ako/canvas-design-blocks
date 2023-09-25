@@ -41,14 +41,16 @@ export abstract class SvelteElement<
     public svelteComponent: ComponentType<
       SvelteComponent<{
         cdbData: stateDataType;
-        localState?: Writable<localState>;
+        localState: Writable<localState>;
       }>
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
     highlight = false,
     defaultState?: Partial<stateDataType>,
-    localState?: Writable<localState>
+    public localState: Writable<localState> = writable<localState>(
+      {} as localState
+    )
   ) {
     super(node, editor, undefined, undefined, id, true);
 

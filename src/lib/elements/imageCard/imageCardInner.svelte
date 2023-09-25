@@ -1,13 +1,19 @@
 <script lang="ts">
   import { Writable } from "svelte/store";
-  import { LocalState, RowData } from "./imageCard";
+  import {
+    ImageCardTheme,
+    LocalState,
+    RowData,
+    ValidThemes,
+  } from "./imageCard";
   import { createEventDispatcher } from "svelte";
+  import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: RowData;
-  export let localState: Writable<LocalState> | undefined = undefined;
-  $: isSelected = localState ? $localState?.isSelected : undefined;
+  export let localState: Writable<LocalState>;
+  $: isSelected = $localState.isSelected;
 </script>
 
 <div class="ImageCards--row {cdbData.theme} {cdbData.size}">
@@ -16,11 +22,12 @@
     <a
       href={card.link}
       class="ImageCard"
-      data-mce-selected={$localState?.selectedCard == card.id && isSelected
+      data-cdb-id={card.id}
+      data-mce-selected={$localState.selectedCard == card.id && isSelected
         ? "cbe"
         : undefined}
-      on:click|preventDefault={() => {
-        localState?.update((state) => {
+      on:pointerdown={() => {
+        localState.update((state) => {
           return {
             ...state,
             selectedCard: card.id,
@@ -28,7 +35,13 @@
         });
       }}
     >
-      {#if card.image}
+      {#if cdbData.theme === ImageCardTheme.Icon}
+        <span class="ImageCardIcon">
+          {#if card.icon}
+            <IconElement icon={card.icon} />
+          {/if}
+        </span>
+      {:else if card.image}
         <img
           class="ImageCardImage"
           src={card.image}

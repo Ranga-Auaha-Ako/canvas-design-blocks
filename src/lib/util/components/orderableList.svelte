@@ -127,7 +127,7 @@
       @apply hidden;
     }
     .item {
-      @apply flex items-center gap-x-2;
+      @apply flex items-center gap-x-2 px-1;
       @apply transition;
       transition-property: background-color, padding, margin;
       .dragHandle {

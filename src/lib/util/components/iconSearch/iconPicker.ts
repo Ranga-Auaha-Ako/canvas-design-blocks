@@ -11,6 +11,30 @@ export enum IconType {
   Line = 1,
 }
 
+export function getIconState(
+  unsafeState?: Partial<IconState>
+): IconState | undefined {
+  let icon: IconState | undefined;
+  const foundIcon = unsafeState?.class
+    ? icons.get(unsafeState?.class)
+    : undefined;
+  let iconType = unsafeState?.type || IconType.Line;
+  let iconClass = unsafeState?.class;
+  let iconUrl = foundIcon ? foundIcon[iconType] : undefined;
+  let iconColor = unsafeState?.color;
+  if (foundIcon && iconType && iconClass && iconUrl) {
+    icon = {
+      url: iconUrl,
+      class: iconClass,
+      type: iconType,
+    };
+    if (iconColor) icon.color = iconColor;
+  } else {
+    icon = undefined;
+  }
+  return icon;
+}
+
 let icons: Map<string, Record<IconType, string>> = new Map();
 const allIcons = InstIcons as Record<string, string>;
 Object.entries(allIcons).forEach(([iconPath, url]) => {
@@ -33,11 +57,20 @@ Object.entries(allIcons).forEach(([iconPath, url]) => {
 
 export { icons };
 
+export interface IconPickerOptions {
+  editColor?: boolean;
+}
+
 export default class IconPicker implements Writable<IconState | undefined> {
   public icon: Writable<IconState> = writable();
   public choices = icons;
   public modal: ModalDialog<typeof IconPickerModalInner>;
-  constructor(editor: Editor, icon?: IconState, parent?: SelectableElement) {
+  constructor(
+    editor: Editor,
+    icon?: IconState,
+    parent?: SelectableElement,
+    options: IconPickerOptions = {}
+  ) {
     if (icon) this.icon.set(icon);
     this.modal = new ModalDialog(
       IconPickerModalInner,
@@ -54,6 +87,7 @@ export default class IconPicker implements Writable<IconState | undefined> {
       },
       {
         iconPicker: this,
+        options,
       },
       parent
     );

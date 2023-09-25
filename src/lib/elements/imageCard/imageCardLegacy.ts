@@ -17,11 +17,13 @@ import { nanoid } from "nanoid";
 
 export class ImageCardLegacy {
   public selector = ".ImageCardRow[data-cdb-version]";
+  public document: Document;
   constructor(
     public readonly state: stateObject,
     public readonly editor = window.tinymce.activeEditor,
     public readonly newManager: ImageCardManager
   ) {
+    this.document = editor.getDoc();
     this.importAll();
   }
 
@@ -31,11 +33,7 @@ export class ImageCardLegacy {
       if (returnAll) return true;
       // Discard TinyMCE Fake Elements
       if (e.closest("[data-mce-bogus]")) return false;
-      // Get ID
-      const id = (e as HTMLElement)?.dataset.cdbId;
-      // No ID Means the element is untracked - we need to track it
-      if (!id) return true;
-      return false;
+      return true;
     }) as HTMLElement[];
   }
 
@@ -43,13 +41,14 @@ export class ImageCardLegacy {
     if (this.detached) return;
     this.findAll().forEach((el) => {
       // Create wrapper element
-      const newElementSeed = document.createElement("div");
+      const newElementSeed = this.document.createElement("div");
       newElementSeed.classList.add("ImageCards");
       newElementSeed.dataset.cdbId = el.dataset.cdbId;
       newElementSeed.dataset.cdbVersion = el.dataset.cdbVersion;
       // Create data element
-      const newDataEl = document.createElement("div");
+      const newDataEl = this.document.createElement("div");
       newDataEl.classList.add("cdbData");
+      newElementSeed.appendChild(newDataEl);
       // Grab state from old element
       const sizeClass = [...el.classList].find((c) =>
         c.startsWith("imageCardSize")
@@ -75,7 +74,7 @@ export class ImageCardLegacy {
         )?.[2];
         const cardState: CardData = {
           label:
-            card.querySelector<HTMLDivElement>("div.ImageCardLabel")
+            card.querySelector<HTMLDivElement>("span.ImageCardLabel")
               ?.innerText || "",
           link: card.getAttribute("href") || "#",
           image: imageUrl || "",
@@ -83,6 +82,8 @@ export class ImageCardLegacy {
         };
         state.cards.push(cardState);
       });
+      // Update data element
+      newDataEl.innerText = JSON.stringify(state);
       // Insert adjacent to old element
       el.insertAdjacentElement("afterend", newElementSeed);
       const imageCards = this.newManager.elementClass.import(

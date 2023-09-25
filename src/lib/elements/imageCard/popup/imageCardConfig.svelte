@@ -16,6 +16,7 @@
   import { Writable } from "svelte/store";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
+  import IconPicker from "$lib/util/components/iconSearch/iconPicker";
 
   const dispatch = createEventDispatcher();
 
@@ -29,6 +30,8 @@
   $: localState = props.localState;
   $: cardIndex =
     $localState && ImageCard.getCardIndex($rowData, $localState.selectedCard);
+  $: currentCard =
+    cardIndex !== undefined ? $rowData.cards[cardIndex] : undefined;
 
   let configEl: HTMLElement;
   let urlInput: HTMLInputElement;
@@ -57,18 +60,6 @@
       picker.close();
     });
   };
-
-  const deleteCard = (cardId?: string) => {
-    let id = cardId || $localState?.selectedCard;
-    if (id === undefined) return;
-    const index = ImageCard.getCardIndex($rowData, id);
-    $rowData.cards.splice(index, 1);
-    if ($localState) {
-      if (index > 0) $localState.selectedCard = $rowData.cards[index - 1].id;
-      else $localState.selectedCard = $rowData.cards[0].id;
-    }
-    $rowData.cards = $rowData.cards;
-  };
   const addCard = () => {
     $rowData.cards.push({
       label: "Insert Label Here",
@@ -80,6 +71,35 @@
       $localState.selectedCard = $rowData.cards[$rowData.cards.length - 1].id;
     $rowData.cards = $rowData.cards;
   };
+  // https://stackoverflow.com/a/52323412/3902950
+  const shallowCompare = (obj1: Record<any, any>, obj2: Record<any, any>) =>
+    Object.keys(obj1).length === Object.keys(obj2).length &&
+    Object.keys(obj1).every((key) => obj1[key] === obj2[key]);
+
+  let iconPicker: IconPicker;
+  $: if (currentCard) {
+    iconPicker = new IconPicker(imageCard.editor, currentCard.icon, imageCard, {
+      editColor: true,
+    });
+    iconPicker.subscribe((icon) => {
+      console.log(icon, currentCard?.icon);
+      if (
+        currentCard &&
+        currentCard?.icon &&
+        icon &&
+        !shallowCompare(currentCard.icon, icon)
+      ) {
+        currentCard.icon = icon;
+        $rowData = $rowData;
+      } else if (
+        currentCard &&
+        ((currentCard?.icon && !icon) || (!currentCard?.icon && icon))
+      ) {
+        currentCard.icon = icon;
+        $rowData = $rowData;
+      }
+    });
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -169,15 +189,25 @@
                 />
               </div>
 
-              <button class="Button Button--block" on:click={() => openPicker()}
-                >Select Image</button
-              >
+              {#if $rowData.theme === ImageCardTheme.Icon}
+                <button
+                  class="Button Button--block"
+                  on:click={() => {
+                    iconPicker.pick();
+                  }}>Select Icon</button
+                >
+              {:else}
+                <button
+                  class="Button Button--block"
+                  on:click={() => openPicker()}>Select Image</button
+                >
+              {/if}
             </div>
           </div>
         </div>
       {:else}
         <div class="cardSettings">
-          <p>
+          <p class="max-w-sm italic">
             Select a card to edit its settings. You can add a new card by
             clicking the "Add Card" button.
           </p>
@@ -225,10 +255,11 @@
       max-width: 20ch;
       max-height: 20ch;
       @apply overflow-y-auto overflow-x-clip p-1;
+      margin: 0 -0.25rem;
       & :global(.ImageCard--active) {
-        @apply bg-white;
-        padding: 0.25rem 0.5rem;
-        margin: -0.25rem -0.5rem;
+        @apply bg-primary text-white rounded;
+        padding: 0.25rem;
+        margin: -0.25rem 0;
       }
     }
   }
