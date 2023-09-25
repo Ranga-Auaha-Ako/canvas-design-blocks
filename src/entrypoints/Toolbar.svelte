@@ -69,7 +69,7 @@
           <span class="text-primary">Feedback</span>
         </a>
         <span class="version">
-          v{version}<i>b</i>
+          v{version}
         </span>
       </div>
     </div>
