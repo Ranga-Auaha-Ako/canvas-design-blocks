@@ -165,7 +165,6 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
         isSelected: selected,
       }));
     });
-    console.log("Node", node);
     node.addEventListener("pointerdown", (e) => {
       console.log(e);
       const target = e.target as HTMLElement;

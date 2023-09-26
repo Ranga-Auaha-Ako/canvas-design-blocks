@@ -1,7 +1,7 @@
 <script lang="ts">
   import Row from "$lib/elements/grid/row";
   import type { Writable } from "svelte/store";
-  import type { Colord } from "colord";
+  import { colord, type Colord } from "colord";
   import ColourPicker, {
     getColour,
   } from "$lib/util/components/colourPicker.svelte";
@@ -24,15 +24,27 @@
   $: isReadable = contrastLevel && contrastLevel >= 7;
 
   // Used for accessibility checking
-  $: inferredTextCol =
-    $preferences.textColor ||
-    getColour(element.window.getComputedStyle(element.node).color);
+  $: inferredTextCol = $preferences.textColor || getApproxInferredColor();
+
+  const getApproxInferredColor = () => {
+    if ($preferences.textColor) return $preferences.textColor;
+    const foundCol = getColour(
+      element.window.getComputedStyle(element.node).color
+    );
+    if (!foundCol) return foundCol;
+    // snap to black or white if colour is too dark or light
+    let altCol = foundCol;
+    if (foundCol.luminance() < 0.05) {
+      altCol = colord("#000");
+    } else if (foundCol.luminance() > 0.95) {
+      altCol = colord("#fff");
+    }
+    return altCol;
+  };
 
   // Set text colour to static if background colour is set
   $: if ($preferences.background && !$preferences.textColor) {
-    $preferences.textColor = getColour(
-      element.window.getComputedStyle(element.node).color
-    );
+    $preferences.textColor = getApproxInferredColor();
   }
 </script>
 

@@ -31,6 +31,8 @@
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
+  import theme from "../theme";
+  import { stringify } from "querystring";
 
   export let id: string;
   export let colour: Colord | undefined = undefined;
@@ -54,74 +56,34 @@
     }
     return c;
   };
-  $: options = [
-    {
-      code: smartColour("#00467F", contrastColour),
-      name: "Dark blue",
-    },
-    {
-      code: smartColour("#000000", contrastColour),
-      name: "Black",
-    },
-    {
-      code: smartColour("#4A4A4C", contrastColour),
-      name: "Body Grey",
-    },
-    {
-      code: smartColour("#8D9091", contrastColour),
-      name: "Silver",
-    },
-    {
-      code: smartColour("#A71930", contrastColour),
-      name: "Arts",
-    },
-    {
-      code: smartColour("#7D0063", contrastColour),
-      name: "Business School",
-    },
-    {
-      code: smartColour("#D2492A", contrastColour),
-      name: "Creative Arts and Industries",
-    },
-    {
-      code: smartColour("#55A51C", contrastColour),
-      name: "Education and Social Work",
-    },
-    {
-      code: smartColour("#4F2D7F", contrastColour),
-      name: "Engineering",
-    },
-    {
-      code: smartColour("#005B82", contrastColour),
-      name: "Auckland Law School",
-    },
-    {
-      code: smartColour("#00877C", contrastColour),
-      name: "Medical Health Sciences",
-    },
-    {
-      code: smartColour("#0039A6", contrastColour),
-      name: "Science",
-    },
-    {
-      code: smartColour("#BA4482", contrastColour),
-      name: "Auckland Bioengineering Institute",
-    },
-    {
-      code: smartColour("#006990", contrastColour),
-      name: "Liggins Institute",
-    },
-    {
-      code: smartColour("#ffffff", contrastColour),
-      name: "White",
-    },
-  ] as {
-    code: Colord | undefined;
-    name: string;
-  }[];
-  $: if (showNone) {
-    options.push({ code: undefined, name: "None" });
-  }
+
+  $: options = (() => {
+    let colours: { code?: Colord; name: string }[] = [
+      {
+        code: smartColour(theme.primary, contrastColour),
+        name: "Primary",
+      },
+      {
+        code: smartColour(theme.secondary, contrastColour),
+        name: "Secondary",
+      },
+    ];
+    const addCol = (r: Record<string, string>, smart = true) =>
+      colours.push(
+        ...Object.entries(r).map(([name, c]) => ({
+          code: smart ? smartColour(c, contrastColour) : colord(c),
+          name,
+        }))
+      );
+    if (theme.palette) {
+      if (contrastColour?.isDark()) addCol(theme.palette.light, false);
+      else addCol(theme.palette.dark);
+    }
+    if (showNone) {
+      colours.push({ code: undefined, name: "None" });
+    }
+    return colours;
+  })();
 
   const select = (c: Colord | undefined) => {
     colour = getColour(c);

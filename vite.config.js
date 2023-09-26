@@ -37,10 +37,12 @@ const shared = (mode) => ({
       JSON.stringify(process.env.npm_package_version) || "unknown",
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
     __ISTHEME__: JSON.stringify(mode.includes("theme")),
+    __THEME__: JSON.stringify(
+      JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
+    ),
   },
   envPrefix: "CANVAS_BLOCKS_",
 });
-
 const sharedPlugins = [
   svelte({
     emitCss: true,
