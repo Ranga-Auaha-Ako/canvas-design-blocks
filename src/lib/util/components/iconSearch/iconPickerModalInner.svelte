@@ -107,7 +107,7 @@
       <div
         class="results iconList"
         bind:this={resultsList}
-        style:color={$iconColor.toHex()}
+        style:color={options.editColor ? $iconColor.toHex() : "#000000"}
       >
         {#each results.entries() as [name, urls] (name)}
           <button
