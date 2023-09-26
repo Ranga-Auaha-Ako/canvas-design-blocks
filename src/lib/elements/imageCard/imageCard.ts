@@ -166,7 +166,6 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
       }));
     });
     node.addEventListener("pointerdown", (e) => {
-      console.log(e);
       const target = e.target as HTMLElement;
       const inCard = target.closest<HTMLAnchorElement>("a.ImageCard");
       if (inCard) {

@@ -14,10 +14,10 @@
   import { colord } from "colord";
 
   export let props: { button: Button };
+  export let isModal: boolean = false;
   // export let isDominant: Writable<boolean>;
   // export let dominantPopover: Readable<boolean> | undefined = undefined;
   $: button = props.button;
-  $: console.log(button);
   $: buttonData = button.SvelteState;
   let configEl: HTMLElement;
 
@@ -72,6 +72,7 @@
         bind:colour={$buttonData.color}
         contrastColour={colord("#ffffff")}
         showNone={false}
+        asModal={isModal}
       />
       <button
         class="Button"

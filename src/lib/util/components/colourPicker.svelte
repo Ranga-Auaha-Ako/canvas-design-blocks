@@ -44,6 +44,7 @@
   export let popupDirection: Placement = "bottom-start";
   export let zIndex = 10;
   export let showNone = true;
+  export let asModal = false;
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     const c = colord(colour);
@@ -98,7 +99,14 @@
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
   let container: HTMLDivElement;
   let popoverTarget: HTMLButtonElement;
-  let popoverEl: HTMLDivElement;
+  let popoverEl: HTMLDialogElement;
+
+  $: if (edit && popoverEl) {
+    if (asModal) popoverEl.showModal();
+    else popoverEl.show();
+  } else if (popoverEl) {
+    popoverEl.close();
+  }
 
   $: updateFunction = async () => {
     const position = await computePosition(popoverTarget, popoverEl, {
@@ -133,11 +141,19 @@
   let customColour = false;
 
   let customColourVal: string | undefined;
-  $: if (!customColour) {
-    customColourVal = colour?.toHex();
-  } else if (customColourVal) {
-    colour = colord(customColourVal);
-  }
+
+  const updateCustomColour = (col?: Colord) => {
+    if (col?.toHex() === customColourVal) return;
+    if (col) customColourVal = col.toHex();
+  };
+  const updateColourFromCustom = (col?: string) => {
+    if (!col || col.length !== 7) return;
+    const newCol = colord(col);
+    if (newCol.isValid() && col !== colour?.toHex()) colour = colord(col);
+  };
+
+  $: updateCustomColour(colour);
+  $: updateColourFromCustom(customColourVal);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -161,19 +177,17 @@
       class:white={colour && colour.isLight()}
     />
     <Portal>
-      <div
-        class="cgb-component"
-        use:clickOutside={() => (edit = false)}
-        use:preventBubble={false}
-      >
-        <div
+      <div class="cgb-component" use:preventBubble={false}>
+        <dialog
           {id}
           class="colourPicker"
           style:z-index={zIndex}
           aria-hidden={!edit}
-          class:edit
           bind:this={popoverEl}
           style:transform
+          use:clickOutside={() => {
+            edit = false;
+          }}
         >
           {#if edit}
             {#each options as option}
@@ -217,6 +231,7 @@
                     class="invisible absolute"
                     type="color"
                     bind:value={customColourVal}
+                    on:input={() => (customColour = true)}
                     aria-hidden="true"
                   />
                 </label>
@@ -224,17 +239,14 @@
                   id={id + "-custom"}
                   type="text"
                   bind:value={customColourVal}
-                  on:input={(e) => {
-                    customColour = true;
-                    return true;
-                  }}
+                  on:input={() => (customColour = true)}
                 />
               </div>
             </div>
           {/if}
-        </div>
-      </div>
-    </Portal>
+        </dialog>
+      </div></Portal
+    >
   </div>
 </div>
 
@@ -260,13 +272,14 @@
     display: inline-block;
   }
   .colourPicker {
-    @apply absolute top-0 left-0 p-4 box-content;
+    @apply absolute top-0 left-0 p-4 m-0 box-content;
     @apply shadow-lg bg-white rounded;
     @apply grid gap-1;
+    @apply overflow-clip;
     grid-template-columns: repeat(4, var(--size));
     grid-template-rows: repeat(auto-fill, var(--size)), auto;
     @apply pointer-events-none opacity-0 transition-opacity;
-    &.edit {
+    &[open] {
       @apply visible opacity-100 pointer-events-auto;
     }
     & .colour-option {

@@ -5,6 +5,7 @@
   const dispatch = createEventDispatcher();
 
   export let cdbData: ProfileData[];
+  export let localState: any;
 </script>
 
 {#each cdbData as profile}

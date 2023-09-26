@@ -127,7 +127,6 @@ export class ProfileGrid extends SvelteElement<ProfileData[]> {
     const pickerInst = picker.open();
     pickerInst.$on("selectImage", ({ detail: url }) => {
       profile.thumbnail = url;
-      console.log(profile);
       this.SvelteState.update((state) => state);
       picker.close();
     });

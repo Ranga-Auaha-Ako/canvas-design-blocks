@@ -109,7 +109,7 @@ class ButtonState implements SvelteState<ButtonData> {
         ? unsafeState.size
         : DefaultSize;
       let icon = getIconState(unsafeState.icon);
-      let state: ButtonData = {
+      state = {
         title: unsafeState.title || ButtonState.defaultState.title,
         label: unsafeState.label || ButtonState.defaultState.label,
         color: color,

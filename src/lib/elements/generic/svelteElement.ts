@@ -77,6 +77,14 @@ export abstract class SvelteElement<
       return this.dataEl;
     };
 
+    this.node.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        this.popover?.show(true);
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    });
+
     let dataEl = this.node.querySelector(".cdbData");
     const stateString = dataEl?.textContent;
     let parsedStateData: Partial<stateDataType> | undefined;
@@ -112,6 +120,9 @@ export abstract class SvelteElement<
           if (detail) {
             createDataEl();
           }
+        });
+        this.lastContents.$on("focus", () => {
+          this.select();
         });
         [...(this.customEvents?.entries() || [])].forEach((event) => {
           this.lastContents?.$on(event[0], (detail) => {

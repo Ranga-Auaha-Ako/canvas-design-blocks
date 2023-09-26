@@ -82,7 +82,6 @@
       editColor: true,
     });
     iconPicker.subscribe((icon) => {
-      console.log(icon, currentCard?.icon);
       if (
         currentCard &&
         currentCard?.icon &&

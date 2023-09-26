@@ -190,6 +190,9 @@
       &:hover {
         @apply scale-125 z-10 shadow border-transparent;
       }
+      &:focus {
+        @apply ring-2;
+      }
       i {
         @apply text-2xl leading-4 block;
       }
