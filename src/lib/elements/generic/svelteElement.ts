@@ -22,7 +22,7 @@ export type SvelteStateClass<State> = new (
  */
 export abstract class SvelteElement<
   stateDataType,
-  localState = Record<string, string>
+  localState = Record<string, string> | undefined
 > extends MceElement {
   selectionMethod: MceElement["selectionMethod"] = "TinyMCE";
   public staticAttributes = {
@@ -35,7 +35,7 @@ export abstract class SvelteElement<
   private lastContents:
     | SvelteComponent<{
         cdbData: stateDataType;
-        localState?: Writable<localState>;
+        localState: Writable<localState>;
       }>
     | undefined;
   public customEvents?: Map<string, (detail: any) => any>;

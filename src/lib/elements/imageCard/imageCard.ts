@@ -8,8 +8,10 @@ import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import type { McePopover } from "../generic/popover/popover";
 import ImageCardInner from "./imageCardInner.svelte";
 import ImageCardConfig from "./popup/imageCardConfig.svelte";
-import { IconState } from "$lib/util/components/iconSearch/iconElement.svelte";
-import { getIconState } from "$lib/util/components/iconSearch/iconPicker";
+import {
+  IconState,
+  getIconState,
+} from "$lib/util/components/iconSearch/iconPicker";
 
 export enum ImageCardTheme {
   Overlay = "imageCardTheme--overlay",

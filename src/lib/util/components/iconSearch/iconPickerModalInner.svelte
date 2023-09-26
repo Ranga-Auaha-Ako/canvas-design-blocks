@@ -1,16 +1,40 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import IconPicker, { IconPickerOptions, IconType } from "./iconPicker";
+  import IconPicker, {
+    IconPickerOptions,
+    IconState,
+    IconType,
+    isCustomIcon,
+    isInstIcon,
+  } from "./iconPicker";
   import { createEventDispatcher } from "svelte";
-  import { IconState } from "./iconElement.svelte";
   import ColourPicker from "../colourPicker.svelte";
   import { nanoid } from "nanoid";
   import { colord } from "colord";
   import { persisted as localStorageWritable } from "svelte-local-storage-store";
+  import {
+    customCategory,
+    customIcon,
+    getIconClass,
+    instCategory,
+    instIcon,
+    isCustomCategory,
+    isInstCategory,
+  } from "./canvas-icons/icons";
 
-  const dispatch = createEventDispatcher();
-  const selectIcon = (icon: IconState) => {
-    dispatch("selectIcon", icon);
+  const dispatch = createEventDispatcher<{
+    selectIcon: {
+      icon: instIcon | customIcon;
+      color?: string;
+      type: IconType;
+    };
+  }>();
+  const selectIcon = (data: {
+    icon: instIcon | customIcon;
+    color?: string;
+    type: IconType;
+  }) => {
+    dispatch("selectIcon", data);
   };
 
   export let iconPicker: IconPicker;
@@ -19,7 +43,6 @@
   let iconPickerFrame: HTMLIFrameElement;
 
   let filterQuery = "";
-  let iconType = IconType.Line;
   let iconColor = localStorageWritable(
     "cdb-preferences-iconColor",
     colord("#000000"),
@@ -35,12 +58,29 @@
     (query: string) => {
       resultsWrapperScroll = resultsWrapperScroll; // Bump to force refresh of scroll hint indicator
       if (query.length < 3) results = iconPicker.choices;
-      results = new Map(
-        [...iconPicker.choices].filter(
-          ([key, value]) =>
-            key.toLowerCase().includes(query.toLowerCase()) && iconType in value
-        )
-      );
+      results = iconPicker.choices
+        .map((cat) => {
+          return {
+            name: cat.name,
+            type: cat.type,
+            icons: cat.icons.filter((icon: instIcon | customIcon) => {
+              const q = query.toLowerCase();
+              const isInTerm = icon.term?.toLowerCase().includes(q);
+              const isInTags =
+                "tags" in icon
+                  ? icon.tags.some((tag) => tag.toLowerCase().includes(q))
+                  : false;
+              const isInCollection =
+                "collections" in icon
+                  ? icon.collections.some((collection) =>
+                      collection.toLowerCase().includes(q)
+                    )
+                  : false;
+              return isInTerm || isInTags || isInCollection;
+            }),
+          } as instCategory | customCategory;
+        })
+        .filter((cat) => cat.icons.length);
     },
     50,
     { trailing: true }
@@ -70,18 +110,6 @@
       placeholder="Search for an image"
       bind:value={filterQuery}
     />
-    <button
-      class="toggle-icons"
-      title="Toggle Line/Solid Icons"
-      on:click={() => {
-        iconType = iconType === IconType.Line ? IconType.Solid : IconType.Line;
-      }}
-    >
-      <i
-        class="icon-{iconType === IconType.Solid ? 'Solid' : 'Line'} icon-paint"
-      />
-      {iconType === IconType.Solid ? "Solid" : "Line"}
-    </button>
     {#if options.editColor}
       <div class="colourPicker">
         <ColourPicker
@@ -104,38 +132,50 @@
         resultsWrapperScroll = resultsWrapper.scrollTop;
       }}
     >
-      <div
-        class="results iconList"
-        bind:this={resultsList}
-        style:color={options.editColor ? $iconColor.toHex() : "#000000"}
-      >
-        {#each results.entries() as [name, urls] (name)}
-          <button
-            class="icon"
-            title={name}
-            on:click={() => {
-              if (options.editColor) {
-                selectIcon({
-                  class: name,
-                  url: urls[iconType],
-                  type: iconType,
-                  color: $iconColor.toHex(),
-                });
-              } else {
-                selectIcon({
-                  class: name,
-                  url: urls[iconType],
-                  type: iconType,
-                });
-              }
-            }}
-          >
-            <i
-              class="icon-{iconType === IconType.Solid
-                ? 'Solid'
-                : 'Line'} icon-{name}"
-            />
-          </button>
+      <div class="categories" bind:this={resultsList}>
+        {#each results as category}
+          <div class="category">
+            <h3>{category.name}</h3>
+            <div class="iconList">
+              {#each category.icons as icon (icon.id)}
+                <button
+                  class="icon"
+                  title={icon.term}
+                  on:click={() => {
+                    debugger;
+                    if (options.editColor) {
+                      selectIcon({
+                        icon,
+                        color: $iconColor.toHex(),
+                        type: category.type,
+                      });
+                    } else {
+                      selectIcon({
+                        icon,
+                        type: category.type,
+                      });
+                    }
+                  }}
+                >
+                  {#if isCustomCategory(category)}
+                    <img
+                      src="https://{import.meta.env
+                        .CANVAS_BLOCKS_USE_CANVAS_ICONS}/font/stack/svg/sprite.stack.svg#{getIconClass(
+                        icon.url
+                      )}"
+                      alt={icon.term}
+                    />
+                  {:else if isInstCategory(category)}
+                    <i
+                      class="icon-{category.type === IconType.Solid
+                        ? 'Solid'
+                        : 'Line'} icon-{icon.term}"
+                    />
+                  {/if}
+                </button>
+              {/each}
+            </div>
+          </div>
         {/each}
       </div>
     </div>
@@ -181,12 +221,21 @@
     @apply overflow-y-auto relative p-2;
     max-height: calc(650px - 9rem);
   }
+  .categories {
+    @apply grid grid-flow-row gap-2;
+    .category {
+      @apply flex flex-col gap-2;
+      h3 {
+        @apply text-lg font-bold w-full text-black;
+      }
+    }
+  }
   .iconList {
     @apply grid gap-1;
-    grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
     .icon {
       @apply rounded border-gray-100 border border-solid bg-white text-center p-2 cursor-pointer;
-      @apply transition duration-200 ease-in-out relative z-0;
+      @apply transition duration-200 ease-in-out relative z-0 aspect-square overflow-hidden;
       &:hover {
         @apply scale-125 z-10 shadow border-transparent;
       }
@@ -194,7 +243,10 @@
         @apply ring-2;
       }
       i {
-        @apply text-2xl leading-4 block;
+        @apply block;
+        &:before {
+          font-size: 1.75rem;
+        }
       }
     }
   }

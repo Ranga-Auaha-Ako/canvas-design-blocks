@@ -6,6 +6,7 @@
   const dispatch = createEventDispatcher();
 
   export let cdbData: ButtonData;
+  // svelte-ignore unused-export-let
   export let localState: any;
 </script>
 

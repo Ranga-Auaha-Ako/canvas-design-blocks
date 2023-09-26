@@ -5,6 +5,8 @@
   const dispatch = createEventDispatcher();
 
   export let cdbData: HeaderData;
+  // svelte-ignore unused-export-let
+  export let localState: any;
 </script>
 
 <div class="headerInner {cdbData.theme}">

@@ -18,4 +18,5 @@ declare const __THEME__:
 interface ImportMetaEnv {
   readonly CANVAS_BLOCKS_BASE_DOMAINS: string;
   readonly CANVAS_BLOCKS_THEME: string;
+  readonly CANVAS_BLOCKS_USE_CANVAS_ICONS: string;
 }
