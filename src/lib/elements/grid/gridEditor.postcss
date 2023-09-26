@@ -19,7 +19,7 @@
       & [class=^="col-"],
       & .cgb-col {
         @apply outline-dashed outline-2 outline-gray-200 cursor-text;
-        @apply transition duration-300;
+        @apply transition duration-300 flex flex-col;
         transition-property: outline;
         @nest [data-mce-selected] &, &:hover, &:focus, &:focus-within {
           @apply outline-dashed outline-2 outline-secondary;

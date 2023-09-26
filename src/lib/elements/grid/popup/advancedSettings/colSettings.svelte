@@ -45,8 +45,8 @@
       reflecting,
       [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
     ) => {
-      // Height
-      if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
+      // // Height
+      // if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
       // Card
       switch (reflecting.card) {
         case ColType.Normal:
