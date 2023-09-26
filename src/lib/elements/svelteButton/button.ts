@@ -16,6 +16,7 @@ import {
 } from "$lib/util/components/iconSearch/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 
 export enum ButtonTheme {
   Default = "Button--default",

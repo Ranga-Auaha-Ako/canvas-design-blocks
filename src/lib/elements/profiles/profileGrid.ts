@@ -18,6 +18,7 @@ import ProfileConfig from "./popup/profileConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
 import { ModalDialog } from "$lib/util/components/modalDialog/modal";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 
 export interface ProfileData {
   id: string;

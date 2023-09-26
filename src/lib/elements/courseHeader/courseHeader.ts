@@ -8,7 +8,7 @@ import { CourseHeaderManager } from "./courseHeaderManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import HeaderConfig from "./popup/headerConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
-
+import { sanitizeUrl } from "@braintree/sanitize-url";
 export enum HeaderTheme {
   Light = "HeaderTheme-light",
   Dark = "HeaderTheme-dark",
@@ -68,7 +68,7 @@ class HeaderState implements SvelteState<HeaderData> {
       links:
         unsafeState?.links?.map((l) => ({
           title: l?.title || "",
-          url: l?.url || "",
+          url: sanitizeUrl(l?.url || "").replace(/^about:blank$/, ""),
           id: l?.id || nanoid(),
         })) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,

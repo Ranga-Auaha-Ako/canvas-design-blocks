@@ -8,6 +8,7 @@ import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import type { McePopover } from "../generic/popover/popover";
 import ImageCardInner from "./imageCardInner.svelte";
 import ImageCardConfig from "./popup/imageCardConfig.svelte";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 import {
   IconState,
   getIconState,
@@ -84,7 +85,7 @@ class CardRowState implements SvelteState<RowData> {
         let icon = getIconState(card.icon);
         return {
           label: card.label || "",
-          link: card.link || "",
+          link: sanitizeUrl(card.link || "").replace(/^about:blank$/, ""),
           image: card.image || "",
           id: card.id || nanoid(),
           icon: icon,
