@@ -94,6 +94,34 @@
         resultsWrapperScroll -
         (resultsWrapper?.clientHeight || 0 + 10);
     }, 50);
+
+  // TODO: This is a hack to get the custom icons to work on Firefox
+  // This is held back by a bug in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=1657218
+  // This ticket has been open for 9 years at time of comment, so I'm not holding my breath
+  function getCustomIconUrl(url: string): string {
+    // Source: https://github.com/faisalman/ua-parser-js
+    // LICENSE: GNU Affero General Public License v3.0
+    const UAChecks = [
+      /(?:mobile|tablet);.*(firefox)\/([\w\.-]+)/i, // Firefox Mobile
+      /(navigator|netscape\d?)\/([-\w\.]+)/i, // Netscape
+      /mobile vr; rv:([\w\.]+)\).+firefox/i, // Firefox Reality
+      /ekiohf.+(flow)\/([\w\.]+)/i, // Flow
+      /(swiftfox)/i, // Swiftfox
+      /(icedragon|iceweasel|camino|chimera|fennec|maemo browser|minimo|conkeror|klar)[\/ ]?([\w\.\+]+)/i, // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror/Klar
+      /(seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([-\w\.]+)$/i, // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
+      /(firefox)\/([\w\.]+)/i, // Other Firefox-based
+      /(mozilla)\/([\w\.]+) .+rv\:.+gecko\/\d+/i, // Mozilla
+    ];
+    if (UAChecks.some((ua) => navigator.userAgent.match(ua))) {
+      return `https://${
+        import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS
+      }/icons/${url}`;
+    }
+
+    return `https://${
+      import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS
+    }/font/stack/svg/sprite.stack.svg#${getIconClass(url)}`;
+  }
 </script>
 
 <div class="searchFilter">
@@ -149,13 +177,7 @@
                 }}
               >
                 {#if isCustomCategory(category)}
-                  <img
-                    src="https://{import.meta.env
-                      .CANVAS_BLOCKS_USE_CANVAS_ICONS}/font/stack/svg/sprite.stack.svg#{getIconClass(
-                      icon.url
-                    )}"
-                    alt={icon.term}
-                  />
+                  <img src={getCustomIconUrl(icon.url)} alt={icon.term} />
                 {:else if isInstCategory(category)}
                   <i
                     class="icon-{category.type === IconType.Solid
