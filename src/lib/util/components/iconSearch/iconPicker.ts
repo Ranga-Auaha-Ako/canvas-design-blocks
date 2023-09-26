@@ -16,12 +16,12 @@ import { colord } from "colord";
 
 export { IconType };
 
-interface InstIconState {
+export interface InstIconState {
   class: string;
   type: IconType.Solid | IconType.Line;
   color?: string;
 }
-interface CustomIconState {
+export interface CustomIconState {
   id: string;
   type: IconType.Custom;
   color?: string;
@@ -68,14 +68,15 @@ Object.entries(InstIcons).forEach(([iconPath, url]) => {
 
 export { icons };
 
-export function getIconData(
+export async function getIconData(
   icon:
     | Pick<InstIconState, "type" | "class">
     | Pick<CustomIconState, "type" | "id">
-): instIcon | customIcon | undefined {
+): Promise<instIcon | customIcon | undefined> {
+  const ics = await loadCustomIcons();
   if (isCustomIcon(icon)) {
     let found: customIcon | undefined;
-    for (const cat of icons) {
+    for (const cat of ics) {
       if (cat.type !== IconType.Custom) continue;
       found = cat.icons.find((ic) => ic.id === icon.id);
       if (found) break;
@@ -83,7 +84,7 @@ export function getIconData(
     return found;
   } else if (isInstIcon(icon)) {
     let found: instIcon | undefined;
-    for (const cat of icons) {
+    for (const cat of ics) {
       if (cat.type !== icon.type) continue;
       found = cat.icons.find((ic) => ic.term === icon.class);
       if (found) break;
@@ -137,21 +138,25 @@ export interface IconPickerOptions {
   editColor?: boolean;
 }
 
-let hasLoadedCustomIcons = false;
-const loadCustomIcons = async () => {
-  if (hasLoadedCustomIcons) return;
-  hasLoadedCustomIcons = true;
-  const data = (await fetch(
-    `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/meta.json`
-  ).then((r) => r.json())) as customIconsMeta;
-  data.forEach((cat) => {
-    icons.push({
-      name: cat.name,
-      type: IconType.Custom,
-      icons: cat.icons,
+let hasLoadedCustomIcons: false | Promise<iconData> = false;
+export async function loadCustomIcons() {
+  if (hasLoadedCustomIcons !== false) return await hasLoadedCustomIcons;
+  const getFunc = (async () => {
+    const data = (await fetch(
+      `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/meta.json`
+    ).then((r) => r.json())) as customIconsMeta;
+    data.forEach((cat) => {
+      icons.push({
+        name: cat.name,
+        type: IconType.Custom,
+        icons: cat.icons,
+      });
     });
-  });
-};
+    return icons;
+  })();
+  hasLoadedCustomIcons = getFunc;
+  return await getFunc;
+}
 
 export default class IconPicker implements Writable<IconState | undefined> {
   public icon: Writable<IconState> = writable();
