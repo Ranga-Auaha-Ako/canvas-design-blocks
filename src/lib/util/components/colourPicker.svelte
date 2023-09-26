@@ -33,8 +33,9 @@
   import preventBubble from "../preventBubble";
   import theme from "../theme";
   import { stringify } from "querystring";
+  import { nanoid } from "nanoid";
 
-  export let id: string;
+  export let id: string = nanoid();
   export let colour: Colord | undefined = undefined;
   export let contrastColour: Colord | undefined = undefined;
   export let showAccessible: boolean = true;

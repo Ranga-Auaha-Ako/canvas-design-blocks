@@ -10,6 +10,8 @@
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/util/components/iconSearch/iconPicker";
+  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import { colord } from "colord";
 
   export let props: { button: Button };
   // export let isDominant: Writable<boolean>;
@@ -43,36 +45,41 @@
   >
     <i class="icon-end" />
   </button>
-  <div class="col">
-    <ButtonRadio
-      title="Button Theme"
-      choices={ValidThemes}
-      labels={Object.keys(ButtonTheme)}
-      bind:value={$buttonData.theme}
-    />
-    <ButtonRadio
-      title="Button Size"
-      choices={ValidSizes}
-      labels={Object.keys(ButtonSize)}
-      bind:value={$buttonData.size}
-    />
-    <input
-      type="text"
-      bind:value={$buttonData.label}
-      placeholder="Button Label..."
-    />
-    <input
-      type="text"
-      bind:value={$buttonData.title}
-      placeholder="Button Title..."
-    />
-    <input type="url" bind:value={$buttonData.url} placeholder="Button URL" />
-    <button
-      class="Button"
-      on:click={() => {
-        iconPicker.pick();
-      }}>Select Icon</button
-    >
+  <div class="flex flex-row gap-4">
+    <div class="col">
+      <ButtonRadio
+        title="Button Size"
+        choices={ValidSizes}
+        labels={Object.keys(ButtonSize)}
+        bind:value={$buttonData.size}
+      />
+      <input
+        type="text"
+        bind:value={$buttonData.label}
+        placeholder="Button Label..."
+      />
+      <input
+        type="text"
+        bind:value={$buttonData.title}
+        placeholder="Button Title..."
+      />
+      <input type="url" bind:value={$buttonData.url} placeholder="Button URL" />
+    </div>
+    <div class="col">
+      <ColourPicker
+        label="Colour"
+        id={nanoid() + "-setting-background"}
+        bind:colour={$buttonData.color}
+        contrastColour={colord("#ffffff")}
+        showNone={false}
+      />
+      <button
+        class="Button"
+        on:click={() => {
+          iconPicker.pick();
+        }}>Select Icon</button
+      >
+    </div>
   </div>
 </div>
 

@@ -6,9 +6,14 @@
   const dispatch = createEventDispatcher();
 
   export let cdbData: ButtonData;
+  export let localState: any;
 </script>
 
-<a class="Button {cdbData.theme} {cdbData.size}" href={cdbData.url}>
+<a
+  class="DesignBlocks--Btn {cdbData.size}"
+  style:background-color={cdbData.color?.toHex()}
+  href={cdbData.url}
+>
   {#if cdbData.icon}
     <IconElement icon={cdbData.icon} />
   {/if}

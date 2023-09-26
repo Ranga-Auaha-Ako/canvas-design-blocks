@@ -32,6 +32,12 @@ export abstract class SvelteElement<
   public static markupVersion = "1.0.0";
   public SvelteState: SvelteState<stateDataType>;
   private dataEl: HTMLElement | undefined;
+  private lastContents:
+    | SvelteComponent<{
+        cdbData: stateDataType;
+        localState?: Writable<localState>;
+      }>
+    | undefined;
   public customEvents?: Map<string, (detail: any) => any>;
 
   constructor(
@@ -60,12 +66,7 @@ export abstract class SvelteElement<
       }
     });
 
-    let lastContents:
-      | SvelteComponent<{
-          cdbData: stateDataType;
-          localState?: Writable<localState>;
-        }>
-      | undefined;
+    this.lastContents = undefined;
     const createDataEl = () => {
       if (!this.dataEl || this.dataEl.parentElement !== this.node) {
         this.dataEl = document.createElement("div");
@@ -94,25 +95,26 @@ export abstract class SvelteElement<
     this.SvelteState = new stateClass(parsedStateData, node);
     this.SvelteState.subscribe((elState) => {
       if (elState) {
+        if (this.detached) return;
         this.stopObserving();
         this.node.innerHTML = "";
         this.dataEl = undefined;
         this.node.appendChild(createDataEl());
-        lastContents?.$destroy();
-        lastContents = new svelteComponent({
+        this.lastContents?.$destroy();
+        this.lastContents = new svelteComponent({
           target: this.node,
           props: {
             cdbData: elState,
             localState: localState,
           },
         });
-        lastContents.$on("update", ({ detail }) => {
+        this.lastContents.$on("update", ({ detail }) => {
           if (detail) {
             createDataEl();
           }
         });
         [...(this.customEvents?.entries() || [])].forEach((event) => {
-          lastContents?.$on(event[0], (detail) => {
+          this.lastContents?.$on(event[0], (detail) => {
             event[1](detail);
           });
         });
@@ -140,5 +142,9 @@ export abstract class SvelteElement<
   public delete() {
     this.popover?.hide();
     super.delete();
+  }
+  public detach() {
+    super.detach();
+    this.lastContents?.$destroy();
   }
 }
