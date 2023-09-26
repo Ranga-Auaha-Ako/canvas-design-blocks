@@ -1,30 +1,38 @@
 <script lang="ts">
-  import { get, type Writable } from "svelte/store";
-  import { ImageCard } from "../imageCard";
   import {
-    DerivedCardSize,
-    DerivedCardTheme,
+    RowData,
     ImageCardSize,
     ImageCardTheme,
     ValidSizes,
     ValidThemes,
-  } from "../imageCardRow";
+    ImageCard,
+    LocalState,
+  } from "../imageCard";
+  import { createEventDispatcher } from "svelte";
   import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
+  import { Writable } from "svelte/store";
+  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import { nanoid } from "nanoid";
+  import IconPicker from "$lib/util/components/iconSearch/iconPicker";
 
-  export let props: { imageCard: ImageCard };
-  // export let isDominant: Writable<boolean>;
-  // export let dominantPopover: Readable<boolean> | undefined = undefined;
+  const dispatch = createEventDispatcher();
+
+  export let props: {
+    imageCard: ImageCard;
+    localState: Writable<LocalState | undefined>;
+  };
+
   $: imageCard = props.imageCard;
-  $: innerText = imageCard.childLabel.innerText;
-  $: classes = imageCard.cardRow.classList;
-  $: theme = DerivedCardTheme(classes);
-  $: size = DerivedCardSize(classes);
-  $: cardLink = imageCard.attributes.get("href") as
-    | Writable<string>
-    | undefined;
+  $: rowData = imageCard.SvelteState;
+  $: localState = props.localState;
+  $: cardIndex =
+    $localState && ImageCard.getCardIndex($rowData, $localState.selectedCard);
+  $: currentCard =
+    cardIndex !== undefined ? $rowData.cards[cardIndex] : undefined;
+
   let configEl: HTMLElement;
   let urlInput: HTMLInputElement;
 
@@ -45,21 +53,52 @@
       imageCard
     );
     const pickerInst = picker.open();
-    pickerInst.$on("selectImage", ({ detail }) => {
-      imageCard.setImage(detail);
+    pickerInst.$on("selectImage", ({ detail: url }) => {
+      if (!$localState) return;
+      const index = ImageCard.getCardIndex($rowData, $localState.selectedCard);
+      $rowData.cards[index].image = url;
       picker.close();
     });
   };
-
-  const deleteCard = () => {
-    imageCard.delete();
-  };
   const addCard = () => {
-    const newCard = imageCard.cardRow.createCard();
-    imageCard.deselect("Popover");
-    console.log(newCard);
-    newCard.select("Popover");
+    $rowData.cards.push({
+      label: "Insert Label Here",
+      link: "#",
+      image: "",
+      id: nanoid(),
+    });
+    if ($localState)
+      $localState.selectedCard = $rowData.cards[$rowData.cards.length - 1].id;
+    $rowData.cards = $rowData.cards;
   };
+  // https://stackoverflow.com/a/52323412/3902950
+  const shallowCompare = (obj1: Record<any, any>, obj2: Record<any, any>) =>
+    Object.keys(obj1).length === Object.keys(obj2).length &&
+    Object.keys(obj1).every((key) => obj1[key] === obj2[key]);
+
+  let iconPicker: IconPicker;
+  $: if (currentCard) {
+    iconPicker = new IconPicker(imageCard.editor, currentCard.icon, imageCard, {
+      editColor: true,
+    });
+    iconPicker.subscribe((icon) => {
+      if (
+        currentCard &&
+        currentCard?.icon &&
+        icon &&
+        !shallowCompare(currentCard.icon, icon)
+      ) {
+        currentCard.icon = icon;
+        $rowData = $rowData;
+      } else if (
+        currentCard &&
+        ((currentCard?.icon && !icon) || (!currentCard?.icon && icon))
+      ) {
+        currentCard.icon = icon;
+        $rowData = $rowData;
+      }
+    });
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -82,57 +121,106 @@
       title="Row Theme"
       choices={ValidThemes}
       labels={Object.keys(ImageCardTheme)}
-      bind:value={$theme}
+      bind:value={$rowData.theme}
     />
     <ButtonRadio
       title="Row Size"
       choices={ValidSizes}
       labels={Object.keys(ImageCardSize)}
-      bind:value={$size}
+      bind:value={$rowData.size}
     />
   </div>
-  <div class="cardSettings">
-    <div class="flex gap-x-2 items-baseline">
-      <div>
-        <label for={`${imageCard.id}-text`}>Card Label:</label>
-        <textarea
-          class="cardName"
-          id={`${imageCard.id}-text`}
-          bind:value={$innerText}
-          rows="3"
-          maxlength="100"
+  <div class="cardPanel">
+    <div class="ImageCard--elements">
+      <div class="ImageCard--list">
+        <OrderableList
+          labelKey="label"
+          idKey="id"
+          bind:items={$rowData.cards}
+          on:edit={({ detail: id }) => {
+            if ($localState) $localState.selectedCard = id;
+          }}
+          on:delete={({ detail: id }) => {
+            const index = ImageCard.getCardIndex($rowData, id);
+            if ($localState && $localState.selectedCard === id) {
+              if (index > 0)
+                $localState.selectedCard = $rowData.cards[index - 1].id;
+              else $localState.selectedCard = $rowData.cards[0].id;
+            }
+          }}
+          showEdit={true}
+          canDelete={$rowData.cards.length > 1}
+          activeClass="ImageCard--active"
+          activeId={$localState?.selectedCard}
         />
       </div>
-      <div>
-        <div class="form-group">
-          <label class="block" for={`${imageCard.id}-url`}
-            >Card Link (URL):</label
-          >
-          <input
-            type="url"
-            placeholder="https://canvas.auckland.ac.nz/..."
-            id={`${imageCard.id}-url`}
-            bind:value={$cardLink}
-            on:input={() => urlInput.reportValidity()}
-            bind:this={urlInput}
-          />
-        </div>
-
-        <button class="Button Button--block" on:click={() => openPicker()}
-          >Select Image</button
-        >
-      </div>
-    </div>
-    <div class="grid grid-cols-2 gap-2">
-      <button class="Button Button--danger" on:click={() => deleteCard()}>
-        <i class="icon-trash" aria-hidden="true" />
-        Remove
-      </button>
-      <button class="Button" on:click={() => addCard()}>
+      <button class="Button Button--small" on:click={() => addCard()}>
         <i class="icon-plus" aria-hidden="true" />
         Add Card</button
       >
     </div>
+    {#if $localState && cardIndex !== undefined && cardIndex >= 0 && $rowData.cards[cardIndex]}
+      {#key $localState.selectedCard}
+        <div
+          class="cardSettings"
+          in:fade={{ duration: 300, delay: 100 }}
+          out:fade={{ duration: 150 }}
+        >
+          <div class="flex gap-x-2 items-baseline">
+            <div>
+              <label for={`${imageCard.id}-text`}>Card Label:</label>
+              <textarea
+                class="cardName"
+                id={`${imageCard.id}-text`}
+                bind:value={$rowData.cards[cardIndex].label}
+                rows="3"
+                maxlength="100"
+              />
+            </div>
+            <div>
+              <div class="form-group">
+                <label class="block" for={`${imageCard.id}-url`}
+                  >Card Link (URL):</label
+                >
+                <input
+                  type="url"
+                  placeholder="https://canvas.auckland.ac.nz/..."
+                  id={`${imageCard.id}-url`}
+                  bind:value={$rowData.cards[cardIndex].link}
+                  on:input={() => urlInput.reportValidity()}
+                  bind:this={urlInput}
+                />
+              </div>
+
+              {#if $rowData.theme === ImageCardTheme.Icon && iconPicker}
+                <button
+                  class="Button Button--block"
+                  on:click={() => {
+                    iconPicker.pick();
+                  }}>Select Icon</button
+                >
+              {:else}
+                <button
+                  class="Button Button--block"
+                  on:click={() => openPicker()}>Select Image</button
+                >
+              {/if}
+            </div>
+          </div>
+        </div>
+      {/key}
+    {:else}
+      <div class="config cardSettings">
+        <p class="max-w-sm italic">
+          Select a card to edit its settings. You can add a new card by clicking
+          the "Add Card" button.
+        </p>
+        <button class="Button" on:click={() => addCard()}>
+          <i class="icon-plus" aria-hidden="true" />
+          Add Card</button
+        >
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -156,16 +244,40 @@
     .rowTheme {
       @apply flex gap-x-2 items-center;
       @apply mb-2;
-      & > * {
-        @apply flex-1;
-      }
     }
 
     input[type="url"] {
       @apply py-3;
     }
-  }
-  .cardName {
-    @apply w-full border border-gray-300 rounded p-2;
+
+    .ImageCard--elements {
+      @apply flex flex-col rounded shadow-inner bg-gray-100 p-2 gap-4;
+    }
+
+    .ImageCard--list {
+      max-width: 20ch;
+      max-height: 20ch;
+      @apply overflow-y-auto overflow-x-clip p-1;
+      margin: 0 -0.25rem;
+      & :global(.ImageCard--active) {
+        @apply bg-primary text-white rounded;
+        padding: 0.25rem;
+        margin: -0.25rem 0;
+      }
+    }
+    .cardName {
+      @apply w-full border border-gray-300 rounded p-2;
+    }
+    .cardPanel {
+      @apply grid gap-4;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: "list config";
+      .ImageCard--elements {
+        grid-area: list;
+      }
+      .cardSettings {
+        grid-area: config;
+      }
+    }
   }
 </style>

@@ -271,7 +271,7 @@
   h5 {
     @apply w-full font-bold;
     &:after {
-      @apply block w-16 bg-uni-blue;
+      @apply block w-16 bg-primary;
       height: 3px;
       content: " ";
     }

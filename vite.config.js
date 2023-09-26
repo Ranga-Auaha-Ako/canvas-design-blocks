@@ -21,6 +21,11 @@ const shared = (mode) => ({
       port: 5175,
     },
   },
+  css: {
+    lightningcss: {
+      targets: "last 2 versions or >= 0.25%, not dead",
+    },
+  },
   resolve: {
     alias: {
       $lib: path.resolve("./src/lib"),
@@ -32,10 +37,12 @@ const shared = (mode) => ({
       JSON.stringify(process.env.npm_package_version) || "unknown",
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
     __ISTHEME__: JSON.stringify(mode.includes("theme")),
+    __THEME__: JSON.stringify(
+      JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
+    ),
   },
   envPrefix: "CANVAS_BLOCKS_",
 });
-
 const sharedPlugins = [
   svelte({
     emitCss: true,
@@ -94,6 +101,7 @@ export default defineConfig(({ mode }) => {
           // the proper extensions will be added
           fileName: "canvas-blocks",
         },
+        cssMinify: "lightningcss",
         rollupOptions: {
           output: {
             assetFileNames: (assetInfo) => {

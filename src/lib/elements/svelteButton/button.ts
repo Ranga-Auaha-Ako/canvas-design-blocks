@@ -8,8 +8,15 @@ import { ButtonManager } from "./buttonManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import ButtonConfig from "./popup/buttonConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
-import { IconType, icons } from "$lib/util/components/iconSearch/iconPicker";
-import { IconState } from "$lib/util/components/iconSearch/iconElement.svelte";
+import {
+  IconState,
+  IconType,
+  getIconState,
+  icons,
+} from "$lib/util/components/iconSearch/iconPicker";
+import theme from "$lib/util/theme";
+import { colord, type Colord } from "colord";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 
 export enum ButtonTheme {
   Default = "Button--default",
@@ -25,7 +32,7 @@ export const DefaultTheme = ButtonTheme.Default;
 export enum ButtonSize {
   Mini = "Button--mini",
   Small = "Button--small",
-  Default = "Button--size-default",
+  Default = "",
   Large = "Button--large",
 }
 export const ValidSizes = Object.values(ButtonSize);
@@ -36,16 +43,20 @@ export interface ButtonData {
   label: string;
   url: string;
   target: string;
-  theme: ButtonTheme;
   size: ButtonSize;
   icon: IconState | undefined;
+  color?: Colord;
+}
+
+export interface CanvasButtonData extends ButtonData {
+  theme: ButtonTheme;
 }
 
 class ButtonState implements SvelteState<ButtonData> {
   static defaultState: ButtonData = {
     title: "",
     label: "Button Text",
-    theme: DefaultTheme,
+    color: colord(theme.primary),
     size: DefaultSize,
     url: "#",
     target: "_self",
@@ -56,49 +67,71 @@ class ButtonState implements SvelteState<ButtonData> {
   public update = this.state.update;
   public subscribe = this.state.subscribe;
   constructor(
-    unsafeState: Partial<ButtonData> | undefined,
+    unsafeState: Partial<ButtonData | CanvasButtonData> | undefined,
     node?: HTMLElement
   ) {
-    let theme = ValidThemes.includes(unsafeState?.theme as ButtonTheme)
-      ? unsafeState?.theme
-      : DefaultTheme;
-    let size = ValidSizes.includes(unsafeState?.size as ButtonSize)
-      ? unsafeState?.size
-      : DefaultSize;
-    let icon: IconState | undefined;
-    const foundIcon = unsafeState?.icon?.class
-      ? icons.get(unsafeState?.icon?.class)
-      : undefined;
-    let iconType = unsafeState?.icon?.type || IconType.Line;
-    let iconClass = unsafeState?.icon?.class;
-    let iconUrl = foundIcon ? foundIcon[iconType] : undefined;
-    if (foundIcon && iconType && iconClass && iconUrl) {
-      icon = {
-        url: iconUrl,
-        class: iconClass,
-        type: iconType,
-      };
-    } else {
-      icon = undefined;
-    }
     let state: ButtonData = {
-      title: unsafeState?.title || ButtonState.defaultState.title,
-      label: unsafeState?.label || ButtonState.defaultState.label,
-      theme: theme || DefaultTheme,
-      size: size || DefaultSize,
+      title: ButtonState.defaultState.title,
+      label: ButtonState.defaultState.label,
+      size: DefaultSize,
       url: ButtonState.defaultState.url,
-      target: unsafeState?.target || ButtonState.defaultState.target,
-      icon: icon,
+      target: ButtonState.defaultState.target,
+      color: ButtonState.defaultState.color,
+      icon: undefined,
     };
-    state.url =
-      node?.querySelector("a.Button")?.getAttribute("href") ||
-      ButtonState.defaultState.url;
+    if (unsafeState) {
+      let color;
+      if ("theme" in unsafeState) {
+        let foundTheme = ValidThemes.includes(unsafeState.theme as ButtonTheme)
+          ? unsafeState.theme
+          : DefaultTheme;
+        switch (foundTheme) {
+          case ButtonTheme.Secondary:
+            color = colord(theme.secondary);
+            break;
+          case ButtonTheme.Warning:
+            color = colord("#fc5e13");
+            break;
+          case ButtonTheme.Danger:
+            color = colord("#e0061f");
+            break;
+          case ButtonTheme.Success:
+            color = colord("#0b874b");
+            break;
+          default:
+            color = colord(theme.primary);
+        }
+      } else {
+        color = unsafeState.color
+          ? colord(unsafeState.color)
+          : ButtonState.defaultState.color;
+      }
+      let size = ValidSizes.includes(unsafeState.size as ButtonSize)
+        ? unsafeState.size
+        : DefaultSize;
+      let icon = getIconState(unsafeState.icon);
+      state = {
+        title: unsafeState.title || ButtonState.defaultState.title,
+        label: unsafeState.label || ButtonState.defaultState.label,
+        color: color,
+        size: size || DefaultSize,
+        url: ButtonState.defaultState.url,
+        target: unsafeState.target || ButtonState.defaultState.target,
+        icon: icon,
+      };
+      state.url =
+        node?.querySelector("a.Button")?.getAttribute("href") ||
+        ButtonState.defaultState.url;
+    }
     this.state.set(state);
   }
   get stateString() {
     const state = get(this.state);
-    const { url: _, ...buttonData } = state;
-    return JSON.stringify(buttonData);
+    const { url: _, color, ...buttonData } = state;
+    return JSON.stringify({
+      ...buttonData,
+      color: color?.toHex(),
+    });
   }
 }
 

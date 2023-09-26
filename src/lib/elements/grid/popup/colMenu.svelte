@@ -76,11 +76,11 @@
 <style lang="postcss">
   .gridMenu {
     @apply px-2 py-0.5 h-6;
-    @apply bg-uni-blue-light text-white rounded-full shadow select-none;
+    @apply bg-secondary text-white rounded-full shadow select-none;
     @apply mx-auto w-fit;
     @apply transition-shadow duration-300;
     &.showConfig {
-      @apply ring-4 ring-uni-blue-light ring-opacity-50;
+      @apply ring-4 ring-secondary ring-opacity-50;
     }
     & .actions {
       @apply flex h-full items-stretch;

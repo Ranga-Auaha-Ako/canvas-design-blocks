@@ -1,152 +1,47 @@
 @import "../../util/components/iconSearch/iconElement.postcss";
-#tinymce .CDB--Button[data-cdb-version] {
-  .Button {
-    background: #f5f5f5;
-    color: #2d3b45;
-    border: 1px solid;
-    border-color: #c7cdd1;
-    border-radius: 3px;
-    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease;
-    display: inline-block;
-    position: relative;
-    padding: 8px 14px;
-    margin-bottom: 0;
-    font-size: 16px;
-    font-size: 1rem;
-    line-height: 20px;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
+
+.DesignBlocks--Btn {
+  @apply relative inline-flex overflow-clip transition;
+  @apply gap-[0.4em] items-center;
+  @apply px-3 py-3 rounded;
+  @apply text-base leading-none;
+  @apply bg-primary text-white;
+  @apply border-solid border border-black border-opacity-40;
+  text-decoration: none !important;
+  &:before {
+    @apply absolute inset-0 z-0;
+    @apply transition bg-black bg-opacity-0;
+    content: "";
+  }
+  &:hover:before {
+    @apply bg-opacity-25;
+  }
+  &:hover {
+    @apply shadow;
+    @apply text-white;
     text-decoration: none;
-    overflow: hidden;
-    text-shadow: none;
-    &:hover {
-      background: #e8e8e8;
-      border-color: #cfcfcf;
-    }
-    &:focus,
-    &:hover {
-      box-shadow: inset 0 0 0 2px #fff;
-    }
-    &[data-mce-selected="inline-boundary"] {
-      box-shadow: 0 0 0 4px #d7f2ff;
-    }
-    &:active,
-    &.active {
-      box-shadow: inset 0 0 0 2px var(--ic-link-color);
-    }
-    &[data-mce-selected="inline-boundary"] {
-      color: black !important;
-      background: white !important;
-    }
   }
-
-  .Button--large {
-    padding: 11px 19px;
-    font-size: 18px;
-    font-size: 1.125rem;
-    border-radius: 6px;
-    & [class^="icon-"],
-    & [class*=" icon-"] {
-      margin-top: 2px;
-    }
+  &:focus {
+    @apply text-white;
   }
-
-  .Button--small {
-    padding: 2px 8px;
-    font-size: 14px;
-    font-size: 0.875rem;
-    & [class^="icon-"],
-    & [class*=" icon-"] {
-      margin-top: 0;
-    }
+  * {
+    @apply relative z-0;
   }
-
-  .Button--mini {
-    padding: 1px 6px;
-    font-size: 10px;
-    font-size: 0.625rem;
-    border-radius: 1px;
+  &.Button--mini {
+    @apply px-2.5 py-1.5;
+    @apply text-sm;
   }
-
-  .Button--block {
-    display: block;
-    width: 100%;
-    padding-left: 0;
-    padding-right: 0;
-    box-sizing: border-box;
+  &.Button--small {
+    @apply px-4 py-2;
+    @apply text-sm;
   }
-
-  .Button--block + .Button--block {
-    margin-top: 6px;
+  &.Button--large {
+    @apply px-4 py-2 text-lg;
   }
-
-  .Button--primary {
-    background: var(--ic-brand-button--primary-bgd);
-    color: var(--ic-brand-button--primary-text);
-    border: 1px solid;
-    border-color: var(--ic-brand-button--primary-bgd-darkened-15);
-    &:hover {
-      background: var(--ic-brand-button--primary-bgd-darkened-5);
-      color: var(--ic-brand-button--primary-text);
-      border-color: var(--ic-brand-button--primary-bgd-darkened-15);
-    }
-  }
-  .Button--warning {
-    background: #fc5e13;
-    color: #fff;
-    border: 1px solid;
-    border-color: #c03f02;
-    &:hover {
-      background: #f25003;
-      color: #fff;
-      border-color: #c03f02;
-    }
-  }
-  .Button--danger {
-    background: #e0061f;
-    color: #fff;
-    border: 1px solid;
-    border-color: #950415;
-    &:hover {
-      background: #c7051c;
-      color: #fff;
-    }
-  }
-  .Button--success {
-    background: #0b874b;
-    color: #fff;
-    border: 1px solid;
-    border-color: #054024;
-    &:hover {
-      background: #096f3e;
-      color: #fff;
-    }
-  }
-  .Button--secondary {
-    background: var(--ic-brand-button--secondary-bgd);
-    color: var(--ic-brand-button--secondary-text);
-    border: 1px solid;
-    border-color: var(--ic-brand-button--secondary-bgd-darkened-15);
-    &:hover {
-      background: var(--ic-brand-button--secondary-bgd-darkened-5);
-      color: var(--ic-brand-button--secondary-text);
-      border-color: var(--ic-brand-button--secondary-bgd-darkened-15);
-    }
-  }
-  .Button--primary,
-  .Button--secondary,
-  .Button--warning,
-  .Button--danger,
-  .Button--success {
-    i[class*="icon-"]:after {
-      @apply invert;
-    }
+  & img.cdb--custom-icon {
+    height: 1.1em;
   }
 }
 .CDB--Button[data-cdb-version] {
   @apply inline-block;
-  .Button i[class*="icon-"]:after {
-    @apply text-sm leading-4;
-  }
 }

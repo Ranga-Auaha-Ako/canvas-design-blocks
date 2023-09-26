@@ -266,6 +266,10 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
+    if (this.detached) {
+      this.stopObserving();
+      return;
+    }
     // console.log(
     //   `\n${mutations
     //     .map((m) => `${(m.target as HTMLElement).className}:${m.type}`)
@@ -374,6 +378,7 @@ export default abstract class MceElement extends SelectableElement {
       case "clickTinyMCE":
         this.node.addEventListener("click", (e) => {
           e.preventDefault();
+          e.stopPropagation();
           this.select(this);
           this.editor.once("NodeChange", () => {
             this.deselect(this);

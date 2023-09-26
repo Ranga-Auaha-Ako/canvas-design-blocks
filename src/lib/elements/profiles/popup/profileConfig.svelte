@@ -3,81 +3,60 @@
   import { fade } from "svelte/transition";
   import { debounce } from "perfect-debounce";
   import OrderableList from "$lib/util/components/orderableList.svelte";
+  import { nanoid } from "nanoid";
 
   export let props: { profileGrid: ProfileGrid };
   $: profileGrid = props.profileGrid;
   $: people = profileGrid.SvelteState;
   let configEl: HTMLElement;
 
+  const allCanvasTeachers = fetch(
+    `/api/v1/courses/${window.ENV.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
+  ).then((res) => res.json());
+
   let searchQuery = "";
 
-  const search = debounce(
-    async (query: string | undefined = undefined) => {
-      const url = `https://profile-cors.c.raa.amazon.auckland.ac.nz/api/users`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          params: {
-            by: "text",
-            type: "user",
-            text: query,
-          },
-        }),
-      });
-      const results = (await response.json()) as {
-        resource: {
-          discoveryUrlId: string;
-          firstNameLastName: string;
-        }[];
-      };
+  $: results = allCanvasTeachers.then((teachers) => {
+    return teachers.filter((teacher: any) => {
+      return searchQuery
+        ? teacher.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+    });
+  });
 
-      return results?.resource;
-    },
-    300,
-    { trailing: false }
-  );
-
-  $: results = searchQuery.length > 2 ? search(searchQuery) : [];
-
-  const getPerson = async (id: string) => {
-    try {
-      const res = await fetch(
-        `https://profile-cors.c.raa.amazon.auckland.ac.nz/api/users/${id}`
-      );
-      const person = await res.json();
-      return person as ProfileData & { hasThumbnail: boolean };
-    } catch (error) {
-      return false;
-    }
+  type canvasUser = {
+    id: number;
+    name: string;
+    last_name: string;
+    first_name: string;
+    short_name: string;
+    avatar_url: string;
+    email: string;
+    bio: string;
   };
 
-  const addPerson = async (id: string) => {
-    const person = await getPerson(id);
+  const addPerson = (person: canvasUser) => {
     if (person) {
       profileGrid.SvelteState.update((people) => {
         const profile: ProfileData = {
-          title: person.title,
-          firstName: person.firstName,
-          lastName: person.lastName,
-          firstNameLastName: person.firstNameLastName,
-          discoveryUrlId: person.discoveryUrlId,
+          firstName: person.first_name,
+          lastName: person.last_name,
+          firstNameLastName: person.name,
+          id: nanoid(),
+          canvasId: person.id.toString(),
           overview: `<p>${
-            person.overview
-              ? person.overview
+            person.bio
+              ? person.bio
                   .split("\n")
 
                   .join("</p><p>")
               : "No bio available..."
           }</p>`,
           showOverview: true,
-          positions: person.positions,
-          emailAddress: person.emailAddress,
-          thumbnail: person.hasThumbnail
-            ? `https://profiles.auckland.ac.nz/${person.discoveryUrlId}/photo`
-            : false,
+          emailAddress: {
+            address: person.email,
+          },
+          thumbnail: person.avatar_url ? person.avatar_url : false,
         };
         if (people) {
           return [...people, profile];
@@ -99,11 +78,11 @@
   <div class="personList">
     <OrderableList
       labelKey="firstNameLastName"
-      idKey="discoveryUrlId"
+      idKey="id"
       bind:items={$people}
       on:toggleOverview={({ detail: id }) => {
         profileGrid.SvelteState.update((people) => {
-          const person = people.find((p) => p.discoveryUrlId === id);
+          const person = people.find((p) => p.id === id);
           if (person) {
             person.showOverview = !person.showOverview;
           }
@@ -134,8 +113,7 @@
           <button
             in:fade|global={{ duration: 200 }}
             class="resultItem"
-            on:click={() => addPerson(result.discoveryUrlId)}
-            >{result.firstNameLastName}</button
+            on:click={() => addPerson(result)}>{result.name}</button
           >
         {/each}
       {/await}

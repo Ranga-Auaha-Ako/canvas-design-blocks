@@ -103,6 +103,12 @@ export default class Row extends MceElement {
     this.node.addEventListener("click", () => {
       this.checkChildren;
     });
+    this.node.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "F9") {
+        this.popover.show(true);
+        e.preventDefault();
+      }
+    });
     // Set up popover
     this.popover = this.setupPopover(RowMenu, { row: this }, "top");
     this.isSelected.subscribe((selected) => {

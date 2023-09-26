@@ -1,10 +1,8 @@
 import { stateObject } from "src/main";
 import ElementManager from "../generic/elementManager";
-import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { CourseHeader } from "./courseHeader";
 import "./courseHeader.postcss";
 import editorStyles from "./courseHeader.postcss?inline";
-//@ts-ignore
 
 export class CourseHeaderManager extends ElementManager {
   selector = ".CourseHeader[data-cdb-version]";

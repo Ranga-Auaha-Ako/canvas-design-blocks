@@ -52,7 +52,7 @@ export class McePopover extends SelectableElement {
     });
   }
 
-  public show() {
+  public show(focus = false) {
     // console.log(
     //   "Showing popover",
     //   this.MceElement.id,
@@ -60,7 +60,7 @@ export class McePopover extends SelectableElement {
     //   this.props,
     //   this.placement
     // );
-    if (this.isActive) return;
+    if (this.isActive && !focus) return;
     this._isActive = true;
 
     this.hostComponent.$set({
@@ -81,6 +81,7 @@ export class McePopover extends SelectableElement {
     if (get(this.isDominant)) {
       activePopover.set(this);
     }
+    if (focus) this.hostComponent.focus();
   }
   hide() {
     // console.log("Hiding popover", this.MceElement.id);

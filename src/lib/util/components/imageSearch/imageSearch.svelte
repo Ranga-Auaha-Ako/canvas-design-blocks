@@ -41,7 +41,10 @@
     if (import.meta.env.DEV && window.location.hostname === "localhost") {
       return `https://canvas.auckland.ac.nz/courses/77467/files/${file.id}/preview`;
     }
-    return `/courses/${COURSE_ID}/files/${file.id}/preview`;
+    return new URL(
+      `/courses/${COURSE_ID}/files/${file.id}/preview`,
+      document.URL
+    ).toString();
   };
 
   let searchInput: HTMLInputElement;
@@ -82,8 +85,9 @@
             <button
               class="imageChoice"
               on:click={() => dispatch("selectImage", getFileURL(file))}
-              style:--image-url={`url(${file.thumbnail_url})`}
-            />
+            >
+              <img src={file.thumbnail_url} alt={file.display_name} />
+            </button>
             <div class="caption">
               <div class="filename">
                 {truncate(file.display_name, 20)}
@@ -133,16 +137,39 @@
     @apply relative;
     button.imageChoice {
       @apply w-full aspect-square;
-      @apply bg-cover bg-center rounded shadow border-0;
+      @apply bg-center rounded shadow border-0;
       @apply transition-all duration-300;
       @apply cursor-pointer;
-      background-image: var(--image-url);
+      background-position: 0px 0px, 10px 10px;
+      background-size: 20px 20px;
+      background-image: linear-gradient(
+          45deg,
+          #ddd 25%,
+          transparent 25%,
+          transparent 75%,
+          #ddd 75%,
+          #ddd 100%
+        ),
+        linear-gradient(
+          45deg,
+          #ddd 25%,
+          white 25%,
+          white 75%,
+          #ddd 75%,
+          #ddd 100%
+        );
       &:hover {
         @apply scale-105;
+        &:before {
+          @apply hidden;
+        }
       }
       &:focus,
       &:active {
         @apply ring-2 ring-blue-500 scale-95 opacity-80;
+      }
+      img {
+        @apply w-full h-full object-cover rounded absolute inset-0;
       }
     }
     .caption {

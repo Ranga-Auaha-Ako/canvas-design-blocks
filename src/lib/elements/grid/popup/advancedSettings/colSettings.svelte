@@ -45,8 +45,8 @@
       reflecting,
       [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList]
     ) => {
-      // Height
-      if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
+      // // Height
+      // if (!oldInnerStyle.height) oldInnerStyle.height = "100%";
       // Card
       switch (reflecting.card) {
         case ColType.Normal:
@@ -156,19 +156,19 @@
   h5 {
     @apply w-full font-bold;
     &:after {
-      @apply block w-16 bg-uni-blue;
+      @apply block w-16 bg-primary;
       height: 3px;
       content: " ";
     }
   }
   .card {
-    @apply p-4 mt-2 shadow-md rounded-lg border-uni-blue-light border-2 bg-white w-screen;
+    @apply p-4 mt-2 shadow-md rounded-lg border-secondary border-2 bg-white w-screen;
     @apply flex flex-col gap-2;
     @apply absolute;
     max-width: var(--editor-width);
     left: var(--offset-left);
     & .label-text {
-      @apply font-bold text-uni-gray-500;
+      @apply font-bold text-gray-500;
     }
   }
   label {
@@ -181,14 +181,14 @@
     }
   }
   .btn {
-    @apply flex items-center gap-2 px-2 py-1 bg-uni-blue text-white rounded border-none cursor-pointer;
+    @apply flex items-center gap-2 px-2 py-1 bg-primary text-white rounded border-none cursor-pointer;
   }
   .btn-group {
     @apply flex;
     & .btn {
       @apply bg-gray-200 text-black rounded-none;
       &.active {
-        @apply bg-uni-blue text-white font-bold;
+        @apply bg-primary text-white font-bold;
       }
       &:first-child {
         @apply rounded-l;

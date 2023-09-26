@@ -11,6 +11,10 @@ import { ButtonManager } from "$lib/elements/svelteButton/buttonManager";
 import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
 import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
+import { version } from "$lib/util/constants";
+import { compareVersions } from "compare-versions";
+import type ElementManager from "$lib/elements/generic/elementManager";
+import { ImageCardLegacy } from "$lib/elements/imageCard/imageCardLegacy";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -74,6 +78,8 @@ const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
   });
 };
 
+let loaded_blocks: ElementManager[] = [];
+
 export const loadApp = async () => {
   // If tool is already loaded, exit
   // Get TinyMCE Editor
@@ -82,19 +88,22 @@ export const loadApp = async () => {
     return null;
   });
   if (!editor) return;
-  console.log("Editor loaded", editor);
 
   // Create Element Managers
-  const grids = new GridManager(state, editor);
-  const buttons = new ButtonManager(state, editor);
-  const imagecards = new ImageCardManager(state, editor);
-  const profiles = new ProfilesManager(state, editor);
-  const courseHeader = new CourseHeaderManager(state, editor);
+  loaded_blocks = [
+    new GridManager(state, editor),
+    new ButtonManager(state, editor),
+    new ImageCardManager(state, editor),
+    new ProfilesManager(state, editor),
+    new CourseHeaderManager(state, editor),
+  ];
+  // Migrate old blocks
+  new ImageCardLegacy(state, editor, loaded_blocks[2] as ImageCardManager);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({
     state,
-    managers: [grids, buttons, imagecards, profiles, courseHeader],
+    managers: loaded_blocks,
   });
 
   // Inject tailwind base styles into editor
@@ -119,27 +128,53 @@ export const loadApp = async () => {
       loadApp();
     }, 100);
   });
+  // Register unload function
+  window._UNLOAD_DESIGNBLOCKS = () => {
+    if (hasLoaded) {
+      console.log(`Unloading app: ${__APP_VERSION__}`);
+      toolbar?.$destroy();
+      loaded_blocks.forEach((block) => block.detatch());
+      hasLoaded = false;
+      return true;
+    }
+    return false;
+  };
 };
 
-if (!window._LOADED_DESIGNBLOCKS) {
-  window._LOADED_DESIGNBLOCKS = true;
+const beginLaunch = () => {
+  if (
+    !window._LOADED_DESIGNBLOCKS ||
+    (compareVersions(window._LOADED_DESIGNBLOCKS, version) < 0 &&
+      window._UNLOAD_DESIGNBLOCKS !== undefined)
+  ) {
+    if (window._LOADED_DESIGNBLOCKS && window._UNLOAD_DESIGNBLOCKS) {
+      const has_unloaded = window._UNLOAD_DESIGNBLOCKS();
+      if (!has_unloaded) {
+        console.log("DesignBlocks failed to unload");
+        return;
+      }
+    }
+    window._LOADED_DESIGNBLOCKS = version;
 
-  console.log("Loading app");
+    console.log("Loading app");
 
-  switch (document.readyState) {
-    case "loading":
-      console.log("Page loading, waiting for load");
-      window.addEventListener("DOMContentLoaded", loadApp);
-      break;
-    case "interactive":
-    case "complete":
-      console.log("Page already loaded, loading app");
-      loadApp();
-      break;
+    switch (document.readyState) {
+      case "loading":
+        window.addEventListener("DOMContentLoaded", loadApp);
+        break;
+      case "interactive":
+      case "complete":
+        loadApp();
+        break;
+    }
+
+    // Load the app only on certain pages
+    // const loc = window.location.pathname;
+    // if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
+    // }
+  } else {
+    console.log("App already loaded");
   }
+};
 
-  // Load the app only on certain pages
-  // const loc = window.location.pathname;
-  // if (/pages\/?$|pages\/.+\/edit$/.test(loc)) {
-  // }
-}
+beginLaunch();

@@ -16,6 +16,7 @@
   import type { SvelteComponent } from "svelte";
   import { writable, type Readable, type Writable } from "svelte/store";
   import type { McePopover } from "./popover";
+  import { fade } from "svelte/transition";
 
   export let component: typeof SvelteComponent<any> | undefined = undefined;
   export let host: McePopover | undefined = undefined;
@@ -35,6 +36,15 @@
         autoPlacement?: true | Parameters<typeof autoPlacement>[0];
       }
     | undefined = undefined;
+  let isModal = false;
+  export const focus = () => {
+    if (popoverEl) {
+      if (popoverEl.open) popoverEl.close();
+      popoverEl.showModal();
+      isModal = true;
+    }
+  };
+  $: if (!show) popoverEl?.close();
 
   $: middlewareMap = Object.entries(
     middleware || { shift: { crossAxis: true } }
@@ -75,7 +85,7 @@
     );
 
   let cleanup: () => void;
-  export let popoverEl: HTMLElement | undefined = undefined;
+  export let popoverEl: HTMLDialogElement | undefined = undefined;
   export let arrowEl: HTMLElement | undefined = undefined;
 
   let x = 0;
@@ -150,11 +160,14 @@
 
 <div class="cgb-component">
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-  <div
+  <dialog
     class="cgb-popover-wrapper"
     style:transform
     bind:this={popoverEl}
-    class:active={component && show && target && popoverEl && isVisible}
+    open={component && show && target && popoverEl && isVisible}
+    on:close={() => {
+      host?.hide();
+    }}
     tabindex="0"
   >
     {#if component && show}
@@ -163,6 +176,7 @@
         {props}
         {isDominant}
         {dominantPopover}
+        {isModal}
       />
     {/if}
     {#if showArrow}
@@ -173,15 +187,15 @@
         style:left={arrowLeft}
       />
     {/if}
-  </div>
+  </dialog>
 </div>
 
 <style lang="postcss">
   .cgb-popover-wrapper {
-    @apply absolute top-0 left-0;
+    @apply absolute top-0 left-0 m-0 p-0 bg-transparent;
     @apply z-10 pointer-events-none;
-    @apply invisible opacity-0 transition-opacity;
-    &.active {
+    @apply invisible opacity-0 transition-opacity overflow-visible;
+    &[open] {
       @apply visible opacity-100;
     }
     & > :global(*) {
@@ -190,6 +204,6 @@
   }
   .popover--Arrow {
     @apply block absolute rounded w-4 h-4 rotate-45;
-    @apply bg-uni-blue shadow -z-10;
+    @apply bg-primary shadow -z-10;
   }
 </style>

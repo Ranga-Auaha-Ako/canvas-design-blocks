@@ -20,7 +20,10 @@ export type SvelteStateClass<State> = new (
  * @extends MceElement
  * @template StateData The type of the data that the Svelte component will receive.
  */
-export abstract class SvelteElement<stateDataType> extends MceElement {
+export abstract class SvelteElement<
+  stateDataType,
+  localState = Record<string, string> | undefined
+> extends MceElement {
   selectionMethod: MceElement["selectionMethod"] = "TinyMCE";
   public staticAttributes = {
     "data-cdb-version": SvelteElement.markupVersion,
@@ -29,18 +32,31 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
   public static markupVersion = "1.0.0";
   public SvelteState: SvelteState<stateDataType>;
   private dataEl: HTMLElement | undefined;
+  private lastContents:
+    | SvelteComponent<{
+        cdbData: stateDataType;
+        localState: Writable<localState>;
+      }>
+    | undefined;
+  public customEvents?: Map<string, (detail: any) => any>;
 
   constructor(
     public editor: Editor = window.tinymce.activeEditor,
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<
-      SvelteComponent<{ cdbData: stateDataType }>
+      SvelteComponent<{
+        cdbData: stateDataType;
+        localState: Writable<localState>;
+      }>
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
     highlight = false,
-    defaultState?: Partial<stateDataType>
+    defaultState?: Partial<stateDataType>,
+    public localState: Writable<localState> = writable<localState>(
+      {} as localState
+    )
   ) {
     super(node, editor, undefined, undefined, id, true);
 
@@ -50,7 +66,7 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
       }
     });
 
-    let lastContents: SvelteComponent<{ cdbData: stateDataType }> | undefined;
+    this.lastContents = undefined;
     const createDataEl = () => {
       if (!this.dataEl || this.dataEl.parentElement !== this.node) {
         this.dataEl = document.createElement("div");
@@ -60,6 +76,14 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
       this.dataEl.innerText = this.SvelteState.stateString;
       return this.dataEl;
     };
+
+    this.node.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        this.popover?.show(true);
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    });
 
     let dataEl = this.node.querySelector(".cdbData");
     const stateString = dataEl?.textContent;
@@ -79,21 +103,31 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
     this.SvelteState = new stateClass(parsedStateData, node);
     this.SvelteState.subscribe((elState) => {
       if (elState) {
+        if (this.detached) return;
         this.stopObserving();
         this.node.innerHTML = "";
         this.dataEl = undefined;
         this.node.appendChild(createDataEl());
-        lastContents?.$destroy();
-        lastContents = new svelteComponent({
+        this.lastContents?.$destroy();
+        this.lastContents = new svelteComponent({
           target: this.node,
           props: {
             cdbData: elState,
+            localState: localState,
           },
         });
-        lastContents.$on("update", ({ detail }) => {
+        this.lastContents.$on("update", ({ detail }) => {
           if (detail) {
             createDataEl();
           }
+        });
+        this.lastContents.$on("focus", () => {
+          this.select();
+        });
+        [...(this.customEvents?.entries() || [])].forEach((event) => {
+          this.lastContents?.$on(event[0], (detail) => {
+            event[1](detail);
+          });
         });
         this.startObserving();
       }
@@ -119,5 +153,9 @@ export abstract class SvelteElement<stateDataType> extends MceElement {
   public delete() {
     this.popover?.hide();
     super.delete();
+  }
+  public detach() {
+    super.detach();
+    this.lastContents?.$destroy();
   }
 }

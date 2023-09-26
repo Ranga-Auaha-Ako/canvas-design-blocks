@@ -71,6 +71,27 @@ export class SelectableElement {
     }
   }
 
+  /**
+   * Whether the element should be observed for changes
+   * - True: Observe the element
+   * - False: Do not observe the element - used when the element is deleted
+   */
+  detached: boolean = false;
+
+  /**
+   * Detach this element from the dom, leaving the element on the page but not observing it
+   * - Used when Design Blocks is shut down
+   */
+  detach() {
+    this.detached = true;
+    this.stopObserving();
+    this.deselectAll();
+    this.children.update((children) => {
+      children.forEach((child) => child.detach());
+      return [];
+    });
+  }
+
   constructor(node?: HTMLElement, children: SelectableElement[] = []) {
     this.node = node;
 

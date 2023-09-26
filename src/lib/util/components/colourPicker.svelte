@@ -31,14 +31,20 @@
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
+  import theme from "../theme";
+  import { stringify } from "querystring";
+  import { nanoid } from "nanoid";
 
-  export let id: string;
+  export let id: string = nanoid();
   export let colour: Colord | undefined = undefined;
   export let contrastColour: Colord | undefined = undefined;
   export let showAccessible: boolean = true;
   export let isText: boolean = false;
   export let label: string;
   export let popupDirection: Placement = "bottom-start";
+  export let zIndex = 10;
+  export let showNone = true;
+  export let asModal = false;
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     const c = colord(colour);
@@ -52,69 +58,34 @@
     }
     return c;
   };
-  $: options = [
-    {
-      code: smartColour("#00467F", contrastColour),
-      name: "Dark blue",
-    },
-    {
-      code: smartColour("#000000", contrastColour),
-      name: "Black",
-    },
-    {
-      code: smartColour("#4A4A4C", contrastColour),
-      name: "Body Grey",
-    },
-    {
-      code: smartColour("#8D9091", contrastColour),
-      name: "Silver",
-    },
-    {
-      code: smartColour("#A71930", contrastColour),
-      name: "Arts",
-    },
-    {
-      code: smartColour("#7D0063", contrastColour),
-      name: "Business School",
-    },
-    {
-      code: smartColour("#D2492A", contrastColour),
-      name: "Creative Arts and Industries",
-    },
-    {
-      code: smartColour("#55A51C", contrastColour),
-      name: "Education and Social Work",
-    },
-    {
-      code: smartColour("#4F2D7F", contrastColour),
-      name: "Engineering",
-    },
-    {
-      code: smartColour("#005B82", contrastColour),
-      name: "Auckland Law School",
-    },
-    {
-      code: smartColour("#00877C", contrastColour),
-      name: "Medical Health Sciences",
-    },
-    {
-      code: smartColour("#0039A6", contrastColour),
-      name: "Science",
-    },
-    {
-      code: smartColour("#BA4482", contrastColour),
-      name: "Auckland Bioengineering Institute",
-    },
-    {
-      code: smartColour("#006990", contrastColour),
-      name: "Liggins Institute",
-    },
-    {
-      code: smartColour("#ffffff", contrastColour),
-      name: "White",
-    },
-    { code: undefined, name: "None" },
-  ];
+
+  $: options = (() => {
+    let colours: { code?: Colord; name: string }[] = [
+      {
+        code: smartColour(theme.primary, contrastColour),
+        name: "Primary",
+      },
+      {
+        code: smartColour(theme.secondary, contrastColour),
+        name: "Secondary",
+      },
+    ];
+    const addCol = (r: Record<string, string>, smart = true) =>
+      colours.push(
+        ...Object.entries(r).map(([name, c]) => ({
+          code: smart ? smartColour(c, contrastColour) : colord(c),
+          name,
+        }))
+      );
+    if (theme.palette) {
+      if (contrastColour?.isDark()) addCol(theme.palette.light, false);
+      else addCol(theme.palette.dark);
+    }
+    if (showNone) {
+      colours.push({ code: undefined, name: "None" });
+    }
+    return colours;
+  })();
 
   const select = (c: Colord | undefined) => {
     colour = getColour(c);
@@ -128,7 +99,14 @@
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
   let container: HTMLDivElement;
   let popoverTarget: HTMLButtonElement;
-  let popoverEl: HTMLDivElement;
+  let popoverEl: HTMLDialogElement;
+
+  $: if (edit && popoverEl) {
+    if (asModal) popoverEl.showModal();
+    else popoverEl.show();
+  } else if (popoverEl) {
+    popoverEl.close();
+  }
 
   $: updateFunction = async () => {
     const position = await computePosition(popoverTarget, popoverEl, {
@@ -146,9 +124,7 @@
 
   let cleanup: () => void;
   $: if (edit && popoverTarget && popoverEl) {
-    cleanup = autoUpdate(popoverTarget, popoverEl, updateFunction, {
-      animationFrame: true,
-    });
+    cleanup = autoUpdate(popoverTarget, popoverEl, updateFunction, {});
   } else {
     if (cleanup) cleanup();
   }
@@ -163,15 +139,24 @@
   let customColour = false;
 
   let customColourVal: string | undefined;
-  $: if (!customColour) {
-    customColourVal = colour?.toHex();
-  } else if (customColourVal) {
-    colour = colord(customColourVal);
-  }
+
+  const updateCustomColour = (col?: Colord) => {
+    if (col?.toHex() === customColourVal) return;
+    if (col) customColourVal = col.toHex();
+  };
+  const updateColourFromCustom = (col?: string) => {
+    if (!col || col.length !== 7) return;
+    const newCol = colord(col);
+    if (newCol.isValid() && col !== colour?.toHex()) colour = colord(col);
+  };
+
+  $: updateCustomColour(colour);
+  $: updateColourFromCustom(customColourVal);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="cgb-component">
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div
     class="container"
     bind:this={container}
@@ -190,18 +175,17 @@
       class:white={colour && colour.isLight()}
     />
     <Portal>
-      <div
-        class="cgb-component"
-        use:clickOutside={() => (edit = false)}
-        use:preventBubble={false}
-      >
-        <div
+      <div class="cgb-component" use:preventBubble={false}>
+        <dialog
           {id}
           class="colourPicker"
+          style:z-index={zIndex}
           aria-hidden={!edit}
-          class:edit
           bind:this={popoverEl}
           style:transform
+          use:clickOutside={() => {
+            edit = false;
+          }}
         >
           {#if edit}
             {#each options as option}
@@ -229,6 +213,7 @@
             {/each}
             <div class="colour-custom" class:selected={customColour}>
               <div class="editor">
+                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
                 <label
                   class="colour colour-option"
                   title="Custom colour"
@@ -244,6 +229,7 @@
                     class="invisible absolute"
                     type="color"
                     bind:value={customColourVal}
+                    on:input={() => (customColour = true)}
                     aria-hidden="true"
                   />
                 </label>
@@ -251,17 +237,14 @@
                   id={id + "-custom"}
                   type="text"
                   bind:value={customColourVal}
-                  on:input={(e) => {
-                    customColour = true;
-                    return true;
-                  }}
+                  on:input={() => (customColour = true)}
                 />
               </div>
             </div>
           {/if}
-        </div>
-      </div>
-    </Portal>
+        </dialog>
+      </div></Portal
+    >
   </div>
 </div>
 
@@ -287,13 +270,14 @@
     display: inline-block;
   }
   .colourPicker {
-    @apply absolute top-0 left-0 p-4 z-10 box-content;
+    @apply absolute top-0 left-0 p-4 m-0 box-content;
     @apply shadow-lg bg-white rounded;
     @apply grid gap-1;
+    @apply overflow-clip;
     grid-template-columns: repeat(4, var(--size));
     grid-template-rows: repeat(auto-fill, var(--size)), auto;
     @apply pointer-events-none opacity-0 transition-opacity;
-    &.edit {
+    &[open] {
       @apply visible opacity-100 pointer-events-auto;
     }
     & .colour-option {

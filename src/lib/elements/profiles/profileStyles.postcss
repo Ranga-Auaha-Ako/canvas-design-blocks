@@ -1,17 +1,22 @@
 #tinymce .Profiles {
   @apply cursor-pointer;
   &[data-mce-selected] {
-    @apply rounded-2xl;
+    @apply rounded-2xl cursor-auto;
+  }
+  .profileItem {
+    .profile-photo {
+      @apply cursor-pointer transition-transform hover:scale-110 hover:opacity-90;
+    }
   }
 }
 .Profiles[data-cdb-version] {
   .profileItem {
     @apply flex flex-wrap mx-auto gap-4 mb-4;
     .card {
-      @apply rounded-2xl shadow-xl bg-uni-blue text-white p-4 text-center w-60 grow;
+      @apply rounded-2xl shadow-xl bg-primary text-white p-4 text-center w-60 grow;
       @apply flex flex-row flex-wrap content-start;
       img.profile-photo {
-        @apply rounded-full mx-auto shadow-md;
+        @apply rounded-full mx-auto shadow-md aspect-square w-32 max-w-full object-cover;
       }
       .details {
         @apply grow basis-0;

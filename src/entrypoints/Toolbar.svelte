@@ -63,13 +63,13 @@
       {/each}
       <div class="info-panel">
         <a
-          href="mailto:{import.meta.env
-            .CANVAS_BLOCKS_THEME_CONTACT_EMAIL}?subject=Canvas%20Design%20Blocks"
+          href={import.meta.env.CANVAS_BLOCKS_THEME_CONTACT_LINK}
+          target="_blank"
         >
-          <span class="text-uni-blue">Feedback</span>
+          <span class="text-primary">Feedback</span>
         </a>
         <span class="version">
-          v{version}<i>b</i>
+          v{version}
         </span>
       </div>
     </div>
@@ -83,9 +83,9 @@
   .cgb-openButton {
     @apply w-full h-8 py-1 px-2;
     @apply flex flex-row items-center;
-    @apply transition text-sm border border-uni-gray-200 rounded;
+    @apply transition text-sm border border-gray-200 rounded;
     &.cgb-active {
-      @apply bg-uni-blue text-white border-2 border-uni-blue;
+      @apply bg-primary text-white border-2 border-primary;
       /* Match Canvas border radius setting */
       border-radius: 3px;
     }
@@ -98,14 +98,11 @@
   }
 
   .toolbar-menu {
-    @apply border-uni-gray-200 border rounded mt-2 overflow-clip;
+    @apply border-gray-200 border rounded mt-2 overflow-clip;
     & .info-panel {
       @apply text-xs p-2 flex;
       & .version {
         @apply text-right flex-grow;
-      }
-      & i {
-        @apply text-xs;
       }
     }
   }

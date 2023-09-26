@@ -7,6 +7,7 @@ declare global {
   interface Window {
     tinymce: TinyMCE;
     ENV: ENV;
-    _LOADED_DESIGNBLOCKS?: boolean;
+    _LOADED_DESIGNBLOCKS?: string;
+    _UNLOAD_DESIGNBLOCKS?: () => boolean;
   }
 }
