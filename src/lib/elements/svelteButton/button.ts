@@ -9,11 +9,11 @@ import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import ButtonConfig from "./popup/buttonConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import {
+  IconState,
   IconType,
   getIconState,
   icons,
 } from "$lib/util/components/iconSearch/iconPicker";
-import { IconState } from "$lib/util/components/iconSearch/iconElement.svelte";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 

@@ -104,9 +104,6 @@
       & .version {
         @apply text-right flex-grow;
       }
-      & i {
-        @apply text-xs;
-      }
     }
   }
 

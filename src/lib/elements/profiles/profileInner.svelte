@@ -5,6 +5,7 @@
   const dispatch = createEventDispatcher();
 
   export let cdbData: ProfileData[];
+  // svelte-ignore unused-export-let
   export let localState: any;
 </script>
 
