@@ -142,6 +142,7 @@ let hasLoadedCustomIcons: false | Promise<iconData> = false;
 export async function loadCustomIcons() {
   if (hasLoadedCustomIcons !== false) return await hasLoadedCustomIcons;
   const getFunc = (async () => {
+    if (!import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS) return icons;
     const data = (await fetch(
       `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/meta.json`
     ).then((r) => r.json())) as customIconsMeta;
