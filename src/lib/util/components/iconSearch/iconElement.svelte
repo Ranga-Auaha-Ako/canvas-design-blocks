@@ -10,9 +10,17 @@
     loadCustomIcons,
   } from "./iconPicker";
   import { customIcon, iconData, instIcon } from "./canvas-icons/icons";
+  import { colord, type Colord } from "colord";
   const dispatch = createEventDispatcher();
 
   export let icon: IconState;
+  export let colorOverride: string;
+
+  $: color = (
+    colorOverride || icon.color
+      ? colord(colorOverride || icon.color!)
+      : undefined
+  ) as Colord | undefined;
 
   $: typeClass = icon.type === IconType.Solid ? "icon-Solid" : "icon-Line";
   $: data = getIconData(icon);
@@ -21,9 +29,9 @@
     icon: CustomIconState,
     data: instIcon | customIcon
   ) => {
-    const partColor = icon.color?.split("#")[1];
+    const partColor = color?.toHex()?.split("#")[1];
     if (!partColor) {
-      return `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/${
+      return `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/icons/${
         data.url
       }`;
     } else {

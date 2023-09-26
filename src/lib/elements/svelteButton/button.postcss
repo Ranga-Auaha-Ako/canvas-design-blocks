@@ -1,7 +1,8 @@
 @import "../../util/components/iconSearch/iconElement.postcss";
 
 .DesignBlocks--Btn {
-  @apply relative inline-block overflow-clip transition;
+  @apply relative inline-flex overflow-clip transition;
+  @apply gap-[0.4em] items-center;
   @apply px-3 py-3 rounded;
   @apply text-base leading-none;
   @apply bg-primary text-white;
@@ -36,6 +37,9 @@
   }
   &.Button--large {
     @apply px-4 py-2 text-lg;
+  }
+  & img.cdb--custom-icon {
+    height: 1.1em;
   }
 }
 .CDB--Button[data-cdb-version] {

@@ -16,7 +16,7 @@
   href={cdbData.url}
 >
   {#if cdbData.icon}
-    <IconElement icon={cdbData.icon} />
+    <IconElement icon={cdbData.icon} colorOverride={"#fff"} />
   {/if}
   <span class="text">{cdbData.label}</span>
 </a>
