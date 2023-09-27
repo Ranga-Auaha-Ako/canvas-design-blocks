@@ -47,37 +47,38 @@ export class Grid extends MceElement implements Readable<Row[]> {
       grid.node.dataset.cdbVersion === "1.0.0" ||
       grid.node.dataset.cgbVersion === "1.0.0"
     ) {
-      const removeUoaStyles = (
-        node: HTMLElement,
-        targetNode: HTMLElement = node
-      ) => {
+      const removeUoaStyles = (from: HTMLElement, to: HTMLElement) => {
+        const fromClasses = Array.from(from.classList);
         if (
-          node.classList.contains("uoa_shadowbox") &&
-          Array.from(node.classList).find((c) =>
-            c.startsWith("uoa_corners_")
-          ) !== undefined
+          from.classList.contains("uoa_shadowbox") &&
+          fromClasses.some((c) => c.startsWith("uoa_corners_"))
         ) {
-          node.classList.remove("uoa_shadowbox");
-          const cornerSizeStr = Array.from(node.classList).find((c) =>
+          from.classList.remove("uoa_shadowbox");
+          const cornerSizeStr = fromClasses.find((c) =>
             c.startsWith("uoa_corners_")
           );
           const cornerSize = cornerSizeStr?.replace("uoa_corners_", "")
             ? parseInt(cornerSizeStr.replace("uoa_corners_", ""))
             : 4;
-          if (cornerSize > 4) targetNode.classList.add("cdb-card--round-lg");
-          else if (cornerSize < 4)
-            targetNode.classList.add("cdb-card--round-sm");
-          if (cornerSizeStr) node.classList.remove(cornerSizeStr);
-          targetNode.classList.add("cdb-card");
+          if (cornerSize > 4) to.classList.add("cdb-card--round-lg");
+          else if (cornerSize < 4) to.classList.add("cdb-card--round-sm");
+          if (cornerSizeStr) from.classList.remove(cornerSizeStr);
+          to.classList.add("cdb-card");
         }
       };
+      grid.stopObserving();
       get(grid).forEach((row) => {
+        row.stopObserving();
         get(row.columns).forEach((col) => {
-          removeUoaStyles(col.node);
+          col.stopObserving();
+          removeUoaStyles(col.node, col.node);
           removeUoaStyles(col.innerNode, col.node);
+          col.startObserving();
         });
-        removeUoaStyles(row.node);
+        removeUoaStyles(row.node, row.node);
+        row.startObserving();
       });
+      grid.startObserving();
     }
     // Migrate row to new version
     grid.node.dataset.cdbVersion = Grid.gridMarkupVersion;
