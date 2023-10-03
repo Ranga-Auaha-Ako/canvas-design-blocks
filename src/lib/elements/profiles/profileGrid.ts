@@ -19,6 +19,8 @@ import type { McePopover } from "../generic/popover/popover";
 import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
 import { ModalDialog } from "$lib/util/components/modalDialog/modal";
 import { sanitizeUrl } from "@braintree/sanitize-url";
+import { type Colord, colord } from "colord";
+import theme from "$lib/util/theme";
 
 export interface ProfileData {
   id: string;
@@ -33,7 +35,15 @@ export interface ProfileData {
     address: string;
   };
   showOverview: boolean;
+  color?: Colord;
 }
+
+const getColorOrDefault = (color?: Colord | string) => {
+  if (color === undefined) return colord(theme.primary);
+  let c = colord(color);
+  if (c.isValid()) return c;
+  return colord(theme.primary);
+};
 
 class ProfileState implements SvelteState<ProfileData[]> {
   state: Writable<ProfileData[]> = writable();
@@ -67,6 +77,7 @@ class ProfileState implements SvelteState<ProfileData[]> {
         },
         overview: "",
         showOverview: p?.showOverview === undefined ? true : p?.showOverview,
+        color: getColorOrDefault(p?.color),
       })) || [];
     const personNodes = node?.querySelectorAll(".profileItem");
     personNodes?.forEach((pNode, index) => {

@@ -259,11 +259,6 @@
       max-height: 20ch;
       @apply overflow-y-auto overflow-x-clip p-1;
       margin: 0 -0.25rem;
-      & :global(.ImageCard--active) {
-        @apply bg-primary text-white rounded;
-        padding: 0.25rem;
-        margin: -0.25rem 0;
-      }
     }
     .cardName {
       @apply w-full border border-gray-300 rounded p-2;

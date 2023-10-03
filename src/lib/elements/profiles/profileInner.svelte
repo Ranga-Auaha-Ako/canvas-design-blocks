@@ -1,4 +1,5 @@
 <script lang="ts">
+  import theme from "$lib/util/theme";
   import { ProfileData } from "./profileGrid";
   import { createEventDispatcher } from "svelte";
 
@@ -11,7 +12,10 @@
 
 {#each cdbData as profile}
   <div class="profileItem">
-    <div class="card">
+    <div
+      class="card"
+      style:background-color={profile.color?.toHex() || theme.primary}
+    >
       {#if profile.thumbnail}
         <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
         <img

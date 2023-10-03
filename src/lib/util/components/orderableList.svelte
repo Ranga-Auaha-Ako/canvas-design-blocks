@@ -60,6 +60,7 @@
         class="item {activeId !== undefined && item[idKey] === activeId
           ? activeClass
           : ''}"
+        class:active={activeId !== undefined && item[idKey] === activeId}
       >
         <div class="dragHandle">
           <i class="icon-solid icon-drag-handle" />
@@ -138,6 +139,10 @@
       }
       .actions {
         @apply flex gap-x-2;
+      }
+      &.active {
+        @apply bg-primary text-white rounded p-1 px-2;
+        margin: -0.25rem 0;
       }
     }
   }
