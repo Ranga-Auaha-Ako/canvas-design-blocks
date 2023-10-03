@@ -12,6 +12,7 @@
 
 <a
   class="DesignBlocks--Btn {cdbData.size}"
+  class:Button--full={cdbData.fullWidth}
   style:background-color={cdbData.color?.toHex()}
   href={cdbData.url}
 >

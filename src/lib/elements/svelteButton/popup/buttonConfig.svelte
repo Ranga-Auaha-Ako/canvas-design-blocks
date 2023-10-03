@@ -19,6 +19,8 @@
   // export let dominantPopover: Readable<boolean> | undefined = undefined;
   $: button = props.button;
   $: buttonData = button.SvelteState;
+
+  $: inGrid = props.button.node.closest(".cgb-col:not(.col-lg-12)") !== null;
   let configEl: HTMLElement;
 
   let iconPicker: IconPicker;
@@ -45,7 +47,7 @@
   >
     <i class="icon-end" />
   </button>
-  <div class="flex flex-row gap-4">
+  <div class="grid grid-flow-col grid-cols-2 gap-4">
     <div class="col">
       <ButtonRadio
         title="Button Size"
@@ -80,6 +82,17 @@
           iconPicker.pick();
         }}>Select Icon</button
       >
+      <!-- Select box for full-width -->
+      {#if inGrid}
+        <label for="fullWidth" class="checkbox-fullwidth">
+          <input
+            type="checkbox"
+            id="fullWidth"
+            bind:checked={$buttonData.fullWidth}
+          />
+          Full Width
+        </label>
+      {/if}
     </div>
   </div>
 </div>
@@ -106,6 +119,15 @@
     @apply border border-gray-300 rounded px-2 py-3 w-full;
     &:focus {
       @apply outline-none border-blue-500;
+    }
+  }
+  .checkbox-fullwidth {
+    @apply flex items-center gap-2;
+    @apply text-gray-500;
+    @apply cursor-pointer;
+    @apply accent-primary;
+    & input {
+      @apply w-4 h-4;
     }
   }
 </style>

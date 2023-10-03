@@ -46,6 +46,7 @@ export interface ButtonData {
   size: ButtonSize;
   icon: IconState | undefined;
   color?: Colord;
+  fullWidth?: boolean;
 }
 
 export interface CanvasButtonData extends ButtonData {
@@ -61,6 +62,7 @@ class ButtonState implements SvelteState<ButtonData> {
     url: "#",
     target: "_self",
     icon: undefined,
+    fullWidth: false,
   };
   state: Writable<ButtonData> = writable();
   public set = this.state.set;
@@ -77,6 +79,7 @@ class ButtonState implements SvelteState<ButtonData> {
       url: ButtonState.defaultState.url,
       target: ButtonState.defaultState.target,
       color: ButtonState.defaultState.color,
+      fullWidth: ButtonState.defaultState.fullWidth,
       icon: undefined,
     };
     if (unsafeState) {
@@ -117,6 +120,7 @@ class ButtonState implements SvelteState<ButtonData> {
         size: size || DefaultSize,
         url: ButtonState.defaultState.url,
         target: unsafeState.target || ButtonState.defaultState.target,
+        fullWidth: unsafeState.fullWidth || ButtonState.defaultState.fullWidth,
         icon: icon,
       };
       state.url =
