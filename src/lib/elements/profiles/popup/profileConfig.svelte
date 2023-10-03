@@ -4,15 +4,21 @@
   import { debounce } from "perfect-debounce";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
+  import blankImg from "../blank-user.png";
 
   export let props: { profileGrid: ProfileGrid };
   $: profileGrid = props.profileGrid;
   $: people = profileGrid.SvelteState;
   let configEl: HTMLElement;
 
-  const allCanvasTeachers = fetch(
-    `/api/v1/courses/${window.ENV.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
-  ).then((res) => res.json());
+  const allCanvasTeachers = window.ENV.COURSE_ID
+    ? fetch(
+        (import.meta.env.DEV && window.location.hostname === "localhost"
+          ? "https://canvas.auckland.ac.nz/"
+          : "") +
+          `/api/v1/courses/${window.ENV.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
+      ).then((res) => res.json())
+    : Promise.resolve([]);
 
   let searchQuery = "";
 
@@ -25,7 +31,7 @@
   });
 
   type canvasUser = {
-    id: number;
+    id?: number;
     name: string;
     last_name: string;
     first_name: string;
@@ -43,7 +49,7 @@
           lastName: person.last_name,
           firstNameLastName: person.name,
           id: nanoid(),
-          canvasId: person.id.toString(),
+          canvasId: person.id?.toString(),
           overview: `<p>${
             person.bio
               ? person.bio
@@ -75,31 +81,33 @@
   class="cgb-component"
   in:fade|global={{ duration: 200 }}
 >
-  <div class="personList">
-    <OrderableList
-      labelKey="firstNameLastName"
-      idKey="id"
-      bind:items={$people}
-      on:toggleOverview={({ detail: id }) => {
-        profileGrid.SvelteState.update((people) => {
-          const person = people.find((p) => p.id === id);
-          if (person) {
-            person.showOverview = !person.showOverview;
-          }
-          return people;
-        });
-      }}
-      actions={(item) => [
-        {
-          title: "Show/Hide Overview",
-          icon: item.showOverview
-            ? "icon-Solid icon-syllabus"
-            : "icon-Line icon-syllabus",
-          event: "toggleOverview",
-        },
-      ]}
-    />
-  </div>
+  {#if $people.length}
+    <div class="personList">
+      <OrderableList
+        labelKey="firstNameLastName"
+        idKey="id"
+        bind:items={$people}
+        on:toggleOverview={({ detail: id }) => {
+          profileGrid.SvelteState.update((people) => {
+            const person = people.find((p) => p.id === id);
+            if (person) {
+              person.showOverview = !person.showOverview;
+            }
+            return people;
+          });
+        }}
+        actions={(item) => [
+          {
+            title: "Show/Hide Overview",
+            icon: item.showOverview
+              ? "icon-Solid icon-syllabus"
+              : "icon-Line icon-syllabus",
+            event: "toggleOverview",
+          },
+        ]}
+      />
+    </div>
+  {/if}
   <div class="searchBox">
     <input
       type="search"
@@ -108,13 +116,32 @@
       bind:value={searchQuery}
     />
     <div class="results">
-      {#await results then resultsAwaited}
+      {#await results}
+        <div class="loading animate-pulse">Loading...</div>
+      {:then resultsAwaited}
         {#each resultsAwaited as result}
           <button
             in:fade|global={{ duration: 200 }}
             class="resultItem"
             on:click={() => addPerson(result)}>{result.name}</button
           >
+        {:else}
+          <button
+            class="no-results"
+            on:click={() =>
+              addPerson({
+                id: -1,
+                name: searchQuery || `New Person ${$people.length + 1}`,
+                last_name: "",
+                first_name: searchQuery || `New Person ${$people.length + 1}`,
+                short_name: searchQuery || `New Person ${$people.length + 1}`,
+                avatar_url: blankImg,
+                email: "email@example.com",
+                bio: "",
+              })}
+          >
+            No results found. Click here to add a blank person.
+          </button>
         {/each}
       {/await}
     </div>
@@ -135,6 +162,9 @@
         @apply flex flex-col gap-y-2 h-32 overflow-y-auto border rounded;
         .resultItem {
           @apply block;
+        }
+        .no-results {
+          @apply block text-gray-400 break-normal w-48 text-center mx-auto my-4;
         }
       }
     }
