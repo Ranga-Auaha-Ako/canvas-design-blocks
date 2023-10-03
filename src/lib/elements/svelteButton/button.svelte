@@ -1,13 +1,18 @@
 <script lang="ts">
   import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
   import { ButtonData } from "./button";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: ButtonData;
   // svelte-ignore unused-export-let
   export let localState: any;
+  export let destroyHandler: () => void;
+
+  onDestroy(() => {
+    destroyHandler();
+  });
 </script>
 
 <a

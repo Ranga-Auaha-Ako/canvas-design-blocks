@@ -6,13 +6,18 @@
     RowData,
     ValidThemes,
   } from "./imageCard";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
   import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: RowData;
   export let localState: Writable<LocalState>;
+  export let destroyHandler: () => void;
+
+  onDestroy(() => {
+    destroyHandler();
+  });
   $: isSelected = $localState.isSelected;
 </script>
 

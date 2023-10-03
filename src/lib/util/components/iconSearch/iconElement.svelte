@@ -14,7 +14,7 @@
   const dispatch = createEventDispatcher();
 
   export let icon: IconState;
-  export let colorOverride: string;
+  export let colorOverride: string | undefined = undefined;
 
   $: color = (
     colorOverride || icon.color

@@ -1,13 +1,18 @@
 <script lang="ts">
   import theme from "$lib/util/theme";
   import { ProfileData } from "./profileGrid";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: ProfileData[];
   // svelte-ignore unused-export-let
   export let localState: any;
+  export let destroyHandler: () => void;
+
+  onDestroy(() => {
+    destroyHandler();
+  });
 </script>
 
 {#each cdbData as profile}
