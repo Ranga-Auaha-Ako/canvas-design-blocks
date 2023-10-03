@@ -90,8 +90,8 @@ class ProfileState implements SvelteState<ProfileData[]> {
   get stateString() {
     const state = get(this.state);
     const safeState = state.map((s) => {
-      const { overview: _, ...person } = s;
-      return person;
+      const { overview: _, color, ...person } = s;
+      return { ...person, color: color?.toHex() };
     });
     return JSON.stringify(safeState);
   }
