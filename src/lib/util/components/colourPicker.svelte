@@ -270,7 +270,7 @@
     display: inline-block;
   }
   .colourPicker {
-    @apply absolute top-0 left-0 p-4 m-0 box-content;
+    @apply absolute top-0 left-0 p-4 m-0 box-content h-auto;
     @apply shadow-lg bg-white rounded;
     @apply grid gap-1;
     @apply overflow-clip;
