@@ -18,3 +18,5 @@ export class CourseHeaderManager extends ElementManager {
     this.importAll();
   }
 }
+
+export default CourseHeaderManager;

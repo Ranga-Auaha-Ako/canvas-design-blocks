@@ -84,7 +84,7 @@ export default defineConfig(({ mode }) => {
             return "a/[hash].[ext]";
           },
           entryFileNames: "canvas-blocks.min.js",
-          chunkFileNames: "[name].js",
+          chunkFileNames: "c/[name].js",
           inlineDynamicImports: false,
         },
       },

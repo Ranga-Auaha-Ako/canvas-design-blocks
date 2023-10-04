@@ -5,7 +5,16 @@
   "license": "GPL-3.0-or-later",
   "size-limit": [
     {
+      "name": "Initial Load",
       "path": [
+        "dist/canvas-blocks.min.js",
+        "dist/theme-loader.umd.cjs"
+      ]
+    },
+    {
+      "name": "Full app launch",
+      "path": [
+        "dist/c/*.js",
         "dist/canvas-blocks.min.js",
         "dist/theme-loader.umd.cjs"
       ]

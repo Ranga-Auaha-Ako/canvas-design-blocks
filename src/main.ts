@@ -1,20 +1,14 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
-import GridManager from "$lib/elements/grid/gridManager";
 import "./app.postcss";
 import "$lib/util/tailwind.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
-import { ButtonManager } from "$lib/elements/svelteButton/buttonManager";
-import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
-import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
-import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
 import { version } from "$lib/util/constants";
 import { compareVersions } from "compare-versions";
 import type ElementManager from "$lib/elements/generic/elementManager";
-import { ImageCardLegacy } from "$lib/elements/imageCard/imageCardLegacy";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -81,6 +75,15 @@ const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
 let loaded_blocks: ElementManager[] = [];
 
 export const loadApp = async () => {
+  // Start loading app
+  const GridManager = import("$lib/elements/grid/gridManager");
+  const ButtonManager = import("$lib/elements/svelteButton/buttonManager");
+  const ImageCardManager = import("$lib/elements/imageCard/imageCardManager");
+  const ProfilesManager = import("$lib/elements/profiles/profilesManager");
+  const CourseHeaderManager = import(
+    "$lib/elements/courseHeader/courseHeaderManager"
+  );
+  const ImageCardLegacy = import("$lib/elements/imageCard/imageCardLegacy");
   // If tool is already loaded, exit
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
@@ -90,15 +93,21 @@ export const loadApp = async () => {
   if (!editor) return;
 
   // Create Element Managers
-  loaded_blocks = [
-    new GridManager(state, editor),
-    new ButtonManager(state, editor),
-    new ImageCardManager(state, editor),
-    new ProfilesManager(state, editor),
-    new CourseHeaderManager(state, editor),
-  ];
+  const awaited = await Promise.all([
+    GridManager,
+    ButtonManager,
+    ImageCardManager,
+    ProfilesManager,
+    CourseHeaderManager,
+  ]).then((modules) => modules.map((m) => m.default));
+  loaded_blocks = awaited.map((el) => new el(state, editor));
+  const legacyAwaits = await Promise.all([ImageCardLegacy]).then((modules) =>
+    modules.map((m) => m.default)
+  );
+  const loaded_legacy = legacyAwaits.map(
+    (el) => new el(state, editor, loaded_blocks[2] as ImageCardManager)
+  );
   // Migrate old blocks
-  new ImageCardLegacy(state, editor, loaded_blocks[2] as ImageCardManager);
 
   // Add button to open grid editor
   const toolbar = loadToolbar({
