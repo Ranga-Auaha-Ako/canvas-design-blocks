@@ -5,7 +5,6 @@ import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
-import { splitVendorChunkPlugin } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -59,7 +58,6 @@ export default defineConfig(({ mode }) => {
       }),
       getInstIconsPlugin(),
       vitePluginCanvasStyles(),
-      splitVendorChunkPlugin(),
     ].concat(
       // @ts-ignore
       mode.includes("beta")
