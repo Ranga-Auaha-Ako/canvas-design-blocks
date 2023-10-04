@@ -13,3 +13,11 @@ jobs:
       - uses: andresz1/size-limit-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          CANVAS_BLOCKS_BASE_DOMAINS: canvas.instructure.com
+          CANVAS_BLOCKS_THEME_HOST: http://example.com/
+          CANVAS_BLOCKS_THEME_CONTACT_NAME: Example
+          CANVAS_BLOCKS_THEME_CONTACT_LINK: http://example.com/
+          CANVAS_BLOCKS_BUILD_DEV: false
+          CANVAS_BLOCKS_USE_CANVAS_ICONS: assets.canvasicons.auckland.ac.nz
+          CANVAS_BLOCKS_THEME: '{"primary": "#00457c","secondary": "#2D3B45","faculty": {"arts": "#A71930","business": "#7D0063","cai": "#D2492A","edu": "#55A51C","eng": "#4F2D7F","law": "#005B82","med": "#00877C","sci": "#0039A6","bio": "#BA4482","liggins": "#006990"},"palette": {"dark": {"red": "#A71930","fushia": "#7D0063","purple": "#4F2D7F","teal": "#005B82","blue": "#0039A6","rose": "#BA4482","barney": "#BF32A4","info": "#0374B5","success": "#0B874B","danger": "#E0061F","warning": "#FC5E13","black": "#000000"},"light": {"red": "#FF8497","business": "#FA7ED5","cai": "#FE8878","edu": "#63BF22","eng": "#BB98FC","law": "#5ABEE8","med": "#00C4B4","sci": "#86B5F7","bio": "#FC81BD","white": "#FFFFFF"}}}'
