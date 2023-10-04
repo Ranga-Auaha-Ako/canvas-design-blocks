@@ -18,7 +18,7 @@
     "zip": "vite build && cd ./dist/ && bestzip bundle.zip icon/* assets/* src/* canvas-blocks.min.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.json popup.html",
     "zip-testing": "vite build --mode testing && cd ./dist/ && bestzip bundle.zip icon/* assets/* src/* favicon.png favicon.svg manifest.json popup.html",
     "zip-beta": "vite build && cd ./dist/ && mkdir -p pkg && rimraf ./pkg/* && cp -r icon extension-loader.js canvas-blocks.min.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.beta.json popup.html ./pkg && mv ./pkg/manifest.beta.json ./pkg/manifest.json && cd pkg && bestzip bundle.beta.zip ./*",
-    "build-theme": "vite build --mode theme && vite build --mode theme-loader && node ./scripts/buildTheme.js",
+    "build-theme": "vite build && vite build --mode theme-loader && node ./scripts/buildTheme.js",
     "size": "yarn build-theme && size-limit"
   },
   "devDependencies": {
