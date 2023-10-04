@@ -3,6 +3,14 @@
   "version": "2.8.2",
   "type": "module",
   "license": "GPL-3.0-or-later",
+  "size-limit": [
+    {
+      "path": [
+        "dist/canvas-blocks.min.js",
+        "dist/theme-loader.umd.cjs"
+      ]
+    }
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +18,8 @@
     "zip": "vite build && cd ./dist/ && bestzip bundle.zip icon/* assets/* src/* canvas-blocks.min.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.json popup.html",
     "zip-testing": "vite build --mode testing && cd ./dist/ && bestzip bundle.zip icon/* assets/* src/* favicon.png favicon.svg manifest.json popup.html",
     "zip-beta": "vite build && cd ./dist/ && mkdir -p pkg && rimraf ./pkg/* && cp -r icon extension-loader.js canvas-blocks.min.js canvas-grid.umd.cjs favicon.png favicon.svg manifest.beta.json popup.html ./pkg && mv ./pkg/manifest.beta.json ./pkg/manifest.json && cd pkg && bestzip bundle.beta.zip ./*",
-    "build-theme": "vite build --mode theme && vite build --mode theme-loader && node ./scripts/buildTheme.js"
+    "build-theme": "vite build && vite build --mode theme-loader && node ./scripts/buildTheme.js",
+    "size": "yarn build-theme && size-limit"
   },
   "devDependencies": {
     "@braintree/sanitize-url": "^6.0.4",
@@ -18,6 +27,7 @@
     "@floating-ui/dom": "1.5.3",
     "@instructure/ui-icons": "^7",
     "@laynezh/vite-plugin-lib-assets": "^0.5.5",
+    "@size-limit/preset-app": "^9.0.0",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "@tailwindcss/forms": "^0.5.6",
     "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
@@ -49,6 +59,7 @@
     "rimraf": "5.0.4",
     "rollup-plugin-visualizer": "5.9.2",
     "sass": "1.68.0",
+    "size-limit": "^9.0.0",
     "sortablejs": "^1.15.0",
     "svelte": "^4.2.1",
     "svelte-local-storage-store": "0.6.0",

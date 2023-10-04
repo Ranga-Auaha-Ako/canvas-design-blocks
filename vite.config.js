@@ -36,7 +36,6 @@ const shared = (mode) => ({
     __APP_VERSION__:
       JSON.stringify(process.env.npm_package_version) || "unknown",
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-    __ISTHEME__: JSON.stringify(mode.includes("theme")),
     __THEME__: JSON.stringify(
       JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
     ),
@@ -70,7 +69,27 @@ export default defineConfig(({ mode }) => {
         emptyOutDir: false,
       },
     };
-  } else if (mode.includes("theme")) {
+  } else if (mode === "extension") {
+    return {
+      ...shared(mode),
+      plugins: [
+        ...sharedPlugins,
+        crx({
+          manifest,
+          injectCss: true,
+        }),
+        vitePluginCanvasStyles(),
+      ].concat(
+        mode === "beta"
+          ? [
+              visualizer({
+                filename: "./dist/stats.html",
+              }),
+            ]
+          : []
+      ),
+    };
+  } else {
     return {
       ...shared(mode),
       plugins: [
@@ -117,23 +136,4 @@ export default defineConfig(({ mode }) => {
       },
     };
   }
-  return {
-    ...shared(mode),
-    plugins: [
-      ...sharedPlugins,
-      crx({
-        manifest,
-        injectCss: true,
-      }),
-      vitePluginCanvasStyles(),
-    ].concat(
-      mode === "beta"
-        ? [
-            visualizer({
-              filename: "./dist/stats.html",
-            }),
-          ]
-        : []
-    ),
-  };
 });
