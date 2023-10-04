@@ -37,7 +37,10 @@ export default function vitePluginInstIcons(): PluginOption {
       if (id === resolvedVirtualModuleId) {
         const iconMap = icons.reduce((acc, icon) => {
           const [_, type, name] = icon.match(/([^/]+)\/([^/]+)\.svg$/) || [];
-          if (config.command == "build" && config.mode?.includes("theme")) {
+          if (
+            config.command == "build" &&
+            !config.mode?.includes("extension")
+          ) {
             const _this = this;
             return {
               ...acc,
@@ -74,7 +77,7 @@ export default function vitePluginInstIcons(): PluginOption {
       }
     },
     resolveFileUrl({ fileName }) {
-      if (config.command == "serve" || !config.mode.includes("theme"))
+      if (config.command == "serve" || config.mode.includes("extension"))
         return null;
       // return `new URL('${fileName}', "${process.env.CANVAS_BLOCKS_THEME_HOST}").href`;
       return `
