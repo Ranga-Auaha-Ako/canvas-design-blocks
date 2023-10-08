@@ -12,6 +12,7 @@
   import IconPicker from "$lib/util/components/iconSearch/iconPicker";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
+  import LinkInput from "$lib/util/components/linkEditor/linkInput.svelte";
 
   export let props: { button: Button };
   export let isModal: boolean = false;
@@ -24,9 +25,11 @@
   let configEl: HTMLElement;
 
   let iconPicker: IconPicker;
+  let pickerUnsub = () => {};
   $: {
     iconPicker = new IconPicker(button.editor, $buttonData.icon, button);
-    iconPicker.subscribe((icon) => {
+    pickerUnsub();
+    pickerUnsub = iconPicker.subscribe((icon) => {
       $buttonData.icon = icon;
     });
   }
@@ -57,15 +60,22 @@
       />
       <input
         type="text"
-        bind:value={$buttonData.label}
-        placeholder="Button Label..."
-      />
-      <input
-        type="text"
         bind:value={$buttonData.title}
         placeholder="Button Title..."
       />
-      <input type="url" bind:value={$buttonData.url} placeholder="Button URL" />
+      <input
+        type="text"
+        bind:value={$buttonData.label}
+        placeholder="Button Label..."
+      />
+      <LinkInput
+        link={$buttonData.url}
+        text={$buttonData.label}
+        on:save={({ detail }) => {
+          $buttonData.url = detail.link;
+          $buttonData.label = detail.text || "";
+        }}
+      />
     </div>
     <div class="col">
       <ColourPicker
@@ -116,7 +126,7 @@
   }
   input[type="text"],
   input[type="url"] {
-    @apply border border-gray-300 rounded px-2 py-3 w-full;
+    @apply border border-gray-300 rounded px-2 py-3 w-full mb-0;
     &:focus {
       @apply outline-none border-blue-500;
     }
