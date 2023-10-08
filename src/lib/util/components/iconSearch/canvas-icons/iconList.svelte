@@ -127,7 +127,7 @@
 <div class="searchFilter">
   <input
     type="search"
-    placeholder="Search for an image"
+    placeholder="Search for an icon"
     bind:value={filterQuery}
   />
   {#if options.editColor}
@@ -201,15 +201,6 @@
       @apply w-full p-3 border border-solid border-gray-200;
       &:focus {
         @apply outline-none border-primary;
-      }
-    }
-    button.toggle-icons {
-      @apply p-3 leading-4 rounded text-white bg-primary shrink-0 cursor-pointer transition;
-      &:hover {
-        @apply bg-slate-800;
-      }
-      &:focus {
-        @apply ring-2;
       }
     }
     .colourPicker {

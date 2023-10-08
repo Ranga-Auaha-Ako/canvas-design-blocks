@@ -17,6 +17,7 @@
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/util/components/iconSearch/iconPicker";
+  import LinkInput from "$lib/util/components/linkEditor/linkInput.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -167,7 +168,7 @@
           out:fade={{ duration: 150 }}
         >
           <div class="flex gap-x-2 items-baseline">
-            <div>
+            <div class="grow">
               <label for={`${imageCard.id}-text`}>Card Label:</label>
               <textarea
                 class="cardName"
@@ -177,18 +178,17 @@
                 maxlength="100"
               />
             </div>
-            <div>
+            <div class="grow">
               <div class="form-group">
                 <label class="block" for={`${imageCard.id}-url`}
                   >Card Link (URL):</label
                 >
-                <input
-                  type="url"
-                  placeholder="https://canvas.auckland.ac.nz/..."
-                  id={`${imageCard.id}-url`}
-                  bind:value={$rowData.cards[cardIndex].link}
-                  on:input={() => urlInput.reportValidity()}
-                  bind:this={urlInput}
+                <LinkInput
+                  link={$rowData.cards[cardIndex].link}
+                  on:save={({ detail }) => {
+                    if (cardIndex === undefined) return;
+                    $rowData.cards[cardIndex].link = detail.link;
+                  }}
                 />
               </div>
 
