@@ -5,9 +5,10 @@ import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
+import { hoistImportDeps } from "rollup-plugin-hoist-import-deps";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   if (mode === "theme-loader") {
     return {
       build: {
@@ -48,6 +49,7 @@ export default defineConfig(({ mode }) => {
         JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
       ),
     },
+    base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
     envPrefix: "CANVAS_BLOCKS_",
     esbuild: {
       banner: `/* Canvas Design Blocks v${process.env.npm_package_version} */`,
@@ -58,6 +60,12 @@ export default defineConfig(({ mode }) => {
       }),
       getInstIconsPlugin(),
       vitePluginCanvasStyles(),
+      // hoistImportDeps({
+      //   baseUrl:
+      //     command === "serve"
+      //       ? "/"
+      //       : process.env.CANVAS_BLOCKS_THEME_HOST || "",
+      // }),
     ].concat(
       // @ts-ignore
       mode.includes("beta")
@@ -71,7 +79,6 @@ export default defineConfig(({ mode }) => {
     build: {
       target: "es2018",
       manifest: true,
-      minify: true,
       cssMinify: "lightningcss",
       rollupOptions: {
         input: "src/main.ts",
