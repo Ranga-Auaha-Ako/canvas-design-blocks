@@ -3,7 +3,6 @@ import { ModalDialog } from "../modalDialog/modal";
 import IconPickerModalInner from "./iconPickerModalInner.svelte";
 import type { Editor } from "tinymce";
 import type { SelectableElement } from "$lib/elements/generic/selectableElement";
-import { icons as InstIcons } from "virtual:inst-icons";
 import type {
   customIcon,
   customIconsMeta,
@@ -36,35 +35,39 @@ export const isInstIcon = (
 ): icon is InstIconState => !isCustomIcon(icon);
 
 let icons: iconData = [];
+// import { icons as InstIcons } from "virtual:inst-icons";
+const InstIcons = import("virtual:inst-icons");
 
-Object.entries(InstIcons).forEach(([iconPath, url]) => {
-  const [type, ...nameArr] = iconPath.split(".");
-  const name = nameArr.join(".");
-  if (!type || !name) return;
-  let typeEnum: IconType.Solid | IconType.Line;
-  if (type === "Solid") typeEnum = IconType.Solid;
-  else if (type === "Line") typeEnum = IconType.Line;
-  else return;
-  // Create/get category
-  const catName = `Instructure ${type} Icons`;
-  let category = icons.find(
-    (c): c is instCategory => c.name === catName && c.type === typeEnum
-  );
-  if (!category) {
-    category = {
-      name: catName,
-      type: typeEnum,
-      icons: [],
-    };
-    icons.push(category);
-  }
-  // Add icon
-  category.icons.push({
-    id: `Inst.${name}.${typeEnum}`,
-    url,
-    term: name,
-  } as instIcon);
-});
+InstIcons.then((i) =>
+  Object.entries(i.icons).forEach(([iconPath, url]) => {
+    const [type, ...nameArr] = iconPath.split(".");
+    const name = nameArr.join(".");
+    if (!type || !name) return;
+    let typeEnum: IconType.Solid | IconType.Line;
+    if (type === "Solid") typeEnum = IconType.Solid;
+    else if (type === "Line") typeEnum = IconType.Line;
+    else return;
+    // Create/get category
+    const catName = `Instructure ${type} Icons`;
+    let category = icons.find(
+      (c): c is instCategory => c.name === catName && c.type === typeEnum
+    );
+    if (!category) {
+      category = {
+        name: catName,
+        type: typeEnum,
+        icons: [],
+      };
+      icons.push(category);
+    }
+    // Add icon
+    category.icons.push({
+      id: `Inst.${name}.${typeEnum}`,
+      url,
+      term: name,
+    } as instIcon);
+  })
+);
 
 export { icons };
 

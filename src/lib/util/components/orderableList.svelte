@@ -1,5 +1,8 @@
 <script lang="ts">
-  import Sortable from "sortablejs";
+  // import Sortable from "sortablejs";
+
+  const Sortable = import("sortablejs");
+  console.log("Sortable", Sortable);
   import { createEventDispatcher } from "svelte";
 
   export let labelKey: string;
@@ -40,12 +43,14 @@
 
   $: sortable =
     itemList &&
-    new Sortable(itemList, {
-      animation: 200,
-      handle: ".dragHandle",
-      onEnd: (event) => {
-        handleItemOrder(event);
-      },
+    Sortable.then((s) => {
+      new s.default(itemList, {
+        animation: 200,
+        handle: ".dragHandle",
+        onEnd: (event) => {
+          handleItemOrder(event);
+        },
+      });
     });
 </script>
 

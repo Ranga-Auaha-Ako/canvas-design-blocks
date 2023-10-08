@@ -1,20 +1,20 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
-import GridManager from "$lib/elements/grid/gridManager";
 import "./app.postcss";
 import "$lib/util/tailwind.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
 import type { Writable } from "svelte/store";
 import { SvelteComponent } from "svelte";
-import { ButtonManager } from "$lib/elements/svelteButton/buttonManager";
-import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
-import { ProfilesManager } from "$lib/elements/profiles/profilesManager";
-import { CourseHeaderManager } from "$lib/elements/courseHeader/courseHeaderManager";
 import { version } from "$lib/util/constants";
 import { compareVersions } from "compare-versions";
 import type ElementManager from "$lib/elements/generic/elementManager";
-import { ImageCardLegacy } from "$lib/elements/imageCard/imageCardLegacy";
+import GridManager from "$lib/elements/grid/gridManager";
+import ButtonManager from "$lib/elements/svelteButton/buttonManager";
+import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
+import ProfilesManager from "$lib/elements/profiles/profilesManager";
+import CourseHeaderManager from "$lib/elements/courseHeader/courseHeaderManager";
+import ImageCardLegacy from "$lib/elements/imageCard/imageCardLegacy";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -90,16 +90,16 @@ export const loadApp = async () => {
   if (!editor) return;
 
   // Create Element Managers
-  loaded_blocks = [
-    new GridManager(state, editor),
-    new ButtonManager(state, editor),
-    new ImageCardManager(state, editor),
-    new ProfilesManager(state, editor),
-    new CourseHeaderManager(state, editor),
+  const managers = [
+    GridManager,
+    ButtonManager,
+    ImageCardManager,
+    ProfilesManager,
+    CourseHeaderManager,
   ];
+  loaded_blocks = managers.map((el) => new el(state, editor));
   // Migrate old blocks
   new ImageCardLegacy(state, editor, loaded_blocks[2] as ImageCardManager);
-
   // Add button to open grid editor
   const toolbar = loadToolbar({
     state,
