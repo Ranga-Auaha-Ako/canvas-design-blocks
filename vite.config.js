@@ -5,8 +5,6 @@ import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
-import { hoistImportDeps } from "rollup-plugin-hoist-import-deps";
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   if (mode === "theme-loader") {
