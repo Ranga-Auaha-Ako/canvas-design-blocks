@@ -3,11 +3,13 @@
   import IconPicker, {
     IconPickerOptions,
     IconType,
+    icons,
     loadCustomIcons,
   } from "./iconPicker";
   import { createEventDispatcher } from "svelte";
   import { customIcon, instIcon } from "./canvas-icons/icons";
   import IconList from "./canvas-icons/iconList.svelte";
+  import Modal from "../modalDialog/modal.svelte";
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
@@ -16,14 +18,19 @@
       type: IconType;
     };
   }>();
-  export let iconPicker: IconPicker;
+
   export let options: IconPickerOptions;
+  let modal: Modal;
+  export const open = () => modal.open();
+  export const close = () => modal.close();
 </script>
 
-<div class="modal-wrap">
-  {#await loadCustomIcons()}
-    <IconList icons={iconPicker.choices} {options} on:selectIcon />
-  {:then icons}
-    <IconList {icons} {options} on:selectIcon />
-  {/await}
-</div>
+<Modal title="Choose an icon" showSave={false} bind:this={modal}>
+  <div class="modal-wrap">
+    {#await loadCustomIcons()}
+      <IconList {icons} {options} on:selectIcon asModal={true} />
+    {:then allIcons}
+      <IconList icons={allIcons} {options} on:selectIcon asModal={true} />
+    {/await}
+  </div>
+</Modal>

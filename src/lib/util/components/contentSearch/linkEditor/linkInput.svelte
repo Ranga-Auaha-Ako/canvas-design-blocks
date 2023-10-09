@@ -1,18 +1,19 @@
 <script lang="ts">
+  import Modal from "../../modalDialog/modal.svelte";
   import LinkDialog from "./linkDialog.svelte";
   const invalidLink = ["", undefined, "#"];
 
   export let link: string;
   export let text: string | undefined = undefined;
   export let id: string | undefined = undefined;
-  let dialog: HTMLDialogElement;
+  let dialog: Modal;
 </script>
 
 <button
   class="editLink"
   {id}
   on:click={() => {
-    dialog.showModal();
+    dialog.open();
   }}
   title="Edit Link"
 >

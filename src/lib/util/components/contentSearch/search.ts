@@ -218,3 +218,25 @@ export const getImageUrl = (file: any) => {
     document.URL
   ).toString();
 };
+
+export function getIcon(l: Link) {
+  switch (l.type) {
+    case InternalLinks.File:
+      return "file";
+    case InternalLinks.Announcements:
+      return "announcement";
+    case InternalLinks.Discussions:
+      return "discussion";
+    case InternalLinks.Assignments:
+      return "assignment";
+    case InternalLinks.Quizzes:
+      return "quiz";
+    case InternalLinks.Pages:
+      return "document";
+    case InternalLinks.Modules:
+      return "module";
+    case InternalLinks.Navigation:
+    default:
+      return "";
+  }
+}

@@ -12,7 +12,7 @@
   import IconPicker from "$lib/util/components/iconSearch/iconPicker";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
-  import LinkInput from "$lib/util/components/linkEditor/linkInput.svelte";
+  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
 
   export let props: { button: Button };
   export let isModal: boolean = false;
