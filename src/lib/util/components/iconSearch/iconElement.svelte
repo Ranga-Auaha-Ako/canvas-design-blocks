@@ -46,7 +46,13 @@
 {#await data then d}
   {#if d}
     {#if isCustomIcon(icon)}
-      <img class="cdb--custom-icon" src={getCustomIcon(icon, d)} alt="" />
+      <img
+        class="cdb--custom-icon"
+        src={getCustomIcon(icon, d)}
+        alt=""
+        aria-hidden="true"
+        role="presentation"
+      />
     {:else if isInstIcon(icon)}
       <span class="icon" style:color={icon.color}>
         <i
