@@ -2,7 +2,7 @@
   import { debounce } from "perfect-debounce";
   import IconPicker, { IconPickerOptions, IconType } from "../iconPicker";
   import { createEventDispatcher } from "svelte";
-  import ColourPicker from "../../colourPicker.svelte";
+  import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
   import { colord } from "colord";
   import { persisted as localStorageWritable } from "svelte-local-storage-store";
@@ -14,9 +14,10 @@
     instIcon,
     isCustomCategory,
     isInstCategory,
-  } from "../canvas-icons/icons";
+  } from "./icons";
 
   import { iconData } from "./icons";
+  import ScrollContainer from "$lib/util/components/scrollContainer.svelte";
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
@@ -35,6 +36,7 @@
 
   export let icons: iconData;
   export let options: IconPickerOptions;
+  export let asModal: boolean = false;
   let filterQuery = "";
   let iconColor = localStorageWritable(
     "cdb-preferences-iconColor",
@@ -49,7 +51,7 @@
   let results = icons;
   const filterIcons = debounce(
     (query: string) => {
-      resultsWrapperScroll = resultsWrapperScroll; // Bump to force refresh of scroll hint indicator
+      scroller?.update();
       if (query.length < 3) results = icons;
       results = icons
         .map((cat) => {
@@ -80,21 +82,6 @@
   );
   $: filterIcons(filterQuery);
 
-  let resultsWrapper: HTMLDivElement;
-  let resultsList: HTMLDivElement;
-  let resultsWrapperScroll: number = 0;
-  $: scrollDistance =
-    (resultsList?.scrollHeight || 0) -
-    resultsWrapperScroll -
-    (resultsWrapper?.clientHeight || 0 + 10);
-  $: results,
-    setTimeout(() => {
-      scrollDistance =
-        (resultsList?.scrollHeight || 0) -
-        resultsWrapperScroll -
-        (resultsWrapper?.clientHeight || 0 + 10);
-    }, 50);
-
   // TODO: This is a hack to get the custom icons to work on Firefox
   // This is held back by a bug in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=1657218
   // This ticket has been open for 9 years at time of comment, so I'm not holding my breath
@@ -122,6 +109,9 @@
       import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS
     }/font/stack/svg/sprite.stack.svg#${getIconClass(url)}`;
   }
+
+  let scroller: ScrollContainer;
+  $: results, scroller?.update();
 </script>
 
 <div class="searchFilter">
@@ -140,59 +130,52 @@
         popupDirection={"top"}
         zIndex={12000}
         showNone={false}
+        {asModal}
       />
     </div>
   {/if}
 </div>
-<div class="overflow" class:active={scrollDistance > 0}>
-  <div
-    class="search-container"
-    bind:this={resultsWrapper}
-    on:scroll={() => {
-      resultsWrapperScroll = resultsWrapper.scrollTop;
-    }}
-  >
-    <div class="categories" bind:this={resultsList}>
-      {#each results as category}
-        <div class="category">
-          <h3>{category.name}</h3>
-          <div class="iconList">
-            {#each category.icons as icon (icon.id)}
-              <button
-                class="icon"
-                title={icon.term}
-                on:click={() => {
-                  if (options.editColor) {
-                    selectIcon({
-                      icon,
-                      color: $iconColor.toHex(),
-                      type: category.type,
-                    });
-                  } else {
-                    selectIcon({
-                      icon,
-                      type: category.type,
-                    });
-                  }
-                }}
-              >
-                {#if isCustomCategory(category)}
-                  <img src={getCustomIconUrl(icon.url)} alt={icon.term} />
-                {:else if isInstCategory(category)}
-                  <i
-                    class="icon-{category.type === IconType.Solid
-                      ? 'Solid'
-                      : 'Line'} icon-{icon.term}"
-                  />
-                {/if}
-              </button>
-            {/each}
-          </div>
+<ScrollContainer bind:this={scroller}>
+  <div class="categories">
+    {#each results as category}
+      <div class="category">
+        <h3>{category.name}</h3>
+        <div class="iconList">
+          {#each category.icons as icon (icon.id)}
+            <button
+              class="icon"
+              title={icon.term}
+              on:click={() => {
+                if (options.editColor) {
+                  selectIcon({
+                    icon,
+                    color: $iconColor.toHex(),
+                    type: category.type,
+                  });
+                } else {
+                  selectIcon({
+                    icon,
+                    type: category.type,
+                  });
+                }
+              }}
+            >
+              {#if isCustomCategory(category)}
+                <img src={getCustomIconUrl(icon.url)} alt={icon.term} />
+              {:else if isInstCategory(category)}
+                <i
+                  class="icon-{category.type === IconType.Solid
+                    ? 'Solid'
+                    : 'Line'} icon-{icon.term}"
+                />
+              {/if}
+            </button>
+          {/each}
         </div>
-      {/each}
-    </div>
+      </div>
+    {/each}
   </div>
-</div>
+</ScrollContainer>
 
 <style lang="postcss">
   .searchFilter {

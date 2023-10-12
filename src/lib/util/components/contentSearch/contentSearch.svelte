@@ -12,9 +12,11 @@
     Image,
     Link,
     File,
+    getIcon,
   } from "./search";
   import ImageList from "./imageList.svelte";
   import { nanoid } from "nanoid";
+  import ScrollContainer from "../scrollContainer.svelte";
 
   export let linkType: InternalLinks | undefined = undefined;
   export let filter: FitlerTypes | undefined = undefined;
@@ -47,6 +49,11 @@
   let searchInput: HTMLInputElement;
 
   let internalLinkTypesList = Object.values(InternalLinks);
+
+  let scrollCont: ScrollContainer;
+  $: results.then(() => {
+    scrollCont.update();
+  });
 </script>
 
 <div class="wrapper cgb-component">
@@ -59,12 +66,13 @@
       on:input={(e) => setQuery(e.currentTarget.value)}
     />
   </div>
-  <div class="fileResults">
-    {#each internalLinkTypesList as type}
-      {@const id = nanoid()}
-      <h4>
+  <ScrollContainer bind:this={scrollCont} card={false}>
+    <div class="fileResults">
+      {#each internalLinkTypesList as type}
+        {@const id = nanoid()}
         <button
           class="accordion-header"
+          class:active={type === linkType}
           id="{id}-header"
           aria-expanded={type === linkType}
           aria-controls={id}
@@ -82,54 +90,70 @@
             {type}
           </span>
         </button>
-      </h4>
-      <div class="fileList" {id} role="region" aria-labelledby="{id}-header">
-        {#if type === linkType}
-          {#await results}
-            <div class="fileListResults">
-              <div class="status-msg" in:fade|global>
-                <p>Loading...</p>
-              </div>
-            </div>
-          {:then files}
-            <div class="fileListResults">
-              {#if files.length === 0}
+        <div class="fileList" {id} role="region" aria-labelledby="{id}-header">
+          {#if type === linkType}
+            {#await results}
+              <div class="fileListResults">
                 <div class="status-msg" in:fade|global>
-                  <p>No results found</p>
-                  {#if query.length > 2}
-                    <button
-                      class="btn btn-secondary"
-                      on:click|stopPropagation={() => {
-                        query = "";
-                        searchInput.value = "";
-                      }}>Clear Search</button
-                    >
-                  {/if}
+                  <p>Loading...</p>
                 </div>
-              {:else if isImage(files)}
-                <ImageList {files} on:select />
-              {:else}
-                {#each files as file}
-                  <button
-                    on:click={() => {
-                      dispatch("select", file);
-                    }}
-                  >
-                    <span class="filename">{file.name}</span>
-                  </button>
-                {/each}
-              {/if}
-            </div>
-          {:catch error}
-            <div class="status-msg">
-              <strong>An error occured</strong>
-              <p>{error.message}</p>
-            </div>
-          {/await}
-        {/if}
-      </div>
-    {/each}
-  </div>
+              </div>
+            {:then files}
+              <div class="fileListResults">
+                {#if files.length === 0}
+                  <div class="status-msg" in:fade|global>
+                    <p>No results found</p>
+                    {#if query.length > 2}
+                      <button
+                        class="btn btn-secondary"
+                        on:click|stopPropagation={() => {
+                          query = "";
+                          searchInput.value = "";
+                        }}>Clear Search</button
+                      >
+                    {/if}
+                  </div>
+                {:else if isImage(files)}
+                  <ImageList {files} on:select />
+                {:else}
+                  {#each files as file}
+                    <button
+                      class:unpublished={!file.published}
+                      on:click={() => {
+                        dispatch("select", file);
+                      }}
+                    >
+                      <i class="icon-Line icon-{getIcon(file)}" />
+                      <span class="linkName">{file.name}</span>
+                      <div class="publishedStatus">
+                        {#if file.published === false}
+                          <i
+                            class="icon-Solid icon-unpublish"
+                            title="Unpublished"
+                          />
+                        {:else if file.published === true}
+                          <i
+                            class="icon-Solid icon-publish"
+                            title="Published"
+                          />
+                        {/if}
+                      </div>
+                    </button>
+                    <hr />
+                  {/each}
+                {/if}
+              </div>
+            {:catch error}
+              <div class="status-msg">
+                <strong>An error occured</strong>
+                <p>{error.message}</p>
+              </div>
+            {/await}
+          {/if}
+        </div>
+      {/each}
+    </div>
+  </ScrollContainer>
 </div>
 
 <style lang="postcss">
@@ -148,23 +172,47 @@
     }
   }
 
+  .fileResults {
+    /*  */
+  }
+
   .accordion-header {
-    @apply w-full p-2 px-3 text-left align-middle leading-none text-lg;
+    @apply w-full p-2 px-3 text-left align-middle leading-none transition;
+    @apply text-lg font-bold border-b;
     i {
-      @apply mr-2;
+      @apply mr-3;
+    }
+    &.active {
+      /* @apply border-gray-300 border border-b-0 rounded-t; */
     }
   }
 
   .fileListResults {
-    @apply grid grid-cols-1 gap-2 bg-gray-100 text-black rounded border border-gray-300 overflow-clip py-1;
+    @apply grid grid-cols-1 text-black py-1;
+    & hr {
+      @apply m-0 p-0 mx-2;
+    }
     & > button {
-      @apply w-full text-left p-2 px-3 transition ring-0;
-      span {
-        @apply block truncate will-change-transform transform transition-transform;
+      @apply w-full text-left p-2 px-3 transition ring-0 relative z-10 rounded;
+      @apply flex flex-row items-center gap-2 text-base;
+      i {
+        @apply text-green-700 mr-1;
+        &:before {
+          @apply text-lg leading-none;
+        }
+      }
+      .linkName {
+        @apply block truncate will-change-transform transform transition-transform grow;
+      }
+      &.unpublished {
+        @apply text-black;
+        i {
+          @apply text-black;
+        }
       }
       &:hover {
-        @apply ring-1 ring-primary bg-white;
-        span {
+        @apply ring-1 ring-primary bg-gray-100;
+        .linkName {
           @apply translate-x-1;
         }
       }

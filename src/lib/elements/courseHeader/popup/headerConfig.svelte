@@ -3,10 +3,10 @@
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
-  import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
+  import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
-  import LinkInput from "$lib/util/components/linkEditor/linkInput.svelte";
+  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
 
   export let props: { courseHeader: CourseHeader };
   // export let isDominant: Writable<boolean>;
@@ -117,7 +117,7 @@
             link={$headerData.links[editLinkIndex].url}
             text={$headerData.links[editLinkIndex].title}
             on:save={({ detail }) => {
-              if (!editLinkIndex) return;
+              if (editLinkIndex === undefined) return;
               $headerData.links[editLinkIndex].url = detail.link;
               if (detail.text !== undefined)
                 $headerData.links[editLinkIndex].title = detail.text;

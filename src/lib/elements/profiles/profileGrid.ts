@@ -16,7 +16,7 @@ import { ProfilesManager } from "./profilesManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import ProfileConfig from "./popup/profileConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
-import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
+import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
 import { ModalDialog } from "$lib/util/components/modalDialog/modal";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { type Colord, colord } from "colord";

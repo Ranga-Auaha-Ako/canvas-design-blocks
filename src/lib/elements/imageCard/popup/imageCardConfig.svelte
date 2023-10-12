@@ -9,15 +9,15 @@
     LocalState,
   } from "../imageCard";
   import { createEventDispatcher } from "svelte";
-  import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
+  import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { Writable } from "svelte/store";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
-  import IconPicker from "$lib/util/components/iconSearch/iconPicker";
-  import LinkInput from "$lib/util/components/linkEditor/linkInput.svelte";
+  import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
+  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -72,34 +72,8 @@
       $localState.selectedCard = $rowData.cards[$rowData.cards.length - 1].id;
     $rowData.cards = $rowData.cards;
   };
-  // https://stackoverflow.com/a/52323412/3902950
-  const shallowCompare = (obj1: Record<any, any>, obj2: Record<any, any>) =>
-    Object.keys(obj1).length === Object.keys(obj2).length &&
-    Object.keys(obj1).every((key) => obj1[key] === obj2[key]);
 
   let iconPicker: IconPicker;
-  $: if (currentCard) {
-    iconPicker = new IconPicker(imageCard.editor, currentCard.icon, imageCard, {
-      editColor: true,
-    });
-    iconPicker.subscribe((icon) => {
-      if (
-        currentCard &&
-        currentCard?.icon &&
-        icon &&
-        !shallowCompare(currentCard.icon, icon)
-      ) {
-        currentCard.icon = icon;
-        $rowData = $rowData;
-      } else if (
-        currentCard &&
-        ((currentCard?.icon && !icon) || (!currentCard?.icon && icon))
-      ) {
-        currentCard.icon = icon;
-        $rowData = $rowData;
-      }
-    });
-  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -192,13 +166,21 @@
                 />
               </div>
 
-              {#if $rowData.theme === ImageCardTheme.Icon && iconPicker}
+              {#if $rowData.theme === ImageCardTheme.Icon}
                 <button
                   class="Button Button--block"
                   on:click={() => {
-                    iconPicker.pick();
+                    iconPicker.open();
                   }}>Select Icon</button
                 >
+                <IconPicker
+                  options={{ editColor: true }}
+                  bind:this={iconPicker}
+                  on:selectIcon={({ detail }) => {
+                    if (cardIndex === undefined) return;
+                    $rowData.cards[cardIndex].icon = detail.icon;
+                  }}
+                />
               {:else}
                 <button
                   class="Button Button--block"

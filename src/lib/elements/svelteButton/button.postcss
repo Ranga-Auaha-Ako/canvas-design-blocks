@@ -8,6 +8,12 @@
   @apply bg-primary text-white;
   @apply border-solid border border-black border-opacity-40;
   text-decoration: none !important;
+  &:hover {
+    text-decoration: none !important;
+    span {
+      text-decoration: none !important;
+    }
+  }
   &:before {
     @apply absolute inset-0 z-0;
     @apply transition bg-black bg-opacity-0;
@@ -43,6 +49,9 @@
   }
   & img.cdb--custom-icon {
     height: 1.1em;
+  }
+  & .external_link_icon {
+    display: none !important;
   }
 }
 /* .CDB--Button[data-cdb-version] {
