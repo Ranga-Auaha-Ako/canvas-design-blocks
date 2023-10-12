@@ -1,6 +1,6 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import IconPicker, { IconPickerOptions, IconType } from "../iconPicker";
+  import { IconPickerOptions, IconType } from "../iconPicker";
   import { createEventDispatcher } from "svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";

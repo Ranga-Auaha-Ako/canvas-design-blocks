@@ -1,6 +1,6 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import IconPicker, {
+  import {
     IconPickerOptions,
     IconType,
     icons,

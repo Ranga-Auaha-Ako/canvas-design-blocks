@@ -1,8 +1,9 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import IconPicker, {
+  import {
     IconPickerOptions,
     IconType,
+    icons,
     loadCustomIcons,
   } from "./iconPicker";
   import { createEventDispatcher } from "svelte";
@@ -16,14 +17,13 @@
       type: IconType;
     };
   }>();
-  export let iconPicker: IconPicker;
   export let options: IconPickerOptions;
 </script>
 
 <div class="modal-wrap">
   {#await loadCustomIcons()}
-    <IconList icons={iconPicker.choices} {options} on:selectIcon />
-  {:then icons}
     <IconList {icons} {options} on:selectIcon />
+  {:then allIcons}
+    <IconList icons={allIcons} {options} on:selectIcon />
   {/await}
 </div>
