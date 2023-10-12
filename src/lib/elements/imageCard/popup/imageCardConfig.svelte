@@ -8,7 +8,7 @@
     ImageCard,
     LocalState,
   } from "../imageCard";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
   import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
   import { fade } from "svelte/transition";
@@ -73,7 +73,24 @@
     $rowData.cards = $rowData.cards;
   };
 
-  let iconPicker: IconPicker;
+  const iconPicker = new IconPicker({
+    target: document.body,
+    props: {
+      options: { editColor: true },
+    },
+  });
+  iconPicker.$on("selectIcon", ({ detail }) => {
+    if (cardIndex === undefined) return;
+    iconPicker.close();
+    $rowData.cards[cardIndex].icon = {
+      id: detail.icon.id,
+      color: detail.color,
+      type: detail.type,
+    };
+  });
+  onDestroy(() => {
+    iconPicker.$destroy();
+  });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -173,14 +190,6 @@
                     iconPicker.open();
                   }}>Select Icon</button
                 >
-                <IconPicker
-                  options={{ editColor: true }}
-                  bind:this={iconPicker}
-                  on:selectIcon={({ detail }) => {
-                    if (cardIndex === undefined) return;
-                    $rowData.cards[cardIndex].icon = detail.icon;
-                  }}
-                />
               {:else}
                 <button
                   class="Button Button--block"

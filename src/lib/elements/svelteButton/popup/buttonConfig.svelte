@@ -9,10 +9,11 @@
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
-  import IconPicker from "$lib/util/components/iconSearch/iconPicker";
+  import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import { onDestroy } from "svelte";
 
   export let props: { button: Button };
   export let isModal: boolean = false;
@@ -24,15 +25,22 @@
   $: inGrid = props.button.node.closest(".cgb-col:not(.col-lg-12)") !== null;
   let configEl: HTMLElement;
 
-  let iconPicker: IconPicker;
-  let pickerUnsub = () => {};
-  $: {
-    iconPicker = new IconPicker(button.editor, $buttonData.icon, button);
-    pickerUnsub();
-    pickerUnsub = iconPicker.subscribe((icon) => {
-      $buttonData.icon = icon;
-    });
-  }
+  const iconPicker = new IconPicker({
+    target: document.body,
+    props: {
+      options: { editColor: false },
+    },
+  });
+  iconPicker.$on("selectIcon", ({ detail }) => {
+    iconPicker.close();
+    $buttonData.icon = {
+      id: detail.icon.id,
+      type: detail.type,
+    };
+  });
+  onDestroy(() => {
+    iconPicker.$destroy();
+  });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -89,7 +97,7 @@
       <button
         class="Button"
         on:click={() => {
-          iconPicker.pick();
+          iconPicker.open();
         }}>Select Icon</button
       >
       <!-- Select box for full-width -->

@@ -25,8 +25,18 @@ export interface CustomIconState {
   type: IconType.Custom;
   color?: string;
 }
-export type IconState = InstIconState | CustomIconState;
 
+export interface universalIconState {
+  id: string;
+  type: IconType;
+  color?: string;
+}
+
+export type IconState = InstIconState | CustomIconState | universalIconState;
+
+export const isUniversalIcon = (
+  icon: Partial<IconState>
+): icon is universalIconState => "id" in icon;
 export const isCustomIcon = (
   icon: Pick<IconState, "type">
 ): icon is CustomIconState => icon.type === IconType.Custom;
@@ -62,12 +72,17 @@ InstIcons.then((i) =>
     }
     // Add icon
     category.icons.push({
-      id: `Inst.${name}.${typeEnum}`,
+      id: instClassToId(name, typeEnum),
       url,
       term: name,
     } as instIcon);
   })
 );
+
+const instClassToId = (
+  classStr: string,
+  type: IconType.Solid | IconType.Line
+) => `Inst.${classStr}.${type}`;
 
 export { icons };
 
@@ -75,12 +90,13 @@ export async function getIconData(
   icon:
     | Pick<InstIconState, "type" | "class">
     | Pick<CustomIconState, "type" | "id">
+    | Pick<universalIconState, "type" | "id">
 ): Promise<instIcon | customIcon | undefined> {
   const ics = await loadCustomIcons();
-  if (isCustomIcon(icon)) {
-    let found: customIcon | undefined;
+  if (isCustomIcon(icon) || isUniversalIcon(icon)) {
+    let found: customIcon | instIcon | undefined;
     for (const cat of ics) {
-      if (cat.type !== IconType.Custom) continue;
+      if (cat.type !== icon.type) continue;
       found = cat.icons.find((ic) => ic.id === icon.id);
       if (found) break;
     }
@@ -98,7 +114,7 @@ export async function getIconData(
 
 export function getIconState(
   unsafeState?: Partial<IconState>
-): IconState | undefined {
+): universalIconState | undefined {
   if (!unsafeState || typeof unsafeState !== "object") return undefined;
   let iconType = IconType.Line;
   if (unsafeState?.type !== undefined) {
@@ -108,7 +124,7 @@ export function getIconState(
   const formedIcon = {
     type: iconType,
     id: "id" in unsafeState ? unsafeState.id : undefined,
-    class: "class" in unsafeState ? unsafeState.class : "#000000",
+    class: "class" in unsafeState ? unsafeState.class : undefined,
     color:
       "color" in unsafeState &&
       unsafeState.color &&
@@ -119,7 +135,7 @@ export function getIconState(
   if (isInstIcon(formedIcon)) {
     const icon = {
       type: formedIcon.type,
-      class: formedIcon.class,
+      id: instClassToId(formedIcon.class, formedIcon.type),
     };
     if (!formedIcon.color) {
       return icon;

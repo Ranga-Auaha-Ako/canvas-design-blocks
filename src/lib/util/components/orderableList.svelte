@@ -1,7 +1,6 @@
 <script lang="ts">
   // import Sortable from "sortablejs";
-
-  const Sortable = import("sortablejs");
+  import { Sortable } from "$lib/util/loaders/sortable";
   console.log("Sortable", Sortable);
   import { createEventDispatcher } from "svelte";
 

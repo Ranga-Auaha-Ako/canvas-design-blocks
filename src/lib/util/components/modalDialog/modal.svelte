@@ -23,45 +23,47 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<dialog
-  bind:this={dialog}
-  on:click={(e) => {
-    if (e.target === dialog) dialog.close();
-  }}
->
-  <div class="dialogBody">
-    <slot name="title">
-      {#if title}
-        <h4>
-          {title}
-        </h4>
-      {/if}
-    </slot>
-    <slot />
-
-    <div class="actions">
-      <slot name="actions">
-        {#if showSave}
-          <button
-            on:click={() => {
-              dispatch("save");
-            }}
-            class="Button Button--success save">Save</button
-          >
-        {/if}
-        {#if showCancel}
-          <button
-            on:click={() => {
-              dispatch("close");
-              dialog.close();
-            }}
-            class="Button cancel">Cancel</button
-          >
+<div class="cgb-component">
+  <dialog
+    bind:this={dialog}
+    on:click|stopPropagation={(e) => {
+      if (e.target === dialog) dialog.close();
+    }}
+  >
+    <div class="dialogBody">
+      <slot name="title">
+        {#if title}
+          <h4>
+            {title}
+          </h4>
         {/if}
       </slot>
+      <slot />
+
+      <div class="actions">
+        <slot name="actions">
+          {#if showSave}
+            <button
+              on:click={() => {
+                dispatch("save");
+              }}
+              class="Button Button--success save">Save</button
+            >
+          {/if}
+          {#if showCancel}
+            <button
+              on:click={() => {
+                dispatch("close");
+                dialog.close();
+              }}
+              class="Button cancel">Cancel</button
+            >
+          {/if}
+        </slot>
+      </div>
     </div>
-  </div>
-</dialog>
+  </dialog>
+</div>
 
 <style lang="postcss">
   dialog {

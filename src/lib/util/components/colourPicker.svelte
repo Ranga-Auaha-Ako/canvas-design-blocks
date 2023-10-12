@@ -178,16 +178,15 @@
       <div class="cgb-component" use:preventBubble={false}>
         <dialog
           {id}
-          class="colourPicker"
           style:z-index={zIndex}
           aria-hidden={!edit}
           bind:this={popoverEl}
           style:transform
-          use:clickOutside={() => {
-            edit = false;
+          on:click={(e) => {
+            if (e.target === popoverEl) edit = false;
           }}
         >
-          {#if edit}
+          <div class="colourPicker">
             {#each options as option}
               {#if !(option.code === undefined && contrastColour !== undefined && isText)}
                 {@const inaccessible =
@@ -241,7 +240,7 @@
                 />
               </div>
             </div>
-          {/if}
+          </div>
         </dialog>
       </div></Portal
     >
@@ -269,17 +268,20 @@
     cursor: pointer;
     display: inline-block;
   }
-  .colourPicker {
-    @apply absolute top-0 left-0 p-4 m-0 box-content h-auto;
-    @apply shadow-lg bg-white rounded;
-    @apply grid gap-1;
-    @apply overflow-clip;
-    grid-template-columns: repeat(4, var(--size));
-    grid-template-rows: repeat(auto-fill, var(--size)), auto;
-    @apply pointer-events-none opacity-0 transition-opacity;
+  dialog {
+    @apply absolute top-0 left-0 p-0 m-0 box-content overflow-clip shadow-lg rounded;
+    @apply opacity-0 transition-opacity;
+    @apply pointer-events-none;
     &[open] {
       @apply visible opacity-100 pointer-events-auto;
     }
+  }
+  .colourPicker {
+    @apply p-4;
+    @apply shadow-lg bg-white rounded;
+    @apply grid gap-1;
+    grid-template-columns: repeat(4, var(--size));
+    grid-template-rows: repeat(auto-fill, var(--size)), auto;
     & .colour-option {
       @apply shadow-sm z-0 transition;
       &.selected {

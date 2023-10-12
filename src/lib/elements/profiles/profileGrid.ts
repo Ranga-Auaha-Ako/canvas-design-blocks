@@ -39,7 +39,6 @@ export interface ProfileData {
 }
 
 const getColorOrDefault = (color?: Colord | string) => {
-  debugger;
   if (color === undefined) return colord(theme.primary);
   let c = colord(color);
   if (c.isValid()) return c;
