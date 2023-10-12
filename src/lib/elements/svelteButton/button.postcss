@@ -54,6 +54,10 @@
     display: none !important;
   }
 }
-/* .CDB--Button[data-cdb-version] {
+.CDB--Button[data-cdb-version] {
+  @apply inline-block;
+}
+
+.CDB--Button[data-cdb-version]:has(.Button--full) {
   @apply block;
-} */
+}
