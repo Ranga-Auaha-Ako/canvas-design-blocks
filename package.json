@@ -6,6 +6,7 @@
   "size-limit": [
     {
       "name": "Initial Load",
+      "brotli": true,
       "path": [
         "dist/canvas-blocks.min.js",
         "dist/theme-loader.umd.cjs"
@@ -13,6 +14,7 @@
     },
     {
       "name": "Full app launch",
+      "brotli": true,
       "path": [
         "dist/c/*.js",
         "dist/canvas-blocks.min.js",
