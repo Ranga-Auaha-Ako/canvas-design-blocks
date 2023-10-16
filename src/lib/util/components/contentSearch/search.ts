@@ -123,7 +123,7 @@ async function searchPages(query?: string) {
   return pages.map<Link>((p) => {
     return {
       name: p.title,
-      url: p.url,
+      url: p.html_url,
       type: InternalLinks.Pages,
       published: p.published,
     };
