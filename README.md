@@ -111,6 +111,8 @@ document.head.appendChild(style);
 
 This project is built on [Vite](https://vitejs.dev/) and [Svelte](https://svelte.dev/). To get started, you will need to have [Node.js](https://nodejs.org/en/) installed, as well as [Yarn V3](https://v3.yarnpkg.com/).
 
+Changelogs are kept to the [Keep a Changelog v1.1.0](https://keepachangelog.com/en/1.1.0/) standard.
+
 ### Getting Started
 
 1. Clone the repository

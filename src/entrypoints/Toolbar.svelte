@@ -5,15 +5,18 @@
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
   import { slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
-  import { version } from "$lib/util/constants";
+  import { changes, version } from "$lib/util/constants";
   import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import type { stateObject } from "src/main";
   import ElementManager from "$lib/elements/generic/elementManager";
   import gtag from "$lib/util/gtag";
+  import { persisted } from "svelte-persisted-store";
 
   export let state: stateObject | undefined;
   export let managers: ElementManager[];
+
+  const last_opened_ver = persisted("cdb_version_opened", "2.8.3");
 
   $: open = state?.showInterface;
   $: configComponent = state?.configComponent;
@@ -40,6 +43,7 @@
       event_category: "Design Blocks",
     });
   }
+  console.log(changes);
 </script>
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
@@ -57,6 +61,22 @@
   </button>
 
   {#if $open}
+    {#if $last_opened_ver !== version}
+      <div class="new-popup" out:slide>
+        <h3>Design Blocks {version}</h3>
+        <p>
+          {changes}
+        </p>
+        <button
+          on:click={() => {
+            $last_opened_ver = version;
+          }}
+        >
+          <i class="icon icon-Solid icon-heart" />
+          Got it!
+        </button>
+      </div>
+    {/if}
     {#if $configComponent}
       <div class="toolbar-menu advanced-settings" transition:slide|global>
         <svelte:component
@@ -125,5 +145,23 @@
 
   .advanced-settings {
     @apply p-2;
+  }
+
+  .new-popup {
+    @apply relative p-2 my-2 bg-white text-black rounded border border-secondary;
+    @apply flex flex-col gap-3;
+
+    h3 {
+      @apply text-sm font-bold leading-none m-0;
+    }
+    p {
+      @apply text-xs m-0;
+    }
+    button {
+      @apply text-xs bg-secondary text-white rounded-sm px-2 py-1;
+      & i:before {
+        @apply text-xs leading-none;
+      }
+    }
   }
 </style>

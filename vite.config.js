@@ -5,6 +5,10 @@ import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
+import parseChangelog from "changelog-parser";
+
+const changelog = await parseChangelog("./CHANGELOG.md");
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   if (mode === "theme-loader") {
@@ -45,6 +49,11 @@ export default defineConfig(({ mode, command }) => {
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       __THEME__: JSON.stringify(
         JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
+      ),
+      __LATEST_CHANGE__: JSON.stringify(
+        changelog.versions.find(
+          (v) => v.version === process.env.npm_package_version
+        )?.parsed.Overview
       ),
     },
     base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
