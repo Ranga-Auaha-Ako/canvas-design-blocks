@@ -41,6 +41,7 @@
   $: if ($open) {
     gtag("event", `design_blocks_open`, {
       event_category: "Design Blocks",
+      cdb_version: version,
     });
   }
 </script>
@@ -64,7 +65,8 @@
       <div class="new-popup" out:slide>
         <h3>Design Blocks {version}</h3>
         <p>
-          {changes}
+          {changes ||
+            "This new version of Design Blocks contains minor bug fixes and improvements."}
         </p>
         <button
           on:click={() => {
