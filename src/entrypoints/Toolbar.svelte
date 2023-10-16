@@ -10,6 +10,7 @@
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import type { stateObject } from "src/main";
   import ElementManager from "$lib/elements/generic/elementManager";
+  import gtag from "$lib/util/gtag";
 
   export let state: stateObject | undefined;
   export let managers: ElementManager[];
@@ -20,10 +21,25 @@
   let container: HTMLElement;
   $: if (container) preventBubble(container);
 
+  let openedThisSession = false;
+
   const add = (manager: ElementManager) => {
     if (!managers) return;
     const newManager = manager.create(true, true);
+    if (!openedThisSession) {
+      gtag("event", `design_blocks_insert`, {
+        event_category: "Design Blocks",
+        event_label: manager.elementName,
+      });
+    }
+    openedThisSession = true;
   };
+
+  $: if ($open) {
+    gtag("event", `design_blocks_open`, {
+      event_category: "Design Blocks",
+    });
+  }
 </script>
 
 <div bind:this={container} class="cgb-toolbar cgb-component">

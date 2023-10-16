@@ -5,7 +5,7 @@
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
   import { colord } from "colord";
-  import { persisted as localStorageWritable } from "svelte-local-storage-store";
+  import { persisted as localStorageWritable } from "svelte-persisted-store";
   import {
     customCategory,
     customIcon,
