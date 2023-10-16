@@ -14,7 +14,7 @@
     @apply flex flex-wrap mx-auto gap-4 mb-4;
     .card {
       @apply rounded-2xl shadow-xl bg-primary text-white p-4 text-center w-60 grow;
-      @apply flex flex-row flex-wrap content-start;
+      @apply flex flex-row flex-wrap content-start gap-3;
       img.profile-photo {
         @apply rounded-full mx-auto shadow-md aspect-square w-32 max-w-full object-cover;
       }
@@ -43,5 +43,6 @@
   }
   .no-people {
     @apply text-center text-2xl text-gray-500 m-4;
+    @apply bg-transparent border-0 block w-full;
   }
 }

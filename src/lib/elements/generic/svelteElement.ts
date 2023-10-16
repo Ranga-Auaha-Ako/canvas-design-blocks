@@ -14,6 +14,13 @@ export type SvelteStateClass<State> = new (
   node?: HTMLElement
 ) => SvelteState<State>;
 
+export interface ElementComponent<stateDataType, localState>
+  extends SvelteComponent<{
+    cdbData: stateDataType;
+    localState: Writable<localState>;
+    destroyHandler: () => void;
+  }> {}
+
 /**
  * SvelteElement is a generic element that can be used to render any Svelte
  * component in TinyMCE.
@@ -32,12 +39,7 @@ export abstract class SvelteElement<
   public static markupVersion = "1.0.0";
   public SvelteState: SvelteState<stateDataType>;
   private dataEl: HTMLElement | undefined;
-  private lastContents:
-    | SvelteComponent<{
-        cdbData: stateDataType;
-        localState: Writable<localState>;
-      }>
-    | undefined;
+  private lastContents: ElementComponent<stateDataType, localState> | undefined;
   public customEvents?: Map<string, (detail: any) => any>;
 
   constructor(
@@ -45,10 +47,7 @@ export abstract class SvelteElement<
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<
-      SvelteComponent<{
-        cdbData: stateDataType;
-        localState: Writable<localState>;
-      }>
+      ElementComponent<stateDataType, localState>
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
@@ -78,7 +77,10 @@ export abstract class SvelteElement<
     };
 
     this.node.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (
+        e.key === "Enter" &&
+        this.node === (e.target as HTMLElement)?.parentElement
+      ) {
         this.popover?.show(true);
         e.stopPropagation();
         e.preventDefault();
@@ -102,38 +104,70 @@ export abstract class SvelteElement<
     }
     this.SvelteState = new stateClass(parsedStateData, node);
     this.SvelteState.subscribe((elState) => {
+      if (this.detached) return;
       if (elState) {
-        if (this.detached) return;
-        this.stopObserving();
-        this.node.innerHTML = "";
-        this.dataEl = undefined;
-        this.node.appendChild(createDataEl());
-        this.lastContents?.$destroy();
-        this.lastContents = new svelteComponent({
-          target: this.node,
-          props: {
+        const newDataEl = createDataEl();
+        if (newDataEl.parentElement !== this.node) {
+          this.node.appendChild(newDataEl);
+          this.dataEl = newDataEl;
+        }
+        // If the node only contains the data element or lastContents is destroyed, we should re-render
+        if (
+          !this.lastContents ||
+          ![...this.node.childNodes].some((node) => node !== this.dataEl)
+        ) {
+          this.stopObserving();
+          this.node.innerHTML = "";
+          this.dataEl = undefined;
+          this.node.appendChild(createDataEl());
+          this.lastContents?.$destroy();
+          this.lastContents = new svelteComponent({
+            target: this.node,
+            props: {
+              cdbData: elState,
+              localState: localState,
+              destroyHandler: () => {
+                this.destroyHandler();
+              },
+            },
+          });
+          this.lastContents.$on("update", ({ detail }) => {
+            if (detail) {
+              createDataEl();
+            }
+          });
+          this.lastContents.$on("focus", () => {
+            this.select();
+          });
+          this.lastContents.$on("toolbar", ({ detail: asModal }) => {
+            this.popover?.show(asModal);
+          });
+
+          [...(this.customEvents?.entries() || [])].forEach((event) => {
+            this.lastContents?.$on(event[0], (detail) => {
+              event[1](detail);
+            });
+          });
+          this.startObserving();
+        } else {
+          this.lastContents.$set({
             cdbData: elState,
             localState: localState,
-          },
-        });
-        this.lastContents.$on("update", ({ detail }) => {
-          if (detail) {
-            createDataEl();
-          }
-        });
-        this.lastContents.$on("focus", () => {
-          this.select();
-        });
-        [...(this.customEvents?.entries() || [])].forEach((event) => {
-          this.lastContents?.$on(event[0], (detail) => {
-            event[1](detail);
+            destroyHandler: () => {
+              this.destroyHandler();
+            },
           });
-        });
-        this.startObserving();
+        }
       }
     });
 
     if (highlight) this.highlight();
+  }
+
+  private destroyHandler() {
+    this.lastContents = undefined;
+    // Trigger an update to recreate the elements if necessary
+    this.SvelteState.update((state) => state);
   }
 
   public updateDataEl() {

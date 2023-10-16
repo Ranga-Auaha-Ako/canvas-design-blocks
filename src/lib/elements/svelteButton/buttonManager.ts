@@ -20,3 +20,5 @@ export class ButtonManager extends ElementManager {
     this.importAll();
   }
 }
+
+export default ButtonManager;

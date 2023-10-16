@@ -4,15 +4,24 @@
   import { debounce } from "perfect-debounce";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
+  import blankImg from "../blank-user.png";
+  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import { colord } from "colord";
 
   export let props: { profileGrid: ProfileGrid };
+  export let isModal: boolean = false;
   $: profileGrid = props.profileGrid;
   $: people = profileGrid.SvelteState;
   let configEl: HTMLElement;
 
-  const allCanvasTeachers = fetch(
-    `/api/v1/courses/${window.ENV.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
-  ).then((res) => res.json());
+  const allCanvasTeachers = window.ENV.COURSE_ID
+    ? fetch(
+        (import.meta.env.DEV && window.location.hostname === "localhost"
+          ? "https://canvas.auckland.ac.nz/"
+          : "") +
+          `/api/v1/courses/${window.ENV.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
+      ).then((res) => res.json())
+    : Promise.resolve([]);
 
   let searchQuery = "";
 
@@ -25,7 +34,7 @@
   });
 
   type canvasUser = {
-    id: number;
+    id?: number;
     name: string;
     last_name: string;
     first_name: string;
@@ -43,7 +52,7 @@
           lastName: person.last_name,
           firstNameLastName: person.name,
           id: nanoid(),
-          canvasId: person.id.toString(),
+          canvasId: person.id?.toString(),
           overview: `<p>${
             person.bio
               ? person.bio
@@ -67,6 +76,11 @@
       searchQuery = "";
     }
   };
+
+  let activeId: string | undefined;
+  $: activeIndex = activeId
+    ? $people.findIndex((p) => p.id === activeId)
+    : undefined;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -75,60 +89,124 @@
   class="cgb-component"
   in:fade|global={{ duration: 200 }}
 >
-  <div class="personList">
-    <OrderableList
-      labelKey="firstNameLastName"
-      idKey="id"
-      bind:items={$people}
-      on:toggleOverview={({ detail: id }) => {
-        profileGrid.SvelteState.update((people) => {
-          const person = people.find((p) => p.id === id);
-          if (person) {
-            person.showOverview = !person.showOverview;
-          }
-          return people;
-        });
-      }}
-      actions={(item) => [
-        {
-          title: "Show/Hide Overview",
-          icon: item.showOverview
-            ? "icon-Solid icon-syllabus"
-            : "icon-Line icon-syllabus",
-          event: "toggleOverview",
-        },
-      ]}
-    />
-  </div>
-  <div class="searchBox">
-    <input
-      type="search"
-      class="imageSearch"
-      placeholder="Search for a person"
-      bind:value={searchQuery}
-    />
-    <div class="results">
-      {#await results then resultsAwaited}
-        {#each resultsAwaited as result}
-          <button
-            in:fade|global={{ duration: 200 }}
-            class="resultItem"
-            on:click={() => addPerson(result)}>{result.name}</button
-          >
-        {/each}
-      {/await}
+  {#if $people.length}
+    <div class="personList">
+      <OrderableList
+        labelKey="firstNameLastName"
+        idKey="id"
+        bind:activeId
+        bind:items={$people}
+        on:toggleOverview={({ detail: id }) => {
+          profileGrid.SvelteState.update((people) => {
+            const person = people.find((p) => p.id === id);
+            if (person) {
+              person.showOverview = !person.showOverview;
+            }
+            return people;
+          });
+        }}
+        on:edit={({ detail: id }) => {
+          activeId = id;
+        }}
+        showEdit={true}
+      />
     </div>
-  </div>
+  {/if}
+  {#if activeIndex !== undefined && $people[activeIndex]}
+    <div class="editPerson">
+      <div class="editActions">
+        <button
+          title="Finish editing Person"
+          on:click={() => {
+            activeId = undefined;
+          }}
+        >
+          Done
+          <i class="icon-solid icon-check pl-1" aria-hidden="true" />
+        </button>
+      </div>
+      <div class="options">
+        <label for="fullWidth" class="checkbox-fullwidth">
+          <input
+            type="checkbox"
+            id="fullWidth"
+            bind:checked={$people[activeIndex].showOverview}
+          />
+          Show Overview
+        </label>
+        <ColourPicker
+          label="Colour"
+          id={nanoid() + "-setting-background"}
+          bind:colour={$people[activeIndex].color}
+          contrastColour={colord("#ffffff")}
+          showNone={false}
+          asModal={isModal}
+        />
+      </div>
+    </div>
+  {:else}
+    <div class="searchBox">
+      <input
+        type="search"
+        class="imageSearch"
+        placeholder="Search for a person"
+        bind:value={searchQuery}
+      />
+      <div class="results">
+        {#await results}
+          <div class="loading animate-pulse">Loading...</div>
+        {:then resultsAwaited}
+          {#each resultsAwaited as result}
+            <button
+              in:fade|global={{ duration: 200 }}
+              class="resultItem"
+              on:click={() => addPerson(result)}>{result.name}</button
+            >
+          {:else}
+            <button
+              class="no-results"
+              on:click={() =>
+                addPerson({
+                  id: -1,
+                  name: searchQuery || `New Person ${$people.length + 1}`,
+                  last_name: "",
+                  first_name: searchQuery || `New Person ${$people.length + 1}`,
+                  short_name: searchQuery || `New Person ${$people.length + 1}`,
+                  avatar_url: blankImg,
+                  email: "email@example.com",
+                  bio: "",
+                })}
+            >
+              No results found. Click here to add a blank person.
+            </button>
+          {/each}
+        {/await}
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style lang="postcss">
   .cgb-component {
     @apply bg-white border border-gray-300 rounded p-2 shadow mb-2;
-    @apply flex gap-4;
+    @apply flex gap-2;
     &:after {
       @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
       @apply border-b border-r bg-white -z-10;
       content: " ";
+    }
+    .personList {
+      @apply py-1;
+    }
+    .editPerson {
+      @apply rounded border border-gray-300 overflow-clip w-52;
+      .editActions {
+        @apply flex gap-2 justify-end;
+        @apply bg-gray-100 border-b p-1 px-2;
+      }
+      & .options {
+        @apply p-2;
+      }
     }
     .searchBox {
       .results {
@@ -136,6 +214,19 @@
         .resultItem {
           @apply block;
         }
+        .no-results {
+          @apply block text-gray-400 break-normal w-48 text-center mx-auto my-4;
+        }
+      }
+    }
+
+    .checkbox-fullwidth {
+      @apply flex items-center gap-2;
+      @apply text-gray-500;
+      @apply cursor-pointer;
+      @apply accent-primary;
+      & input {
+        @apply w-4 h-4;
       }
     }
   }

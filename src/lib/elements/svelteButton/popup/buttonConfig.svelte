@@ -9,9 +9,11 @@
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
-  import IconPicker from "$lib/util/components/iconSearch/iconPicker";
+  import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
+  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import { onDestroy } from "svelte";
 
   export let props: { button: Button };
   export let isModal: boolean = false;
@@ -19,15 +21,26 @@
   // export let dominantPopover: Readable<boolean> | undefined = undefined;
   $: button = props.button;
   $: buttonData = button.SvelteState;
+
+  $: inGrid = props.button.node.closest(".cgb-col:not(.col-lg-12)") !== null;
   let configEl: HTMLElement;
 
-  let iconPicker: IconPicker;
-  $: {
-    iconPicker = new IconPicker(button.editor, $buttonData.icon, button);
-    iconPicker.subscribe((icon) => {
-      $buttonData.icon = icon;
-    });
-  }
+  const iconPicker = new IconPicker({
+    target: document.body,
+    props: {
+      options: { editColor: false },
+    },
+  });
+  iconPicker.$on("selectIcon", ({ detail }) => {
+    iconPicker.close();
+    $buttonData.icon = {
+      id: detail.icon.id,
+      type: detail.type,
+    };
+  });
+  onDestroy(() => {
+    iconPicker.$destroy();
+  });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -45,7 +58,7 @@
   >
     <i class="icon-end" />
   </button>
-  <div class="flex flex-row gap-4">
+  <div class="grid grid-flow-col grid-cols-2 gap-4">
     <div class="col">
       <ButtonRadio
         title="Button Size"
@@ -55,15 +68,22 @@
       />
       <input
         type="text"
-        bind:value={$buttonData.label}
-        placeholder="Button Label..."
-      />
-      <input
-        type="text"
         bind:value={$buttonData.title}
         placeholder="Button Title..."
       />
-      <input type="url" bind:value={$buttonData.url} placeholder="Button URL" />
+      <input
+        type="text"
+        bind:value={$buttonData.label}
+        placeholder="Button Label..."
+      />
+      <LinkInput
+        link={$buttonData.url}
+        text={$buttonData.label}
+        on:save={({ detail }) => {
+          $buttonData.url = detail.link;
+          $buttonData.label = detail.text || "";
+        }}
+      />
     </div>
     <div class="col">
       <ColourPicker
@@ -77,9 +97,20 @@
       <button
         class="Button"
         on:click={() => {
-          iconPicker.pick();
+          iconPicker.open();
         }}>Select Icon</button
       >
+      <!-- Select box for full-width -->
+      {#if inGrid}
+        <label for="fullWidth" class="checkbox-fullwidth">
+          <input
+            type="checkbox"
+            id="fullWidth"
+            bind:checked={$buttonData.fullWidth}
+          />
+          Full Width
+        </label>
+      {/if}
     </div>
   </div>
 </div>
@@ -103,9 +134,18 @@
   }
   input[type="text"],
   input[type="url"] {
-    @apply border border-gray-300 rounded px-2 py-3 w-full;
+    @apply border border-gray-300 rounded px-2 py-3 w-full mb-0;
     &:focus {
       @apply outline-none border-blue-500;
+    }
+  }
+  .checkbox-fullwidth {
+    @apply flex items-center gap-2;
+    @apply text-gray-500;
+    @apply cursor-pointer;
+    @apply accent-primary;
+    & input {
+      @apply w-4 h-4;
     }
   }
 </style>

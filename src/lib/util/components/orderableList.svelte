@@ -1,5 +1,6 @@
 <script lang="ts">
-  import Sortable from "sortablejs";
+  // import Sortable from "sortablejs";
+  import { Sortable } from "$lib/util/loaders/sortable";
   import { createEventDispatcher } from "svelte";
 
   export let labelKey: string;
@@ -40,12 +41,14 @@
 
   $: sortable =
     itemList &&
-    new Sortable(itemList, {
-      animation: 200,
-      handle: ".dragHandle",
-      onEnd: (event) => {
-        handleItemOrder(event);
-      },
+    Sortable.then((s) => {
+      new s.default(itemList, {
+        animation: 200,
+        handle: ".dragHandle",
+        onEnd: (event) => {
+          handleItemOrder(event);
+        },
+      });
     });
 </script>
 
@@ -60,6 +63,7 @@
         class="item {activeId !== undefined && item[idKey] === activeId
           ? activeClass
           : ''}"
+        class:active={activeId !== undefined && item[idKey] === activeId}
       >
         <div class="dragHandle">
           <i class="icon-solid icon-drag-handle" />
@@ -138,6 +142,10 @@
       }
       .actions {
         @apply flex gap-x-2;
+      }
+      &.active {
+        @apply bg-primary text-white rounded p-1 px-2;
+        margin: -0.25rem 0;
       }
     }
   }

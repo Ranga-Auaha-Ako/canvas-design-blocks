@@ -6,13 +6,18 @@
     RowData,
     ValidThemes,
   } from "./imageCard";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
   import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: RowData;
   export let localState: Writable<LocalState>;
+  export let destroyHandler: () => void;
+
+  onDestroy(() => {
+    destroyHandler();
+  });
   $: isSelected = $localState.isSelected;
 </script>
 
@@ -33,6 +38,18 @@
             selectedCard: card.id,
           };
         });
+      }}
+      on:keydown={(e) => {
+        if (e.key === "Enter") {
+          e.stopPropagation();
+          dispatch("toolbar", true);
+          localState.update((state) => {
+            return {
+              ...state,
+              selectedCard: card.id,
+            };
+          });
+        }
       }}
     >
       {#if cdbData.theme === ImageCardTheme.Icon}

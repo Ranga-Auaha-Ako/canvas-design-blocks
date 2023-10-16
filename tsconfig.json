@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["@types/gtag.js"],
     "moduleResolution": "Node",
     "target": "ES2018",
     "module": "ESNext",

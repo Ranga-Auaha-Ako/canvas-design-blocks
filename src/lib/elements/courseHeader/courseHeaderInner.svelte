@@ -1,15 +1,22 @@
 <script lang="ts">
   import { HeaderData } from "./courseHeader";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: HeaderData;
   // svelte-ignore unused-export-let
   export let localState: any;
+
+  export let destroyHandler: () => void;
+
+  onDestroy(() => {
+    destroyHandler();
+  });
 </script>
 
-<div class="headerInner {cdbData.theme}">
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<div class="headerInner {cdbData.theme}" tabindex="0">
   {#if cdbData.image}
     <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
     <div class="imageOverlay">&nbsp;</div>

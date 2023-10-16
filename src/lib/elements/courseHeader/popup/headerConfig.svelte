@@ -3,9 +3,10 @@
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
-  import ImageSearch from "$lib/util/components/imageSearch/imageSearch.svelte";
+  import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
+  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
 
   export let props: { courseHeader: CourseHeader };
   // export let isDominant: Writable<boolean>;
@@ -96,20 +97,10 @@
           <button
             title="Finish editing link"
             on:click={() => {
-              if (
-                (newLinkTextUrl.value.startsWith("#") ||
-                  newLinkTextUrl.checkValidity()) &&
-                newLinkTextLabel.value.length > 0
-              ) {
-                editLinkId = undefined;
-                newLinkTextLabel.removeAttribute("required");
-              } else {
-                newLinkTextUrl.reportValidity();
-                newLinkTextLabel.setAttribute("required", "");
-              }
+              editLinkId = undefined;
             }}
           >
-            Save
+            Done
             <i class="icon-solid icon-check pl-1" aria-hidden="true" />
           </button>
         </div>
@@ -119,14 +110,18 @@
             type="text"
             id="linkTitle-{editLinkId}"
             bind:value={$headerData.links[editLinkIndex].title}
-            bind:this={newLinkTextLabel}
           />
           <label for="linkUrl-{editLinkId}">URL</label>
-          <input
-            type="url"
+          <LinkInput
             id="linkUrl-{editLinkId}"
-            bind:value={$headerData.links[editLinkIndex].url}
-            bind:this={newLinkTextUrl}
+            link={$headerData.links[editLinkIndex].url}
+            text={$headerData.links[editLinkIndex].title}
+            on:save={({ detail }) => {
+              if (editLinkIndex === undefined) return;
+              $headerData.links[editLinkIndex].url = detail.link;
+              if (detail.text !== undefined)
+                $headerData.links[editLinkIndex].title = detail.text;
+            }}
           />
         </div>
       </div>

@@ -5,7 +5,7 @@ import type Grid from "./grid";
 import ColMenu from "./popup/colMenu.svelte";
 import Row from "./row";
 import { ColumnLayout, gridSize } from "./rowLayouts";
-import { persisted as localStorageWritable } from "svelte-local-storage-store";
+import { persisted as localStorageWritable } from "svelte-persisted-store";
 import type { Editor } from "tinymce";
 
 export default class Column extends MceElement {
@@ -89,7 +89,6 @@ export default class Column extends MceElement {
         foundInnerNode = grid.editor.dom.create("div", {
           contenteditable: true,
           class: "cgb-col-inner",
-          style: "height: 100%; display: flow-root;",
         });
         outerNode.appendChild(foundInnerNode);
       }

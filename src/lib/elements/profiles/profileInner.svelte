@@ -1,17 +1,27 @@
 <script lang="ts">
+  import theme from "$lib/util/theme";
   import { ProfileData } from "./profileGrid";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: ProfileData[];
   // svelte-ignore unused-export-let
   export let localState: any;
+  export let destroyHandler: () => void;
+
+  onDestroy(() => {
+    destroyHandler();
+  });
 </script>
 
 {#each cdbData as profile}
-  <div class="profileItem">
-    <div class="card">
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+  <div class="profileItem" tabindex="0">
+    <div
+      class="card"
+      style:background-color={profile.color?.toHex() || theme.primary}
+    >
       {#if profile.thumbnail}
         <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
         <img
@@ -81,7 +91,7 @@
     {/if}
   </div>
 {:else}
-  <div data-mce-bogus="all" class="no-people">
-    <p>Click to add a person...</p>
-  </div>
+  <button data-mce-bogus="all" class="no-people">
+    Click to add a person...
+  </button>
 {/each}

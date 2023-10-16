@@ -1,9 +1,8 @@
 import { writable, type Writable } from "svelte/store";
-import { ModalDialog } from "../modalDialog/modal";
+import { ModalDialog } from "$lib/util/components/modalDialog/modal";
 import IconPickerModalInner from "./iconPickerModalInner.svelte";
 import type { Editor } from "tinymce";
 import type { SelectableElement } from "$lib/elements/generic/selectableElement";
-import { icons as InstIcons } from "virtual:inst-icons";
 import type {
   customIcon,
   customIconsMeta,
@@ -26,8 +25,18 @@ export interface CustomIconState {
   type: IconType.Custom;
   color?: string;
 }
-export type IconState = InstIconState | CustomIconState;
 
+export interface universalIconState {
+  id: string;
+  type: IconType;
+  color?: string;
+}
+
+export type IconState = InstIconState | CustomIconState | universalIconState;
+
+export const isUniversalIcon = (
+  icon: Partial<IconState>
+): icon is universalIconState => "id" in icon;
 export const isCustomIcon = (
   icon: Pick<IconState, "type">
 ): icon is CustomIconState => icon.type === IconType.Custom;
@@ -36,35 +45,44 @@ export const isInstIcon = (
 ): icon is InstIconState => !isCustomIcon(icon);
 
 let icons: iconData = [];
+// import { icons as InstIcons } from "virtual:inst-icons";
+const InstIcons = import("virtual:inst-icons");
 
-Object.entries(InstIcons).forEach(([iconPath, url]) => {
-  const [type, ...nameArr] = iconPath.split(".");
-  const name = nameArr.join(".");
-  if (!type || !name) return;
-  let typeEnum: IconType.Solid | IconType.Line;
-  if (type === "Solid") typeEnum = IconType.Solid;
-  else if (type === "Line") typeEnum = IconType.Line;
-  else return;
-  // Create/get category
-  const catName = `Instructure ${type} Icons`;
-  let category = icons.find(
-    (c): c is instCategory => c.name === catName && c.type === typeEnum
-  );
-  if (!category) {
-    category = {
-      name: catName,
-      type: typeEnum,
-      icons: [],
-    };
-    icons.push(category);
-  }
-  // Add icon
-  category.icons.push({
-    id: `Inst.${name}.${typeEnum}`,
-    url,
-    term: name,
-  } as instIcon);
-});
+InstIcons.then((i) =>
+  Object.entries(i.icons).forEach(([iconPath, url]) => {
+    const [type, ...nameArr] = iconPath.split(".");
+    const name = nameArr.join(".");
+    if (!type || !name) return;
+    let typeEnum: IconType.Solid | IconType.Line;
+    if (type === "Solid") typeEnum = IconType.Solid;
+    else if (type === "Line") typeEnum = IconType.Line;
+    else return;
+    // Create/get category
+    const catName = `Instructure ${type} Icons`;
+    let category = icons.find(
+      (c): c is instCategory => c.name === catName && c.type === typeEnum
+    );
+    if (!category) {
+      category = {
+        name: catName,
+        type: typeEnum,
+        icons: [],
+      };
+      icons.push(category);
+    }
+    // Add icon
+    category.icons.push({
+      id: instClassToId(name, typeEnum),
+      url,
+      term: name,
+    } as instIcon);
+  })
+);
+
+const instClassToId = (
+  classStr: string,
+  type: IconType.Solid | IconType.Line
+) => `Inst.${classStr}.${type}`;
 
 export { icons };
 
@@ -72,12 +90,13 @@ export async function getIconData(
   icon:
     | Pick<InstIconState, "type" | "class">
     | Pick<CustomIconState, "type" | "id">
+    | Pick<universalIconState, "type" | "id">
 ): Promise<instIcon | customIcon | undefined> {
   const ics = await loadCustomIcons();
-  if (isCustomIcon(icon)) {
-    let found: customIcon | undefined;
+  if (isCustomIcon(icon) || isUniversalIcon(icon)) {
+    let found: customIcon | instIcon | undefined;
     for (const cat of ics) {
-      if (cat.type !== IconType.Custom) continue;
+      if (cat.type !== icon.type) continue;
       found = cat.icons.find((ic) => ic.id === icon.id);
       if (found) break;
     }
@@ -95,7 +114,7 @@ export async function getIconData(
 
 export function getIconState(
   unsafeState?: Partial<IconState>
-): IconState | undefined {
+): universalIconState | undefined {
   if (!unsafeState || typeof unsafeState !== "object") return undefined;
   let iconType = IconType.Line;
   if (unsafeState?.type !== undefined) {
@@ -105,7 +124,7 @@ export function getIconState(
   const formedIcon = {
     type: iconType,
     id: "id" in unsafeState ? unsafeState.id : undefined,
-    class: "class" in unsafeState ? unsafeState.class : "#000000",
+    class: "class" in unsafeState ? unsafeState.class : undefined,
     color:
       "color" in unsafeState &&
       unsafeState.color &&
@@ -116,7 +135,7 @@ export function getIconState(
   if (isInstIcon(formedIcon)) {
     const icon = {
       type: formedIcon.type,
-      class: formedIcon.class,
+      id: instClassToId(formedIcon.class, formedIcon.type),
     };
     if (!formedIcon.color) {
       return icon;
@@ -157,65 +176,4 @@ export async function loadCustomIcons() {
   })();
   hasLoadedCustomIcons = getFunc;
   return await getFunc;
-}
-
-export default class IconPicker implements Writable<IconState | undefined> {
-  public icon: Writable<IconState> = writable();
-  public choices: iconData = icons;
-  public modal: ModalDialog<typeof IconPickerModalInner>;
-  constructor(
-    editor: Editor,
-    icon?: IconState,
-    parent?: SelectableElement,
-    options: IconPickerOptions = {}
-  ) {
-    if (icon) this.icon.set(icon);
-    if (import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS) {
-      // Only load this if the icon picker launches to save on load time
-      loadCustomIcons();
-    }
-    this.modal = new ModalDialog(
-      IconPickerModalInner,
-      editor,
-      {
-        title: "Choose an icon",
-        buttons: [
-          {
-            type: "cancel",
-            text: "Cancel",
-          },
-        ],
-        size: "medium",
-      },
-      {
-        iconPicker: this,
-        options,
-      },
-      parent
-    );
-  }
-  public pick() {
-    const pickerInst = this.modal.open();
-    pickerInst.$on("selectIcon", ({ detail: { icon, color, type } }) => {
-      let iconState: IconState;
-      if (type === IconType.Custom) {
-        iconState = {
-          type,
-          id: icon.id,
-          color,
-        } as CustomIconState;
-      } else {
-        iconState = {
-          type,
-          class: icon.term,
-          color,
-        } as InstIconState;
-      }
-      this.set(iconState);
-      this.modal.close();
-    });
-  }
-  public set = this.icon.set;
-  public update = this.icon.update;
-  public subscribe = this.icon.subscribe;
 }

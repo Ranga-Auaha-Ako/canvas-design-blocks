@@ -531,6 +531,11 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.1.tgz#aa22750962f3bf0e79d753d3cc067f010c95f194"
   integrity sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==
 
+"@types/gtag.js@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@types/gtag.js/-/gtag.js-0.0.16.tgz#c1a0867730e5f7454b210ea5a45dc07088105bb5"
+  integrity sha512-TefTCQWiQYc1F7zF7KKLOd5E645me+9CjfPwJLNxWxaTK3ITKmCxtHRVH7EhSo1dl+sVGmu2h2htCOZrjWQRrQ==
+
 "@types/jsdom@^21.1.3":
   version "21.1.3"
   resolved "https://registry.yarnpkg.com/@types/jsdom/-/jsdom-21.1.3.tgz#a88c5dc65703e1b10b2a7839c12db49662b43ff0"
@@ -901,6 +906,14 @@ chalk@^2.4.2:
     ansi-styles "^3.2.1"
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
+
+changelog-parser@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/changelog-parser/-/changelog-parser-3.0.1.tgz#c8c693c78756e5b93fbf09760b65ca95b05cef68"
+  integrity sha512-1AEVJgnFEO4v5ukfEH/j9cr2Z39Y/GCieNi605azhufAolXF4vQAwZBY8BrUVRkvlI3gwe3i621/PIAW0zmmEQ==
+  dependencies:
+    line-reader "^0.2.4"
+    remove-markdown "^0.5.0"
 
 cheerio-select@^2.1.0:
   version "2.1.0"
@@ -1994,6 +2007,11 @@ lilconfig@^2.0.5, lilconfig@^2.1.0:
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.1.0.tgz#78e23ac89ebb7e1bfbf25b18043de756548e7f52"
   integrity sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==
 
+line-reader@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/line-reader/-/line-reader-0.2.4.tgz#c4392b587dea38580c9678570e6e8e49fce52622"
+  integrity sha512-342xzyZZS9uTiKwHJcMacopVl/WjrMMCZS1Qg4Uhl/WBknWRrGFdKOIS1Kec6SaiTcZMtmuxWvvIbPXj/+FMjA==
+
 lines-and-columns@^1.1.6:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
@@ -2688,6 +2706,11 @@ regenerator-runtime@^0.14.0:
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
   integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
 
+remove-markdown@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/remove-markdown/-/remove-markdown-0.5.0.tgz#a596264bbd60b9ceab2e2ae86e5789eee91aee32"
+  integrity sha512-x917M80K97K5IN1L8lUvFehsfhR8cYjGQ/yAMRI9E7JIKivtl5Emo5iD13DhMr+VojzMCiYk8V2byNPwT/oapg==
+
 require-directory@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
@@ -3015,10 +3038,10 @@ svelte-hmr@^0.15.3:
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.15.3.tgz#df54ccde9be3f091bf5f18fc4ef7b8eb6405fbe6"
   integrity sha512-41snaPswvSf8TJUhlkoJBekRrABDXDMdpNpT2tfHIv4JuhgvHqLMhEPGtaQn0BmbNSTkuz2Ed20DF2eHw0SmBQ==
 
-svelte-local-storage-store@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/svelte-local-storage-store/-/svelte-local-storage-store-0.6.0.tgz#f49d9c6f0ae1c3e9b84f266a12fefa64a88f1fae"
-  integrity sha512-UbCY/yT/YUadU5IX/gZkoRQnA+ebFZHKKQjlJvfWHnBj3CPe9sNn8ndxYz/xy4LUzGjuBLq8+wH5RYK54ba3wA==
+svelte-persisted-store@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/svelte-persisted-store/-/svelte-persisted-store-0.7.0.tgz#7c29ab092d0ef12c370bde899cfa22772d229680"
+  integrity sha512-PczYS60ysScQ0DmTCPXQm5rwt8FfQzSlx0lCbljbE6hTCKqXaw2bP8KH1+B7QTPmuiy/QbAk4pjYpNCmZhjyRw==
 
 svelte-portal@^2.2.0:
   version "2.2.0"
