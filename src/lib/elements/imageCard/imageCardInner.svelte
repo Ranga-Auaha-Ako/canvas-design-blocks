@@ -39,6 +39,18 @@
           };
         });
       }}
+      on:keydown={(e) => {
+        if (e.key === "Enter") {
+          e.stopPropagation();
+          dispatch("toolbar", true);
+          localState.update((state) => {
+            return {
+              ...state,
+              selectedCard: card.id,
+            };
+          });
+        }
+      }}
     >
       {#if cdbData.theme === ImageCardTheme.Icon}
         <span class="ImageCardIcon">

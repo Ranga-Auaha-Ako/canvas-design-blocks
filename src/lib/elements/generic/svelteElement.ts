@@ -77,7 +77,10 @@ export abstract class SvelteElement<
     };
 
     this.node.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (
+        e.key === "Enter" &&
+        this.node === (e.target as HTMLElement)?.parentElement
+      ) {
         this.popover?.show(true);
         e.stopPropagation();
         e.preventDefault();
@@ -136,6 +139,10 @@ export abstract class SvelteElement<
           this.lastContents.$on("focus", () => {
             this.select();
           });
+          this.lastContents.$on("toolbar", ({ detail: asModal }) => {
+            this.popover?.show(asModal);
+          });
+
           [...(this.customEvents?.entries() || [])].forEach((event) => {
             this.lastContents?.$on(event[0], (detail) => {
               event[1](detail);

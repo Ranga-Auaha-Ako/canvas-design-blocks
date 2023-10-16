@@ -16,7 +16,8 @@
 </script>
 
 {#each cdbData as profile}
-  <div class="profileItem">
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+  <div class="profileItem" tabindex="0">
     <div
       class="card"
       style:background-color={profile.color?.toHex() || theme.primary}
@@ -90,7 +91,7 @@
     {/if}
   </div>
 {:else}
-  <div data-mce-bogus="all" class="no-people">
-    <p>Click to add a person...</p>
-  </div>
+  <button data-mce-bogus="all" class="no-people">
+    Click to add a person...
+  </button>
 {/each}

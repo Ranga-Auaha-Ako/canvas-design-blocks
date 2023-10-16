@@ -15,7 +15,8 @@
   });
 </script>
 
-<div class="headerInner {cdbData.theme}">
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<div class="headerInner {cdbData.theme}" tabindex="0">
   {#if cdbData.image}
     <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
     <div class="imageOverlay">&nbsp;</div>
