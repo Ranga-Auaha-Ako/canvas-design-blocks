@@ -17,19 +17,24 @@
   import ImageList from "./imageList.svelte";
   import { nanoid } from "nanoid";
   import ScrollContainer from "../scrollContainer.svelte";
+  import { persisted } from "svelte-persisted-store";
+  import type { Writable } from "svelte/store";
 
-  export let linkType: InternalLinks | undefined = undefined;
+  export const linkType: Writable<InternalLinks | undefined> = persisted(
+    "cdb-contentsearch-linktype",
+    undefined
+  );
   export let filter: FitlerTypes | undefined = undefined;
 
   let query = "";
   let debounce: number | undefined;
 
   function isImage(files: any[]): files is Image[] {
-    return linkType === InternalLinks.File && filter === FitlerTypes.Images;
+    return $linkType === InternalLinks.File && filter === FitlerTypes.Images;
   }
 
   const dispatch = createEventDispatcher<{
-    select: typeof linkType extends InternalLinks.File
+    select: typeof $linkType extends InternalLinks.File
       ? typeof filter extends FitlerTypes.Images
         ? Image
         : File
@@ -44,11 +49,11 @@
     }, 200);
   };
 
-  $: results = searchContent(linkType, query, filter);
+  $: results = searchContent($linkType, query, filter);
 
   let searchInput: HTMLInputElement;
 
-  let internalLinkTypesList = Object.values(InternalLinks);
+  let internal$LinkTypesList = Object.values(InternalLinks);
 
   let scrollCont: ScrollContainer;
   $: results.then(() => {
@@ -68,30 +73,30 @@
   </div>
   <ScrollContainer bind:this={scrollCont} card={false}>
     <div class="fileResults">
-      {#each internalLinkTypesList as type}
+      {#each internal$LinkTypesList as type}
         {@const id = nanoid()}
         <button
           class="accordion-header"
-          class:active={type === linkType}
+          class:active={type === $linkType}
           id="{id}-header"
-          aria-expanded={type === linkType}
+          aria-expanded={type === $linkType}
           aria-controls={id}
           on:click={() => {
-            if (type === linkType) linkType = undefined;
-            else linkType = type;
+            if (type === $linkType) $linkType = undefined;
+            else $linkType = type;
           }}
         >
           <i
             class="icon-Solid"
-            class:icon-arrow-open-down={linkType !== type}
-            class:icon-arrow-open-up={linkType === type}
+            class:icon-arrow-open-down={$linkType !== type}
+            class:icon-arrow-open-up={$linkType === type}
           />
           <span>
             {type}
           </span>
         </button>
         <div class="fileList" {id} role="region" aria-labelledby="{id}-header">
-          {#if type === linkType}
+          {#if type === $linkType}
             {#await results}
               <div class="fileListResults">
                 <div class="status-msg" in:fade|global>

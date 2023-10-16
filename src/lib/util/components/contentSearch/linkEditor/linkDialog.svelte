@@ -3,6 +3,8 @@
   import ButtonRadio from "../../buttonRadio.svelte";
   import ContentSearch from "../contentSearch.svelte";
   import Modal from "../../modalDialog/modal.svelte";
+  import { persisted } from "svelte-persisted-store";
+  import type { Writable } from "svelte/store";
 
   const dispatch = createEventDispatcher<{
     save: { link: string; text: string | undefined };
@@ -23,7 +25,10 @@
     Internal = "Course",
     External = "External",
   }
-  let linkType: LinkTypes = LinkTypes.External;
+  const linkType: Writable<LinkTypes> = persisted(
+    "cdb-linktype-dialog",
+    LinkTypes.External
+  );
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -32,24 +37,24 @@
   <div class="tabs-header" role="tablist">
     <button
       role="tab"
-      aria-selected={linkType === LinkTypes.External}
+      aria-selected={$linkType === LinkTypes.External}
       class="tab"
-      class:active={linkType === LinkTypes.Internal}
+      class:active={$linkType === LinkTypes.Internal}
       on:click={() => {
-        linkType = LinkTypes.Internal;
+        $linkType = LinkTypes.Internal;
       }}>Course Links</button
     >
     <button
       role="tab"
-      aria-selected={linkType === LinkTypes.External}
+      aria-selected={$linkType === LinkTypes.External}
       class="tab"
-      class:active={linkType === LinkTypes.External}
+      class:active={$linkType === LinkTypes.External}
       on:click={() => {
-        linkType = LinkTypes.External;
+        $linkType = LinkTypes.External;
       }}>External Links</button
     >
   </div>
-  {#if linkType === LinkTypes.External}
+  {#if $linkType === LinkTypes.External}
     <form
       on:submit|preventDefault|stopPropagation={() => {
         if (newLinkUrl.value.startsWith("#") || newLinkUrl.checkValidity()) {
@@ -94,7 +99,7 @@
     />
   {/if}
   <div slot="actions">
-    {#if linkType === LinkTypes.External}
+    {#if $linkType === LinkTypes.External}
       <button
         on:click={() => {
           if (newLinkUrl.value.startsWith("#") || newLinkUrl.checkValidity()) {
