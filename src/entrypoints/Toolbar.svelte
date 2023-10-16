@@ -43,7 +43,6 @@
       event_category: "Design Blocks",
     });
   }
-  console.log(changes);
 </script>
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
