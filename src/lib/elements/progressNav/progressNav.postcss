@@ -1,0 +1,63 @@
+@import "../../util/components/iconSearch/iconElement.postcss";
+
+.DesignBlocks--Btn {
+  @apply relative inline-flex overflow-clip transition;
+  @apply gap-[0.4em] items-center justify-center;
+  @apply px-3 py-3 rounded;
+  @apply text-base leading-none;
+  @apply bg-primary text-white;
+  @apply border-solid border border-black border-opacity-40;
+  text-decoration: none !important;
+  &:hover {
+    text-decoration: none !important;
+    span {
+      text-decoration: none !important;
+    }
+  }
+  &:before {
+    @apply absolute inset-0 z-0;
+    @apply transition bg-black bg-opacity-0;
+    content: "";
+  }
+  &:hover:before {
+    @apply bg-opacity-25;
+  }
+  &:hover {
+    @apply shadow;
+    @apply text-white;
+    text-decoration: none;
+  }
+  &:focus {
+    @apply text-white;
+  }
+  * {
+    @apply relative z-0;
+  }
+  &.Button--mini {
+    @apply px-2.5 py-1.5;
+    @apply text-sm;
+  }
+  &.Button--small {
+    @apply px-4 py-2;
+    @apply text-sm;
+  }
+  &.Button--large {
+    @apply px-4 py-2 text-lg;
+  }
+  &.Button--full {
+    @apply w-full flex;
+  }
+  & img.cdb--custom-icon {
+    height: 1.1em;
+  }
+  & .external_link_icon {
+    display: none !important;
+  }
+}
+.CDB--Button[data-cdb-version] {
+  @apply inline-block;
+}
+
+.CDB--Button[data-cdb-version]:has(.Button--full) {
+  @apply block;
+}
