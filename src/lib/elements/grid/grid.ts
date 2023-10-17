@@ -113,7 +113,11 @@ export class Grid extends MceElement implements Readable<Row[]> {
         //  If the cursor is in a non-block element, insert the grid after the element
         editor.dom.insertAfter(gridRoot, insertNode);
       } else {
-        editor.dom.add(insertNode, gridRoot);
+        if ((insertNode as HTMLElement)?.dataset.mceCaret === "after") {
+          editor.dom.insertAfter(gridRoot, insertNode);
+        } else {
+          editor.dom.add(insertNode, gridRoot);
+        }
       }
     } else editor.dom.add(editor.dom.getRoot(), gridRoot);
     // Create grid instance

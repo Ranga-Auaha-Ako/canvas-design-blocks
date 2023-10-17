@@ -255,7 +255,11 @@ export default abstract class MceElement extends SelectableElement {
         //  If the cursor is in a non-block element, insert the grid after the element
         editor.dom.insertAfter(node, insertNode);
       } else {
-        editor.dom.add(insertNode, node);
+        if ((insertNode as HTMLElement)?.dataset.mceCaret === "after") {
+          editor.dom.insertAfter(node, insertNode);
+        } else {
+          editor.dom.add(insertNode, node);
+        }
       }
     } else editor.dom.add(editor.dom.getRoot(), node);
     return node;
