@@ -224,6 +224,23 @@ export class Grid extends MceElement implements Readable<Row[]> {
         capture: true,
       }
     );
+
+    // Hack to fix Canvas using assumption around selection always targeting inserted content to bind onload
+    // In reality, the selection in a non-contenteditable element will be the nearest false contenteditable parent
+    // This means that the selection will be the grid, not the inserted image
+    this.node.addEventListener(
+      "load" as string,
+      (e) => {
+        //@ts-ignore
+        if (e.detail === "synthetic" || e.target === this.node) return;
+        // Fire the load event on the grid as Canvas expects it. Caveat: This will cause any images also loading to be incorrectly marked as finished
+        // It seems unlikely for multiple images being loaded separately to be common
+        this.node.dispatchEvent(
+          new CustomEvent("load", { detail: "synthetic" })
+        );
+      },
+      { capture: true }
+    );
   }
 
   public checkChildren() {
