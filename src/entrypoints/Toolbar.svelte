@@ -5,13 +5,14 @@
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
   import { slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
-  import { changes, version } from "$lib/util/constants";
+  import { changes, changeversion, version } from "$lib/util/constants";
   import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import type { stateObject } from "src/main";
   import ElementManager from "$lib/elements/generic/elementManager";
   import gtag from "$lib/util/gtag";
   import { persisted } from "svelte-persisted-store";
+  import { compareVersions } from "compare-versions";
 
   export let state: stateObject | undefined;
   export let managers: ElementManager[];
@@ -41,9 +42,9 @@
   $: if ($open) {
     gtag("event", `design_blocks_open`, {
       event_category: "Design Blocks",
+      cdb_version: version,
     });
   }
-  console.log(changes);
 </script>
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
@@ -61,15 +62,16 @@
   </button>
 
   {#if $open}
-    {#if $last_opened_ver !== version}
+    {#if !changeversion || compareVersions($last_opened_ver, changeversion) < 0}
       <div class="new-popup" out:slide>
         <h3>Design Blocks {version}</h3>
         <p>
-          {changes}
+          {changes ||
+            "This new version of Design Blocks contains minor bug fixes and improvements."}
         </p>
         <button
           on:click={() => {
-            $last_opened_ver = version;
+            $last_opened_ver = changeversion || version;
           }}
         >
           <i class="icon icon-Solid icon-heart" />

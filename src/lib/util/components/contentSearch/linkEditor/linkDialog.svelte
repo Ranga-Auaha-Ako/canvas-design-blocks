@@ -93,7 +93,6 @@
     <ContentSearch
       on:select={({ detail }) => {
         dispatch("save", { link: detail.url, text: detail.name });
-        console.log(detail);
         dialog.close();
       }}
     />

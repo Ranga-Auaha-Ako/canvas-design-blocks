@@ -123,7 +123,6 @@ class ButtonState implements SvelteState<ButtonData> {
         fullWidth: unsafeState.fullWidth || ButtonState.defaultState.fullWidth,
         icon: icon,
       };
-      debugger;
       state.url =
         node?.querySelector("a")?.getAttribute("href") ||
         node?.querySelector("a")?.dataset.mceHref ||

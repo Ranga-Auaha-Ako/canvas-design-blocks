@@ -3,6 +3,7 @@
 
 declare const __APP_VERSION__: string;
 declare const __LATEST_CHANGE__: string;
+declare const __LATEST_CHANGE_VERSION__: string | null;
 declare const __THEME__:
   | {
       primary?: string;

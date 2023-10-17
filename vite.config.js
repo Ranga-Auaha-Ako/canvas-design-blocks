@@ -6,8 +6,15 @@ import { visualizer } from "rollup-plugin-visualizer";
 import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
 import parseChangelog from "changelog-parser";
+import { compare } from "compare-versions";
 
 const changelog = await parseChangelog("./CHANGELOG.md");
+const changeVer = changelog.versions.find(
+  (v) =>
+    v.version &&
+    compare(v.version, process.env.npm_package_version, "<=") &&
+    v.parsed.Overview
+);
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
@@ -50,11 +57,8 @@ export default defineConfig(({ mode, command }) => {
       __THEME__: JSON.stringify(
         JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
       ),
-      __LATEST_CHANGE__: JSON.stringify(
-        changelog.versions.find(
-          (v) => v.version === process.env.npm_package_version
-        )?.parsed.Overview
-      ),
+      __LATEST_CHANGE__: JSON.stringify(changeVer?.parsed.Overview),
+      __LATEST_CHANGE_VERSION__: JSON.stringify(changeVer.version),
     },
     base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
     envPrefix: "CANVAS_BLOCKS_",

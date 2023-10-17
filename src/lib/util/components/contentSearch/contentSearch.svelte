@@ -53,7 +53,7 @@
 
   let searchInput: HTMLInputElement;
 
-  let internal$LinkTypesList = Object.values(InternalLinks);
+  let internalLinkTypesList = Object.values(InternalLinks);
 
   let scrollCont: ScrollContainer;
   $: results.then(() => {
@@ -73,7 +73,7 @@
   </div>
   <ScrollContainer bind:this={scrollCont} card={false}>
     <div class="fileResults">
-      {#each internal$LinkTypesList as type}
+      {#each internalLinkTypesList as type}
         {@const id = nanoid()}
         <button
           class="accordion-header"
