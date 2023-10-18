@@ -43,7 +43,7 @@
     colord("#000000"),
     {
       serializer: {
-        stringify: (value) => value.toHex(),
+        stringify: (value) => (value ? value.toHex() : ""),
         parse: (value) => colord(value),
       },
     }

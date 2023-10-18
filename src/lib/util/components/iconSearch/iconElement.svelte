@@ -7,6 +7,7 @@
     getIconData,
     isCustomIcon,
     isInstIcon,
+    isUniversalIcon,
     loadCustomIcons,
   } from "./iconPicker";
   import { customIcon, iconData, instIcon } from "./canvas-icons/icons";
@@ -56,7 +57,7 @@
     {:else if isInstIcon(icon)}
       <span class="icon" style:color={icon.color}>
         <i
-          class="{typeClass} icon-{icon.class}"
+          class="{typeClass} icon-{d.term}"
           style:--cdb-icon="url({d.url})"
           data-mce-style=""
         />
