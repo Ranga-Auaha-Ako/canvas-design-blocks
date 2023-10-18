@@ -76,6 +76,14 @@ export const loadApp = async () => {
       li.classList.add("section");
       target.insertAdjacentElement("afterbegin", li);
 
+      document.head.insertAdjacentHTML(
+        "beforeend",
+        `
+        <style>
+          .cgb-openButton{opacity:.3!important;pointer-events:none!important}
+        </style>
+      `
+      );
       return new Depreciate({
         target: li,
       });
