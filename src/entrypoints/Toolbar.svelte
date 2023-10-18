@@ -63,7 +63,7 @@
 
   {#if $open}
     {#if !changeversion || compareVersions($last_opened_ver, changeversion) < 0}
-      <div class="new-popup" out:slide>
+      <div class="new-popup" transition:slide|global>
         <h3>Design Blocks {version}</h3>
         <p>
           {changes ||
@@ -72,6 +72,10 @@
         <button
           on:click={() => {
             $last_opened_ver = changeversion || version;
+            gtag("event", `design_blocks_update_dismiss`, {
+              event_category: "Design Blocks",
+              cdb_version: version,
+            });
           }}
         >
           <i class="icon icon-Solid icon-heart" />

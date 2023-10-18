@@ -10,6 +10,10 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [2.9.2] - 2023-10-18
 
+### Overview
+
+- Lots of bugfixes and improvements in this release, including a fix for images in grids not loading properly, and some changes to make inserting blocks into the page feel a bit snappier.
+
 ### Fixed
 
 - Fix #27: Issue with images in grids not loading properly
