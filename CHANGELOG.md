@@ -8,6 +8,16 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.9.2] - 2023-10-18
+
+### Fixed
+
+- Fix #27: Issue with images in grids not loading properly
+- Fix #14: Elements accidentally place inside the cursor
+- Fix #38: Bugfixing for the icon selector and link picker
+- Persist preferred image card theme
+- Improvements to responsive grid sizing in image cards
+
 ## [2.9.1] - 2023-10-17
 
 ### Fixed
