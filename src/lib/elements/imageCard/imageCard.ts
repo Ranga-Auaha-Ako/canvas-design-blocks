@@ -34,7 +34,10 @@ export enum ImageCardSize {
   "Grid-5" = "imageCardSize--grid-5",
 }
 export const ValidSizes = Object.values(ImageCardSize);
-export const DefaultSize = persisted("cdb-imageCardSize", ImageCardSize.Small);
+export const DefaultSize = persisted(
+  "cdb-imageCardSize",
+  ImageCardSize["Grid-5"]
+);
 
 export interface CardData {
   label: string;

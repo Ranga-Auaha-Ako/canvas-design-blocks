@@ -16,7 +16,13 @@
       <slot {index}>
         <span>{labels[index]}</span>
       </slot>
-      <input name={id} type="radio" value={choice} bind:group={value} />
+      <input
+        name={id}
+        type="radio"
+        value={choice}
+        bind:group={value}
+        on:change
+      />
     </label>
   {/each}
 </div>

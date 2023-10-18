@@ -45,11 +45,8 @@
 
   export const DefaultSize = persisted(
     "cdb-imageCardSize",
-    ImageCardSize.Small
+    ImageCardSize["Grid-5"]
   );
-
-  $: $DefaultSize = $rowData.size;
-  $: $DefaultTheme = $rowData.theme;
 
   const openPicker = () => {
     const picker = new ModalDialog(
@@ -128,12 +125,18 @@
       choices={ValidThemes}
       labels={Object.keys(ImageCardTheme)}
       bind:value={$rowData.theme}
+      on:change={() => {
+        $DefaultTheme = $rowData.theme;
+      }}
     />
     <ButtonRadio
       title="Row Size"
       choices={ValidSizes}
       labels={Object.keys(ImageCardSize)}
       bind:value={$rowData.size}
+      on:change={() => {
+        $DefaultSize = $rowData.size;
+      }}
     />
   </div>
   <div class="cardPanel">
