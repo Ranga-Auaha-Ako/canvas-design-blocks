@@ -13,6 +13,7 @@ import {
   IconState,
   getIconState,
 } from "$lib/util/components/iconSearch/iconPicker";
+import { persisted } from "svelte-persisted-store";
 
 export enum ImageCardTheme {
   Overlay = "imageCardTheme--overlay",
@@ -20,7 +21,10 @@ export enum ImageCardTheme {
   Icon = "imageCardTheme--icon",
 }
 export const ValidThemes = Object.values(ImageCardTheme);
-export const DefaultTheme = ImageCardTheme.Overlay;
+export const DefaultTheme = persisted(
+  "cdb-imageCardTheme",
+  ImageCardTheme.Overlay
+);
 
 export enum ImageCardSize {
   Small = "imageCardSize--small",
@@ -30,7 +34,10 @@ export enum ImageCardSize {
   "Grid-5" = "imageCardSize--grid-5",
 }
 export const ValidSizes = Object.values(ImageCardSize);
-export const DefaultSize = ImageCardSize.Small;
+export const DefaultSize = persisted(
+  "cdb-imageCardSize",
+  ImageCardSize["Grid-5"]
+);
 
 export interface CardData {
   label: string;
@@ -61,8 +68,8 @@ class CardRowState implements SvelteState<RowData> {
         id: nanoid(),
       },
     ],
-    theme: DefaultTheme,
-    size: DefaultSize,
+    theme: get(DefaultTheme),
+    size: get(DefaultSize),
   };
   state: Writable<RowData> = writable();
   public set = this.state.set;
@@ -71,14 +78,14 @@ class CardRowState implements SvelteState<RowData> {
   constructor(unsafeState: Partial<RowData> | undefined, node?: HTMLElement) {
     let size = ValidSizes.includes(unsafeState?.size as ImageCardSize)
       ? unsafeState?.size
-      : DefaultSize;
+      : get(DefaultSize);
     let theme = ValidThemes.includes(unsafeState?.theme as ImageCardTheme)
       ? unsafeState?.theme
-      : DefaultTheme;
+      : get(DefaultTheme);
     let state: RowData = {
       cards: [],
-      size: size || DefaultSize,
-      theme: theme || DefaultTheme,
+      size: size || get(DefaultSize),
+      theme: theme || get(DefaultTheme),
     };
     if (unsafeState?.cards) {
       state.cards = unsafeState.cards.map((card) => {

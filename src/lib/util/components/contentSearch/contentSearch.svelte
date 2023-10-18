@@ -20,9 +20,20 @@
   import { persisted } from "svelte-persisted-store";
   import type { Writable } from "svelte/store";
 
-  export const linkType: Writable<InternalLinks | undefined> = persisted(
+  let internalLinkTypesList = Object.values(InternalLinks);
+
+  export const linkType = persisted<InternalLinks | undefined>(
     "cdb-contentsearch-linktype",
-    undefined
+    undefined,
+    {
+      serializer: {
+        stringify: (value) => (value ? value : ""),
+        parse: (value) =>
+          internalLinkTypesList.includes(value as InternalLinks)
+            ? undefined
+            : (value as InternalLinks),
+      },
+    }
   );
   export let filter: FitlerTypes | undefined = undefined;
 
@@ -52,8 +63,6 @@
   $: results = searchContent($linkType, query, filter);
 
   let searchInput: HTMLInputElement;
-
-  let internalLinkTypesList = Object.values(InternalLinks);
 
   let scrollCont: ScrollContainer;
   $: results.then(() => {

@@ -18,6 +18,7 @@
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import { persisted } from "svelte-persisted-store";
 
   const dispatch = createEventDispatcher();
 
@@ -36,6 +37,16 @@
 
   let configEl: HTMLElement;
   let urlInput: HTMLInputElement;
+
+  export const DefaultTheme = persisted(
+    "cdb-imageCardTheme",
+    ImageCardTheme.Overlay
+  );
+
+  export const DefaultSize = persisted(
+    "cdb-imageCardSize",
+    ImageCardSize["Grid-5"]
+  );
 
   const openPicker = () => {
     const picker = new ModalDialog(
@@ -114,12 +125,18 @@
       choices={ValidThemes}
       labels={Object.keys(ImageCardTheme)}
       bind:value={$rowData.theme}
+      on:change={() => {
+        $DefaultTheme = $rowData.theme;
+      }}
     />
     <ButtonRadio
       title="Row Size"
       choices={ValidSizes}
       labels={Object.keys(ImageCardSize)}
       bind:value={$rowData.size}
+      on:change={() => {
+        $DefaultSize = $rowData.size;
+      }}
     />
   </div>
   <div class="cardPanel">

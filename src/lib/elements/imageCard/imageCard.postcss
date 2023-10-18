@@ -64,17 +64,24 @@
       &.imageCardSize--grid-3,
       &.imageCardSize--grid-4,
       &.imageCardSize--grid-5 {
+        @apply grid-cols-3;
+      }
+    }
+    @media (max-width: 400px) {
+      &.imageCardSize--grid-3,
+      &.imageCardSize--grid-4,
+      &.imageCardSize--grid-5 {
         @apply grid-cols-2;
       }
     }
-    @container (width < 400px) {
+    @container (width < 300px) {
       &.imageCardSize--grid-3,
       &.imageCardSize--grid-4,
       &.imageCardSize--grid-5 {
         @apply grid-cols-1;
       }
     }
-    @media (max-width: 350px) {
+    @media (max-width: 325px) {
       &.imageCardSize--grid-3,
       &.imageCardSize--grid-4,
       &.imageCardSize--grid-5 {
@@ -87,7 +94,7 @@
       @apply flex flex-col items-stretch justify-end h-32;
       @apply transition transform;
       container: ImageCard;
-      width: 175px;
+      width: 150px;
       text-decoration: none !important;
       &[data-mce-selected="cbe"] {
         @apply shadow ring-2 ring-primary;
