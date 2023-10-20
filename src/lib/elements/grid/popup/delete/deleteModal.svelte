@@ -12,12 +12,6 @@
   <Modal
     title="Delete Grid{queue.length !== 1 ? 's' : ''}"
     show={true}
-    on:save={() => {
-      queue.forEach((grid) => {
-        grid.delete();
-      });
-      queue = [];
-    }}
     on:close={() => {
       queue = [];
     }}
@@ -27,5 +21,22 @@
     {:else}
       <p>Are you sure you want to delete all {queue.length} grids?</p>
     {/if}
+    <svelte:fragment slot="actions">
+      <button
+        on:click={() => {
+          queue = [];
+        }}
+        class="Button">Cancel</button
+      >
+      <button
+        on:click={() => {
+          queue.forEach((grid) => {
+            grid.delete();
+          });
+          queue = [];
+        }}
+        class="Button Button--danger save">I'm sure: Delete this</button
+      >
+    </svelte:fragment>
   </Modal>
 {/if}
