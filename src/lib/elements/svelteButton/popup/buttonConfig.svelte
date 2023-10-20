@@ -6,7 +6,7 @@
     ButtonSize,
     ValidSizes,
   } from "../button";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
@@ -58,6 +58,9 @@
   onDestroy(() => {
     iconPicker.$destroy();
   });
+  $: contrastLevel = $buttonData.color?.contrast(colord("#ffffff"));
+  $: isReadable =
+    contrastLevel === undefined || (contrastLevel && contrastLevel >= 7);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -111,6 +114,15 @@
         showNone={false}
         asModal={isModal}
       />
+      {#if !isReadable}
+        <div class="colour-alert" transition:slide|global>
+          <p class="alert-details">
+            <span class="font-bold">Warning:</span> The text in this button may be
+            hard to read for some students. Consider using a darker colour to improve
+            contrast against the white text.
+          </p>
+        </div>
+      {/if}
       <button
         class="Button"
         on:click={() => {
@@ -168,6 +180,12 @@
     @apply accent-primary;
     & input {
       @apply w-4 h-4;
+    }
+  }
+  .colour-alert {
+    @apply border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
+    p {
+      @apply m-0;
     }
   }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ProfileData, ProfileGrid } from "../profileGrid";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import { debounce } from "perfect-debounce";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
@@ -81,6 +81,15 @@
   $: activeIndex = activeId
     ? $people.findIndex((p) => p.id === activeId)
     : undefined;
+
+  $: contrastLevel =
+    activeIndex !== undefined
+      ? $people[activeIndex].color?.contrast(colord("#ffffff"))
+      : true;
+  $: isReadable =
+    contrastLevel === true ||
+    contrastLevel === undefined ||
+    (contrastLevel && contrastLevel >= 7);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -142,6 +151,15 @@
           showNone={false}
           asModal={isModal}
         />
+        {#if !isReadable}
+          <div class="colour-alert" transition:slide|global>
+            <p class="alert-details">
+              <span class="font-bold">Warning:</span> The text in this profile may
+              be hard to read for some students. Consider using a darker colour to
+              improve contrast against the white text.
+            </p>
+          </div>
+        {/if}
       </div>
     </div>
   {:else}
@@ -228,6 +246,12 @@
       & input {
         @apply w-4 h-4;
       }
+    }
+  }
+  .colour-alert {
+    @apply mt-2 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded text-xs transition;
+    p {
+      @apply m-0;
     }
   }
 </style>
