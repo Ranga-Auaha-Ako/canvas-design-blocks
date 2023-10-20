@@ -14,6 +14,7 @@
   import { colord } from "colord";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
   import { onDestroy } from "svelte";
+  import writableDerived from "svelte-writable-derived";
 
   export let props: { button: Button };
   export let isModal: boolean = false;
@@ -24,6 +25,22 @@
 
   $: inGrid = props.button.node.closest(".cgb-col:not(.col-lg-12)") !== null;
   let configEl: HTMLElement;
+
+  $: isNewTab = writableDerived(
+    buttonData,
+    ($buttonData) => {
+      return $buttonData.target === "_blank";
+    },
+    (reflecting, $buttonData) => {
+      if (!reflecting && $buttonData.target === "_blank") {
+        $buttonData.target = "_self";
+      }
+      if (reflecting && $buttonData.target !== "_blank") {
+        $buttonData.target = "_blank";
+      }
+      return $buttonData;
+    }
+  );
 
   const iconPicker = new IconPicker({
     target: document.body,
@@ -100,9 +117,14 @@
           iconPicker.open();
         }}>Select Icon</button
       >
+      <!-- Select box for opening in new tab -->
+      <label for="newTab" class="checkbox">
+        <input type="checkbox" id="newTab" bind:checked={$isNewTab} />
+        Open in new tab
+      </label>
       <!-- Select box for full-width -->
       {#if inGrid}
-        <label for="fullWidth" class="checkbox-fullwidth">
+        <label for="fullWidth" class="checkbox">
           <input
             type="checkbox"
             id="fullWidth"
@@ -139,7 +161,7 @@
       @apply outline-none border-blue-500;
     }
   }
-  .checkbox-fullwidth {
+  .checkbox {
     @apply flex items-center gap-2;
     @apply text-gray-500;
     @apply cursor-pointer;

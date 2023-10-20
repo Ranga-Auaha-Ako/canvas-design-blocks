@@ -7,6 +7,7 @@
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import writableDerived from "svelte-writable-derived";
 
   export let props: { courseHeader: CourseHeader };
   // export let isDominant: Writable<boolean>;
@@ -61,6 +62,25 @@
   $: editLinkIndex = editLinkId
     ? $headerData.links.findIndex((l) => l.id === editLinkId)
     : undefined;
+
+  $: isNewTab = writableDerived(
+    headerData,
+    ($headerData) => {
+      return $headerData.links.map((l) => l.target !== "_self");
+    },
+    (reflecting, $headerData) => {
+      $headerData.links = $headerData.links.map((l, i) => {
+        if (!reflecting[i]) {
+          l.target = "_self";
+        }
+        if (reflecting[i] && l.target !== "_blank") {
+          l.target = "_blank";
+        }
+        return l;
+      });
+      return $headerData;
+    }
+  );
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -123,6 +143,16 @@
                 $headerData.links[editLinkIndex].title = detail.text;
             }}
           />
+
+          <!-- Select box for opening in new tab -->
+          <label for="newTab" class="checkbox">
+            <input
+              type="checkbox"
+              id="newTab"
+              bind:checked={$isNewTab[editLinkIndex]}
+            />
+            Open in new tab
+          </label>
         </div>
       </div>
     {:else}
@@ -212,6 +242,16 @@
       & input {
         @apply p-4;
       }
+    }
+  }
+
+  .checkbox {
+    @apply flex items-center gap-2;
+    @apply text-gray-500;
+    @apply cursor-pointer;
+    @apply accent-primary;
+    & input {
+      @apply w-4 h-4;
     }
   }
 </style>

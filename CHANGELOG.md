@@ -8,6 +8,14 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+### Added
+
+- Add "open in new tab" to buttons and header links
+
+### Fixed
+
+- Make buttons in grids behave properly
+
 ## [2.9.2] - 2023-10-18
 
 ### Overview

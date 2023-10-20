@@ -26,6 +26,7 @@ export interface HeaderData {
     title: string;
     url: string;
     id: string;
+    target?: string;
   }[];
   theme: HeaderTheme;
 }
@@ -70,6 +71,7 @@ class HeaderState implements SvelteState<HeaderData> {
           title: l?.title || "",
           url: sanitizeUrl(l?.url || "").replace(/^about:blank$/, ""),
           id: l?.id || nanoid(),
+          target: l.target || undefined,
         })) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
     };
