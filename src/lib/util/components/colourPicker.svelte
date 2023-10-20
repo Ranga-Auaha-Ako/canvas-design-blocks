@@ -23,6 +23,7 @@
   import {
     autoUpdate,
     computePosition,
+    flip,
     offset,
     Placement,
     shift,
@@ -111,12 +112,7 @@
   $: updateFunction = async () => {
     const position = await computePosition(popoverTarget, popoverEl, {
       placement: popupDirection,
-      middleware: [
-        offset(0),
-        shift(),
-        // flip(),
-        offset(10),
-      ],
+      middleware: [offset(0), shift(), flip(), offset(10)],
     });
     x = position.x;
     y = position.y;
@@ -175,7 +171,11 @@
       class:white={colour && colour.isLight()}
     />
     <Portal>
-      <div class="cgb-component" use:preventBubble={false}>
+      <div
+        class="cgb-component"
+        use:preventBubble={false}
+        use:clickOutside={() => (edit = false)}
+      >
         <dialog
           {id}
           style:z-index={zIndex}

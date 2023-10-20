@@ -138,7 +138,7 @@
         @apply cursor-pointer;
       }
       .itemlabel {
-        @apply flex-1 truncate text-base;
+        @apply flex-1 truncate text-base text-left;
       }
       .actions {
         @apply flex gap-x-2;

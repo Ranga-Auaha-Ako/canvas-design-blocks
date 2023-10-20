@@ -27,7 +27,15 @@
   <dialog
     bind:this={dialog}
     on:click|stopPropagation={(e) => {
-      if (e.target === dialog) dialog.close();
+      if (e.target === dialog) {
+        dialog.close();
+        dispatch("close");
+      }
+    }}
+    on:keydown={(e) => {
+      if (e.key === "Escape") {
+        dispatch("close");
+      }
     }}
   >
     <div class="dialogBody">

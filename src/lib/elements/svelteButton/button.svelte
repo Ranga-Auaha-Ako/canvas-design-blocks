@@ -21,6 +21,7 @@
   style:background-color={cdbData.color?.toHex()}
   style:color="#fff"
   href={cdbData.url}
+  target={cdbData.target !== "_self" ? cdbData.target : undefined}
 >
   {#if cdbData.icon}
     <IconElement icon={cdbData.icon} colorOverride={"#fff"} />

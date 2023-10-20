@@ -8,6 +8,20 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.10.0] - 2023-10-20
+
+### Added
+
+- Add "open in new tab" to buttons and header links
+
+### Fixed
+
+- Fix #1: Improve logic for grid deletion
+- Fix #31: Implement accessibility warnings where colour picker is used
+- Make buttons in grids behave properly
+- Fix to colour picker positioning
+- Make image cards have minimum height
+
 ## [2.9.2] - 2023-10-18
 
 ### Overview

@@ -188,9 +188,7 @@
             </div>
             <div class="grow">
               <div class="form-group">
-                <label class="block" for={`${imageCard.id}-url`}
-                  >Card Link (URL):</label
-                >
+                <label class="block">Card Link (URL):</label>
                 <LinkInput
                   link={$rowData.cards[cardIndex].link}
                   on:save={({ detail }) => {

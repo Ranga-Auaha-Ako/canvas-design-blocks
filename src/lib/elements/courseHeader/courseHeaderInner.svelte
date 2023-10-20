@@ -44,7 +44,7 @@
         <a
           class="headerLink"
           href={link.url}
-          target="_blank"
+          target={link.target !== undefined ? link.target : "_blank"}
           rel="noopener noreferrer"
         >
           {link.title}

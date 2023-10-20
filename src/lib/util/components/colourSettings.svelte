@@ -72,11 +72,13 @@
     />
     <!-- Warning if contrast is dangerously low -->
     {#if contrastLevel && contrastLevel < 7}
-      <p class="alert-details">
-        <span class="font-bold">Warning:</span> The contrast ratio between the
-        background and text colours is only {contrastLevel.toFixed(2)}:1. Most
-        text should be 7:1 (AAA), or at least 4.5:1 (AA).
-      </p>
+      <div class="colour-alert" transition:slide|global>
+        <p class="alert-details">
+          <span class="font-bold">Warning:</span> Text and icons smaller than 18pt
+          (or bold 14pt) should display a minimum contrast ratio of 4.5:1. Consider
+          using a darker colour if you are using this icon in a smaller size.
+        </p>
+      </div>
     {/if}
   </div>
 </div>
@@ -85,10 +87,13 @@
   .colour-alert-box {
     @apply ring-0 ring-orange-300 p-2 rounded transition;
     &.alert-active {
-      @apply shadow-md text-orange-800 ring-2 font-bold;
+      @apply shadow-md text-orange-800 ring-2;
     }
-    & .alert-details {
-      @apply text-xs italic;
+  }
+  .colour-alert {
+    @apply mt-2 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
+    p {
+      @apply m-0;
     }
   }
 </style>

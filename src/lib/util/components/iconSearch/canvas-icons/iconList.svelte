@@ -18,6 +18,7 @@
 
   import { iconData } from "./icons";
   import ScrollContainer from "$lib/util/components/scrollContainer.svelte";
+  import { slide } from "svelte/transition";
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
@@ -112,6 +113,9 @@
 
   let scroller: ScrollContainer;
   $: results, scroller?.update();
+
+  $: contrastLevel = $iconColor.contrast(colord("#ffffff"));
+  $: isReadable = contrastLevel && contrastLevel >= 7;
 </script>
 
 <div class="searchFilter">
@@ -135,6 +139,15 @@
     </div>
   {/if}
 </div>
+{#if !isReadable}
+  <div class="colour-alert" transition:slide|global>
+    <p class="alert-details">
+      <span class="font-bold">Warning:</span> Text and icons smaller than 18pt (or
+      bold 14pt) should display a minimum contrast ratio of 4.5:1. Consider using
+      a darker colour if you are using this icon in a smaller size.
+    </p>
+  </div>
+{/if}
 <ScrollContainer bind:this={scroller}>
   <div class="categories">
     {#each results as category}
@@ -188,6 +201,13 @@
     }
     .colourPicker {
       @apply shrink-0 flex items-center pl-3;
+    }
+  }
+
+  .colour-alert {
+    @apply mb-4 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition;
+    p {
+      @apply m-0;
     }
   }
 
