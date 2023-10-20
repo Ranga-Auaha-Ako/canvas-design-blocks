@@ -81,6 +81,13 @@ const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
 let loaded_blocks: ElementManager[] = [];
 
 export const loadApp = async () => {
+  // Track users who view content made with DesignBlocks
+  if (document.querySelector("div[data-cdb-version]")) {
+    gtag("event", "design_blocks_viewer", {
+      event_category: "Design Blocks",
+      cdb_version: version,
+    });
+  }
   // If tool is already loaded, exit
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
@@ -155,8 +162,6 @@ const beginLaunch = () => {
       }
     }
     window._LOADED_DESIGNBLOCKS = version;
-
-    console.log("Loading app");
 
     switch (document.readyState) {
       case "loading":
