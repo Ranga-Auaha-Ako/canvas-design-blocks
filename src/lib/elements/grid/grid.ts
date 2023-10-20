@@ -16,6 +16,7 @@ import confirmDialog from "$lib/util/confirmDialog";
 import MceElement from "$lib/elements/generic/mceElement";
 import type { MceElementStatics } from "$lib/elements/generic/mceElement";
 import { stateObject } from "src/main";
+import { deleteGrid } from "./popup/delete/deleteGrid";
 
 export class Grid extends MceElement implements Readable<Row[]> {
   public static gridMarkupVersion = "1.1.0";
@@ -197,6 +198,7 @@ export class Grid extends MceElement implements Readable<Row[]> {
         if (e.key === "Backspace" || e.key === "Delete") {
           let willDeleteElem = false;
           const selectNode = this.editor.selection.getNode() as HTMLElement;
+          const range = this.editor.selection.getRng();
           if (e.key === "Backspace") {
             if (
               selectNode.dataset.mceCaret === "after" &&
@@ -210,16 +212,10 @@ export class Grid extends MceElement implements Readable<Row[]> {
             )
               willDeleteElem = true;
           }
-          if (get(this.cursorSelected) === true || willDeleteElem) {
+          if (willDeleteElem) {
             e.preventDefault();
             e.stopPropagation();
-            confirmDialog(
-              this.editor,
-              "Delete Grid?",
-              "Are you sure you want to delete this grid?"
-            ).then((confirm) => {
-              if (confirm) this.delete();
-            });
+            deleteGrid(this);
             return false;
           }
         }
@@ -267,12 +263,12 @@ export class Grid extends MceElement implements Readable<Row[]> {
         return;
       }
       if (position > 0) {
-        get(this.gridManager)[position - 1].node.insertAdjacentElement(
+        get(this.gridManager)[position - 1]?.node.insertAdjacentElement(
           "afterend",
           this.node
         );
       } else {
-        get(this.gridManager)[position + 1].node.insertAdjacentElement(
+        get(this.gridManager)[position + 1]?.node.insertAdjacentElement(
           "beforebegin",
           this.node
         );
