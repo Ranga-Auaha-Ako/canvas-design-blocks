@@ -16,10 +16,11 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ### Fixed
 
+- Fix #1: Improve logic for grid deletion
+- Fix #31: Implement accessibility warnings where colour picker is used
 - Make buttons in grids behave properly
 - Fix to colour picker positioning
 - Make image cards have minimum height
-- Fix #1: Improve logic for grid deletion
 
 ## [2.9.2] - 2023-10-18
 
