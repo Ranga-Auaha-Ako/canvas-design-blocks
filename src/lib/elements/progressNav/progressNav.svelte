@@ -23,12 +23,21 @@
       style:color="#fff"
       href={item.url}
     >
-      {#if item.icon}
-        <IconElement icon={item.icon} colorOverride={"#fff"} />
-      {/if}
-      <span class="label">{item.label}</span>
+      <span class="Module--icon">
+        {#if item.icon}
+          <IconElement icon={item.icon} colorOverride={"#fff"} />
+        {:else}
+          <span class="icon">
+            <i class="icon-Line icon-module" />
+          </span>
+        {/if}
+      </span>
+      <span class="Module--label">{item.label}</span>
     </a>
   {:else}
     <!-- No items -->
+    <p>
+      No Published Modules Found! Try adding some to your course to see this.
+    </p>
   {/each}
 </div>

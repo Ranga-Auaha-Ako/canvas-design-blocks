@@ -2,14 +2,13 @@ import { stateObject } from "src/main";
 import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { ProgressNav } from "./progressNav";
-import "./button.postcss";
-import editorStyles from "./button.postcss?inline";
-//@ts-ignore
+import "./progressNav.postcss";
+import editorStyles from "./progressNav.postcss?inline";
 
 export class ProgressNavManager extends ElementManager {
   public elementClass: ElementManager["elementClass"] = ProgressNav;
   selector = ".CDB--ProgressNav[data-cdb-version]";
-  elementName = "ProgressNav";
+  elementName = "Module Progress";
 
   constructor(
     public readonly state: stateObject,

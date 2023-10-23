@@ -10,13 +10,15 @@ import ProgressNavConfig from "./popup/progressNavConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import {
   IconState,
-  IconType,
   getIconState,
-  icons,
 } from "$lib/util/components/iconSearch/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";
+import {
+  getIcon,
+  searchModules,
+} from "$lib/util/components/contentSearch/search";
 
 export enum ProgressNavSize {
   Default = "",
@@ -43,6 +45,23 @@ export interface ProgressNavItem {
 export interface ProgressNavData {
   items: ProgressNavItem[];
   size: ProgressNavSize;
+}
+
+const COURSE_ID = window.ENV?.COURSE_ID;
+async function getModuleItems(): Promise<ProgressNavItem[]> {
+  if (!COURSE_ID) return [];
+  const modules = await searchModules();
+  return modules
+    .filter((m) => m.published)
+    .map((m) => {
+      return {
+        moduleID: m.id,
+        state: ProgressState.After,
+        label: m.name,
+        url: m.url,
+        color: colord(theme.primary),
+      };
+    });
 }
 
 class ProgressNavState implements SvelteState<ProgressNavData> {
@@ -86,11 +105,33 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
             ? colord(item.color)
             : colord(theme.primary);
           stateItem.icon = getIconState(item.icon);
-          state.items.push(stateItem);
+          const existingIndex = state.items.findIndex(
+            (i) => i.moduleID === stateItem.moduleID
+          );
+          if (existingIndex > -1) {
+            state.items[existingIndex] = stateItem;
+          } else {
+            state.items.push(stateItem);
+          }
         });
       }
     }
     this.state.set(state);
+    const foundModules = getModuleItems();
+    foundModules.then((modules) => {
+      this.state.update((state) => {
+        state.items = modules.map((module) => {
+          const existingItem = state.items.find(
+            (item) => item.moduleID === module.moduleID
+          );
+          if (existingItem) {
+            return existingItem;
+          }
+          return module;
+        });
+        return state;
+      });
+    });
   }
   get stateString() {
     const state = get(this.state);
@@ -111,6 +152,9 @@ export class ProgressNav extends SvelteElement<ProgressNavData> {
   attributes: MceElement["attributes"] = new Map([]);
   defaultClasses = new Set(["CDB--ProgressNav"]);
   public popover: McePopover;
+  static getItemIndex(state: ProgressNavData, id: string) {
+    return state.items.findIndex((item) => item.moduleID === id);
+  }
 
   public static import(
     state: stateObject,

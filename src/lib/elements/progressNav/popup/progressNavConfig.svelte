@@ -1,23 +1,31 @@
 <script lang="ts">
-  import { type ProgressNav, ValidSizes } from "../progressNav";
+  import { ProgressNav, ProgressNavSize, ValidSizes } from "../progressNav";
   import { fade } from "svelte/transition";
-  import ProgressNavRadio from "$lib/util/components/progressNavRadio.svelte";
+  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
   import { onDestroy } from "svelte";
+  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import { Writable } from "svelte/store";
+  import { LocalState } from "$lib/elements/imageCard/imageCard";
+  import ItemPages from "$lib/util/components/itemPages/itemPages.svelte";
 
-  export let props: { progressNav: ProgressNav };
+  export let props: {
+    progressNav: ProgressNav;
+  };
+
   export let isModal: boolean = false;
-  // export let isDominant: Writable<boolean>;
-  // export let dominantPopover: Readable<boolean> | undefined = undefined;
+  let selectedId: string | undefined = undefined;
   $: progressNav = props.progressNav;
   $: progressNavData = progressNav.SvelteState;
+  $: cardIndex =
+    selectedId !== undefined
+      ? ProgressNav.getItemIndex($progressNavData, selectedId)
+      : undefined;
 
-  $: inGrid =
-    props.progressNav.node.closest(".cgb-col:not(.col-lg-12)") !== null;
   let configEl: HTMLElement;
 
   const iconPicker = new IconPicker({
@@ -28,7 +36,8 @@
   });
   iconPicker.$on("selectIcon", ({ detail }) => {
     iconPicker.close();
-    $progressNavData.icon = {
+    if (cardIndex === undefined || !$progressNavData.items[cardIndex]) return;
+    $progressNavData.items[cardIndex].icon = {
       id: detail.icon.id,
       type: detail.type,
     };
@@ -44,7 +53,8 @@
   class="cgb-component"
   in:fade|global={{ duration: 200 }}
 >
-  <progressNav
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <button
     class="close"
     title="Close"
     on:click={() => {
@@ -52,62 +62,43 @@
     }}
   >
     <i class="icon-end" />
-  </progressNav>
-  <div class="grid grid-flow-col grid-cols-2 gap-4">
-    <div class="col">
-      <ProgressNavRadio
-        title="ProgressNav Size"
-        choices={ValidSizes}
-        labels={Object.keys(ProgressNavSize)}
-        bind:value={$progressNavData.size}
-      />
-      <input
-        type="text"
-        bind:value={$progressNavData.title}
-        placeholder="ProgressNav Title..."
-      />
-      <input
-        type="text"
-        bind:value={$progressNavData.label}
-        placeholder="ProgressNav Label..."
-      />
-      <LinkInput
-        link={$progressNavData.url}
-        text={$progressNavData.label}
-        on:save={({ detail }) => {
-          $progressNavData.url = detail.link;
-          $progressNavData.label = detail.text || "";
-        }}
-      />
-    </div>
-    <div class="col">
-      <ColourPicker
-        label="Colour"
-        id={nanoid() + "-setting-background"}
-        bind:colour={$progressNavData.color}
-        contrastColour={colord("#ffffff")}
-        showNone={false}
-        asModal={isModal}
-      />
-      <progressNav
-        class="ProgressNav"
-        on:click={() => {
-          iconPicker.open();
-        }}>Select Icon</progressNav
-      >
-      <!-- Select box for full-width -->
-      {#if inGrid}
-        <label for="fullWidth" class="checkbox-fullwidth">
-          <input
-            type="checkbox"
-            id="fullWidth"
-            bind:checked={$progressNavData.fullWidth}
-          />
-          Full Width
-        </label>
+  </button>
+  <ItemPages
+    bind:items={$progressNavData.items}
+    bind:selectedId
+    OrderableListOptions={{
+      canDelete: false,
+    }}
+    idKey="moduleID"
+    let:itemIndex
+  >
+    <svelte:fragment slot="header">
+      <!-- <ButtonRadio
+      title="Row Size"
+      choices={ValidSizes}
+      labels={Object.keys(ProgressNavSize)}
+      bind:value={$progressNavData.size}
+    /> -->
+    </svelte:fragment>
+    <div class="card">
+      {#if itemIndex >= 0}
+        <ColourPicker
+          label="Colour"
+          id={nanoid() + "-setting-background"}
+          bind:colour={$progressNavData.items[itemIndex].color}
+          contrastColour={colord("#ffffff")}
+          showNone={false}
+          asModal={isModal}
+        />
+        <button
+          class="ProgressNav"
+          on:click={() => {
+            iconPicker.open();
+          }}>Select Icon</button
+        >
       {/if}
     </div>
-  </div>
+  </ItemPages>
 </div>
 
 <style lang="postcss">
