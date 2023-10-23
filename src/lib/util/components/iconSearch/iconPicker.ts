@@ -132,19 +132,19 @@ export function getIconState(
         ? unsafeState.color
         : undefined,
   };
-  if (isInstIcon(formedIcon)) {
+  if (isUniversalIcon(formedIcon) || isCustomIcon(formedIcon)) {
     const icon = {
       type: formedIcon.type,
-      id: instClassToId(formedIcon.class, formedIcon.type),
+      id: formedIcon.id,
     };
     if (!formedIcon.color) {
       return icon;
     }
     return { ...icon, color: formedIcon.color };
-  } else if (isCustomIcon(formedIcon)) {
+  } else if (isInstIcon(formedIcon)) {
     const icon = {
       type: formedIcon.type,
-      id: formedIcon.id,
+      id: instClassToId(formedIcon.class, formedIcon.type),
     };
     if (!formedIcon.color) {
       return icon;
