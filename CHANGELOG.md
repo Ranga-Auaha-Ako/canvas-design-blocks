@@ -8,7 +8,7 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
-## [2.10.0] - 2023-10-20
+## [2.10.0] - 2023-10-24
 
 ### Added
 
