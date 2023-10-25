@@ -1,22 +1,66 @@
 .DesignBlocks--ProgressNav {
-  @apply grid grid-flow-col gap-4 pb-10;
-  .ProgressNav--Module {
-    @apply rounded-full shadow-lg p-2 block;
+  @apply flex flex-row flex-wrap gap-2 pb-10 w-full;
+  .Module-container {
+    @apply relative grow shrink basis-20 transition;
     text-decoration: none !important;
-    .Module--icon {
-      @apply w-full block text-center;
-      --icon-size: 3rem;
-      font-size: var(--icon-size);
-      i:before {
-        @apply text-white;
+    color: unset !important;
+    .Module--info {
+      @apply mt-2 flex flex-row items-center gap-2 justify-center transition w-full duration-300;
+      .Module--icon {
+        @apply leading-none z-10 relative m-0;
+        --icon-size: 1rem;
         font-size: var(--icon-size);
+        i:before {
+          font-size: var(--icon-size);
+        }
+      }
+      .Module--label {
+        @apply text-center text-sm block box-border z-10 relative m-0;
+        span {
+          @apply bg-transparent;
+        }
       }
     }
-    .Module--label {
-      @apply text-center text-sm block w-full box-border;
-      span {
-        @apply bg-transparent;
+    .ProgressNav--Card {
+      @apply rounded p-2 relative block;
+      @apply w-full h-14 box-border overflow-clip;
+      .module-bg {
+        @apply absolute inset-0 transition bg-opacity-75;
+        background-size: 100vw;
+        background-image: url("assets/pano.jpg");
+      }
+      .Module--checkmark {
+        @apply w-5 h-5 text-xs text-center bg-gray-300 rounded-full shadow z-10 absolute inset-0 m-auto;
+        @apply flex items-center justify-center pointer-events-none select-none;
+        &.Checkmark--completed {
+          @apply bg-green-500 text-white;
+        }
+      }
+      &.moduleProgress--before {
+      }
+      &.moduleProgress--current {
+        /* .module-bg {
+          @apply outline outline-2 outline-white -outline-offset-4 rounded-md;
+        } */
+      }
+      &.moduleProgress--after {
+        @apply opacity-50;
+        .module-bg {
+          @apply grayscale;
+        }
       }
     }
+    /* &:hover {
+      @apply scale-105 duration-150;
+      .module-bg {
+        @apply blur-sm scale-125 bg-opacity-50 brightness-75;
+      }
+    }
+    &:active {
+      @apply scale-100;
+    } */
+  }
+  .no-published {
+    @apply text-center text-gray-400 text-base p-4 border-gray-200 border-2 rounded-md border-dashed;
   }
 }

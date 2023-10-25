@@ -79,17 +79,17 @@
       labels={Object.keys(ProgressNavSize)}
       bind:value={$progressNavData.size}
     /> -->
+      <ColourPicker
+        label="Colour"
+        id={nanoid() + "-setting-background"}
+        bind:colour={$progressNavData.color}
+        contrastColour={colord("#ffffff")}
+        showNone={false}
+        asModal={isModal}
+      />
     </svelte:fragment>
     <div class="card">
       {#if itemIndex >= 0}
-        <ColourPicker
-          label="Colour"
-          id={nanoid() + "-setting-background"}
-          bind:colour={$progressNavData.items[itemIndex].color}
-          contrastColour={colord("#ffffff")}
-          showNone={false}
-          asModal={isModal}
-        />
         <button
           class="ProgressNav"
           on:click={() => {

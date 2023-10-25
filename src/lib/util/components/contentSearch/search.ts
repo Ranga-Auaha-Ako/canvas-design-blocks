@@ -130,20 +130,26 @@ export async function searchPages(query?: string) {
   });
 }
 
-export async function searchModules(query?: string) {
+export async function searchModules(query?: string, includeItems = false) {
   const url = `/api/v1/courses/${COURSE_ID}/modules?per_page=12&limit=12${
     query ? `&search_term=${query}` : ""
-  }`;
+  }${includeItems ? "&include[]=items" : ""}`;
   const response = await fetch(url);
   const modules = (await response.json()) as Record<string, any>[];
   if (!modules) return [];
-  return modules.map<Link & { id: string }>((m) => {
+  return modules.map<
+    Link & {
+      id: string;
+      items?: { id: number; published: boolean; page_url?: string }[];
+    }
+  >((m) => {
     return {
       id: m.id,
       name: m.name,
       url: `/courses/${COURSE_ID}/modules/${m.id}`,
       type: InternalLinks.Modules,
       published: m.published,
+      items: includeItems ? m.items : undefined,
     };
   });
 }

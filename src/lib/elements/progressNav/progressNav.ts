@@ -35,38 +35,43 @@ export const ValidProgressStates = Object.values(ProgressState);
 
 export interface ProgressNavItem {
   moduleID?: string;
-  state: ProgressState;
   label: string;
   url: string;
   icon?: IconState;
-  color?: Colord;
 }
 
 export interface ProgressNavData {
   items: ProgressNavItem[];
   size: ProgressNavSize;
+  position?: number;
+  color?: Colord;
 }
 
 const COURSE_ID = window.ENV?.COURSE_ID;
-async function getModuleItems(): Promise<ProgressNavItem[]> {
-  if (!COURSE_ID) return [];
-  const modules = await searchModules();
-  return modules
-    .filter((m) => m.published)
-    .map((m) => {
-      return {
-        moduleID: m.id,
-        state: ProgressState.After,
-        label: m.name,
-        url: m.url,
-        color: colord(theme.primary),
-      };
-    });
+async function getModuleItems(): Promise<{
+  items: ProgressNavItem[];
+  modules: Awaited<ReturnType<typeof searchModules>>;
+}> {
+  if (!COURSE_ID) return { items: [], modules: [] };
+  const modules = await searchModules(undefined, true);
+  return {
+    items: modules
+      .filter((m) => m.published)
+      .map((m, index) => {
+        return {
+          moduleID: m.id,
+          label: m.name,
+          url: m.url,
+        };
+      }),
+    modules,
+  };
 }
 
 class ProgressNavState implements SvelteState<ProgressNavData> {
   static defaultState: ProgressNavData = {
     size: DefaultSize,
+    color: colord(theme.primary),
     items: [],
   };
   state: Writable<ProgressNavData> = writable();
@@ -86,24 +91,18 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
         ? unsafeState.size
         : DefaultSize;
       state.size = size || DefaultSize;
+      state.color = unsafeState.color
+        ? colord(unsafeState.color)
+        : colord(theme.primary);
+      state.position = unsafeState.position;
       if (unsafeState.items) {
         unsafeState.items.forEach((item, index) => {
           let stateItem: ProgressNavItem = {
             moduleID: item.moduleID,
-            state: ProgressState.After,
             label: item.label || `Module ${index + 1}`,
             url: sanitizeUrl(item?.url || "").replace(/^about:blank$/, ""),
-            color: colord(theme.primary),
             icon: undefined,
           };
-          stateItem.state = ValidProgressStates.includes(
-            item.state as ProgressState
-          )
-            ? item.state
-            : ProgressState.After;
-          stateItem.color = item.color
-            ? colord(item.color)
-            : colord(theme.primary);
           stateItem.icon = getIconState(item.icon);
           const existingIndex = state.items.findIndex(
             (i) => i.moduleID === stateItem.moduleID
@@ -118,9 +117,18 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
     }
     this.state.set(state);
     const foundModules = getModuleItems();
-    foundModules.then((modules) => {
+    foundModules.then(({ items, modules }) => {
       this.state.update((state) => {
-        state.items = modules.map((module) => {
+        const pageID = window.ENV?.WIKI_PAGE?.url;
+        const moduleWithPage = modules.findIndex((m) => {
+          const page = m.items?.find(
+            (i) => pageID && i.page_url === pageID && i.published
+          );
+          return page;
+        });
+        if (moduleWithPage > -1 && state.position === undefined)
+          state.position = moduleWithPage;
+        state.items = items.map((module) => {
           const existingItem = state.items.find(
             (item) => item.moduleID === module.moduleID
           );
@@ -135,13 +143,13 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { items, ...stateData } = state;
+    const { items, color, ...stateData } = state;
     return JSON.stringify({
       ...stateData,
       items: items.map((item) => ({
         ...item,
-        color: item.color?.toHex(),
       })),
+      color: color?.toHex(),
     });
   }
 }
