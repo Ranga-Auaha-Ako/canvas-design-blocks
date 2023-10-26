@@ -9,7 +9,7 @@
   export let OrderableListOptions: Partial<
     Pick<
       ComponentProps<OrderableList>,
-      "labelKey" | "idKey" | "showEdit" | "canDelete"
+      "labelKey" | "idKey" | "showEdit" | "canDelete" | "canReorder" | "actions"
     >
   >;
 
@@ -52,6 +52,7 @@
           else selectedId = items[0].moduleID;
         }
       }}
+      activeId={selectedId}
       {canDelete}
     />
     {#if addDefaults}
@@ -61,7 +62,7 @@
       >
     {/if}
   </div>
-  <div class="col">
+  <div class="col col-contents">
     <slot name="header" />
     {#if selectedIndex !== undefined}
       <slot itemIndex={selectedIndex} />
@@ -71,9 +72,12 @@
 
 <style lang="postcss">
   .itemGrid {
-    @apply grid grid-flow-col grid-cols-2 gap-4;
+    @apply grid grid-flow-col grid-cols-3 gap-4;
   }
   .col {
     @apply flex flex-col gap-2;
+  }
+  .col-contents {
+    @apply col-span-2;
   }
 </style>

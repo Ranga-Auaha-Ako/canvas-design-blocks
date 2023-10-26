@@ -68,6 +68,18 @@
     bind:selectedId
     OrderableListOptions={{
       canDelete: false,
+      canReorder: false,
+      actions(item) {
+        return [
+          {
+            title: item.hide ? "Show" : "Hide",
+            icon: item.hide ? "icon-solid icon-eye" : "icon-line icon-eye",
+            event: () => {
+              item.hide = !item.hide;
+            },
+          },
+        ];
+      },
     }}
     idKey="moduleID"
     let:itemIndex
@@ -80,7 +92,7 @@
       bind:value={$progressNavData.size}
     /> -->
       <ColourPicker
-        label="Colour"
+        label="Progress Bar Colour"
         id={nanoid() + "-setting-background"}
         bind:colour={$progressNavData.color}
         contrastColour={colord("#ffffff")}
@@ -88,15 +100,34 @@
         asModal={isModal}
       />
     </svelte:fragment>
-    <div class="card">
-      {#if itemIndex >= 0}
-        <button
-          class="ProgressNav"
-          on:click={() => {
-            iconPicker.open();
-          }}>Select Icon</button
+    <div class="card-slot">
+      {#key itemIndex}
+        <div
+          class="card"
+          out:fade={{ duration: 150 }}
+          in:fade={{ duration: 150, delay: 200 }}
         >
-      {/if}
+          {#if itemIndex >= 0}
+            <div class="card-header">
+              <h3 class="card-title">
+                {$progressNavData.items[itemIndex].label}
+              </h3>
+            </div>
+            <div class="card-body">
+              <button
+                class="ProgressNav"
+                on:click={() => {
+                  iconPicker.open();
+                }}>Select Icon</button
+              >
+            </div>
+          {:else}
+            <div class="card-body">
+              <p>Select an item on the left to edit it.</p>
+            </div>
+          {/if}
+        </div>
+      {/key}
     </div>
   </ItemPages>
 </div>
@@ -132,6 +163,29 @@
     @apply accent-primary;
     & input {
       @apply w-4 h-4;
+    }
+  }
+  .card-slot {
+    /* To make the fade transition overlay on itself */
+    @apply relative grid grow;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "card";
+  }
+  .card {
+    @apply flex flex-col items-start gap-2 border border-gray-300 rounded shadow-sm grow;
+    grid-area: card;
+    .card-header {
+      @apply bg-gray-100 rounded-t border-b w-full px-2 py-1;
+      h3 {
+        @apply text-base m-0;
+      }
+    }
+    .card-body {
+      @apply p-2 w-full;
+    }
+    p {
+      @apply text-sm text-gray-500 italic text-center;
     }
   }
 </style>

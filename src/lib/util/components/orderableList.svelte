@@ -8,10 +8,11 @@
   export let items: Record<any, any>[];
   export let showEdit: boolean = false;
   export let canDelete: boolean = true;
+  export let canReorder: boolean = true;
   export let actions: (item: any) => {
     title: string;
     icon: string;
-    event: string;
+    event: string | (() => void);
   }[] = () => [];
   export let activeClass: string = "active";
   export let activeId: string | undefined = undefined;
@@ -40,6 +41,7 @@
   };
 
   $: sortable =
+    canReorder &&
     itemList &&
     Sortable.then((s) => {
       new s.default(itemList, {
@@ -65,9 +67,11 @@
           : ''}"
         class:active={activeId !== undefined && item[idKey] === activeId}
       >
-        <div class="dragHandle">
-          <i class="icon-solid icon-drag-handle" />
-        </div>
+        {#if canReorder}
+          <div class="dragHandle">
+            <i class="icon-solid icon-drag-handle" />
+          </div>
+        {/if}
         {#if showEdit}
           <button
             class="itemlabel"
@@ -101,7 +105,8 @@
             <button
               title={action.title}
               on:click|stopPropagation={() => {
-                dispatch(action.event, item[idKey]);
+                if (typeof action.event === "function") action.event();
+                else dispatch(action.event, item[idKey]);
               }}
             >
               <i class={action.icon} />

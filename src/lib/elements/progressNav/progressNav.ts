@@ -38,6 +38,7 @@ export interface ProgressNavItem {
   label: string;
   url: string;
   icon?: IconState;
+  hide?: boolean;
 }
 
 export interface ProgressNavData {
@@ -102,6 +103,7 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
             label: item.label || `Module ${index + 1}`,
             url: sanitizeUrl(item?.url || "").replace(/^about:blank$/, ""),
             icon: undefined,
+            hide: !!item.hide,
           };
           stateItem.icon = getIconState(item.icon);
           const existingIndex = state.items.findIndex(

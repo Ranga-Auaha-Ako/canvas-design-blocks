@@ -1,64 +1,60 @@
 .DesignBlocks--ProgressNav {
-  @apply flex flex-row flex-wrap gap-2 pb-10 w-full;
-  .Module-container {
-    @apply relative grow shrink basis-20 transition;
-    text-decoration: none !important;
-    color: unset !important;
-    .Module--info {
-      @apply mt-2 flex flex-row items-center gap-2 justify-center transition w-full duration-300;
-      .Module--icon {
-        @apply leading-none z-10 relative m-0;
-        --icon-size: 1rem;
-        font-size: var(--icon-size);
-        i:before {
-          font-size: var(--icon-size);
-        }
-      }
-      .Module--label {
-        @apply text-center text-sm block box-border z-10 relative m-0;
-        span {
-          @apply bg-transparent;
-        }
-      }
+  .ProgressNav--Bar {
+    /* Progress bar */
+    @apply relative w-full h-3 rounded-full bg-gray-200;
+    @apply grid grid-flow-col gap-2 content-center auto-cols-fr;
+    .ProgressNav--Bar--Progress {
+      @apply absolute top-0 left-0 h-full bg-primary rounded-full;
+      width: 0%;
+      transition: width 0.3s ease-in-out;
     }
-    .ProgressNav--Card {
-      @apply rounded p-2 relative block;
-      @apply w-full h-14 box-border overflow-clip;
-      .module-bg {
-        @apply absolute inset-0 transition bg-opacity-75;
-        background-size: 100vw;
-        background-image: url("assets/pano.jpg");
-      }
+    .ProgressNav--Bar--Step {
+      @apply w-full relative text-center grow-0 shrink-0;
       .Module--checkmark {
-        @apply w-5 h-5 text-xs text-center bg-gray-300 rounded-full shadow z-10 absolute inset-0 m-auto;
-        @apply flex items-center justify-center pointer-events-none select-none;
+        @apply w-5 h-5 text-xs z-10;
+        @apply inline-flex items-center justify-center pointer-events-none select-none;
         &.Checkmark--completed {
-          @apply bg-green-500 text-white;
+          @apply bg-gray-300 rounded-full shadow text-white;
+        }
+        &.Checkmark--current {
+          @apply text-black relative top-4 text-lg;
         }
       }
-      &.moduleProgress--before {
+    }
+  }
+  .ProgressNav--Steps {
+    @apply sm:grid hidden grid-flow-col auto-cols-fr gap-2 pb-10 w-full;
+    .Module-container {
+      @apply relative grow shrink basis-20 transition;
+      text-decoration: none !important;
+      color: unset !important;
+      .Module--info {
+        @apply mt-2 flex flex-row items-center gap-2 justify-center transition w-full duration-300;
+        .Module--icon {
+          @apply leading-none z-10 relative m-0;
+          --icon-size: 1rem;
+          font-size: var(--icon-size);
+          i:before {
+            font-size: var(--icon-size);
+          }
+        }
+        .Module--label {
+          @apply text-center text-sm block box-border z-10 relative m-0;
+          span {
+            @apply bg-transparent;
+          }
+        }
       }
-      &.moduleProgress--current {
-        /* .module-bg {
-          @apply outline outline-2 outline-white -outline-offset-4 rounded-md;
-        } */
-      }
-      &.moduleProgress--after {
-        @apply opacity-50;
+      /* &:hover {
+        @apply scale-105 duration-150;
         .module-bg {
-          @apply grayscale;
+          @apply blur-sm scale-125 bg-opacity-50 brightness-75;
         }
       }
+      &:active {
+        @apply scale-100;
+      } */
     }
-    /* &:hover {
-      @apply scale-105 duration-150;
-      .module-bg {
-        @apply blur-sm scale-125 bg-opacity-50 brightness-75;
-      }
-    }
-    &:active {
-      @apply scale-100;
-    } */
   }
   .no-published {
     @apply text-center text-gray-400 text-base p-4 border-gray-200 border-2 rounded-md border-dashed;
