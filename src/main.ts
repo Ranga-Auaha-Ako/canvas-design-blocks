@@ -16,6 +16,7 @@ import ProfilesManager from "$lib/elements/profiles/profilesManager";
 import CourseHeaderManager from "$lib/elements/courseHeader/courseHeaderManager";
 import ImageCardLegacy from "$lib/elements/imageCard/imageCardLegacy";
 import ProgressNavManager from "$lib/elements/progressNav/progressNavManager";
+import gtag from "$lib/util/gtag";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
