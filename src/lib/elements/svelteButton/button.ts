@@ -208,6 +208,15 @@ export class Button extends SvelteElement<ButtonData> {
         }
       }
     });
+
+    this.SvelteState.subscribe((state) => {
+      // We need to mark full width buttons as such
+      if (state.fullWidth) {
+        this.node.classList.add("fullWidth");
+      } else {
+        this.node.classList.remove("fullWidth");
+      }
+    });
     this.setupObserver();
   }
 }
