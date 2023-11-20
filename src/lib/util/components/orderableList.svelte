@@ -9,6 +9,7 @@
   export let showEdit: boolean = false;
   export let canDelete: boolean = true;
   export let canReorder: boolean = true;
+  export let canDeselect: boolean = false;
   export let actions: (item: any) => {
     title: string;
     icon: string;
@@ -76,8 +77,11 @@
           <button
             class="itemlabel"
             on:click|stopPropagation={() => {
-              dispatch("edit", item[idKey]);
+              if (canDeselect && activeId === item[idKey])
+                dispatch("edit", undefined);
+              else dispatch("edit", item[idKey]);
             }}
+            tabindex="-1"
           >
             {item[labelKey]}
           </button>

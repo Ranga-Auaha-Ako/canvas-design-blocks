@@ -73,19 +73,21 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
   static defaultState: ProgressNavData = {
     size: DefaultSize,
     color: colord(theme.primary),
+    position: 0,
     items: [],
   };
   state: Writable<ProgressNavData> = writable();
   public set = this.state.set;
   public update = this.state.update;
   public subscribe = this.state.subscribe;
+
   constructor(
     unsafeState: Partial<ProgressNavData> | undefined,
     node?: HTMLElement
   ) {
     let state: ProgressNavData = {
+      ...ProgressNavState.defaultState,
       items: [],
-      size: DefaultSize,
     };
     if (unsafeState) {
       let size = ValidSizes.includes(unsafeState.size as ProgressNavSize)
@@ -95,7 +97,7 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
       state.color = unsafeState.color
         ? colord(unsafeState.color)
         : colord(theme.primary);
-      state.position = unsafeState.position;
+      state.position = unsafeState.position || 0;
       if (unsafeState.items) {
         unsafeState.items.forEach((item, index) => {
           let stateItem: ProgressNavItem = {
@@ -118,30 +120,6 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
       }
     }
     this.state.set(state);
-    const foundModules = getModuleItems();
-    foundModules.then(({ items, modules }) => {
-      this.state.update((state) => {
-        const pageID = window.ENV?.WIKI_PAGE?.url;
-        const moduleWithPage = modules.findIndex((m) => {
-          const page = m.items?.find(
-            (i) => pageID && i.page_url === pageID && i.published
-          );
-          return page;
-        });
-        if (moduleWithPage > -1 && state.position === undefined)
-          state.position = moduleWithPage;
-        state.items = items.map((module) => {
-          const existingItem = state.items.find(
-            (item) => item.moduleID === module.moduleID
-          );
-          if (existingItem) {
-            return existingItem;
-          }
-          return module;
-        });
-        return state;
-      });
-    });
   }
   get stateString() {
     const state = get(this.state);
@@ -182,7 +160,9 @@ export class ProgressNav extends SvelteElement<ProgressNavData> {
     highlight: boolean
   ) {
     const node = this.createInsertNode(atCursor, editor);
-    return new this(state, editor, manager, node);
+    const inst = new this(state, editor, manager, node);
+    this.syncModules(inst.SvelteState);
+    return inst;
   }
 
   constructor(
@@ -236,5 +216,36 @@ export class ProgressNav extends SvelteElement<ProgressNavData> {
       }
     });
     this.setupObserver();
+  }
+
+  static async syncModules(svelteState: SvelteState<ProgressNavData>) {
+    const { items, modules } = await getModuleItems();
+    svelteState.update((state) => {
+      const pageID = window.ENV?.WIKI_PAGE?.url;
+      if (!pageID) return state;
+      const moduleWithPage = modules.findIndex((m) => {
+        const page = m.items?.find(
+          (i) => pageID && i.page_url === pageID && i.published
+        );
+        return page;
+      });
+      if (
+        moduleWithPage > -1 &&
+        (state.position === undefined || state.position === -1)
+      )
+        state.position = moduleWithPage;
+      state.items = items.map((module) => {
+        const existingItem = state.items.find(
+          (item) => item.moduleID === module.moduleID
+        );
+        if (existingItem) {
+          existingItem.label = module.label;
+          existingItem.url = module.url;
+          return existingItem;
+        }
+        return module;
+      });
+      return state;
+    });
   }
 }

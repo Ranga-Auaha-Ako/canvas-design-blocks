@@ -1,59 +1,59 @@
 .DesignBlocks--ProgressNav {
-  .ProgressNav--Bar {
-    /* Progress bar */
-    @apply relative w-full h-3 rounded-full bg-gray-200;
-    @apply grid grid-flow-col gap-2 content-center auto-cols-fr;
-    .ProgressNav--Bar--Progress {
-      @apply absolute top-0 left-0 h-full bg-primary rounded-full;
-      width: 0%;
-      transition: width 0.3s ease-in-out;
-    }
-    .ProgressNav--Bar--Step {
-      @apply w-full relative text-center grow-0 shrink-0;
-      .Module--checkmark {
-        @apply w-5 h-5 text-xs z-10;
-        @apply inline-flex items-center justify-center pointer-events-none select-none;
-        &.Checkmark--completed {
-          @apply bg-gray-300 rounded-full shadow text-white;
-        }
-        &.Checkmark--current {
-          @apply text-black relative top-4 text-lg;
-        }
-      }
-    }
-  }
-  .ProgressNav--Steps {
-    @apply sm:grid hidden grid-flow-col auto-cols-fr gap-2 pb-10 w-full;
-    .Module-container {
-      @apply relative grow shrink basis-20 transition;
+  container-type: inline-size;
+  .progressBar {
+    @apply mb-2 w-full relative grid grid-flow-col items-stretch auto-cols-fr rounded overflow-clip;
+    @apply text-black text-base text-center bg-gray-100;
+    .progressBar--step {
+      @apply relative grow shrink px-4 py-1;
       text-decoration: none !important;
-      color: unset !important;
-      .Module--info {
-        @apply mt-2 flex flex-row items-center gap-2 justify-center transition w-full duration-300;
-        .Module--icon {
-          @apply leading-none z-10 relative m-0;
-          --icon-size: 1rem;
-          font-size: var(--icon-size);
-          i:before {
-            font-size: var(--icon-size);
+      &.moduleProgress--current {
+      }
+      .progressBar--label {
+        @apply w-full text-black;
+        .Module--info {
+          @apply h-full flex gap-2 flex-row items-center justify-center;
+          .Module--icon {
+            @apply shrink-0;
           }
-        }
-        .Module--label {
-          @apply text-center text-sm block box-border z-10 relative m-0;
-          span {
-            @apply bg-transparent;
+          .Module--label {
+            @apply truncate;
           }
         }
       }
-      /* &:hover {
-        @apply scale-105 duration-150;
-        .module-bg {
-          @apply blur-sm scale-125 bg-opacity-50 brightness-75;
+    }
+    @container (width < 50em) {
+      &.progressBar--overflowing {
+        @apply flex flex-row flex-nowrap;
+        /* @apply overflow-visible h-10;
+        &:before,
+        &:after {
+          @apply absolute top-0 w-1/12 h-full z-10;
+          @apply from-white to-transparent;
+          content: " ";
+        }
+        &:before {
+          @apply left-0 bg-gradient-to-r;
+        }
+        &:after {
+          @apply right-0 bg-gradient-to-l;
+        } */
+        .progressBar--step {
+          @apply shrink;
+          width: 20%;
+          .Module--info {
+            @apply flex-col gap-0;
+          }
+        }
+        .moduleProgress--small-hide {
+          width: unset;
+          .Module--label {
+            @apply hidden;
+          }
+          &:hover .Module--label {
+            @apply block;
+          }
         }
       }
-      &:active {
-        @apply scale-100;
-      } */
     }
   }
   .no-published {

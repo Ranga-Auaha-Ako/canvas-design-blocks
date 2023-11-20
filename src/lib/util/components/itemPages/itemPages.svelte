@@ -9,7 +9,13 @@
   export let OrderableListOptions: Partial<
     Pick<
       ComponentProps<OrderableList>,
-      "labelKey" | "idKey" | "showEdit" | "canDelete" | "canReorder" | "actions"
+      | "labelKey"
+      | "idKey"
+      | "showEdit"
+      | "canDelete"
+      | "canReorder"
+      | "actions"
+      | "canDeselect"
     >
   >;
 
