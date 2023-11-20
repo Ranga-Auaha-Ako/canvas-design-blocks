@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { ButtonBar, ButtonBarSize, ValidSizes } from "../buttonBar";
-  import { fade } from "svelte/transition";
+  import {
+    ButtonBar,
+    ButtonBarSize,
+    ButtonBarTheme,
+    ValidSizes,
+  } from "../buttonBar";
+  import { fade, slide } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
@@ -12,6 +17,7 @@
   import { Writable } from "svelte/store";
   import { LocalState } from "$lib/elements/imageCard/imageCard";
   import ItemPages from "$lib/util/components/itemPages/itemPages.svelte";
+  import { text } from "stream/consumers";
 
   export let props: {
     buttonBar: ButtonBar;
@@ -57,6 +63,8 @@
     $buttonBarData.items = $buttonBarData.items;
   }
 
+  $: visibleItems = $buttonBarData.items.filter((item) => item.hide !== true);
+
   let isLoading: boolean = false;
 </script>
 
@@ -76,11 +84,26 @@
   >
     <i class="icon-end" />
   </button>
+  {#if visibleItems.length > 5}
+    <div class="info-alert" transition:slide|global>
+      <p class="alert-details">
+        <span class="font-bold">Heads up:</span> There are too many buttons to
+        display in a row on mobile devices!
+        {#if $buttonBarData.theme === ButtonBarTheme.Default}
+          The current item in the progress bar will show text, but all other
+          buttons will be reduced to just an icon.
+        {:else if $buttonBarData.theme === ButtonBarTheme.Simple}
+          The row will collapse into a vertical list of buttons instead, which
+          may take up a lot of space.
+        {/if}
+      </p>
+    </div>
+  {/if}
   <ItemPages
     bind:items={$buttonBarData.items}
     bind:selectedId
     OrderableListOptions={{
-      canDelete: false,
+      canDelete: true,
       canReorder: true,
       canDeselect: true,
     }}
@@ -179,7 +202,7 @@
                     class="icon icon-progress"
                     class:motion-safe:animate-spin={isLoading}
                   />
-                  Sync to Modules
+                  Sync from Modules
                 </button>
                 <button
                   class="btn btn-primary btn-small block mt-0 grow"
@@ -283,6 +306,13 @@
       .progress-selector {
         @apply accent-primary;
       }
+    }
+  }
+
+  .info-alert {
+    @apply mt-2 border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-xs transition;
+    p {
+      @apply m-0;
     }
   }
 </style>

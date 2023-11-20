@@ -20,11 +20,12 @@ import {
   searchModules,
 } from "$lib/util/components/contentSearch/search";
 
-export enum ButtonBarSize {
-  Default = "",
+export enum ButtonBarTheme {
+  Default = "progress",
+  Simple = "simple",
 }
-export const ValidSizes = Object.values(ButtonBarSize);
-export const DefaultSize = ButtonBarSize.Default;
+export const ValidThemes = Object.values(ButtonBarTheme);
+export const DefaultTheme = ButtonBarTheme.Default;
 
 export enum ProgressState {
   Before = "moduleProgress--before",
@@ -43,7 +44,7 @@ export interface ButtonBarItem {
 
 export interface ButtonBarData {
   items: ButtonBarItem[];
-  size: ButtonBarSize;
+  theme: ButtonBarTheme;
   position?: number;
   color?: Colord;
 }
@@ -71,7 +72,7 @@ async function getModuleItems(): Promise<{
 
 class ButtonBarState implements SvelteState<ButtonBarData> {
   static defaultState: ButtonBarData = {
-    size: DefaultSize,
+    theme: DefaultTheme,
     color: colord(theme.primary),
     position: 0,
     items: [],
@@ -90,10 +91,10 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
       items: [],
     };
     if (unsafeState) {
-      let size = ValidSizes.includes(unsafeState.size as ButtonBarSize)
-        ? unsafeState.size
-        : DefaultSize;
-      state.size = size || DefaultSize;
+      let btnTheme = ValidThemes.includes(unsafeState.theme as ButtonBarTheme)
+        ? unsafeState.theme
+        : DefaultTheme;
+      state.theme = btnTheme || DefaultTheme;
       state.color = unsafeState.color
         ? colord(unsafeState.color)
         : colord(theme.primary);
