@@ -1,12 +1,12 @@
 import { Writable, get, writable } from "svelte/store";
 import MceElement from "../generic/mceElement";
-import ProgressNavInner from "./progressNav.svelte";
+import ButtonBarInner from "./buttonBar.svelte";
 import { stateObject } from "src/main";
 import { Editor } from "tinymce";
 import { nanoid } from "nanoid";
-import { ProgressNavManager } from "./progressNavManager";
+import { ButtonBarManager } from "./buttonBarManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
-import ProgressNavConfig from "./popup/progressNavConfig.svelte";
+import ButtonBarConfig from "./popup/buttonBarConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import {
   IconState,
@@ -20,11 +20,11 @@ import {
   searchModules,
 } from "$lib/util/components/contentSearch/search";
 
-export enum ProgressNavSize {
+export enum ButtonBarSize {
   Default = "",
 }
-export const ValidSizes = Object.values(ProgressNavSize);
-export const DefaultSize = ProgressNavSize.Default;
+export const ValidSizes = Object.values(ButtonBarSize);
+export const DefaultSize = ButtonBarSize.Default;
 
 export enum ProgressState {
   Before = "moduleProgress--before",
@@ -33,7 +33,7 @@ export enum ProgressState {
 }
 export const ValidProgressStates = Object.values(ProgressState);
 
-export interface ProgressNavItem {
+export interface ButtonBarItem {
   moduleID?: string;
   label: string;
   url: string;
@@ -41,16 +41,16 @@ export interface ProgressNavItem {
   hide?: boolean;
 }
 
-export interface ProgressNavData {
-  items: ProgressNavItem[];
-  size: ProgressNavSize;
+export interface ButtonBarData {
+  items: ButtonBarItem[];
+  size: ButtonBarSize;
   position?: number;
   color?: Colord;
 }
 
 const COURSE_ID = window.ENV?.COURSE_ID;
 async function getModuleItems(): Promise<{
-  items: ProgressNavItem[];
+  items: ButtonBarItem[];
   modules: Awaited<ReturnType<typeof searchModules>>;
 }> {
   if (!COURSE_ID) return { items: [], modules: [] };
@@ -69,28 +69,28 @@ async function getModuleItems(): Promise<{
   };
 }
 
-class ProgressNavState implements SvelteState<ProgressNavData> {
-  static defaultState: ProgressNavData = {
+class ButtonBarState implements SvelteState<ButtonBarData> {
+  static defaultState: ButtonBarData = {
     size: DefaultSize,
     color: colord(theme.primary),
     position: 0,
     items: [],
   };
-  state: Writable<ProgressNavData> = writable();
+  state: Writable<ButtonBarData> = writable();
   public set = this.state.set;
   public update = this.state.update;
   public subscribe = this.state.subscribe;
 
   constructor(
-    unsafeState: Partial<ProgressNavData> | undefined,
+    unsafeState: Partial<ButtonBarData> | undefined,
     node?: HTMLElement
   ) {
-    let state: ProgressNavData = {
-      ...ProgressNavState.defaultState,
+    let state: ButtonBarData = {
+      ...ButtonBarState.defaultState,
       items: [],
     };
     if (unsafeState) {
-      let size = ValidSizes.includes(unsafeState.size as ProgressNavSize)
+      let size = ValidSizes.includes(unsafeState.size as ButtonBarSize)
         ? unsafeState.size
         : DefaultSize;
       state.size = size || DefaultSize;
@@ -100,7 +100,7 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
       state.position = unsafeState.position || 0;
       if (unsafeState.items) {
         unsafeState.items.forEach((item, index) => {
-          let stateItem: ProgressNavItem = {
+          let stateItem: ButtonBarItem = {
             moduleID: item.moduleID,
             label: item.label || `Module ${index + 1}`,
             url: sanitizeUrl(item?.url || "").replace(/^about:blank$/, ""),
@@ -134,13 +134,13 @@ class ProgressNavState implements SvelteState<ProgressNavData> {
   }
 }
 
-export class ProgressNav extends SvelteElement<ProgressNavData> {
-  selectionMethod: SvelteElement<ProgressNavData>["selectionMethod"] =
+export class ButtonBar extends SvelteElement<ButtonBarData> {
+  selectionMethod: SvelteElement<ButtonBarData>["selectionMethod"] =
     "clickTinyMCE";
   attributes: MceElement["attributes"] = new Map([]);
-  defaultClasses = new Set(["CDB--ProgressNav"]);
+  defaultClasses = new Set(["CDB--ButtonBar"]);
   public popover: McePopover;
-  static getItemIndex(state: ProgressNavData, id: string) {
+  static getItemIndex(state: ButtonBarData, id: string) {
     return state.items.findIndex((item) => item.moduleID === id);
   }
 
@@ -168,26 +168,18 @@ export class ProgressNav extends SvelteElement<ProgressNavData> {
   constructor(
     public state: stateObject,
     public editor: Editor = window.tinymce.activeEditor,
-    public manager: ProgressNavManager,
+    public manager: ButtonBarManager,
     public node: HTMLElement,
     public readonly id = nanoid(),
     highlight = false
   ) {
-    super(
-      editor,
-      manager,
-      node,
-      ProgressNavInner,
-      ProgressNavState,
-      id,
-      highlight
-    );
+    super(editor, manager, node, ButtonBarInner, ButtonBarState, id, highlight);
 
     // Set up popover
     this.popover = this.setupPopover(
-      ProgressNavConfig,
+      ButtonBarConfig,
       {
-        progressNav: this,
+        buttonBar: this,
       },
       "top",
       {
@@ -218,7 +210,7 @@ export class ProgressNav extends SvelteElement<ProgressNavData> {
     this.setupObserver();
   }
 
-  static async syncModules(svelteState: SvelteState<ProgressNavData>) {
+  static async syncModules(svelteState: SvelteState<ButtonBarData>) {
     const { items, modules } = await getModuleItems();
     svelteState.update((state) => {
       const pageID = window.ENV?.WIKI_PAGE?.url;

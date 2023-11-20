@@ -1,11 +1,15 @@
 <script lang="ts">
   import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
-  import { ProgressNavData } from "./progressNav";
+  import {
+    IconType,
+    instClassToId,
+  } from "$lib/util/components/iconSearch/iconPicker";
+  import { ButtonBarData } from "./buttonBar";
   import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
 
-  export let cdbData: ProgressNavData;
+  export let cdbData: ButtonBarData;
   // svelte-ignore unused-export-let
   export let localState: any;
   export let destroyHandler: () => void;
@@ -31,17 +35,17 @@
   const showSm = 1;
 </script>
 
-<div class="DesignBlocks--ProgressNav {cdbData.size}">
+<div class="DesignBlocks--ButtonBar {cdbData.size}">
   {#if visiblePosition !== undefined && visibleItems.length > 0}
     <div
-      class="progressBar"
-      class:progressBar--overflowing={visibleItems.length > 5}
+      class="buttonBar"
+      class:buttonBar--overflowing={visibleItems.length > 5}
     >
       {#each itemLocations as loc, index}
         {@const item = visibleItems[index]}
         <a
           href={item.url}
-          class="progressBar--step"
+          class="buttonBar--step"
           class:moduleProgress--before={index < visiblePosition}
           class:moduleProgress--after={index > visiblePosition}
           class:moduleProgress--current={index === visiblePosition}
@@ -50,9 +54,10 @@
           style:background-color={index <= visiblePosition
             ? cdbData.color?.toHex()
             : undefined}
+          style:color={index <= visiblePosition ? "#fff" : "#000"}
         >
           <span
-            class="progressBar--label"
+            class="buttonBar--label"
             style:color={index <= visiblePosition ? "#fff" : undefined}
           >
             <span class="Module--info">
@@ -63,9 +68,13 @@
                     colorOverride={index <= visiblePosition ? "#fff" : "#000"}
                   />
                 {:else}
-                  <span class="icon">
-                    <i class="icon-Line icon-module" />
-                  </span>
+                  <IconElement
+                    icon={{
+                      type: IconType.Line,
+                      id: instClassToId("module", IconType.Line),
+                    }}
+                    colorOverride={index <= visiblePosition ? "#fff" : "#000"}
+                  />
                 {/if}
               </span>
               <span class="Module--label">{item.label}</span>

@@ -1,14 +1,14 @@
-.DesignBlocks--ProgressNav {
+.DesignBlocks--ButtonBar {
   container-type: inline-size;
-  .progressBar {
+  .buttonBar {
     @apply mb-2 w-full relative grid grid-flow-col items-stretch auto-cols-fr rounded overflow-clip;
     @apply text-black text-base text-center bg-gray-100;
-    .progressBar--step {
+    .buttonBar--step {
       @apply relative grow shrink px-4 py-1;
       text-decoration: none !important;
       &.moduleProgress--current {
       }
-      .progressBar--label {
+      .buttonBar--label {
         @apply w-full text-black;
         .Module--info {
           @apply h-full flex gap-2 flex-row items-center justify-center;
@@ -22,7 +22,7 @@
       }
     }
     @container (width < 50em) {
-      &.progressBar--overflowing {
+      &.buttonBar--overflowing {
         @apply flex flex-row flex-nowrap;
         /* @apply overflow-visible h-10;
         &:before,
@@ -37,7 +37,7 @@
         &:after {
           @apply right-0 bg-gradient-to-l;
         } */
-        .progressBar--step {
+        .buttonBar--step {
           @apply shrink;
           width: 20%;
           .Module--info {

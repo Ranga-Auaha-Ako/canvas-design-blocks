@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ProgressNav, ProgressNavSize, ValidSizes } from "../progressNav";
+  import { ButtonBar, ButtonBarSize, ValidSizes } from "../buttonBar";
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
@@ -14,16 +14,16 @@
   import ItemPages from "$lib/util/components/itemPages/itemPages.svelte";
 
   export let props: {
-    progressNav: ProgressNav;
+    buttonBar: ButtonBar;
   };
 
   export let isModal: boolean = false;
   let selectedId: string | undefined = undefined;
-  $: progressNav = props.progressNav;
-  $: progressNavData = progressNav.SvelteState;
+  $: buttonBar = props.buttonBar;
+  $: buttonBarData = buttonBar.SvelteState;
   $: cardIndex =
     selectedId !== undefined
-      ? ProgressNav.getItemIndex($progressNavData, selectedId)
+      ? ButtonBar.getItemIndex($buttonBarData, selectedId)
       : undefined;
 
   let configEl: HTMLElement;
@@ -36,8 +36,8 @@
   });
   iconPicker.$on("selectIcon", ({ detail }) => {
     iconPicker.close();
-    if (cardIndex === undefined || !$progressNavData.items[cardIndex]) return;
-    $progressNavData.items[cardIndex].icon = {
+    if (cardIndex === undefined || !$buttonBarData.items[cardIndex]) return;
+    $buttonBarData.items[cardIndex].icon = {
       id: detail.icon.id,
       type: detail.type,
     };
@@ -47,15 +47,14 @@
   });
 
   function addItem() {
-    $progressNavData.items.push({
+    $buttonBarData.items.push({
       moduleID: nanoid(),
       label: "New Item",
       url: "#",
       icon: undefined,
     });
-    selectedId =
-      $progressNavData.items[$progressNavData.items.length - 1].moduleID;
-    $progressNavData.items = $progressNavData.items;
+    selectedId = $buttonBarData.items[$buttonBarData.items.length - 1].moduleID;
+    $buttonBarData.items = $buttonBarData.items;
   }
 
   let isLoading: boolean = false;
@@ -72,13 +71,13 @@
     class="close"
     title="Close"
     on:click={() => {
-      progressNav.deselectAll();
+      buttonBar.deselectAll();
     }}
   >
     <i class="icon-end" />
   </button>
   <ItemPages
-    bind:items={$progressNavData.items}
+    bind:items={$buttonBarData.items}
     bind:selectedId
     OrderableListOptions={{
       canDelete: false,
@@ -92,8 +91,8 @@
       <!-- <ButtonRadio
       title="Row Size"
       choices={ValidSizes}
-      labels={Object.keys(ProgressNavSize)}
-      bind:value={$progressNavData.size}
+      labels={Object.keys(ButtonBarSize)}
+      bind:value={$buttonBarData.size}
     /> -->
     </svelte:fragment>
     <div class="card-slot">
@@ -106,7 +105,7 @@
           {#if itemIndex >= 0}
             <div class="card-header">
               <h3 class="card-title truncate">
-                {$progressNavData.items[itemIndex].label}
+                {$buttonBarData.items[itemIndex].label}
               </h3>
               <button
                 class="btn btn-text btn-small shrink-0"
@@ -125,7 +124,7 @@
                 <input
                   type="text"
                   id={nanoid() + "-setting-label"}
-                  bind:value={$progressNavData.items[itemIndex].label}
+                  bind:value={$buttonBarData.items[itemIndex].label}
                 />
               </div>
               <!-- Input for URL -->
@@ -133,9 +132,9 @@
                 <label for={nanoid() + "-setting-url"}>URL</label>
                 <LinkInput
                   id={nanoid() + "-setting-url"}
-                  link={$progressNavData.items[itemIndex].url}
+                  link={$buttonBarData.items[itemIndex].url}
                   on:save={(e) => {
-                    $progressNavData.items[itemIndex].url = e.detail.link;
+                    $buttonBarData.items[itemIndex].url = e.detail.link;
                   }}
                 />
               </div>
@@ -149,7 +148,7 @@
                 <button
                   class="btn btn-danger btn-small"
                   on:click={() => {
-                    $progressNavData.items = $progressNavData.items.filter(
+                    $buttonBarData.items = $buttonBarData.items.filter(
                       (i, idx) => idx !== itemIndex
                     );
                   }}
@@ -161,7 +160,7 @@
             </div>
           {:else}
             <div class="card-body">
-              <h3>Progress Bar</h3>
+              <h3>Button Bar</h3>
               <p>
                 Help people quickly navigate between pages and content that
                 shows one after the other.
@@ -171,7 +170,7 @@
                   class="btn btn-primary btn-small block mt-0 grow"
                   on:click={async () => {
                     isLoading = true;
-                    await ProgressNav.syncModules(progressNavData);
+                    await ButtonBar.syncModules(buttonBarData);
                     isLoading = false;
                   }}
                   disabled={isLoading}
@@ -197,15 +196,15 @@
                 class="w-full progress-selector"
                 type="range"
                 min="-1"
-                max={$progressNavData.items.length - 1}
+                max={$buttonBarData.items.length - 1}
                 step="1"
-                bind:value={$progressNavData.position}
+                bind:value={$buttonBarData.position}
               />
 
               <ColourPicker
-                label="Progress Bar Colour"
+                label="Button Bar Colour"
                 id={nanoid() + "-setting-background"}
-                bind:colour={$progressNavData.color}
+                bind:colour={$buttonBarData.color}
                 contrastColour={colord("#ffffff")}
                 style="wide"
                 showNone={false}
