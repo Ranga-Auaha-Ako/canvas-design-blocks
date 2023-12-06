@@ -79,7 +79,7 @@ InstIcons.then((i) =>
   })
 );
 
-const instClassToId = (
+export const instClassToId = (
   classStr: string,
   type: IconType.Solid | IconType.Line
 ) => `Inst.${classStr}.${type}`;

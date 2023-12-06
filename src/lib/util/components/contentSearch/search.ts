@@ -62,7 +62,7 @@ export async function searchFiles(
   );
 }
 
-async function searchDiscussions(query?: string, type?: InternalLinks) {
+export async function searchDiscussions(query?: string, type?: InternalLinks) {
   const url = `/api/v1/courses/${COURSE_ID}/discussion_topics?${
     type === InternalLinks.Announcements ? "only_announcements=true&" : ""
   }per_page=12&limit=12${query ? `&search_term=${query}` : ""}`;
@@ -79,7 +79,7 @@ async function searchDiscussions(query?: string, type?: InternalLinks) {
   });
 }
 
-async function searchAssignments(query?: string) {
+export async function searchAssignments(query?: string) {
   const url = `/api/v1/courses/${COURSE_ID}/assignments?per_page=12&limit=12${
     query ? `&search_term=${query}` : ""
   }`;
@@ -96,7 +96,7 @@ async function searchAssignments(query?: string) {
   });
 }
 
-async function searchQuizzes(query?: string) {
+export async function searchQuizzes(query?: string) {
   const url = `/api/v1/courses/${COURSE_ID}/quizzes?per_page=12&limit=12${
     query ? `&search_term=${query}` : ""
   }`;
@@ -113,7 +113,7 @@ async function searchQuizzes(query?: string) {
   });
 }
 
-async function searchPages(query?: string) {
+export async function searchPages(query?: string) {
   const url = `/api/v1/courses/${COURSE_ID}/pages?per_page=12&limit=12${
     query ? `&search_term=${query}` : ""
   }`;
@@ -130,24 +130,31 @@ async function searchPages(query?: string) {
   });
 }
 
-async function searchModules(query?: string) {
+export async function searchModules(query?: string, includeItems = false) {
   const url = `/api/v1/courses/${COURSE_ID}/modules?per_page=12&limit=12${
     query ? `&search_term=${query}` : ""
-  }`;
+  }${includeItems ? "&include[]=items" : ""}`;
   const response = await fetch(url);
   const modules = (await response.json()) as Record<string, any>[];
   if (!modules) return [];
-  return modules.map<Link>((m) => {
+  return modules.map<
+    Link & {
+      id: string;
+      items?: { id: number; published: boolean; page_url?: string }[];
+    }
+  >((m) => {
     return {
+      id: m.id,
       name: m.name,
       url: `/courses/${COURSE_ID}/modules/${m.id}`,
       type: InternalLinks.Modules,
       published: m.published,
+      items: includeItems ? m.items : undefined,
     };
   });
 }
 
-async function searchNavigation(query?: string) {
+export async function searchNavigation(query?: string) {
   const url = `/api/v1/courses/${COURSE_ID}/tabs?per_page=12&limit=12${
     query ? `&search_term=${query}` : ""
   }`;

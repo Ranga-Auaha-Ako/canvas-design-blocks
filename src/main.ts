@@ -15,6 +15,8 @@ import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import ProfilesManager from "$lib/elements/profiles/profilesManager";
 import CourseHeaderManager from "$lib/elements/courseHeader/courseHeaderManager";
 import ImageCardLegacy from "$lib/elements/imageCard/imageCardLegacy";
+import ButtonBarManager from "$lib/elements/buttonBar/buttonBarManager";
+import gtag from "$lib/util/gtag";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -103,6 +105,7 @@ export const loadApp = async () => {
     ImageCardManager,
     ProfilesManager,
     CourseHeaderManager,
+    ButtonBarManager,
   ];
   loaded_blocks = managers.map((el) => new el(state, editor));
   // Migrate old blocks

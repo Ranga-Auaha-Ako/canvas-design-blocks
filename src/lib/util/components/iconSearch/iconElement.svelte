@@ -44,7 +44,9 @@
   };
 </script>
 
-{#await data then d}
+{#await data}
+  <span class="icon"> &nbsp; </span>
+{:then d}
   {#if d}
     {#if isCustomIcon(icon)}
       <img

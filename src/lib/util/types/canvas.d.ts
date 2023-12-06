@@ -47,4 +47,8 @@ export interface ENV {
   FULL_STORY_ENABLED: boolean;
   RAILS_ENVIRONMENT: string;
   COURSE_ID?: string;
+  WIKI_PAGE?: {
+    page_id: string;
+    url?: string;
+  };
 }
