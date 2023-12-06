@@ -1,10 +1,5 @@
 <script lang="ts">
-  import {
-    ButtonBar,
-    ButtonBarSize,
-    ButtonBarTheme,
-    ValidSizes,
-  } from "../buttonBar";
+  import { ButtonBar, ButtonBarTheme, ValidThemes } from "../buttonBar";
   import { fade, slide } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
@@ -65,7 +60,14 @@
 
   $: visibleItems = $buttonBarData.items.filter((item) => item.hide !== true);
 
+  $: contrastLevel = $buttonBarData.color
+    ? $buttonBarData.color.contrast(colord("#ffffff"))
+    : true;
   let isLoading: boolean = false;
+  $: isReadable =
+    contrastLevel === true ||
+    contrastLevel === undefined ||
+    (contrastLevel && contrastLevel >= 7);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -87,15 +89,24 @@
   {#if visibleItems.length > 5}
     <div class="info-alert" transition:slide|global>
       <p class="alert-details">
-        <span class="font-bold">Heads up:</span> There are too many buttons to
-        display in a row on mobile devices!
-        {#if $buttonBarData.theme === ButtonBarTheme.Default}
-          The current item in the progress bar will show text, but all other
-          buttons will be reduced to just an icon.
+        <span class="font-bold">Heads up!</span>
+        {#if $buttonBarData.theme === ButtonBarTheme.Progress}
+          There are too many buttons to display in a row on mobile devices. The
+          current item in the progress bar will show text, but all other buttons
+          will be reduced to just an icon.
         {:else if $buttonBarData.theme === ButtonBarTheme.Simple}
-          The row will collapse into a vertical list of buttons instead, which
-          may take up a lot of space.
+          There are a lot of choices! The row will collapse into a vertical list
+          of buttons instead, which may take up a lot of space.
         {/if}
+      </p>
+    </div>
+  {/if}
+  {#if !isReadable}
+    <div class="colour-alert" transition:slide|global>
+      <p class="alert-details">
+        <span class="font-bold">Warning:</span> The text in this row of buttons may
+        be hard to read for some students. Consider using a darker colour to improve
+        contrast against the white text.
       </p>
     </div>
   {/if}
@@ -110,14 +121,6 @@
     idKey="moduleID"
     let:itemIndex
   >
-    <svelte:fragment slot="header">
-      <!-- <ButtonRadio
-      title="Row Size"
-      choices={ValidSizes}
-      labels={Object.keys(ButtonBarSize)}
-      bind:value={$buttonBarData.size}
-    /> -->
-    </svelte:fragment>
     <div class="card-slot">
       {#key itemIndex}
         <div
@@ -214,15 +217,23 @@
                   Add new item</button
                 >
               </div>
-              <p>Adjust the progress of this page through the items here:</p>
-              <input
-                class="w-full progress-selector"
-                type="range"
-                min="-1"
-                max={$buttonBarData.items.length - 1}
-                step="1"
-                bind:value={$buttonBarData.position}
+              <ButtonRadio
+                title="Row Theme"
+                choices={Object.values(ButtonBarTheme)}
+                labels={Object.keys(ButtonBarTheme)}
+                bind:value={$buttonBarData.theme}
               />
+              {#if $buttonBarData.theme === ButtonBarTheme.Progress}
+                <p>Adjust the progress of this page through the items here:</p>
+                <input
+                  class="w-full progress-selector"
+                  type="range"
+                  min="-1"
+                  max={$buttonBarData.items.length - 1}
+                  step="1"
+                  bind:value={$buttonBarData.position}
+                />
+              {/if}
 
               <ColourPicker
                 label="Button Bar Colour"
@@ -309,10 +320,14 @@
     }
   }
 
-  .info-alert {
-    @apply mt-2 border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-xs transition;
+  .info-alert,
+  .colour-alert {
+    @apply border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-xs transition;
     p {
       @apply m-0;
     }
+  }
+  .colour-alert {
+    @apply border-orange-300 bg-orange-100 text-orange-900;
   }
 </style>

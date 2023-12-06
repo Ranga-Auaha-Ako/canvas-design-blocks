@@ -4,7 +4,7 @@
     IconType,
     instClassToId,
   } from "$lib/util/components/iconSearch/iconPicker";
-  import { ButtonBarData } from "./buttonBar";
+  import { ButtonBarData, ButtonBarTheme } from "./buttonBar";
   import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -35,30 +35,43 @@
   const showSm = 1;
 </script>
 
-<div class="DesignBlocks--ButtonBar {cdbData.size}">
+<div class="DesignBlocks--ButtonBar">
   {#if visiblePosition !== undefined && visibleItems.length > 0}
     <div
-      class="buttonBar"
+      class="buttonBar buttonBar--{cdbData.theme}"
       class:buttonBar--overflowing={visibleItems.length > 5}
+      style:background-color={cdbData.theme === ButtonBarTheme.Simple
+        ? cdbData.color?.toHex()
+        : undefined}
+      style:color={cdbData.theme === ButtonBarTheme.Simple ? "#fff" : undefined}
     >
       {#each itemLocations as loc, index}
         {@const item = visibleItems[index]}
         <a
           href={item.url}
           class="buttonBar--step"
-          class:moduleProgress--before={index < visiblePosition}
-          class:moduleProgress--after={index > visiblePosition}
-          class:moduleProgress--current={index === visiblePosition}
-          class:moduleProgress--small-hide={visibleItems.length > showSm &&
-            Math.abs(index - visiblePosition) >= showSm / 2}
-          style:background-color={index <= visiblePosition
+          class:moduleProgress--before={cdbData.theme ===
+            ButtonBarTheme.Progress && index < visiblePosition}
+          class:moduleProgress--after={cdbData.theme ===
+            ButtonBarTheme.Progress && index > visiblePosition}
+          class:moduleProgress--current={index === visiblePosition &&
+            cdbData.theme === ButtonBarTheme.Progress}
+          style:background-color={index <= visiblePosition ||
+          cdbData.theme !== ButtonBarTheme.Progress
             ? cdbData.color?.toHex()
             : undefined}
-          style:color={index <= visiblePosition ? "#fff" : "#000"}
+          style:color={index <= visiblePosition ||
+          cdbData.theme !== ButtonBarTheme.Progress
+            ? "#fff"
+            : "#000"}
+          title={item.label}
         >
           <span
             class="buttonBar--label"
-            style:color={index <= visiblePosition ? "#fff" : undefined}
+            style:color={index <= visiblePosition ||
+            cdbData.theme !== ButtonBarTheme.Progress
+              ? "#fff"
+              : undefined}
           >
             <span class="Module--info">
               <span class="Module--icon">

@@ -21,11 +21,11 @@ import {
 } from "$lib/util/components/contentSearch/search";
 
 export enum ButtonBarTheme {
-  Default = "progress",
+  Progress = "progress",
   Simple = "simple",
 }
 export const ValidThemes = Object.values(ButtonBarTheme);
-export const DefaultTheme = ButtonBarTheme.Default;
+export const DefaultTheme = ButtonBarTheme.Progress;
 
 export enum ProgressState {
   Before = "moduleProgress--before",
