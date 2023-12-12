@@ -159,6 +159,7 @@ export interface IconPickerOptions {
 
 let hasLoadedCustomIcons: false | Promise<iconData> = false;
 export async function loadCustomIcons() {
+  await InstIcons;
   if (hasLoadedCustomIcons !== false) return await hasLoadedCustomIcons;
   const getFunc = (async () => {
     if (!import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS) return icons;
