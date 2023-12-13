@@ -8,10 +8,7 @@ import { ButtonBarManager } from "./buttonBarManager";
 import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import ButtonBarConfig from "./popup/buttonBarConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
-import {
-  IconState,
-  getIconState,
-} from "$lib/util/components/iconSearch/iconPicker";
+import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";

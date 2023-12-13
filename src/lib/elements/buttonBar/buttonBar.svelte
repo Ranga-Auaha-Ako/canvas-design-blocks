@@ -1,9 +1,6 @@
 <script lang="ts">
-  import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
-  import {
-    IconType,
-    instClassToId,
-  } from "$lib/util/components/iconSearch/iconPicker";
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
+  import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { ButtonBarData, ButtonBarTheme } from "./buttonBar";
   import { createEventDispatcher, onDestroy } from "svelte";
 

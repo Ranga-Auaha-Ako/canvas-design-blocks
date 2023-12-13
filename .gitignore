@@ -151,3 +151,6 @@ dist
 # Merge styles and scripts
 themeStyles.css
 themeScripts.js
+
+# Ignore custom icons directory
+src/lib/icons/assets/custom
