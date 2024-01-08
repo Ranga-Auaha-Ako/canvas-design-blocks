@@ -46,38 +46,40 @@ export const isInstIcon = (
 
 let icons: iconData = [];
 // import { icons as InstIcons } from "virtual:inst-icons";
-const InstIcons = import("virtual:inst-icons");
+import iconFontURL from "virtual:blocks-icons";
+console.log(iconFontURL);
+// const InstIcons = import("virtual:inst-icons");
 
-InstIcons.then((i) =>
-  Object.entries(i.icons).forEach(([iconPath, url]) => {
-    const [type, ...nameArr] = iconPath.split(".");
-    const name = nameArr.join(".");
-    if (!type || !name) return;
-    let typeEnum: IconType.Solid | IconType.Line;
-    if (type === "Solid") typeEnum = IconType.Solid;
-    else if (type === "Line") typeEnum = IconType.Line;
-    else return;
-    // Create/get category
-    const catName = `Instructure ${type} Icons`;
-    let category = icons.find(
-      (c): c is instCategory => c.name === catName && c.type === typeEnum
-    );
-    if (!category) {
-      category = {
-        name: catName,
-        type: typeEnum,
-        icons: [],
-      };
-      icons.push(category);
-    }
-    // Add icon
-    category.icons.push({
-      id: instClassToId(name, typeEnum),
-      url,
-      term: name,
-    } as instIcon);
-  })
-);
+// InstIcons.then((i) =>
+//   Object.entries(i.icons).forEach(([iconPath, url]) => {
+//     const [type, ...nameArr] = iconPath.split(".");
+//     const name = nameArr.join(".");
+//     if (!type || !name) return;
+//     let typeEnum: IconType.Solid | IconType.Line;
+//     if (type === "Solid") typeEnum = IconType.Solid;
+//     else if (type === "Line") typeEnum = IconType.Line;
+//     else return;
+//     // Create/get category
+//     const catName = `Instructure ${type} Icons`;
+//     let category = icons.find(
+//       (c): c is instCategory => c.name === catName && c.type === typeEnum
+//     );
+//     if (!category) {
+//       category = {
+//         name: catName,
+//         type: typeEnum,
+//         icons: [],
+//       };
+//       icons.push(category);
+//     }
+//     // Add icon
+//     category.icons.push({
+//       id: instClassToId(name, typeEnum),
+//       url,
+//       term: name,
+//     } as instIcon);
+//   })
+// );
 
 export const instClassToId = (
   classStr: string,
@@ -159,7 +161,7 @@ export interface IconPickerOptions {
 
 let hasLoadedCustomIcons: false | Promise<iconData> = false;
 export async function loadCustomIcons() {
-  await InstIcons;
+  // await InstIcons;
   if (hasLoadedCustomIcons !== false) return await hasLoadedCustomIcons;
   const getFunc = (async () => {
     if (!import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS) return icons;

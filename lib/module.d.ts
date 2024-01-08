@@ -8,4 +8,7 @@ declare module "virtual:inst-icons" {
    */
   export const icons: Record<string, string>;
 }
+declare module "virtual:blocks-icons" {
+  export default string;
+}
 declare module "virtual:inst-env";

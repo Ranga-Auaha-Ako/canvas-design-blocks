@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
-import getInstIconsPlugin from "./lib/vite-plugin-inst-icons.js";
+import getIconsPlugin from "./src/lib/icons/vite/vite-plugin-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
 import parseChangelog from "changelog-parser";
 import { compare } from "compare-versions";
@@ -69,7 +69,7 @@ export default defineConfig(({ mode, command }) => {
       svelte({
         emitCss: true,
       }),
-      getInstIconsPlugin(),
+      getIconsPlugin(),
       vitePluginCanvasStyles(),
       // hoistImportDeps({
       //   baseUrl:
