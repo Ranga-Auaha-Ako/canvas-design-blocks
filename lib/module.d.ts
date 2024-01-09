@@ -8,7 +8,10 @@ declare module "virtual:inst-icons" {
    */
   export const icons: Record<string, string>;
 }
-declare module "virtual:blocks-icons" {
-  export default string;
-}
 declare module "virtual:inst-env";
+
+declare module "virtual:blocks-icons" {
+  import type { IconSet as IconSetType } from "$lib/icons/vite/icons";
+  export const fonts: string;
+  export const meta: typeof IconSetType.prototype.iconSearchList;
+}

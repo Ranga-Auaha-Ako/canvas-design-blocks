@@ -6,6 +6,8 @@ import { temporaryFile, temporaryWrite, temporaryWriteTask } from "tempy";
 import { PythonShell } from "python-shell";
 import SVGIcons2SVGFontStream from "svgicons2svgfont";
 import svg2ttf from "svg2ttf";
+import ttf2woff from "ttf2woff";
+import wawoff2 from "wawoff2";
 import hash_sum from "hash-sum";
 import { exec, spawnSync } from "child_process";
 import cliProgress from "cli-progress";
@@ -13,6 +15,18 @@ import Cache from "async-disk-cache";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+/**
+ * Represents a searchable icon.
+ */
+interface searchableIcons {
+  /** The name of the icon. */
+  n: string;
+  /** The filename of the icon. */
+  f: string;
+  /** The search terms of the icon. This includes tags and collections. */
+  s: string[];
+}
 
 const disableCache = process.env.CANVAS_BLOCKS_DISABLE_FONTCACHE === "true";
 
@@ -33,7 +47,13 @@ export class IconSet {
     cliProgress.Presets.shades_classic
   );
   categories: IconCategory[] = [new IconCategory("default")];
-  constructor() {}
+  constructor(
+    public logger: {
+      info: (log: string) => void;
+      warn: (log: string) => void;
+      error: (log: string) => void;
+    } = console
+  ) {}
   get iconSVGMap() {
     return this.categories.reduce((acc, category) => {
       return {
@@ -41,6 +61,20 @@ export class IconSet {
         ...category.iconSVGMap,
       };
     }, {} as Record<string, string>);
+  }
+  get iconSearchList() {
+    return this.categories.map((cat) => {
+      return {
+        name: cat.name,
+        icons: cat.icons.map((icon) => {
+          return {
+            n: icon.name,
+            f: icon.filename,
+            s: [...(icon.tags || []), ...(icon.collections || [])],
+          } as searchableIcons;
+        }),
+      };
+    });
   }
   importFolder(
     folder: string,
@@ -125,32 +159,48 @@ export class IconSet {
     const hash_input = hash_sum([this.iconSVGMap, fontOptions]);
     // Check cache
     const cached = await cache.get("icon");
+    let cachedResult = JSON.parse(cached.value || "undefined") as
+      | { hash?: string; ttf?: string; woff2?: string; woff?: string }
+      | undefined;
+    let cachedHash = cachedResult?.hash?.toString() || "";
     if (
       !disableCache &&
       cached.isCached &&
-      JSON.parse(cached.value).hash === hash_input
+      cachedHash === hash_input.toString() &&
+      cachedResult?.ttf &&
+      cachedResult?.woff2 &&
+      cachedResult?.woff
     ) {
-      console.log("Using cached SVG font");
-      fs.writeFileSync(
-        "/Users/zmil425/Documents/Git/canvas-grid-builder/src/lib/icons/dist/design-blocks-icons.ttf",
-        Buffer.from(JSON.parse(cached.value).result, "base64")
-      );
-      return cached.value;
+      this.logger.info("Using cached SVG font");
+      return {
+        ttf: Buffer.from(cachedResult.ttf, "base64"),
+        woff: Buffer.from(cachedResult.woff, "base64"),
+        woff2: Buffer.from(cachedResult.woff2, "base64"),
+      };
     }
 
     if (cached.isCached) {
-      console.log("Regenerating SVG font. This may take a while.");
+      this.logger.info("Regenerating SVG font. This may take a while.");
+      if (disableCache && cachedHash === hash_input.toString()) {
+        this.logger.info(
+          "Cache is disabled, but a cached version was found. Skipping cache."
+        );
+      } else {
+        this.logger.info(
+          `Hash comparison: ${cachedHash} (cached) !== ${hash_input} (current)`
+        );
+      }
     } else {
-      console.log("Generating SVG font. This may take a while.");
+      this.logger.info("Generating SVG font. This may take a while.");
     }
-    console.log("Converting SVGs to minified SVGs");
+    this.logger.info("Converting SVGs to minified SVGs");
     this.importProgress.start(Object.keys(this.iconSVGMap).length, 0);
     const paths = await Promise.all(
       Object.entries(this.iconSVGMap).map(async ([name, svg]) => {
         const filepath = await temporaryWrite(svg);
         // Run picosvg on this file
         if (svg.includes("stroke-width:")) {
-          console.log("Found stroke-width in", name);
+          this.logger.info("Found stroke-width in", name);
         }
         const res = spawnSync("picosvg", [
           filepath,
@@ -161,11 +211,6 @@ export class IconSet {
           "--drop_unsupported",
           "true",
         ]);
-        if (name.includes("General.noun_Earth_619898")) {
-          console.log(res.stdout.toString());
-          console.log(res.stderr.toString());
-          console.log(filepath);
-        }
         // await PythonShell.run("picosvg", {
         //   args: [filepath],
         // });
@@ -174,9 +219,10 @@ export class IconSet {
       })
     );
     this.importProgress.stop();
-    console.log("Creating combined SVG font");
+    this.logger.info("Creating combined SVG font");
     this.importProgress.start(paths.length, 0);
     // Run svgicons2svgfont
+    const _this = this;
     const fontPromise = new Promise<string>((resolve, reject) => {
       const fontStream = new SVGIcons2SVGFontStream(fontOptions);
       // Was "../dist/design-blocks-icons.svg"
@@ -184,10 +230,12 @@ export class IconSet {
       fontStream
         .pipe(fs.createWriteStream(tempSvgFile))
         .on("finish", function () {
+          _this.logger.info("Finished writing SVG font");
           resolve(tempSvgFile);
         })
         .on("error", function (err) {
-          console.log("Error writing SVG font", err);
+          _this.logger.warn("Error writing SVG font", err);
+          reject(err);
         });
 
       paths.forEach(([name, stream]) => {
@@ -200,32 +248,29 @@ export class IconSet {
       fontStream.end();
     });
     const outputFile = await fontPromise;
-
-    fs.writeFileSync(
-      "/Users/zmil425/Documents/Git/canvas-grid-builder/src/lib/icons/dist/design-blocks-icons.svg",
-      Buffer.from(fs.readFileSync(outputFile))
-    );
     // Convert
-    console.log("Converting SVG font to TTF");
+    this.logger.info("Converting SVG font to TTF, WOFF, and WOFF2");
     const ttf = svg2ttf(fs.readFileSync(outputFile).toString(), {});
+    const woff = ttf2woff(ttf.buffer, {});
+    const woff2 = await wawoff2.compress(Buffer.from(ttf.buffer));
     // // Get and return hash
     // const hash_output = hash_sum(ttf.buffer);
-    console.log("Finished generating font");
+    this.logger.info("Finished generating font");
     // Cache result
     await cache.set(
       "icon",
       JSON.stringify({
         hash: hash_input,
-        result: Buffer.from(ttf.buffer).toString("base64"),
+        ttf: Buffer.from(ttf.buffer).toString("base64"),
+        woff: woff.toString("base64"),
+        woff2: Buffer.from(woff2).toString("base64"),
       })
     );
-    // Write
-    fs.writeFileSync(
-      "/Users/zmil425/Documents/Git/canvas-grid-builder/src/lib/icons/dist/design-blocks-icons.ttf",
-      ttf.buffer
-    );
-
-    return ttf.buffer;
+    return {
+      ttf: Buffer.from(ttf.buffer),
+      woff: woff,
+      woff2: Buffer.from(woff2),
+    };
   }
 }
 

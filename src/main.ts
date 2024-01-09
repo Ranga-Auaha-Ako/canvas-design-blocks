@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import "./app.postcss";
+import "virtual:blocks-icons.css";
 import "$lib/util/tailwind.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";

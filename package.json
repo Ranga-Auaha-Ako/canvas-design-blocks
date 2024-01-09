@@ -52,6 +52,8 @@
     "@types/svg2ttf": "^5.0.3",
     "@types/svgicons2svgfont": "^10.0.5",
     "@types/to-px": "^1.1.2",
+    "@types/ttf2woff": "^2.0.4",
+    "@types/wawoff2": "^1.0.2",
     "async-disk-cache": "^2.1.0",
     "autoprefixer": "10.4.16",
     "bestzip": "^2.2.1",
@@ -94,8 +96,10 @@
     "tempy": "^3.1.0",
     "tinymce": "5.10",
     "to-px": "^1.1.0",
+    "ttf2woff": "^3.0.0",
     "typescript": "^5.0.0",
-    "vite": "^4.3.9"
+    "vite": "^4.3.9",
+    "wawoff2": "^2.0.1"
   },
   "packageManager": "yarn@4.0.2"
 }

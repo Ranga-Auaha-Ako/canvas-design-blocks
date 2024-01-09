@@ -46,8 +46,8 @@ export const isInstIcon = (
 
 let icons: iconData = [];
 // import { icons as InstIcons } from "virtual:inst-icons";
-import iconFontURL from "virtual:blocks-icons";
-console.log(iconFontURL);
+import { meta } from "virtual:blocks-icons";
+console.log(meta);
 // const InstIcons = import("virtual:inst-icons");
 
 // InstIcons.then((i) =>

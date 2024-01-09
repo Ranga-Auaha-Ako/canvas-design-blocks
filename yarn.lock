@@ -844,6 +844,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ttf2woff@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@types/ttf2woff@npm:2.0.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: c36f3f54d1cb234f393e56703c193ee2617a1f45108e45ba225baac9859766fd0d96645f8c6ce757e5c0bdbcb2d4bf7a9b6686303591101093f2aca604d1121b
+  languageName: node
+  linkType: hard
+
+"@types/wawoff2@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@types/wawoff2@npm:1.0.2"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 9a34ac86fc673f5e27403692d8387bd2a112bfed8e5e1b7a99a8822497419437339ef8b248cc70c6184cbb87ddfce5ccb70678ab8487ec2a3ca3dda62685cfac
+  languageName: node
+  linkType: hard
+
 "@types/yauzl@npm:^2.9.1":
   version: 2.10.1
   resolution: "@types/yauzl@npm:2.10.1"
@@ -1360,6 +1378,8 @@ __metadata:
     "@types/svg2ttf": "npm:^5.0.3"
     "@types/svgicons2svgfont": "npm:^10.0.5"
     "@types/to-px": "npm:^1.1.2"
+    "@types/ttf2woff": "npm:^2.0.4"
+    "@types/wawoff2": "npm:^1.0.2"
     async-disk-cache: "npm:^2.1.0"
     autoprefixer: "npm:10.4.16"
     bestzip: "npm:^2.2.1"
@@ -1402,8 +1422,10 @@ __metadata:
     tempy: "npm:^3.1.0"
     tinymce: "npm:5.10"
     to-px: "npm:^1.1.0"
+    ttf2woff: "npm:^3.0.0"
     typescript: "npm:^5.0.0"
     vite: "npm:^4.3.9"
+    wawoff2: "npm:^2.0.1"
   languageName: unknown
   linkType: soft
 
@@ -3789,6 +3811,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pako@npm:^1.0.0":
+  version: 1.0.11
+  resolution: "pako@npm:1.0.11"
+  checksum: 86dd99d8b34c3930345b8bbeb5e1cd8a05f608eeb40967b293f72fe469d0e9c88b783a8777e4cc7dc7c91ce54c5e93d88ff4b4f060e6ff18408fd21030d9ffbe
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -5240,6 +5269,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ttf2woff@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "ttf2woff@npm:3.0.0"
+  dependencies:
+    argparse: "npm:^2.0.1"
+    pako: "npm:^1.0.0"
+  bin:
+    ttf2woff: ttf2woff.js
+  checksum: 438b4fed5c5d0c8761307604feec73bf56b8c0723b01c6c11e152b2f21f28c614f53b325e3c5d51c00b36157793245f3da0894086bad1b498962640660bb6049
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:^1.0.1":
   version: 1.4.0
   resolution: "type-fest@npm:1.4.0"
@@ -5435,6 +5476,18 @@ __metadata:
   dependencies:
     xml-name-validator: "npm:^4.0.0"
   checksum: 02cc66d6efc590bd630086cd88252444120f5feec5c4043932b0d0f74f8b060512f79dc77eb093a7ad04b4f02f39da79ce4af47ceb600f2bf9eacdc83204b1a8
+  languageName: node
+  linkType: hard
+
+"wawoff2@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "wawoff2@npm:2.0.1"
+  dependencies:
+    argparse: "npm:^2.0.1"
+  bin:
+    woff2_compress.js: bin/woff2_compress.js
+    woff2_decompress.js: bin/woff2_decompress.js
+  checksum: 98a286b60114e15ed578bbeeef1759b4890a1e8106e1486d8d0d4106b8e6c7a99c4c1d1b64afc76a83893dae040cc19a59dd64cffd5754b5337b5c82efed3d12
   languageName: node
   linkType: hard
 

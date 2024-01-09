@@ -9,13 +9,11 @@
       "name": "Vite: dev",
       "request": "launch",
       "type": "node-terminal",
-      "env": {
-        "NO_COLOR": "1"
-      },
       "serverReadyAction": {
         // "pattern": ".*Local.*([0-9]{4})/",
         // "pattern": ".*Local:\\s+(https?://\\S+|[0-9]+)",
-        "pattern": "Local:\\s+http://localhost:([0-9]+)",
+        // "pattern": "Local:\\s+http://localhost:([0-9]+)",
+        "pattern": "Local.*localhost.*([0-9]{4})",
         "uriFormat": "http://localhost:%s",
         "action": "debugWithChrome"
       }
