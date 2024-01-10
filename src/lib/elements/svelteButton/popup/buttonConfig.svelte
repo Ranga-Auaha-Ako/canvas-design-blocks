@@ -51,7 +51,7 @@
   iconPicker.$on("selectIcon", ({ detail }) => {
     iconPicker.close();
     $buttonData.icon = {
-      id: detail.icon.id,
+      id: detail.icon.i,
       type: detail.type,
     };
   });

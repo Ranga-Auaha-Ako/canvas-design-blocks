@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import "./app.postcss";
 import "virtual:blocks-icons.css";
+import blockStyles from "virtual:blocks-icons-editor-styles";
 import "$lib/util/tailwind.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
@@ -119,7 +120,7 @@ export const loadApp = async () => {
 
   // Inject tailwind base styles into editor
   const pageStylesEl = editor.getDoc().createElement("style");
-  pageStylesEl.innerHTML = tailwindStyles;
+  pageStylesEl.innerHTML = tailwindStyles + blockStyles;
   editor.getBody().insertAdjacentElement("beforebegin", pageStylesEl);
 
   // Add class to page body when toolbar is open

@@ -20,8 +20,11 @@ export default function vitePluginIcons(): PluginOption {
   };
   const virtualModuleId = "virtual:blocks-icons";
   const virtualStylesModuleId = "virtual:blocks-icons.css";
+  const virtualStylesInlineModuleId = "virtual:blocks-icons-editor-styles";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
   const resolvedVirtualStylesModuleId = "\0" + virtualStylesModuleId;
+  const resolvedVirtualStylesInlineModuleId =
+    "\0" + virtualStylesInlineModuleId;
   let config: ResolvedConfig;
   return {
     name: "vite-plugin-inst-icons",
@@ -36,12 +39,18 @@ export default function vitePluginIcons(): PluginOption {
       if (id === virtualStylesModuleId) {
         return resolvedVirtualStylesModuleId;
       }
+      if (id === virtualStylesInlineModuleId) {
+        return resolvedVirtualStylesInlineModuleId;
+      }
     },
     async load(id: string) {
       if (id === resolvedVirtualModuleId) {
         return `export default ${JSON.stringify(iconset.iconSearchList)};`;
       }
-      if (id === resolvedVirtualStylesModuleId) {
+      if (
+        id === resolvedVirtualStylesModuleId ||
+        id === resolvedVirtualStylesInlineModuleId
+      ) {
         let assets = {
           ttf: "/@devicons/iconFont.ttf",
           woff: "/@devicons/iconFont.woff",
@@ -83,10 +92,12 @@ export default function vitePluginIcons(): PluginOption {
             })}__`,
           };
         }
-        return `@font-face { font-family: 'BlocksIcons';
-        src:  url('${assets.woff2}') format('woff2'), 
-        url('${assets.woff}') format('woff'),
-        url('${assets.ttf}') format('truetype');}`;
+        const fontFaceString = `@font-face { font-family: 'BlocksIcons'; src:  url('${assets.woff2}') format('woff2'), url('${assets.woff}') format('woff'), url('${assets.ttf}') format('truetype'); font-display: block;}`;
+        if (id === resolvedVirtualStylesModuleId) {
+          return fontFaceString;
+        } else {
+          return `export default "${fontFaceString}";`;
+        }
       }
     },
     async configureServer(server) {

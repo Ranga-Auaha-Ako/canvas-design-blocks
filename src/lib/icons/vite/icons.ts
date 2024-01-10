@@ -22,10 +22,12 @@ dotenv.config();
  * Represents a searchable icon.
  */
 interface searchableIcons {
-  /** The name of the icon. */
+  /** The ID of the icon. */
+  i: string;
+  /** The name (title) of the icon. */
   n: string;
-  /** The filename of the icon. */
-  f: string;
+  /** The ligature of the icon. */
+  l: string;
   /** The search terms of the icon. This includes tags and collections. */
   s: string[];
 }
@@ -50,11 +52,10 @@ const cache = new Cache("vite-plugin-design-blocks-icons", {
   supportBuffer: true,
 });
 
-const fontOptions = {
+const fontOptions: SVGIcons2SVGFontStream.SvgIcons2FontOptions = {
   fontName: "design-blocks-icons",
   normalize: true,
   fontHeight: 1000,
-  fixedWidth: true,
 };
 
 export class IconSet {
@@ -88,8 +89,9 @@ export class IconSet {
         name: cat.name,
         icons: cat.icons.map((icon) => {
           return {
+            i: icon.id,
             n: icon.name,
-            f: icon.ligature,
+            l: icon.ligature,
             s: [...(icon.tags || []), ...(icon.collections || [])],
           } as searchableIcons;
         }),

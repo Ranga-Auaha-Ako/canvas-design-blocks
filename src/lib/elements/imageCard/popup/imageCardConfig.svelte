@@ -94,7 +94,7 @@
     if (cardIndex === undefined) return;
     iconPicker.close();
     $rowData.cards[cardIndex].icon = {
-      id: detail.icon.id,
+      id: detail.icon.i,
       color: detail.color,
       type: detail.type,
     };

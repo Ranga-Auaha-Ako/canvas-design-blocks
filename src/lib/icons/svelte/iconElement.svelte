@@ -23,47 +23,29 @@
       : undefined
   ) as Colord | undefined;
 
-  $: typeClass = icon.type === IconType.Solid ? "icon-Solid" : "icon-Line";
   $: data = getIconData(icon);
-
-  const getCustomIcon = (
-    icon: CustomIconState,
-    data: instIcon | customIcon
-  ) => {
-    const partColor = color?.toHex()?.split("#")[1];
-    if (!partColor) {
-      return `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/icons/${
-        data.url
-      }`;
-    } else {
-      const partUrl = data.url.split(".svg")[0];
-      return `https://${
-        import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS
-      }/colour/${partUrl}.${partColor}.svg`;
-    }
-  };
 </script>
 
 {#await data}
-  <span class="icon"> &nbsp; </span>
+  <span
+    class="cdb--icon"
+    style:color={color?.toHex() || undefined}
+    data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
+  >
+    {#if isCustomIcon(icon) && icon.lig}
+      {icon.lig}
+    {:else}
+      &nbsp;
+    {/if}
+  </span>
 {:then d}
   {#if d}
-    {#if isCustomIcon(icon)}
-      <img
-        class="cdb--custom-icon"
-        src={getCustomIcon(icon, d)}
-        alt=""
-        aria-hidden="true"
-        role="presentation"
-      />
-    {:else if isInstIcon(icon)}
-      <span class="icon" style:color={icon.color}>
-        <i
-          class="{typeClass} icon-{d.term}"
-          style:--cdb-icon="url({d.url})"
-          data-mce-style=""
-        />
-      </span>
-    {/if}
+    <span
+      class="cdb--icon"
+      style:color={color?.toHex() || undefined}
+      data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
+    >
+      {d.c}.{d.l}
+    </span>
   {/if}
 {/await}

@@ -1,11 +1,6 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import {
-    IconPickerOptions,
-    IconType,
-    icons,
-    loadCustomIcons,
-  } from "./iconPicker";
+  import { IconPickerOptions, IconType, type icon, icons } from "./iconPicker";
   import { createEventDispatcher } from "svelte";
   import { customIcon, instIcon } from "./canvas-icons/icons";
   import IconList from "./canvas-icons/iconList.svelte";
@@ -13,9 +8,9 @@
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
-      icon: instIcon | customIcon;
+      icon: icon;
       color?: string;
-      type: IconType;
+      type: IconType.Custom;
     };
   }>();
 
@@ -27,8 +22,8 @@
 
 <Modal title="Choose an icon" showSave={false} bind:this={modal}>
   <div class="modal-wrap">
-    {#await loadCustomIcons()}
-      <IconList {icons} {options} on:selectIcon asModal={true} />
+    {#await icons}
+      <!-- Loading -->
     {:then allIcons}
       <IconList icons={allIcons} {options} on:selectIcon asModal={true} />
     {/await}

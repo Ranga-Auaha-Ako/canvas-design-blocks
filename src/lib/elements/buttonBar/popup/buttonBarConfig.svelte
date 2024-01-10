@@ -39,7 +39,7 @@
     iconPicker.close();
     if (cardIndex === undefined || !$buttonBarData.items[cardIndex]) return;
     $buttonBarData.items[cardIndex].icon = {
-      id: detail.icon.id,
+      id: detail.icon.i,
       type: detail.type,
     };
   });

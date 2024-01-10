@@ -12,6 +12,8 @@ declare module "virtual:inst-env";
 
 declare module "virtual:blocks-icons" {
   import type { IconSet as IconSetType } from "$lib/icons/vite/icons";
-  export const fonts: string;
-  export const meta: typeof IconSetType.prototype.iconSearchList;
+  export default IconSetType.prototype.iconSearchList;
+}
+declare module "virtual:blocks-icons-editor-styles" {
+  export default string;
 }
