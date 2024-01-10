@@ -1,34 +1,49 @@
 /* eslint-disable no-alert */
 
 export default definePreset({
-  name: 'canvas-design-blocks',
-  options: {
-  },
-  handler: async () => {
-    await prompt({ name: 'name', text: 'What is the name of this new Block? Use something simple, like "button' })
-		if(!opts.prompts.name) {
-			return
-		}
+  name: "canvas-design-blocks",
+  options: {},
+  handler: async (opts) => {
+    while (!opts.prompts.name || opts.prompts.name === "newBlock") {
+      await prompt({
+        name: "name",
+        text: 'What is the name of this new Block? Use something simple, like "button',
+        default: "newBlock",
+      });
+    }
     extractTemplates({
-      templates: 'src/lib/elements/templates',
-			to: 'src/lib/elements',
-    })
-		await renamePaths({
-      paths: '**',
-      transformer: ({name}) => `${name.replace(/__name/g, opts.prompts.name.toLower())}`,
-    })
-		await editFiles({
-			title: 'Apply element name',
-			files: ['resources/**/*.vue', 'src/**/*.php', 'tests/**/*.php', 'bootstrap/app.php'],
-			operations:[{
-				type: 'replace-variables',
-				prefix: '__',
-				variables: {
-					name: opts.prompts.name.toLower(),
-					Name: opts.prompts.name.toLower().charAt(0).toUpperCase() + opts.prompts.name.toLower().slice(1);
-				},
-			}],
-		})
+      templates: "src/lib/elements/templates",
+      to: "src/lib/elements",
+      whenConflict: "skip",
+    });
+    await editFiles({
+      title: "Apply element name",
+      files: "src/lib/elements/__name/**",
+      operations: [
+        {
+          type: "replace-variables",
+          prefix: "__",
+          variables: {
+            name: opts.prompts.name.toString(),
+            Name:
+              opts.prompts.name.toString().charAt(0).toUpperCase() +
+              opts.prompts.name.toString().slice(1),
+          },
+        },
+      ],
+    });
+    await renamePaths({
+      paths: "src/lib/elements/__name/**",
+      transformer: ({ base }) => {
+        console.log(base);
+        return `${base.replace(/__name/g, opts.prompts.name)}`;
+      },
+    });
 
-  }
-})
+    await renamePaths({
+      paths: "src/lib/elements/__name",
+      transformer: ({ base }) =>
+        `${base.replace(/__name/g, opts.prompts.name)}`,
+    });
+  },
+});
