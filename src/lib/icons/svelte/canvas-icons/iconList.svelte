@@ -57,10 +57,9 @@
             icons: cat.icons.filter((icon) => {
               const q = query.toLowerCase();
               const isInName = icon.n?.toLowerCase().includes(q);
-              const isInTags =
-                "tags" in icon
-                  ? icon.s.some((tag) => tag.toLowerCase().includes(q))
-                  : false;
+              const isInTags = icon.s.some((tag) =>
+                tag.toLowerCase().includes(q)
+              );
               return isInName || isInTags;
             }),
           };
