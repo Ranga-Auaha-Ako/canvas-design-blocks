@@ -11,7 +11,7 @@ export default definePreset({
         default: "newBlock",
       });
     }
-    extractTemplates({
+    await extractTemplates({
       templates: "src/lib/elements/templates",
       to: "src/lib/elements",
       whenConflict: "skip",
