@@ -5,17 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "command": "yarn build",
+      "name": "Vite: build",
+      "request": "launch",
+      "type": "node-terminal",
+    }
+    {
       "command": "yarn dev",
       "name": "Vite: dev",
       "request": "launch",
       "type": "node-terminal",
-      "env": {
-        "NO_COLOR": "1"
-      },
       "serverReadyAction": {
         // "pattern": ".*Local.*([0-9]{4})/",
         // "pattern": ".*Local:\\s+(https?://\\S+|[0-9]+)",
-        "pattern": "Local:\\s+http://localhost:([0-9]+)",
+        // "pattern": "Local:\\s+http://localhost:([0-9]+)",
+        "pattern": "Local.*localhost.*([0-9]{4})",
         "uriFormat": "http://localhost:%s",
         "action": "debugWithChrome"
       }

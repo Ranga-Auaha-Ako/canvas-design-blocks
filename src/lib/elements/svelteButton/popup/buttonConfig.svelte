@@ -9,7 +9,7 @@
   import { fade, slide } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
-  import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
+  import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
@@ -51,7 +51,7 @@
   iconPicker.$on("selectIcon", ({ detail }) => {
     iconPicker.close();
     $buttonData.icon = {
-      id: detail.icon.id,
+      id: detail.icon.i,
       type: detail.type,
     };
   });

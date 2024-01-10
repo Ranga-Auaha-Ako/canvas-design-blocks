@@ -75,7 +75,7 @@
 
 <style lang="postcss">
   dialog {
-    @apply p-0 rounded-lg shadow-lg w-full max-w-screen-md;
+    @apply p-0 rounded-lg shadow-lg w-full max-w-screen-md border-t-4 border-solid border-primary;
     .dialogBody {
       @apply p-4;
       @apply grid grid-cols-1 gap-4;

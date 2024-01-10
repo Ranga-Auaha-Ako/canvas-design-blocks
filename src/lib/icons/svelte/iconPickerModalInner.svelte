@@ -3,6 +3,7 @@
   import {
     IconPickerOptions,
     IconType,
+    icon,
     icons,
     loadCustomIcons,
   } from "./iconPicker";
@@ -12,9 +13,9 @@
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
-      icon: instIcon | customIcon;
+      icon: icon;
       color?: string;
-      type: IconType;
+      type: IconType.Custom;
     };
   }>();
   export let options: IconPickerOptions;

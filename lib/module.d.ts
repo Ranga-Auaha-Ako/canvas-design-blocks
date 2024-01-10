@@ -9,3 +9,11 @@ declare module "virtual:inst-icons" {
   export const icons: Record<string, string>;
 }
 declare module "virtual:inst-env";
+
+declare module "virtual:blocks-icons" {
+  import type { IconSet as IconSetType } from "$lib/icons/vite/icons";
+  export default IconSetType.prototype.iconSearchList;
+}
+declare module "virtual:blocks-icons-editor-styles" {
+  export default string;
+}

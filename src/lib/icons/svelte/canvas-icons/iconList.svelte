@@ -1,6 +1,6 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
-  import { IconPickerOptions, IconType } from "../iconPicker";
+  import { IconPickerOptions, IconType, category, icon } from "../iconPicker";
   import { createEventDispatcher } from "svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
@@ -22,20 +22,16 @@
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
-      icon: instIcon | customIcon;
+      icon: icon;
       color?: string;
-      type: IconType;
+      type: IconType.Custom;
     };
   }>();
-  const selectIcon = (data: {
-    icon: instIcon | customIcon;
-    color?: string;
-    type: IconType;
-  }) => {
-    dispatch("selectIcon", data);
+  const selectIcon = (data: { icon: icon; color?: string }) => {
+    dispatch("selectIcon", { ...data, type: IconType.Custom });
   };
 
-  export let icons: iconData;
+  export let icons: category[];
   export let options: IconPickerOptions;
   export let asModal: boolean = false;
   let filterQuery = "";
@@ -58,23 +54,15 @@
         .map((cat) => {
           return {
             name: cat.name,
-            type: cat.type,
-            icons: cat.icons.filter((icon: instIcon | customIcon) => {
+            icons: cat.icons.filter((icon) => {
               const q = query.toLowerCase();
-              const isInTerm = icon.term?.toLowerCase().includes(q);
-              const isInTags =
-                "tags" in icon
-                  ? icon.tags.some((tag) => tag.toLowerCase().includes(q))
-                  : false;
-              const isInCollection =
-                "collections" in icon
-                  ? icon.collections.some((collection) =>
-                      collection.toLowerCase().includes(q)
-                    )
-                  : false;
-              return isInTerm || isInTags || isInCollection;
+              const isInName = icon.n?.toLowerCase().includes(q);
+              const isInTags = icon.s.some((tag) =>
+                tag.toLowerCase().includes(q)
+              );
+              return isInName || isInTags;
             }),
-          } as instCategory | customCategory;
+          };
         })
         .filter((cat) => cat.icons.length);
     },
@@ -82,34 +70,6 @@
     { trailing: true }
   );
   $: filterIcons(filterQuery);
-
-  // TODO: This is a hack to get the custom icons to work on Firefox
-  // This is held back by a bug in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=1657218
-  // This ticket has been open for 9 years at time of comment, so I'm not holding my breath
-  function getCustomIconUrl(url: string): string {
-    // Source: https://github.com/faisalman/ua-parser-js
-    // LICENSE: GNU Affero General Public License v3.0
-    const UAChecks = [
-      /(?:mobile|tablet);.*(firefox)\/([\w\.-]+)/i, // Firefox Mobile
-      /(navigator|netscape\d?)\/([-\w\.]+)/i, // Netscape
-      /mobile vr; rv:([\w\.]+)\).+firefox/i, // Firefox Reality
-      /ekiohf.+(flow)\/([\w\.]+)/i, // Flow
-      /(swiftfox)/i, // Swiftfox
-      /(icedragon|iceweasel|camino|chimera|fennec|maemo browser|minimo|conkeror|klar)[\/ ]?([\w\.\+]+)/i, // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror/Klar
-      /(seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([-\w\.]+)$/i, // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
-      /(firefox)\/([\w\.]+)/i, // Other Firefox-based
-      /(mozilla)\/([\w\.]+) .+rv\:.+gecko\/\d+/i, // Mozilla
-    ];
-    if (UAChecks.some((ua) => navigator.userAgent.match(ua))) {
-      return `https://${
-        import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS
-      }/icons/${url}`;
-    }
-
-    return `https://${
-      import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS
-    }/font/stack/svg/sprite.stack.svg#${getIconClass(url)}`;
-  }
 
   let scroller: ScrollContainer;
   $: results, scroller?.update();
@@ -149,39 +109,34 @@
   </div>
 {/if}
 <ScrollContainer bind:this={scroller}>
-  <div class="categories">
+  <div
+    class="categories"
+    style:color={options.editColor ? $iconColor.toHex() : "black"}
+  >
     {#each results as category}
       <div class="category">
         <h3>{category.name}</h3>
         <div class="iconList">
-          {#each category.icons as icon (icon.id)}
+          {#each category.icons as icon (icon.i)}
             <button
               class="icon"
-              title={icon.term}
+              title={icon.n}
               on:click={() => {
                 if (options.editColor) {
                   selectIcon({
                     icon,
                     color: $iconColor.toHex(),
-                    type: category.type,
                   });
                 } else {
                   selectIcon({
                     icon,
-                    type: category.type,
                   });
                 }
               }}
             >
-              {#if isCustomCategory(category)}
-                <img src={getCustomIconUrl(icon.url)} alt={icon.term} />
-              {:else if isInstCategory(category)}
-                <i
-                  class="icon-{category.type === IconType.Solid
-                    ? 'Solid'
-                    : 'Line'} icon-{icon.term}"
-                />
-              {/if}
+              <span class="cdb--icon">
+                {category.name}.{icon.l}
+              </span>
             </button>
           {/each}
         </div>
@@ -248,11 +203,9 @@
       &:focus {
         @apply ring-2;
       }
-      i {
+      span {
         @apply block;
-        &:before {
-          font-size: 1.75rem;
-        }
+        font-size: 1.75rem;
       }
     }
   }

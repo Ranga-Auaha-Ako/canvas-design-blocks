@@ -1,5 +1,5 @@
 # Dockerfile
-FROM node:18.7.0 AS build
+FROM node:20.10.0 AS build
 
 WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "yarn.lock", "./"]

@@ -1,0 +1,104 @@
+.DesignBlocks--ButtonBar {
+  container-type: inline-size;
+  @apply relative z-0;
+  &:hover {
+    @apply z-10;
+  }
+  .buttonBar {
+    @apply mb-2 w-full relative grid grid-flow-col items-stretch auto-cols-fr rounded overflow-clip;
+    @apply text-black text-base text-center bg-gray-100;
+    &.buttonBar--simple {
+      @apply flex flex-row flex-wrap gap-px;
+      &:before {
+        @apply absolute inset-0 bg-white bg-opacity-20 rounded transition-colors;
+        content: "";
+      }
+      .buttonBar--step {
+        @apply basis-0;
+        &:after {
+          @apply absolute inset-0 bg-white bg-opacity-0 rounded transition-colors;
+          content: "";
+        }
+        &:hover:after,
+        &:focus:after {
+          @apply bg-opacity-10;
+        }
+      }
+    }
+    &.buttonBar--progress {
+      @apply overflow-visible;
+      .buttonBar--step {
+        &:first-child {
+          @apply rounded-l;
+        }
+        &:last-child {
+          @apply rounded-r;
+        }
+      }
+    }
+    .buttonBar--step {
+      @apply relative grow shrink px-4 py-1;
+      text-decoration: none !important;
+      &:after {
+        @apply absolute left-0 right-0 mx-auto -bottom-1 rounded-full w-2 h-2;
+        @apply ring-2 ring-white bg-gray-300;
+        @apply opacity-0 transition scale-75;
+        content: "";
+      }
+      &:hover,
+      &:focus {
+        &:after {
+          @apply opacity-100 scale-100;
+        }
+      }
+      &.moduleProgress--current {
+        @apply rounded-r relative;
+        &:after {
+          @apply opacity-100 bg-inherit scale-100;
+          &:hover,
+          &:focus {
+            @apply translate-y-full;
+          }
+        }
+      }
+      .buttonBar--label {
+        @apply w-full text-black;
+        .Module--info {
+          @apply h-full flex gap-2 flex-row items-center justify-center transition;
+          .Module--icon {
+            @apply shrink-0;
+          }
+          .Module--label {
+            @apply truncate;
+          }
+        }
+      }
+    }
+    @container (width < 50em) {
+      &.buttonBar--progress.buttonBar--overflowing {
+        @apply flex flex-row flex-nowrap;
+        .buttonBar--step {
+          @apply shrink;
+          width: 20%;
+          .Module--info {
+            @apply flex-col gap-0;
+          }
+        }
+        .moduleProgress--before,
+        .moduleProgress--after {
+          width: unset;
+          .Module--label {
+            @apply absolute opacity-0 pointer-events-none px-2 w-screen max-w-max top-full mt-0.5 mx-auto left-0 right-0 rounded bg-secondary text-white shadow transition;
+          }
+          &:hover .Module--label,
+          &:focus .Module--label {
+            @apply opacity-100 pointer-events-auto;
+          }
+        }
+      }
+    }
+  }
+  .no-published {
+    @apply text-center text-gray-400 text-base p-4 border-gray-200 border-2 rounded-md border-dashed;
+  }
+}

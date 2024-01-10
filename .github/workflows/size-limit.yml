@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - beta
 jobs:
   size:
     runs-on: ubuntu-latest
@@ -10,7 +11,15 @@ jobs:
       CI_JOB_NUMBER: 1
     steps:
       - uses: actions/checkout@v1
-      - uses: andresz1/size-limit-action@v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: pip install picosvg
+      - uses: actions/setup-node@v4.0.1
+        with:
+          node-version: "20.x"
+      - run: corepack enable
+      - uses: andresz1/size-limit-action@7313b26c76b3666c1dc41e2ca05370e201a9b7de
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         env:

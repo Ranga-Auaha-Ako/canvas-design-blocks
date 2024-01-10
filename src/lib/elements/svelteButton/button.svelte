@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { ButtonData } from "./button";
   import { createEventDispatcher, onDestroy } from "svelte";
 

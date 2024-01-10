@@ -46,6 +46,7 @@
   export let zIndex = 10;
   export let showNone = true;
   export let asModal = false;
+  export let style: "default" | "wide" | "minimal" = "default";
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     const c = colord(colour);
@@ -155,12 +156,15 @@
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div
     class="container"
+    class:container-wide={style === "wide"}
     bind:this={container}
     on:click={({ target }) => {
       if (target === container) edit = false;
     }}
   >
-    <label for={id}> {label} </label>
+    {#if style !== "minimal"}
+      <label for={id}> {label} </label>
+    {/if}
     <button
       bind:this={popoverTarget}
       on:click={(e) => (edit = !edit)}
@@ -253,13 +257,20 @@
   }
   .container {
     @apply flex items-center justify-start w-full;
+    &.container-wide {
+      @apply justify-between;
+      &::before,
+      &::after {
+        @apply hidden;
+      }
+    }
   }
   .container,
   .colourPicker {
     --size: 1.7em;
   }
   label {
-    @apply pr-2;
+    @apply pr-2 mb-0;
   }
   .colour {
     @apply rounded;

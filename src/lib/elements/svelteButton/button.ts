@@ -13,7 +13,7 @@ import {
   IconType,
   getIconState,
   icons,
-} from "$lib/util/components/iconSearch/iconPicker";
+} from "$lib/icons/svelte/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";
