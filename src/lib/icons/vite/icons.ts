@@ -58,6 +58,10 @@ const fontOptions: SVGIcons2SVGFontStream.SvgIcons2FontOptions = {
   fontHeight: 1000,
 };
 
+/**
+ * Represents a set of categories of icons.
+ * This is the main class for the icon library.
+ */
 export class IconSet {
   importProgress = new cliProgress.SingleBar(
     {
