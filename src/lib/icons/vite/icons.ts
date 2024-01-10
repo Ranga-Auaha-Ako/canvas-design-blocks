@@ -185,15 +185,17 @@ export class IconSet {
     const hash_input = hash_sum([this.iconSVGMap, fontOptions]);
     // Check cache
     const cached = await cache.get("icon");
-    let cachedResult = JSON.parse(cached.value || "undefined") as
-      | {
-          hash?: string;
-          ttf?: string;
-          woff2?: string;
-          woff?: string;
-          svg?: string;
-        }
-      | undefined;
+    let cachedResult = cached.isCached
+      ? (JSON.parse(cached.value || "undefined") as
+          | {
+              hash?: string;
+              ttf?: string;
+              woff2?: string;
+              woff?: string;
+              svg?: string;
+            }
+          | undefined)
+      : undefined;
     let cachedHash = cachedResult?.hash?.toString() || "";
     if (
       !disableCache &&
