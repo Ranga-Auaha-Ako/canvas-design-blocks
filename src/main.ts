@@ -18,6 +18,7 @@ import ProfilesManager from "$lib/elements/profiles/profilesManager";
 import CourseHeaderManager from "$lib/elements/courseHeader/courseHeaderManager";
 import ImageCardLegacy from "$lib/elements/imageCard/imageCardLegacy";
 import ButtonBarManager from "$lib/elements/buttonBar/buttonBarManager";
+import IconManager from "$lib/elements/icon/iconManager";
 import gtag from "$lib/util/gtag";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
@@ -108,6 +109,7 @@ export const loadApp = async () => {
     ProfilesManager,
     CourseHeaderManager,
     ButtonBarManager,
+    IconManager,
   ];
   loaded_blocks = managers.map((el) => new el(state, editor));
   // Migrate old blocks

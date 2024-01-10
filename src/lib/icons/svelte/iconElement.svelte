@@ -30,6 +30,7 @@
   <span
     class="cdb--icon"
     style:color={color?.toHex() || undefined}
+    aria-hidden="true"
     data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
   >
     {#if isCustomIcon(icon) && icon.lig}
@@ -42,6 +43,7 @@
   {#if d}
     <span
       class="cdb--icon"
+      aria-hidden="true"
       style:color={color?.toHex() || undefined}
       data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
     >
