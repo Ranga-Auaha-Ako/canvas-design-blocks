@@ -1,0 +1,2364 @@
+{
+  "name": "Canvas",
+  "icons": [
+    {
+      "id": "a11y",
+      "url": "a11y.svg",
+      "title": "A11y",
+      "ligature": "a11y",
+      "tags": []
+    },
+    {
+      "id": "add-folder",
+      "url": "add-folder.svg",
+      "title": "Add Folder",
+      "ligature": "add-folder",
+      "tags": []
+    },
+    {
+      "id": "add-media",
+      "url": "add-media.svg",
+      "title": "Add Media",
+      "ligature": "add-media",
+      "tags": []
+    },
+    {
+      "id": "add",
+      "url": "add.svg",
+      "title": "Add",
+      "ligature": "plus",
+      "tags": []
+    },
+    {
+      "id": "address-book",
+      "url": "address-book.svg",
+      "title": "Address Book",
+      "ligature": "address-book",
+      "tags": []
+    },
+    {
+      "id": "admin-tools",
+      "url": "admin-tools.svg",
+      "title": "Admin Tools",
+      "ligature": "tools-admin",
+      "tags": []
+    },
+    {
+      "id": "admin",
+      "url": "admin.svg",
+      "title": "Admin",
+      "ligature": "admin",
+      "tags": []
+    },
+    {
+      "id": "alerts",
+      "url": "alerts.svg",
+      "title": "Alerts",
+      "ligature": "alerts",
+      "tags": []
+    },
+    {
+      "id": "analytics",
+      "url": "analytics.svg",
+      "title": "Analytics",
+      "ligature": "analytics",
+      "tags": []
+    },
+    {
+      "id": "android",
+      "url": "android.svg",
+      "title": "Android",
+      "ligature": "android",
+      "tags": []
+    },
+    {
+      "id": "annotate",
+      "url": "annotate.svg",
+      "title": "Annotate",
+      "ligature": "annotate",
+      "tags": []
+    },
+    {
+      "id": "announcement",
+      "url": "announcement.svg",
+      "title": "Announcement",
+      "ligature": "announcement",
+      "tags": []
+    },
+    {
+      "id": "apple",
+      "url": "apple.svg",
+      "title": "Apple",
+      "ligature": "apple",
+      "tags": []
+    },
+    {
+      "id": "archive",
+      "url": "archive.svg",
+      "title": "Archive",
+      "ligature": "archive",
+      "tags": []
+    },
+    {
+      "id": "arrow-down",
+      "url": "arrow-down.svg",
+      "title": "Arrow Down",
+      "ligature": "arrow-down",
+      "tags": []
+    },
+    {
+      "id": "arrow-end",
+      "url": "arrow-end.svg",
+      "title": "Arrow End",
+      "ligature": "arrow-end",
+      "tags": []
+    },
+    {
+      "id": "arrow-left",
+      "url": "arrow-left.svg",
+      "title": "Arrow Left",
+      "ligature": "arrow-left",
+      "tags": []
+    },
+    {
+      "id": "arrow-nest",
+      "url": "arrow-nest.svg",
+      "title": "Arrow Nest",
+      "ligature": "arrow-nest",
+      "tags": []
+    },
+    {
+      "id": "arrow-open-down",
+      "url": "arrow-open-down.svg",
+      "title": "Arrow Open Down",
+      "ligature": "arrow-open-down",
+      "tags": []
+    },
+    {
+      "id": "arrow-open-end",
+      "url": "arrow-open-end.svg",
+      "title": "Arrow Open End",
+      "ligature": "arrow-open-end",
+      "tags": []
+    },
+    {
+      "id": "arrow-open-left",
+      "url": "arrow-open-left.svg",
+      "title": "Arrow Open Left",
+      "ligature": "arrow-open-left",
+      "tags": []
+    },
+    {
+      "id": "arrow-open-right",
+      "url": "arrow-open-right.svg",
+      "title": "Arrow Open Right",
+      "ligature": "arrow-open-right",
+      "tags": []
+    },
+    {
+      "id": "arrow-open-start",
+      "url": "arrow-open-start.svg",
+      "title": "Arrow Open Start",
+      "ligature": "arrow-open-start",
+      "tags": []
+    },
+    {
+      "id": "arrow-open-up",
+      "url": "arrow-open-up.svg",
+      "title": "Arrow Open Up",
+      "ligature": "arrow-open-up",
+      "tags": []
+    },
+    {
+      "id": "arrow-right",
+      "url": "arrow-right.svg",
+      "title": "Arrow Right",
+      "ligature": "arrow-right",
+      "tags": []
+    },
+    {
+      "id": "arrow-start",
+      "url": "arrow-start.svg",
+      "title": "Arrow Start",
+      "ligature": "arrow-start",
+      "tags": []
+    },
+    {
+      "id": "arrow-up",
+      "url": "arrow-up.svg",
+      "title": "Arrow Up",
+      "ligature": "arrow-up",
+      "tags": []
+    },
+    {
+      "id": "assignment",
+      "url": "assignment.svg",
+      "title": "Assignment",
+      "ligature": "assignment",
+      "tags": []
+    },
+    {
+      "id": "attach-media",
+      "url": "attach-media.svg",
+      "title": "Attach Media",
+      "ligature": "attach-media",
+      "tags": []
+    },
+    {
+      "id": "audio-off",
+      "url": "audio-off.svg",
+      "title": "Audio Off",
+      "ligature": "audio-off",
+      "tags": []
+    },
+    {
+      "id": "audio",
+      "url": "audio.svg",
+      "title": "Audio",
+      "ligature": "sound",
+      "tags": []
+    },
+    {
+      "id": "bank",
+      "url": "bank.svg",
+      "title": "Bank",
+      "ligature": "bank",
+      "tags": []
+    },
+    {
+      "id": "blueprint-lock",
+      "url": "blueprint-lock.svg",
+      "title": "Blueprint Lock",
+      "ligature": "toggle-blueprint-lock",
+      "tags": []
+    },
+    {
+      "id": "blueprint",
+      "url": "blueprint.svg",
+      "title": "Blueprint",
+      "ligature": "blueprint",
+      "tags": []
+    },
+    {
+      "id": "bold",
+      "url": "bold.svg",
+      "title": "Bold",
+      "ligature": "bold",
+      "tags": []
+    },
+    {
+      "id": "bookmark",
+      "url": "bookmark.svg",
+      "title": "Bookmark",
+      "ligature": "bookmark",
+      "tags": []
+    },
+    {
+      "id": "box",
+      "url": "box.svg",
+      "title": "Box",
+      "ligature": "box",
+      "tags": []
+    },
+    {
+      "id": "bullet-list-alpha",
+      "url": "bullet-list-alpha.svg",
+      "title": "Bullet List Alpha",
+      "ligature": "bullet-list-alpha",
+      "tags": []
+    },
+    {
+      "id": "bullet-list-circle-outline",
+      "url": "bullet-list-circle-outline.svg",
+      "title": "Bullet List Circle Outline",
+      "ligature": "bullet-list-circle-outline",
+      "tags": []
+    },
+    {
+      "id": "bullet-list-roman",
+      "url": "bullet-list-roman.svg",
+      "title": "Bullet List Roman",
+      "ligature": "bullet-list-roman",
+      "tags": []
+    },
+    {
+      "id": "bullet-list-square",
+      "url": "bullet-list-square.svg",
+      "title": "Bullet List Square",
+      "ligature": "bullet-list-square",
+      "tags": []
+    },
+    {
+      "id": "bullet-list",
+      "url": "bullet-list.svg",
+      "title": "Bullet List",
+      "ligature": "bullet-list-dot",
+      "tags": []
+    },
+    {
+      "id": "button-and-icon-maker",
+      "url": "button-and-icon-maker.svg",
+      "title": "Button And Icon Maker",
+      "ligature": "button-and-icon-maker",
+      "tags": []
+    },
+    {
+      "id": "calculator-desmos",
+      "url": "calculator-desmos.svg",
+      "title": "Calculator Desmos",
+      "ligature": "calc-desmos",
+      "tags": []
+    },
+    {
+      "id": "calculator",
+      "url": "calculator.svg",
+      "title": "Calculator",
+      "ligature": "calculator",
+      "tags": []
+    },
+    {
+      "id": "calendar-add",
+      "url": "calendar-add.svg",
+      "title": "Calendar Add",
+      "ligature": "calendar-add",
+      "tags": []
+    },
+    {
+      "id": "calendar-clock",
+      "url": "calendar-clock.svg",
+      "title": "Calendar Clock",
+      "ligature": "calendar-clock",
+      "tags": []
+    },
+    {
+      "id": "calendar-day",
+      "url": "calendar-day.svg",
+      "title": "Calendar Day",
+      "ligature": "calendar-day",
+      "tags": []
+    },
+    {
+      "id": "calendar-month",
+      "url": "calendar-month.svg",
+      "title": "Calendar Month",
+      "ligature": "calendar-month",
+      "tags": []
+    },
+    {
+      "id": "calendar-reserved",
+      "url": "calendar-reserved.svg",
+      "title": "Calendar Reserved",
+      "ligature": "calendar-reserved",
+      "tags": []
+    },
+    {
+      "id": "canvas-logo",
+      "url": "canvas-logo.svg",
+      "title": "Canvas Logo",
+      "ligature": "canvas-logo",
+      "tags": []
+    },
+    {
+      "id": "certified",
+      "url": "certified.svg",
+      "title": "Certified",
+      "ligature": "certified",
+      "tags": []
+    },
+    {
+      "id": "chat",
+      "url": "chat.svg",
+      "title": "Chat",
+      "ligature": "chat",
+      "tags": []
+    },
+    {
+      "id": "check-dark",
+      "url": "check-dark.svg",
+      "title": "Check Dark",
+      "ligature": "check-dark",
+      "tags": []
+    },
+    {
+      "id": "check-mark-indeterminate",
+      "url": "check-mark-indeterminate.svg",
+      "title": "Check Mark Indeterminate",
+      "ligature": "indeterminate-check-mark",
+      "tags": []
+    },
+    {
+      "id": "check-mark",
+      "url": "check-mark.svg",
+      "title": "Check Mark",
+      "ligature": "check-mark",
+      "tags": []
+    },
+    {
+      "id": "check-plus",
+      "url": "check-plus.svg",
+      "title": "Check Plus",
+      "ligature": "check-plus",
+      "tags": []
+    },
+    {
+      "id": "circle-arrow-down",
+      "url": "circle-arrow-down.svg",
+      "title": "Circle Arrow Down",
+      "ligature": "circle-arrow-down",
+      "tags": []
+    },
+    {
+      "id": "circle-arrow-up",
+      "url": "circle-arrow-up.svg",
+      "title": "Circle Arrow Up",
+      "ligature": "circle-arrow-up",
+      "tags": []
+    },
+    {
+      "id": "clear-text-formatting",
+      "url": "clear-text-formatting.svg",
+      "title": "Clear Text Formatting",
+      "ligature": "clear-text-formatting",
+      "tags": []
+    },
+    {
+      "id": "clock",
+      "url": "clock.svg",
+      "title": "Clock",
+      "ligature": "clock",
+      "tags": []
+    },
+    {
+      "id": "closed-captioning-off",
+      "url": "closed-captioning-off.svg",
+      "title": "Closed Captioning Off",
+      "ligature": "toggle-closed-captioning-off",
+      "tags": []
+    },
+    {
+      "id": "closed-captioning-on",
+      "url": "closed-captioning-on.svg",
+      "title": "Closed Captioning On",
+      "ligature": "toggle-closed-captioning-on",
+      "tags": []
+    },
+    {
+      "id": "closed-captioning",
+      "url": "closed-captioning.svg",
+      "title": "Closed Captioning",
+      "ligature": "closed-captioning",
+      "tags": []
+    },
+    {
+      "id": "cloud-download",
+      "url": "cloud-download.svg",
+      "title": "Cloud Download",
+      "ligature": "cloud-download",
+      "tags": []
+    },
+    {
+      "id": "cloud-lock",
+      "url": "cloud-lock.svg",
+      "title": "Cloud Lock",
+      "ligature": "cloud-lock",
+      "tags": []
+    },
+    {
+      "id": "cloud-upload",
+      "url": "cloud-upload.svg",
+      "title": "Cloud Upload",
+      "ligature": "cloud-upload",
+      "tags": []
+    },
+    {
+      "id": "code",
+      "url": "code.svg",
+      "title": "Code",
+      "ligature": "code",
+      "tags": []
+    },
+    {
+      "id": "collapse",
+      "url": "collapse.svg",
+      "title": "Collapse",
+      "ligature": "collapse",
+      "tags": []
+    },
+    {
+      "id": "collection-save",
+      "url": "collection-save.svg",
+      "title": "Collection Save",
+      "ligature": "save-collection",
+      "tags": []
+    },
+    {
+      "id": "collection",
+      "url": "collection.svg",
+      "title": "Collection",
+      "ligature": "collection",
+      "tags": []
+    },
+    {
+      "id": "comment",
+      "url": "comment.svg",
+      "title": "Comment",
+      "ligature": "comment",
+      "tags": []
+    },
+    {
+      "id": "comments-off",
+      "url": "comments-off.svg",
+      "title": "Comments Off",
+      "ligature": "toggle-comments-off",
+      "tags": []
+    },
+    {
+      "id": "comments-on",
+      "url": "comments-on.svg",
+      "title": "Comments On",
+      "ligature": "toggle-comments-on",
+      "tags": []
+    },
+    {
+      "id": "commons",
+      "url": "commons.svg",
+      "title": "Commons",
+      "ligature": "commons",
+      "tags": []
+    },
+    {
+      "id": "compass",
+      "url": "compass.svg",
+      "title": "Compass",
+      "ligature": "compass",
+      "tags": []
+    },
+    {
+      "id": "complete",
+      "url": "complete.svg",
+      "title": "Complete",
+      "ligature": "complete",
+      "tags": []
+    },
+    {
+      "id": "compose",
+      "url": "compose.svg",
+      "title": "Compose",
+      "ligature": "compose",
+      "tags": []
+    },
+    {
+      "id": "configure",
+      "url": "configure.svg",
+      "title": "Configure",
+      "ligature": "configure",
+      "tags": []
+    },
+    {
+      "id": "copy-course",
+      "url": "copy-course.svg",
+      "title": "Copy Course",
+      "ligature": "copy-course",
+      "tags": []
+    },
+    {
+      "id": "copy",
+      "url": "copy.svg",
+      "title": "Copy",
+      "ligature": "copy-text",
+      "tags": []
+    },
+    {
+      "id": "courses",
+      "url": "courses.svg",
+      "title": "Courses",
+      "ligature": "courses",
+      "tags": []
+    },
+    {
+      "id": "crop",
+      "url": "crop.svg",
+      "title": "Crop",
+      "ligature": "crop",
+      "tags": []
+    },
+    {
+      "id": "dashboard",
+      "url": "dashboard.svg",
+      "title": "Dashboard",
+      "ligature": "dashboard",
+      "tags": []
+    },
+    {
+      "id": "deactivate-user",
+      "url": "deactivate-user.svg",
+      "title": "Deactivate User",
+      "ligature": "deactivate-user",
+      "tags": []
+    },
+    {
+      "id": "discussion-check",
+      "url": "discussion-check.svg",
+      "title": "Discussion Check",
+      "ligature": "discussion-check",
+      "tags": []
+    },
+    {
+      "id": "discussion-new",
+      "url": "discussion-new.svg",
+      "title": "Discussion New",
+      "ligature": "discussion-new",
+      "tags": []
+    },
+    {
+      "id": "discussion-reply",
+      "url": "discussion-reply.svg",
+      "title": "Discussion Reply",
+      "ligature": "discussion-reply",
+      "tags": []
+    },
+    {
+      "id": "discussion-search",
+      "url": "discussion-search.svg",
+      "title": "Discussion Search",
+      "ligature": "discussion-search",
+      "tags": []
+    },
+    {
+      "id": "discussion-x",
+      "url": "discussion-x.svg",
+      "title": "Discussion X",
+      "ligature": "discussion-x",
+      "tags": []
+    },
+    {
+      "id": "discussion",
+      "url": "discussion.svg",
+      "title": "Discussion",
+      "ligature": "discussions",
+      "tags": []
+    },
+    {
+      "id": "document",
+      "url": "document.svg",
+      "title": "Document",
+      "ligature": "document",
+      "tags": []
+    },
+    {
+      "id": "download",
+      "url": "download.svg",
+      "title": "Download",
+      "ligature": "download",
+      "tags": []
+    },
+    {
+      "id": "drag-handle",
+      "url": "drag-handle.svg",
+      "title": "Drag Handle",
+      "ligature": "drag-handle",
+      "tags": []
+    },
+    {
+      "id": "drop-down",
+      "url": "drop-down.svg",
+      "title": "Drop Down",
+      "ligature": "drop-down",
+      "tags": []
+    },
+    {
+      "id": "duplicate",
+      "url": "duplicate.svg",
+      "title": "Duplicate",
+      "ligature": "duplicate",
+      "tags": []
+    },
+    {
+      "id": "edit",
+      "url": "edit.svg",
+      "title": "Edit",
+      "ligature": "edit",
+      "tags": []
+    },
+    {
+      "id": "educators",
+      "url": "educators.svg",
+      "title": "Educators",
+      "ligature": "educators",
+      "tags": []
+    },
+    {
+      "id": "elevate-logo",
+      "url": "elevate-logo.svg",
+      "title": "Elevate Logo",
+      "ligature": "elevate-logo",
+      "tags": []
+    },
+    {
+      "id": "email",
+      "url": "email.svg",
+      "title": "Email",
+      "ligature": "email",
+      "tags": []
+    },
+    {
+      "id": "empty",
+      "url": "empty.svg",
+      "title": "Empty",
+      "ligature": "empty",
+      "tags": []
+    },
+    {
+      "id": "end",
+      "url": "end.svg",
+      "title": "End",
+      "ligature": "end",
+      "tags": []
+    },
+    {
+      "id": "eportfolio",
+      "url": "eportfolio.svg",
+      "title": "ePortfolio",
+      "ligature": "eportfolio",
+      "tags": []
+    },
+    {
+      "id": "equation",
+      "url": "equation.svg",
+      "title": "Equation",
+      "ligature": "equation",
+      "tags": []
+    },
+    {
+      "id": "equella",
+      "url": "equella.svg",
+      "title": "Equella",
+      "ligature": "equella",
+      "tags": []
+    },
+    {
+      "id": "essay",
+      "url": "essay.svg",
+      "title": "Essay",
+      "ligature": "essay",
+      "tags": []
+    },
+    {
+      "id": "exit-full-screen",
+      "url": "exit-full-screen.svg",
+      "title": "Exit Full Screen",
+      "ligature": "exit-full-screen",
+      "tags": []
+    },
+    {
+      "id": "expand-items",
+      "url": "expand-items.svg",
+      "title": "Expand Items",
+      "ligature": "expand-items",
+      "tags": []
+    },
+    {
+      "id": "expand-left",
+      "url": "expand-left.svg",
+      "title": "Expand Left",
+      "ligature": "expand-left",
+      "tags": []
+    },
+    {
+      "id": "expand-start",
+      "url": "expand-start.svg",
+      "title": "Expand Start",
+      "ligature": "expand-start",
+      "tags": []
+    },
+    {
+      "id": "expand",
+      "url": "expand.svg",
+      "title": "Expand",
+      "ligature": "expand-up",
+      "tags": []
+    },
+    {
+      "id": "export",
+      "url": "export.svg",
+      "title": "Export",
+      "ligature": "export",
+      "tags": []
+    },
+    {
+      "id": "external-link",
+      "url": "external-link.svg",
+      "title": "External Link",
+      "ligature": "external-link",
+      "tags": []
+    },
+    {
+      "id": "eye",
+      "url": "eye.svg",
+      "title": "Eye",
+      "ligature": "eye",
+      "tags": []
+    },
+    {
+      "id": "facebook",
+      "url": "facebook.svg",
+      "title": "Facebook",
+      "ligature": "facebook",
+      "tags": []
+    },
+    {
+      "id": "fast-forward",
+      "url": "fast-forward.svg",
+      "title": "Fast Forward",
+      "ligature": "fast-forward",
+      "tags": []
+    },
+    {
+      "id": "feedback",
+      "url": "feedback.svg",
+      "title": "Feedback",
+      "ligature": "feedback",
+      "tags": []
+    },
+    {
+      "id": "file-locked",
+      "url": "file-locked.svg",
+      "title": "File Locked",
+      "ligature": "file-locked",
+      "tags": []
+    },
+    {
+      "id": "files-copyright",
+      "url": "files-copyright.svg",
+      "title": "Files Copyright",
+      "ligature": "files-copyright",
+      "tags": []
+    },
+    {
+      "id": "files-creative-commons",
+      "url": "files-creative-commons.svg",
+      "title": "Files Creative Commons",
+      "ligature": "files-creative-commons",
+      "tags": []
+    },
+    {
+      "id": "files-fair-use",
+      "url": "files-fair-use.svg",
+      "title": "Files Fair Use",
+      "ligature": "files-fair-use",
+      "tags": []
+    },
+    {
+      "id": "files-obtained-permission",
+      "url": "files-obtained-permission.svg",
+      "title": "Files Obtained Permission",
+      "ligature": "files-obtained-permission",
+      "tags": []
+    },
+    {
+      "id": "files-public-domain",
+      "url": "files-public-domain.svg",
+      "title": "Files Public Domain",
+      "ligature": "files-public-domain",
+      "tags": []
+    },
+    {
+      "id": "filmstrip",
+      "url": "filmstrip.svg",
+      "title": "Filmstrip",
+      "ligature": "filmstrip",
+      "tags": []
+    },
+    {
+      "id": "filter",
+      "url": "filter.svg",
+      "title": "Filter",
+      "ligature": "filter",
+      "tags": []
+    },
+    {
+      "id": "flag",
+      "url": "flag.svg",
+      "title": "Flag",
+      "ligature": "flag",
+      "tags": []
+    },
+    {
+      "id": "folder-locked",
+      "url": "folder-locked.svg",
+      "title": "Folder Locked",
+      "ligature": "folder-locked",
+      "tags": []
+    },
+    {
+      "id": "folder",
+      "url": "folder.svg",
+      "title": "Folder",
+      "ligature": "folder-closed",
+      "tags": []
+    },
+    {
+      "id": "forward",
+      "url": "forward.svg",
+      "title": "Forward",
+      "ligature": "forward",
+      "tags": []
+    },
+    {
+      "id": "full-screen",
+      "url": "full-screen.svg",
+      "title": "Full Screen",
+      "ligature": "full-screen",
+      "tags": []
+    },
+    {
+      "id": "github",
+      "url": "github.svg",
+      "title": "Github",
+      "ligature": "github",
+      "tags": []
+    },
+    {
+      "id": "gradebook-export",
+      "url": "gradebook-export.svg",
+      "title": "Gradebook Export",
+      "ligature": "gradebook-export",
+      "tags": []
+    },
+    {
+      "id": "gradebook-import",
+      "url": "gradebook-import.svg",
+      "title": "Gradebook Import",
+      "ligature": "gradebook-import",
+      "tags": []
+    },
+    {
+      "id": "gradebook",
+      "url": "gradebook.svg",
+      "title": "Gradebook",
+      "ligature": "gradebooks",
+      "tags": []
+    },
+    {
+      "id": "group-dark-new",
+      "url": "group-dark-new.svg",
+      "title": "Group Dark New",
+      "ligature": "group-dark-new",
+      "tags": []
+    },
+    {
+      "id": "group-new",
+      "url": "group-new.svg",
+      "title": "Group New",
+      "ligature": "group-new",
+      "tags": []
+    },
+    {
+      "id": "group",
+      "url": "group.svg",
+      "title": "Group",
+      "ligature": "groups",
+      "tags": []
+    },
+    {
+      "id": "hamburger",
+      "url": "hamburger.svg",
+      "title": "Hamburger",
+      "ligature": "hamburger",
+      "tags": []
+    },
+    {
+      "id": "header",
+      "url": "header.svg",
+      "title": "Header",
+      "ligature": "header",
+      "tags": []
+    },
+    {
+      "id": "heart",
+      "url": "heart.svg",
+      "title": "Heart",
+      "ligature": "heart",
+      "tags": []
+    },
+    {
+      "id": "highlighter",
+      "url": "highlighter.svg",
+      "title": "Highlighter",
+      "ligature": "highlighter",
+      "tags": []
+    },
+    {
+      "id": "home",
+      "url": "home.svg",
+      "title": "Home",
+      "ligature": "home",
+      "tags": []
+    },
+    {
+      "id": "hour-glass",
+      "url": "hour-glass.svg",
+      "title": "Hour Glass",
+      "ligature": "hour-glass",
+      "tags": []
+    },
+    {
+      "id": "image",
+      "url": "image.svg",
+      "title": "Image",
+      "ligature": "image",
+      "tags": []
+    },
+    {
+      "id": "immersive-reader",
+      "url": "immersive-reader.svg",
+      "title": "Immersive Reader",
+      "ligature": "immersive-reader",
+      "tags": []
+    },
+    {
+      "id": "impact-logo",
+      "url": "impact-logo.svg",
+      "title": "Impact Logo",
+      "ligature": "impact-logo",
+      "tags": []
+    },
+    {
+      "id": "import-content",
+      "url": "import-content.svg",
+      "title": "Import Content",
+      "ligature": "import-content",
+      "tags": []
+    },
+    {
+      "id": "important-dates",
+      "url": "important-dates.svg",
+      "title": "Important Dates",
+      "ligature": "important-dates",
+      "tags": []
+    },
+    {
+      "id": "inbox",
+      "url": "inbox.svg",
+      "title": "Inbox",
+      "ligature": "inbox",
+      "tags": []
+    },
+    {
+      "id": "indent",
+      "url": "indent.svg",
+      "title": "Indent",
+      "ligature": "indent",
+      "tags": []
+    },
+    {
+      "id": "info-borderless",
+      "url": "info-borderless.svg",
+      "title": "Info Borderless",
+      "ligature": "info-borderless",
+      "tags": []
+    },
+    {
+      "id": "info",
+      "url": "info.svg",
+      "title": "Info",
+      "ligature": "info-circle",
+      "tags": []
+    },
+    {
+      "id": "instructure-logo",
+      "url": "instructure-logo.svg",
+      "title": "Instructure Logo",
+      "ligature": "instructure-logo",
+      "tags": []
+    },
+    {
+      "id": "integrations",
+      "url": "integrations.svg",
+      "title": "Integrations",
+      "ligature": "integrations",
+      "tags": []
+    },
+    {
+      "id": "invitation",
+      "url": "invitation.svg",
+      "title": "Invitation",
+      "ligature": "invitation",
+      "tags": []
+    },
+    {
+      "id": "italic",
+      "url": "italic.svg",
+      "title": "Italic",
+      "ligature": "italic",
+      "tags": []
+    },
+    {
+      "id": "keyboard-shortcuts",
+      "url": "keyboard-shortcuts.svg",
+      "title": "Keyboard Shortcuts",
+      "ligature": "keyboard-shortcuts",
+      "tags": []
+    },
+    {
+      "id": "launch",
+      "url": "launch.svg",
+      "title": "Launch",
+      "ligature": "launch",
+      "tags": []
+    },
+    {
+      "id": "life-preserver",
+      "url": "life-preserver.svg",
+      "title": "Life Preserver",
+      "ligature": "life-preserver",
+      "tags": []
+    },
+    {
+      "id": "like",
+      "url": "like.svg",
+      "title": "Like",
+      "ligature": "like",
+      "tags": []
+    },
+    {
+      "id": "line-reader",
+      "url": "line-reader.svg",
+      "title": "Line Reader",
+      "ligature": "line-reader",
+      "tags": []
+    },
+    {
+      "id": "link",
+      "url": "link.svg",
+      "title": "Link",
+      "ligature": "link",
+      "tags": []
+    },
+    {
+      "id": "linkedin",
+      "url": "linkedin.svg",
+      "title": "Linkedin",
+      "ligature": "social-linkedin",
+      "tags": []
+    },
+    {
+      "id": "lock",
+      "url": "lock.svg",
+      "title": "Lock",
+      "ligature": "lock",
+      "tags": []
+    },
+    {
+      "id": "lti",
+      "url": "lti.svg",
+      "title": "Lti",
+      "ligature": "lti",
+      "tags": []
+    },
+    {
+      "id": "mark-as-read",
+      "url": "mark-as-read.svg",
+      "title": "Mark As Read",
+      "ligature": "mark-as-read",
+      "tags": []
+    },
+    {
+      "id": "marker",
+      "url": "marker.svg",
+      "title": "Marker",
+      "ligature": "marker",
+      "tags": []
+    },
+    {
+      "id": "masquerade",
+      "url": "masquerade.svg",
+      "title": "Masquerade",
+      "ligature": "masquerade",
+      "tags": []
+    },
+    {
+      "id": "mastery-logo",
+      "url": "mastery-logo.svg",
+      "title": "Mastery Logo",
+      "ligature": "mastery-logo",
+      "tags": []
+    },
+    {
+      "id": "mastery-paths",
+      "url": "mastery-paths.svg",
+      "title": "Mastery Paths",
+      "ligature": "mastery-paths",
+      "tags": []
+    },
+    {
+      "id": "materials-required",
+      "url": "materials-required.svg",
+      "title": "Materials Required",
+      "ligature": "materials-required",
+      "tags": []
+    },
+    {
+      "id": "mature",
+      "url": "mature.svg",
+      "title": "Mature",
+      "ligature": "mature",
+      "tags": []
+    },
+    {
+      "id": "media",
+      "url": "media.svg",
+      "title": "Media",
+      "ligature": "media",
+      "tags": []
+    },
+    {
+      "id": "message",
+      "url": "message.svg",
+      "title": "Message",
+      "ligature": "message",
+      "tags": []
+    },
+    {
+      "id": "mic-off",
+      "url": "mic-off.svg",
+      "title": "Mic Off",
+      "ligature": "toggle-mic-off",
+      "tags": []
+    },
+    {
+      "id": "mic",
+      "url": "mic.svg",
+      "title": "Mic",
+      "ligature": "mic",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-double",
+      "url": "mini-arrow-double.svg",
+      "title": "Mini Arrow Double",
+      "ligature": "mini-arrow-double",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-down",
+      "url": "mini-arrow-down.svg",
+      "title": "Mini Arrow Down",
+      "ligature": "mini-arrow-down",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-end",
+      "url": "mini-arrow-end.svg",
+      "title": "Mini Arrow End",
+      "ligature": "mini-arrow-end",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-left",
+      "url": "mini-arrow-left.svg",
+      "title": "Mini Arrow Left",
+      "ligature": "mini-arrow-left",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-right",
+      "url": "mini-arrow-right.svg",
+      "title": "Mini Arrow Right",
+      "ligature": "mini-arrow-right",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-start",
+      "url": "mini-arrow-start.svg",
+      "title": "Mini Arrow Start",
+      "ligature": "mini-arrow-start",
+      "tags": []
+    },
+    {
+      "id": "mini-arrow-up",
+      "url": "mini-arrow-up.svg",
+      "title": "Mini Arrow Up",
+      "ligature": "mini-arrow-up",
+      "tags": []
+    },
+    {
+      "id": "minimize",
+      "url": "minimize.svg",
+      "title": "Minimize",
+      "ligature": "minimize",
+      "tags": []
+    },
+    {
+      "id": "module",
+      "url": "module.svg",
+      "title": "Module",
+      "ligature": "module",
+      "tags": []
+    },
+    {
+      "id": "more",
+      "url": "more.svg",
+      "title": "More",
+      "ligature": "more",
+      "tags": []
+    },
+    {
+      "id": "move-down-bottom",
+      "url": "move-down-bottom.svg",
+      "title": "Move Down Bottom",
+      "ligature": "move-down-bottom",
+      "tags": []
+    },
+    {
+      "id": "move-down",
+      "url": "move-down.svg",
+      "title": "Move Down",
+      "ligature": "move-down-one",
+      "tags": []
+    },
+    {
+      "id": "move-end",
+      "url": "move-end.svg",
+      "title": "Move End",
+      "ligature": "move-end",
+      "tags": []
+    },
+    {
+      "id": "move-left",
+      "url": "move-left.svg",
+      "title": "Move Left",
+      "ligature": "move-left",
+      "tags": []
+    },
+    {
+      "id": "move-right",
+      "url": "move-right.svg",
+      "title": "Move Right",
+      "ligature": "move-right",
+      "tags": []
+    },
+    {
+      "id": "move-start",
+      "url": "move-start.svg",
+      "title": "Move Start",
+      "ligature": "move-start",
+      "tags": []
+    },
+    {
+      "id": "move-up-top",
+      "url": "move-up-top.svg",
+      "title": "Move Up Top",
+      "ligature": "move-up-top",
+      "tags": []
+    },
+    {
+      "id": "move-up",
+      "url": "move-up.svg",
+      "title": "Move Up",
+      "ligature": "move-up-one",
+      "tags": []
+    },
+    {
+      "id": "ms-excel",
+      "url": "ms-excel.svg",
+      "title": "Ms Excel",
+      "ligature": "ms-excel",
+      "tags": []
+    },
+    {
+      "id": "ms-ppt",
+      "url": "ms-ppt.svg",
+      "title": "Ms Ppt",
+      "ligature": "ms-ppt",
+      "tags": []
+    },
+    {
+      "id": "ms-word",
+      "url": "ms-word.svg",
+      "title": "Ms Word",
+      "ligature": "ms-word",
+      "tags": []
+    },
+    {
+      "id": "muted",
+      "url": "muted.svg",
+      "title": "Muted",
+      "ligature": "muted",
+      "tags": []
+    },
+    {
+      "id": "next-unread",
+      "url": "next-unread.svg",
+      "title": "Next Unread",
+      "ligature": "next-unread",
+      "tags": []
+    },
+    {
+      "id": "no",
+      "url": "no.svg",
+      "title": "No",
+      "ligature": "block",
+      "tags": []
+    },
+    {
+      "id": "not-graded",
+      "url": "not-graded.svg",
+      "title": "Not Graded",
+      "ligature": "not-graded",
+      "tags": []
+    },
+    {
+      "id": "note",
+      "url": "note.svg",
+      "title": "Note",
+      "ligature": "sticky-note",
+      "tags": []
+    },
+    {
+      "id": "notepad",
+      "url": "notepad.svg",
+      "title": "Notepad",
+      "ligature": "notepad",
+      "tags": []
+    },
+    {
+      "id": "numbered-list",
+      "url": "numbered-list.svg",
+      "title": "Numbered List",
+      "ligature": "numbered-list",
+      "tags": []
+    },
+    {
+      "id": "off",
+      "url": "off.svg",
+      "title": "Off",
+      "ligature": "off",
+      "tags": ["hidden", "disable"]
+    },
+    {
+      "id": "open-folder",
+      "url": "open-folder.svg",
+      "title": "Open Folder",
+      "ligature": "open-folder",
+      "tags": []
+    },
+    {
+      "id": "outcomes",
+      "url": "outcomes.svg",
+      "title": "Outcomes",
+      "ligature": "outcomes",
+      "tags": []
+    },
+    {
+      "id": "outdent",
+      "url": "outdent.svg",
+      "title": "Outdent",
+      "ligature": "outdent",
+      "tags": []
+    },
+    {
+      "id": "oval-half",
+      "url": "oval-half.svg",
+      "title": "Oval Half",
+      "ligature": "oval-half",
+      "tags": []
+    },
+    {
+      "id": "page-down",
+      "url": "page-down.svg",
+      "title": "Page Down",
+      "ligature": "page-down",
+      "tags": []
+    },
+    {
+      "id": "page-up",
+      "url": "page-up.svg",
+      "title": "Page Up",
+      "ligature": "page-up",
+      "tags": []
+    },
+    {
+      "id": "paint",
+      "url": "paint.svg",
+      "title": "Paint",
+      "ligature": "paint",
+      "tags": []
+    },
+    {
+      "id": "paperclip",
+      "url": "paperclip.svg",
+      "title": "Paperclip",
+      "ligature": "paperclip",
+      "tags": []
+    },
+    {
+      "id": "partial",
+      "url": "partial.svg",
+      "title": "Partial",
+      "ligature": "partial",
+      "tags": []
+    },
+    {
+      "id": "pause",
+      "url": "pause.svg",
+      "title": "Pause",
+      "ligature": "pause",
+      "tags": []
+    },
+    {
+      "id": "pdf",
+      "url": "pdf.svg",
+      "title": "Pdf",
+      "ligature": "pdf",
+      "tags": []
+    },
+    {
+      "id": "peer-graded",
+      "url": "peer-graded.svg",
+      "title": "Peer Graded",
+      "ligature": "peer-graded",
+      "tags": []
+    },
+    {
+      "id": "peer-review",
+      "url": "peer-review.svg",
+      "title": "Peer Review",
+      "ligature": "peer-review",
+      "tags": []
+    },
+    {
+      "id": "permissions",
+      "url": "permissions.svg",
+      "title": "Permissions",
+      "ligature": "permissions",
+      "tags": []
+    },
+    {
+      "id": "pin",
+      "url": "pin.svg",
+      "title": "Pin",
+      "ligature": "push-pin",
+      "tags": []
+    },
+    {
+      "id": "pinterest",
+      "url": "pinterest.svg",
+      "title": "Pinterest",
+      "ligature": "pinterest",
+      "tags": []
+    },
+    {
+      "id": "play",
+      "url": "play.svg",
+      "title": "Play",
+      "ligature": "play",
+      "tags": []
+    },
+    {
+      "id": "plus",
+      "url": "plus.svg",
+      "title": "Plus",
+      "ligature": "plus",
+      "tags": []
+    },
+    {
+      "id": "post-to-sis",
+      "url": "post-to-sis.svg",
+      "title": "Post To Sis",
+      "ligature": "post-to-sis",
+      "tags": []
+    },
+    {
+      "id": "prerequisite",
+      "url": "prerequisite.svg",
+      "title": "Prerequisite",
+      "ligature": "prerequisite",
+      "tags": []
+    },
+    {
+      "id": "printer",
+      "url": "printer.svg",
+      "title": "Printer",
+      "ligature": "printer",
+      "tags": []
+    },
+    {
+      "id": "progress",
+      "url": "progress.svg",
+      "title": "Progress",
+      "ligature": "progress",
+      "tags": []
+    },
+    {
+      "id": "protractor",
+      "url": "protractor.svg",
+      "title": "Protractor",
+      "ligature": "protractor",
+      "tags": []
+    },
+    {
+      "id": "publish",
+      "url": "publish.svg",
+      "title": "Publish",
+      "ligature": "publish",
+      "tags": []
+    },
+    {
+      "id": "question",
+      "url": "question.svg",
+      "title": "Question",
+      "ligature": "question",
+      "tags": []
+    },
+    {
+      "id": "quiz-instructions",
+      "url": "quiz-instructions.svg",
+      "title": "Quiz Instructions",
+      "ligature": "quiz-instructions",
+      "tags": []
+    },
+    {
+      "id": "quiz-stats-avg",
+      "url": "quiz-stats-avg.svg",
+      "title": "Quiz Stats Avg",
+      "ligature": "quiz-stats-avg",
+      "tags": []
+    },
+    {
+      "id": "quiz-stats-cronbachs-alpha",
+      "url": "quiz-stats-cronbachs-alpha.svg",
+      "title": "Quiz Stats Cronbachs Alpha",
+      "ligature": "quiz-stats-cronbachs-alpha",
+      "tags": []
+    },
+    {
+      "id": "quiz-stats-deviation",
+      "url": "quiz-stats-deviation.svg",
+      "title": "Quiz Stats Deviation",
+      "ligature": "quiz-stats-deviation",
+      "tags": []
+    },
+    {
+      "id": "quiz-stats-high",
+      "url": "quiz-stats-high.svg",
+      "title": "Quiz Stats High",
+      "ligature": "quiz-stats-high",
+      "tags": []
+    },
+    {
+      "id": "quiz-stats-low",
+      "url": "quiz-stats-low.svg",
+      "title": "Quiz Stats Low",
+      "ligature": "quiz-stats-low",
+      "tags": []
+    },
+    {
+      "id": "quiz-stats-time",
+      "url": "quiz-stats-time.svg",
+      "title": "Quiz Stats Time",
+      "ligature": "quiz-stats-time",
+      "tags": []
+    },
+    {
+      "id": "quiz-title",
+      "url": "quiz-title.svg",
+      "title": "Quiz Title",
+      "ligature": "quiz-title",
+      "tags": []
+    },
+    {
+      "id": "quiz",
+      "url": "quiz.svg",
+      "title": "Quiz",
+      "ligature": "quizzes",
+      "tags": []
+    },
+    {
+      "id": "record",
+      "url": "record.svg",
+      "title": "Record",
+      "ligature": "record",
+      "tags": []
+    },
+    {
+      "id": "refresh",
+      "url": "refresh.svg",
+      "title": "Refresh",
+      "ligature": "refresh",
+      "tags": []
+    },
+    {
+      "id": "remove-bookmark",
+      "url": "remove-bookmark.svg",
+      "title": "Remove Bookmark",
+      "ligature": "remove-bookmark",
+      "tags": []
+    },
+    {
+      "id": "remove-from-collection",
+      "url": "remove-from-collection.svg",
+      "title": "Remove From Collection",
+      "ligature": "remove-from-collection",
+      "tags": []
+    },
+    {
+      "id": "remove-link",
+      "url": "remove-link.svg",
+      "title": "Remove Link",
+      "ligature": "remove-link",
+      "tags": []
+    },
+    {
+      "id": "replied",
+      "url": "replied.svg",
+      "title": "Replied",
+      "ligature": "replied",
+      "tags": []
+    },
+    {
+      "id": "reply-all-2",
+      "url": "reply-all-2.svg",
+      "title": "Reply All 2",
+      "ligature": "reply-all-2",
+      "tags": []
+    },
+    {
+      "id": "reply",
+      "url": "reply.svg",
+      "title": "Reply",
+      "ligature": "reply-single",
+      "tags": []
+    },
+    {
+      "id": "reset",
+      "url": "reset.svg",
+      "title": "Reset",
+      "ligature": "reset",
+      "tags": []
+    },
+    {
+      "id": "review-screen",
+      "url": "review-screen.svg",
+      "title": "Review Screen",
+      "ligature": "review-screen",
+      "tags": []
+    },
+    {
+      "id": "rewind",
+      "url": "rewind.svg",
+      "title": "Rewind",
+      "ligature": "rewind",
+      "tags": []
+    },
+    {
+      "id": "rotate-left",
+      "url": "rotate-left.svg",
+      "title": "Rotate Left",
+      "ligature": "rotate-left",
+      "tags": []
+    },
+    {
+      "id": "rotate-right",
+      "url": "rotate-right.svg",
+      "title": "Rotate Right",
+      "ligature": "rotate-right",
+      "tags": []
+    },
+    {
+      "id": "rss",
+      "url": "rss.svg",
+      "title": "Rss",
+      "ligature": "rss",
+      "tags": []
+    },
+    {
+      "id": "rubric",
+      "url": "rubric.svg",
+      "title": "Rubric",
+      "ligature": "rubric",
+      "tags": []
+    },
+    {
+      "id": "ruler",
+      "url": "ruler.svg",
+      "title": "Ruler",
+      "ligature": "ruler",
+      "tags": []
+    },
+    {
+      "id": "save",
+      "url": "save.svg",
+      "title": "Save",
+      "ligature": "save-item",
+      "tags": []
+    },
+    {
+      "id": "screen-capture",
+      "url": "screen-capture.svg",
+      "title": "Screen Capture",
+      "ligature": "screen-capture",
+      "tags": []
+    },
+    {
+      "id": "search",
+      "url": "search.svg",
+      "title": "Search",
+      "ligature": "search",
+      "tags": ["magnify"]
+    },
+    {
+      "id": "settings",
+      "url": "settings.svg",
+      "title": "Settings",
+      "ligature": "settings",
+      "tags": []
+    },
+    {
+      "id": "shape-oval",
+      "url": "shape-oval.svg",
+      "title": "Shape Oval",
+      "ligature": "shape-oval",
+      "tags": []
+    },
+    {
+      "id": "shape-polygon",
+      "url": "shape-polygon.svg",
+      "title": "Shape Polygon",
+      "ligature": "shape-polygon",
+      "tags": []
+    },
+    {
+      "id": "shape-rectangle",
+      "url": "shape-rectangle.svg",
+      "title": "Shape Rectangle",
+      "ligature": "shape-rectangle",
+      "tags": []
+    },
+    {
+      "id": "share",
+      "url": "share.svg",
+      "title": "Share",
+      "ligature": "share",
+      "tags": []
+    },
+    {
+      "id": "sis-imported",
+      "url": "sis-imported.svg",
+      "title": "Sis Imported",
+      "ligature": "sis-imported",
+      "tags": []
+    },
+    {
+      "id": "sis-not-synced",
+      "url": "sis-not-synced.svg",
+      "title": "Sis Not Synced",
+      "ligature": "sis-not-synced",
+      "tags": []
+    },
+    {
+      "id": "sis-synced",
+      "url": "sis-synced.svg",
+      "title": "Sis Synced",
+      "ligature": "sis-synced",
+      "tags": []
+    },
+    {
+      "id": "skype",
+      "url": "skype.svg",
+      "title": "Skype",
+      "ligature": "skype",
+      "tags": []
+    },
+    {
+      "id": "sort",
+      "url": "sort.svg",
+      "title": "Sort",
+      "ligature": "sort",
+      "tags": []
+    },
+    {
+      "id": "speed-grader",
+      "url": "speed-grader.svg",
+      "title": "Speed Grader",
+      "ligature": "speed-grader",
+      "tags": []
+    },
+    {
+      "id": "standards",
+      "url": "standards.svg",
+      "title": "Standards",
+      "ligature": "standards",
+      "tags": []
+    },
+    {
+      "id": "star-light",
+      "url": "star-light.svg",
+      "title": "Star Light",
+      "ligature": "star-light",
+      "tags": []
+    },
+    {
+      "id": "star",
+      "url": "star.svg",
+      "title": "Star",
+      "ligature": "star-filled",
+      "tags": []
+    },
+    {
+      "id": "stats",
+      "url": "stats.svg",
+      "title": "Stats",
+      "ligature": "stats",
+      "tags": []
+    },
+    {
+      "id": "stop",
+      "url": "stop.svg",
+      "title": "Stop",
+      "ligature": "stop",
+      "tags": []
+    },
+    {
+      "id": "strikethrough",
+      "url": "strikethrough.svg",
+      "title": "Strikethrough",
+      "ligature": "strikethrough",
+      "tags": []
+    },
+    {
+      "id": "student-view",
+      "url": "student-view.svg",
+      "title": "Student View",
+      "ligature": "student-view",
+      "tags": []
+    },
+    {
+      "id": "studio",
+      "url": "studio.svg",
+      "title": "Studio",
+      "ligature": "studio",
+      "tags": []
+    },
+    {
+      "id": "subaccounts",
+      "url": "subaccounts.svg",
+      "title": "Subaccounts",
+      "ligature": "subaccounts",
+      "tags": []
+    },
+    {
+      "id": "subtitles",
+      "url": "subtitles.svg",
+      "title": "Subtitles",
+      "ligature": "subtitles",
+      "tags": []
+    },
+    {
+      "id": "syllabus",
+      "url": "syllabus.svg",
+      "title": "Syllabus",
+      "ligature": "syllabus",
+      "tags": []
+    },
+    {
+      "id": "table-cell-select-all",
+      "url": "table-cell-select-all.svg",
+      "title": "Table Cell Select All",
+      "ligature": "table-cell-select-all",
+      "tags": []
+    },
+    {
+      "id": "table-delete-column",
+      "url": "table-delete-column.svg",
+      "title": "Table Delete Column",
+      "ligature": "table-delete-column",
+      "tags": []
+    },
+    {
+      "id": "table-delete-row",
+      "url": "table-delete-row.svg",
+      "title": "Table Delete Row",
+      "ligature": "table-delete-row",
+      "tags": []
+    },
+    {
+      "id": "table-delete-table",
+      "url": "table-delete-table.svg",
+      "title": "Table Delete Table",
+      "ligature": "table-delete-table",
+      "tags": []
+    },
+    {
+      "id": "table-insert-column-after",
+      "url": "table-insert-column-after.svg",
+      "title": "Table Insert Column After",
+      "ligature": "table-insert-column-after",
+      "tags": []
+    },
+    {
+      "id": "table-insert-column-before",
+      "url": "table-insert-column-before.svg",
+      "title": "Table Insert Column Before",
+      "ligature": "table-insert-column-before",
+      "tags": []
+    },
+    {
+      "id": "table-insert-row-above",
+      "url": "table-insert-row-above.svg",
+      "title": "Table Insert Row Above",
+      "ligature": "table-insert-row-above",
+      "tags": []
+    },
+    {
+      "id": "table-insert-row-after",
+      "url": "table-insert-row-after.svg",
+      "title": "Table Insert Row After",
+      "ligature": "table-insert-row-after",
+      "tags": []
+    },
+    {
+      "id": "table-left-header",
+      "url": "table-left-header.svg",
+      "title": "Table Left Header",
+      "ligature": "table-left-header",
+      "tags": []
+    },
+    {
+      "id": "table-merge-cells",
+      "url": "table-merge-cells.svg",
+      "title": "Table Merge Cells",
+      "ligature": "table-merge-cells",
+      "tags": []
+    },
+    {
+      "id": "table-row-properties",
+      "url": "table-row-properties.svg",
+      "title": "Table Row Properties",
+      "ligature": "table-row-properties",
+      "tags": []
+    },
+    {
+      "id": "table-split-cells",
+      "url": "table-split-cells.svg",
+      "title": "Table Split Cells",
+      "ligature": "table-split-cells",
+      "tags": []
+    },
+    {
+      "id": "table-top-header",
+      "url": "table-top-header.svg",
+      "title": "Table Top Header",
+      "ligature": "table-top-header",
+      "tags": []
+    },
+    {
+      "id": "table",
+      "url": "table.svg",
+      "title": "Table",
+      "ligature": "table-grid",
+      "tags": []
+    },
+    {
+      "id": "tag",
+      "url": "tag.svg",
+      "title": "Tag",
+      "ligature": "tag",
+      "tags": []
+    },
+    {
+      "id": "target",
+      "url": "target.svg",
+      "title": "Target",
+      "ligature": "target",
+      "tags": []
+    },
+    {
+      "id": "text-background-color",
+      "url": "text-background-color.svg",
+      "title": "Text Background Color",
+      "ligature": "text-background-color",
+      "tags": []
+    },
+    {
+      "id": "text-centered",
+      "url": "text-centered.svg",
+      "title": "Text Centered",
+      "ligature": "text-centered",
+      "tags": []
+    },
+    {
+      "id": "text-color",
+      "url": "text-color.svg",
+      "title": "Text Color",
+      "ligature": "text-color",
+      "tags": []
+    },
+    {
+      "id": "text-direction-ltr",
+      "url": "text-direction-ltr.svg",
+      "title": "Text Direction Ltr",
+      "ligature": "text-direction-ltr",
+      "tags": []
+    },
+    {
+      "id": "text-direction-rtl",
+      "url": "text-direction-rtl.svg",
+      "title": "Text Direction Rtl",
+      "ligature": "text-direction-rtl",
+      "tags": []
+    },
+    {
+      "id": "text-end",
+      "url": "text-end.svg",
+      "title": "Text End",
+      "ligature": "text-end",
+      "tags": []
+    },
+    {
+      "id": "text-left",
+      "url": "text-left.svg",
+      "title": "Text Left",
+      "ligature": "text-left",
+      "tags": []
+    },
+    {
+      "id": "text-right",
+      "url": "text-right.svg",
+      "title": "Text Right",
+      "ligature": "text-right",
+      "tags": []
+    },
+    {
+      "id": "text-start",
+      "url": "text-start.svg",
+      "title": "Text Start",
+      "ligature": "text-start",
+      "tags": []
+    },
+    {
+      "id": "text-subscript",
+      "url": "text-subscript.svg",
+      "title": "Text Subscript",
+      "ligature": "text-subscript",
+      "tags": []
+    },
+    {
+      "id": "text-superscript",
+      "url": "text-superscript.svg",
+      "title": "Text Superscript",
+      "ligature": "text-superscript",
+      "tags": []
+    },
+    {
+      "id": "text",
+      "url": "text.svg",
+      "title": "Text",
+      "ligature": "text-t",
+      "tags": []
+    },
+    {
+      "id": "textarea",
+      "url": "textarea.svg",
+      "title": "Textarea",
+      "ligature": "textarea",
+      "tags": []
+    },
+    {
+      "id": "timer",
+      "url": "timer.svg",
+      "title": "Timer",
+      "ligature": "timer",
+      "tags": []
+    },
+    {
+      "id": "toggle-end",
+      "url": "toggle-end.svg",
+      "title": "Toggle End",
+      "ligature": "toggle-end",
+      "tags": []
+    },
+    {
+      "id": "toggle-left",
+      "url": "toggle-left.svg",
+      "title": "Toggle Left",
+      "ligature": "toggle-left",
+      "tags": []
+    },
+    {
+      "id": "toggle-right",
+      "url": "toggle-right.svg",
+      "title": "Toggle Right",
+      "ligature": "toggle-right",
+      "tags": []
+    },
+    {
+      "id": "toggle-start",
+      "url": "toggle-start.svg",
+      "title": "Toggle Start",
+      "ligature": "toggle-start",
+      "tags": []
+    },
+    {
+      "id": "trash",
+      "url": "trash.svg",
+      "title": "Trash",
+      "ligature": "trash",
+      "tags": []
+    },
+    {
+      "id": "trouble",
+      "url": "trouble.svg",
+      "title": "Trouble",
+      "ligature": "trouble",
+      "tags": []
+    },
+    {
+      "id": "twitter",
+      "url": "twitter.svg",
+      "title": "Twitter",
+      "ligature": "twitter",
+      "tags": []
+    },
+    {
+      "id": "unarchive",
+      "url": "unarchive.svg",
+      "title": "Unarchive",
+      "ligature": "unarchive",
+      "tags": []
+    },
+    {
+      "id": "underline",
+      "url": "underline.svg",
+      "title": "Underline",
+      "ligature": "underline",
+      "tags": []
+    },
+    {
+      "id": "unlock",
+      "url": "unlock.svg",
+      "title": "Unlock",
+      "ligature": "unlock",
+      "tags": []
+    },
+    {
+      "id": "unmuted",
+      "url": "unmuted.svg",
+      "title": "Unmuted",
+      "ligature": "unmuted",
+      "tags": []
+    },
+    {
+      "id": "unpublished",
+      "url": "unpublished.svg",
+      "title": "Unpublished",
+      "ligature": "unpublished",
+      "tags": []
+    },
+    {
+      "id": "updown",
+      "url": "updown.svg",
+      "title": "Updown",
+      "ligature": "updown",
+      "tags": []
+    },
+    {
+      "id": "upload",
+      "url": "upload.svg",
+      "title": "Upload",
+      "ligature": "upload",
+      "tags": []
+    },
+    {
+      "id": "user-add",
+      "url": "user-add.svg",
+      "title": "User Add",
+      "ligature": "user-add",
+      "tags": []
+    },
+    {
+      "id": "user",
+      "url": "user.svg",
+      "title": "User",
+      "ligature": "user-icon",
+      "tags": []
+    },
+    {
+      "id": "video-camera-off",
+      "url": "video-camera-off.svg",
+      "title": "Video Camera Off",
+      "ligature": "video-camera-off",
+      "tags": []
+    },
+    {
+      "id": "video-camera",
+      "url": "video-camera.svg",
+      "title": "Video Camera",
+      "ligature": "video-camera-on",
+      "tags": []
+    },
+    {
+      "id": "video",
+      "url": "video.svg",
+      "title": "Video",
+      "ligature": "video-online",
+      "tags": []
+    },
+    {
+      "id": "warning-borderless",
+      "url": "warning-borderless.svg",
+      "title": "Warning Borderless",
+      "ligature": "warning-borderless",
+      "tags": []
+    },
+    {
+      "id": "warning",
+      "url": "warning.svg",
+      "title": "Warning",
+      "ligature": "warning-circle",
+      "tags": []
+    },
+    {
+      "id": "windows",
+      "url": "windows.svg",
+      "title": "Windows",
+      "ligature": "windows",
+      "tags": []
+    },
+    {
+      "id": "wordpress",
+      "url": "wordpress.svg",
+      "title": "Wordpress",
+      "ligature": "wordpress",
+      "tags": []
+    },
+    {
+      "id": "x",
+      "url": "x.svg",
+      "title": "X",
+      "ligature": "x",
+      "tags": ["cross", "delete", "remove"]
+    },
+    {
+      "id": "zipped",
+      "url": "zipped.svg",
+      "title": "Zipped",
+      "ligature": "zipped",
+      "tags": []
+    },
+    {
+      "id": "zoom-in",
+      "url": "zoom-in.svg",
+      "title": "Zoom In",
+      "ligature": "zoom-in",
+      "tags": []
+    },
+    {
+      "id": "zoom-out",
+      "url": "zoom-out.svg",
+      "title": "Zoom Out",
+      "ligature": "zoom-out",
+      "tags": []
+    }
+  ]
+}
