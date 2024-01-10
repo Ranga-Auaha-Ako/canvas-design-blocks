@@ -3,16 +3,18 @@ import path from "path";
 import fs from "fs";
 import { nanoid } from "nanoid";
 import { temporaryFile, temporaryWrite, temporaryWriteTask } from "tempy";
-import { PythonShell } from "python-shell";
 import SVGIcons2SVGFontStream from "svgicons2svgfont";
 import svg2ttf from "svg2ttf";
 import ttf2woff from "ttf2woff";
 import wawoff2 from "wawoff2";
 import hash_sum from "hash-sum";
-import { exec, spawnSync } from "child_process";
+import { exec as callbackExec } from "child_process";
 import cliProgress from "cli-progress";
 import Cache from "async-disk-cache";
 import dotenv from "dotenv";
+import pLimit from "p-limit";
+import { promisify } from "util";
+const exec = promisify(callbackExec);
 
 dotenv.config();
 
@@ -26,6 +28,20 @@ interface searchableIcons {
   f: string;
   /** The search terms of the icon. This includes tags and collections. */
   s: string[];
+}
+
+interface MetaFile {
+  name?: string;
+  icons: {
+    id: string;
+    ligature?: string;
+    url: string;
+    title: string;
+    name: string;
+    tags?: string[];
+    term?: string;
+    collections?: string[];
+  }[];
 }
 
 const disableCache = process.env.CANVAS_BLOCKS_DISABLE_FONTCACHE === "true";
@@ -43,10 +59,14 @@ const fontOptions = {
 
 export class IconSet {
   importProgress = new cliProgress.SingleBar(
-    {},
+    {
+      etaBuffer: 100,
+      fps: 5,
+      etaAsynchronousUpdate: true,
+    },
     cliProgress.Presets.shades_classic
   );
-  categories: IconCategory[] = [new IconCategory("default")];
+  categories: IconCategory[] = [];
   constructor(
     public logger: {
       info: (log: string) => void;
@@ -69,7 +89,7 @@ export class IconSet {
         icons: cat.icons.map((icon) => {
           return {
             n: icon.name,
-            f: icon.filename,
+            f: icon.ligature,
             s: [...(icon.tags || []), ...(icon.collections || [])],
           } as searchableIcons;
         }),
@@ -82,6 +102,7 @@ export class IconSet {
       fromNodeModules = false,
       useSubfoldersAsCategories = false,
       categoryName = "default",
+      prefix = "",
     }
   ) {
     const nodeModuleDir = path.join(
@@ -98,9 +119,9 @@ export class IconSet {
         foundIcon.match(/([^/]+)\/([^/]+)\.svg$/) || [];
       const source = fs.readFileSync(foundIcon);
       const icon = new Icon(name, source);
-      let catName = categoryName;
+      let catName = prefix + categoryName;
       if (useSubfoldersAsCategories) {
-        catName = subfolder;
+        catName = prefix + subfolder;
       }
       const category = this.categories.find((cat) => cat.name === catName);
       if (category) {
@@ -114,42 +135,45 @@ export class IconSet {
   }
   importRichFolder(
     folder: string,
-    { fromNodeModules = false } = { fromNodeModules: false }
+    {
+      /** If true, will load the icons from the node_modules folder. Does not affect metaPath */
+      fromNodeModules = false,
+      /** If specified, will load the meta.json file from this path. */
+      metaPath = "",
+    } = {}
   ) {
     const cwd = fromNodeModules
       ? path.join(__dirname, "../../../../", "./node_modules/")
       : __dirname;
-    const foundMeta = glob.sync(`${folder}/**/meta.json`, {
-      cwd,
-      absolute: true,
-    });
+    let foundMeta: string[] = [];
+    if (metaPath) {
+      foundMeta = [metaPath];
+    } else {
+      foundMeta = glob.sync(`${folder}/**/meta.json`, {
+        cwd,
+        absolute: true,
+      });
+    }
     // Read meta.json files
-    const categories = foundMeta.map((foundMeta) => {
-      const source = fs.readFileSync(foundMeta);
-      const folderName =
-        path.dirname(foundMeta).split(path.sep).pop() || "Default";
-      const parsed = JSON.parse(source.toString()) as {
-        name?: string;
-        icons: {
-          id: string;
-          url: string;
-          title: string;
-          name: string;
-          tags?: string[];
-          term?: string;
-          collections?: string[];
-        }[];
-      };
+    const categories = foundMeta.map((foundPath) => {
+      const source = fs.readFileSync(foundPath);
+      const folderName = metaPath
+        ? ""
+        : path.dirname(foundPath).split(path.sep).pop() || "Default";
+      const parsed = JSON.parse(source.toString()) as MetaFile;
       // Read SVG files
       const icons = parsed.icons.map((icon) => {
         const source = fs.readFileSync(
-          path.join(path.dirname(foundMeta), icon.url)
+          path.join(
+            metaPath ? path.resolve(cwd, folder) : path.dirname(foundPath),
+            icon.url
+          )
         );
         return new Icon(icon.title || icon.name, source, icon);
       });
       return new IconCategory(parsed.name || folderName || "default", icons);
     });
-    this.categories = categories;
+    this.categories.push(...categories);
   }
   async createIconFont() {
     // const sortedIcons = this.categories
@@ -160,7 +184,13 @@ export class IconSet {
     // Check cache
     const cached = await cache.get("icon");
     let cachedResult = JSON.parse(cached.value || "undefined") as
-      | { hash?: string; ttf?: string; woff2?: string; woff?: string }
+      | {
+          hash?: string;
+          ttf?: string;
+          woff2?: string;
+          woff?: string;
+          svg?: string;
+        }
       | undefined;
     let cachedHash = cachedResult?.hash?.toString() || "";
     if (
@@ -169,10 +199,12 @@ export class IconSet {
       cachedHash === hash_input.toString() &&
       cachedResult?.ttf &&
       cachedResult?.woff2 &&
-      cachedResult?.woff
+      cachedResult?.woff &&
+      cachedResult?.svg
     ) {
       this.logger.info("Using cached SVG font");
       return {
+        svg: Buffer.from(cachedResult.svg, "base64"),
         ttf: Buffer.from(cachedResult.ttf, "base64"),
         woff: Buffer.from(cachedResult.woff, "base64"),
         woff2: Buffer.from(cachedResult.woff2, "base64"),
@@ -193,30 +225,46 @@ export class IconSet {
     } else {
       this.logger.info("Generating SVG font. This may take a while.");
     }
+    // First, check for ligature collisions
+    // This is not optimal performance, but it's the easiest way to check for collisions
+    const ligs = Object.keys(this.iconSVGMap);
+    const hasCollision = ligs.filter((name, idx) =>
+      ligs.some((name2, idx2) => idx !== idx2 && name2.startsWith(name))
+    );
+    if (hasCollision.length > 0) {
+      this.logger.error("Found ligature collision:" + hasCollision.join(", "));
+      throw new Error("Found ligature collision");
+    }
     this.logger.info("Converting SVGs to minified SVGs");
     this.importProgress.start(Object.keys(this.iconSVGMap).length, 0);
+    const limit = pLimit(13);
     const paths = await Promise.all(
-      Object.entries(this.iconSVGMap).map(async ([name, svg]) => {
-        const filepath = await temporaryWrite(svg);
-        // Run picosvg on this file
-        if (svg.includes("stroke-width:")) {
-          this.logger.info("Found stroke-width in", name);
-        }
-        const res = spawnSync("picosvg", [
-          filepath,
-          "--output_file",
-          filepath,
-          "--clip_to_viewbox",
-          "true",
-          "--drop_unsupported",
-          "true",
-        ]);
-        // await PythonShell.run("picosvg", {
-        //   args: [filepath],
-        // });
-        this.importProgress.increment();
-        return [name, fs.createReadStream(filepath)];
-      })
+      Object.entries(this.iconSVGMap).map(([name, svg]) =>
+        limit(
+          async ([name, svg]) => {
+            const filepath = await temporaryWrite(svg);
+            // Run picosvg on this file
+            if (svg.includes("stroke-width:")) {
+              this.logger.info("Found stroke-width in" + name);
+            }
+            await exec(
+              `picosvg ${filepath} --output_file ${filepath} --clip_to_viewbox true --drop_unsupported true`
+            ).catch((err) => {
+              this.logger.warn(
+                `Error running picosvg on ${name
+                  .split(".")
+                  .join("/")}: ${err.stderr
+                  .split("\n")
+                  .filter((l: string) => l.length > 1)
+                  .pop()}`
+              );
+            });
+            this.importProgress.increment();
+            return [name, fs.createReadStream(filepath)];
+          },
+          [name, svg]
+        )
+      )
     );
     this.importProgress.stop();
     this.logger.info("Creating combined SVG font");
@@ -238,15 +286,22 @@ export class IconSet {
           reject(err);
         });
 
-      paths.forEach(([name, stream]) => {
+      paths.forEach(([name, stream], index) => {
         if (!name.toString()) return;
         // @ts-ignore
-        stream.metadata = { unicode: [name.toString()], name: name.toString() };
+        stream.metadata = {
+          unicode: [
+            String.fromCharCode("\uE000".charCodeAt(0) + index),
+            name.toString(),
+          ],
+          name: name.toString(),
+        };
         fontStream.write(stream);
         this.importProgress.increment();
       });
       fontStream.end();
     });
+    this.importProgress.stop();
     const outputFile = await fontPromise;
     // Convert
     this.logger.info("Converting SVG font to TTF, WOFF, and WOFF2");
@@ -264,12 +319,14 @@ export class IconSet {
         ttf: Buffer.from(ttf.buffer).toString("base64"),
         woff: woff.toString("base64"),
         woff2: Buffer.from(woff2).toString("base64"),
+        svg: fs.readFileSync(outputFile).toString("base64"),
       })
     );
     return {
       ttf: Buffer.from(ttf.buffer),
       woff: woff,
       woff2: Buffer.from(woff2),
+      svg: fs.readFileSync(outputFile),
     };
   }
 }
@@ -280,7 +337,7 @@ export class IconCategory {
     return this.icons.reduce((acc, icon) => {
       return {
         ...acc,
-        [`${this.name}.${icon.filename}`]: icon.svg,
+        [`${this.name}.${icon.ligature}`]: icon.svg,
       };
     }, {} as Record<string, string>);
   }
@@ -292,11 +349,12 @@ export class Icon {
   tags: string[] | undefined;
   term: string | undefined;
   collections: string[] | undefined;
-  filename: string | undefined;
+  ligature: string | undefined;
   constructor(
     public name: string,
     public file: Buffer,
     meta: Partial<{
+      ligature: string;
       id: string;
       title: string;
       tags: string[];
@@ -310,7 +368,8 @@ export class Icon {
     this.tags = meta.tags;
     this.term = meta.term;
     this.collections = meta.collections;
-    this.filename = meta.url?.split("/").pop()?.split(".")[0];
+    this.ligature =
+      meta.ligature || meta.url?.split("/").pop()?.split(".")[0] || this.name;
   }
   get base64() {
     return `data:image/svg+xml;base64,${this.file.toString("base64")}`;

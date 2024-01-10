@@ -2,15 +2,16 @@ import MagicString from "magic-string";
 import { PluginOption, ResolvedConfig } from "vite";
 import { IconSet } from "./icons";
 import fs from "fs";
+import path from "path";
 
 export default function vitePluginIcons(): PluginOption {
   const iconset = new IconSet();
   let buffer: ReturnType<typeof iconset.createIconFont> | undefined;
   const getIconBuffer = async () => {
     if (!buffer) {
-      iconset.importFolder("@instructure/ui-icons/svg", {
+      iconset.importRichFolder("@instructure/ui-icons/svg/Line", {
         fromNodeModules: true,
-        useSubfoldersAsCategories: true,
+        metaPath: path.resolve(__dirname, "../assets/instructure/meta.json"),
       });
       iconset.importRichFolder("../assets/custom");
       buffer = iconset.createIconFont();
@@ -38,7 +39,7 @@ export default function vitePluginIcons(): PluginOption {
     },
     async load(id: string) {
       if (id === resolvedVirtualModuleId) {
-        return `export const meta = ${JSON.stringify(iconset.iconSearchList)};`;
+        return `export default ${JSON.stringify(iconset.iconSearchList)};`;
       }
       if (id === resolvedVirtualStylesModuleId) {
         let assets = {
@@ -49,31 +50,37 @@ export default function vitePluginIcons(): PluginOption {
         if (config.command === "build") {
           iconset.logger = this;
           const b = await getIconBuffer();
+          // This relies on Vite to manage the asset, but __VITE_ASSET__ is not
+          // documented and could change at any time.
+          // Issue: https://github.com/vitejs/vite/issues/13459
           this.emitFile({
             type: "asset",
             needsCodeReference: false,
-            name: `iconFont.ttf`,
-            fileName: "f/iconFont.ttf",
-            source: b.ttf,
-          });
-          this.emitFile({
-            type: "asset",
-            needsCodeReference: false,
-            name: `iconFont.woff`,
-            fileName: "f/iconFont.woff",
-            source: b.woff,
-          });
-          this.emitFile({
-            type: "asset",
-            needsCodeReference: false,
-            name: `iconFont.woff2`,
-            fileName: "f/iconFont.woff2",
-            source: b.woff2,
+            name: `iconFont.svg`,
+            source: b.svg,
           });
           assets = {
-            ttf: "/f/iconFont.ttf",
-            woff: "/f/iconFont.woff",
-            woff2: "/f/iconFont.woff2",
+            ttf: `__VITE_ASSET__${this.emitFile({
+              type: "asset",
+              needsCodeReference: false,
+              name: `iconFont.ttf`,
+              // fileName: "f/iconFont.ttf",
+              source: b.ttf,
+            })}__`,
+            woff: `__VITE_ASSET__${this.emitFile({
+              type: "asset",
+              needsCodeReference: false,
+              name: `iconFont.woff`,
+              // fileName: "f/iconFont.woff",
+              source: b.woff,
+            })}__`,
+            woff2: `__VITE_ASSET__${this.emitFile({
+              type: "asset",
+              needsCodeReference: false,
+              name: `iconFont.woff2`,
+              // fileName: "f/iconFont.woff2",
+              source: b.woff2,
+            })}__`,
           };
         }
         return `@font-face { font-family: 'BlocksIcons';
