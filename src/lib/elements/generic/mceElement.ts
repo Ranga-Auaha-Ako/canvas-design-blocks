@@ -244,7 +244,7 @@ export default abstract class MceElement extends SelectableElement {
     editor: Editor,
     inline = false
   ) {
-    const node = editor.dom.create("div");
+    const node = editor.dom.create(inline ? "span" : "div");
     if (atCursor) {
       const insertNode = editor.selection.getNode();
       const inBlock = insertNode.closest(`*[data-cdb-content="Simple"]`);

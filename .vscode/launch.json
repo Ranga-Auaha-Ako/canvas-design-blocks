@@ -8,8 +8,8 @@
       "command": "yarn build",
       "name": "Vite: build",
       "request": "launch",
-      "type": "node-terminal",
-    }
+      "type": "node-terminal"
+    },
     {
       "command": "yarn dev",
       "name": "Vite: dev",

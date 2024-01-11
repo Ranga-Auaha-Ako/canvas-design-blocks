@@ -96,7 +96,7 @@ export class Icon extends SvelteElement<IconData> {
     editor: Editor,
     highlight: boolean
   ) {
-    const node = this.createInsertNode(atCursor, editor);
+    const node = this.createInsertNode(atCursor, editor, true);
     return new this(state, editor, manager, node);
   }
 

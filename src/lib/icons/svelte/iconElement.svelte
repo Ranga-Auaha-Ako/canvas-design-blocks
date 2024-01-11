@@ -24,6 +24,34 @@
   ) as Colord | undefined;
 
   $: data = getIconData(icon);
+
+  $: elWindow = iconEl?.ownerDocument.defaultView;
+  const findNearestBackgroundColor: (el: HTMLElement) => string = (el) => {
+    if (el === elWindow?.document.body || !elWindow) {
+      return "#0000";
+    }
+    const computedStyle = elWindow.getComputedStyle(el);
+    const backgroundColor = computedStyle.backgroundColor;
+    const c = colord(backgroundColor);
+    if (c.alpha() === 0 && el.parentElement) {
+      return findNearestBackgroundColor(el.parentElement);
+    }
+    return c.toHex();
+  };
+  let iconEl: HTMLSpanElement | undefined;
+  $: shouldEnforceBackground = iconEl
+    ? colord(findNearestBackgroundColor(iconEl)).alpha() === 0
+    : false;
+  $: console.log(
+    shouldEnforceBackground,
+    elWindow,
+    iconEl
+      ? [
+          findNearestBackgroundColor(iconEl),
+          colord(findNearestBackgroundColor(iconEl)),
+        ]
+      : "No iconEl"
+  );
 </script>
 
 {#await data}
@@ -46,6 +74,8 @@
       aria-hidden="true"
       style:color={color?.toHex() || undefined}
       data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
+      class:safeBackground={shouldEnforceBackground}
+      bind:this={iconEl}
     >
       {d.c}.{d.l}
     </span>

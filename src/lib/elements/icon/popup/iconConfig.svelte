@@ -77,7 +77,10 @@
         <!-- Preview area for icon -->
         <div class="icon-preview">
           {#if $iconData.icon}
-            <IconElement icon={$iconData.icon} colour={$iconData.color} />
+            <IconElement
+              icon={$iconData.icon}
+              colorOverride={$iconData.color?.toHex()}
+            />
           {:else}
             <span>?</span>
           {/if}

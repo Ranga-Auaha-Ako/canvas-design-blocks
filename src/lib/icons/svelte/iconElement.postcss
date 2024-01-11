@@ -21,6 +21,9 @@ img.cdb--custom-icon {
 }
 
 .cdb--icon {
-  @apply select-none;
+  @apply select-none align-bottom;
   font-family: "BlocksIcons";
+  &.safeBackground {
+    @apply bg-white rounded;
+  }
 }

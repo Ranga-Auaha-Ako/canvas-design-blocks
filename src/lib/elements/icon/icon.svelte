@@ -1,5 +1,6 @@
 <script lang="ts">
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
+  import { colord } from "colord";
   import { IconData } from "./icon";
   import { createEventDispatcher, onDestroy } from "svelte";
 
@@ -15,10 +16,10 @@
   });
 </script>
 
-<div class="DesignBlocks--Icon {cdbData.theme}">
+<span class="DesignBlocks--Icon {cdbData.theme}">
   {#if cdbData.icon}
     <IconElement icon={cdbData.icon} colorOverride={cdbData.color?.toHex()} />
   {:else}
-    <i className="icon-line icon-empty" aria-hidden="true" />
+    <span class="iconPlaceholder"> &nbsp; </span>
   {/if}
-</div>
+</span>
