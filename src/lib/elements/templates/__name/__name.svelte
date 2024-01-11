@@ -16,11 +16,14 @@
 </script>
 
 <div class="DesignBlocks--__Name {cdbData.theme}">
-  <p contenteditable="false">
-    Hi! I'm the interior of a new component.
-    <ul>
-      <li>Title: {cdbData.title}</li>
-      <a href={cdbData.url}>Url: {cdbData.url} (Note: This is sanitized by pulling directly from the rendered sanitized DOM)</a>
-    </ul>
-  </p>
+  <p contenteditable="false">Hi! I'm the interior of a new component.</p>
+  <ul>
+    <li>Title: {cdbData.title}</li>
+    <li>
+      <a href={cdbData.url}
+        >Url: {cdbData.url} (Note: This is sanitized by pulling directly from the
+        rendered sanitized DOM)</a
+      >
+    </li>
+  </ul>
 </div>

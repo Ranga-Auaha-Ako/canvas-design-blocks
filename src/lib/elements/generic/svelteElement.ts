@@ -41,6 +41,7 @@ export abstract class SvelteElement<
   private dataEl: HTMLElement | undefined;
   private lastContents: ElementComponent<stateDataType, localState> | undefined;
   public customEvents?: Map<string, (detail: any) => any>;
+  public inline: boolean = false;
 
   constructor(
     public editor: Editor = window.tinymce.activeEditor,
@@ -68,7 +69,7 @@ export abstract class SvelteElement<
     this.lastContents = undefined;
     const createDataEl = () => {
       if (!this.dataEl || this.dataEl.parentElement !== this.node) {
-        this.dataEl = document.createElement("div");
+        this.dataEl = document.createElement(this.inline ? "div" : "span");
         this.dataEl.classList.add("cdbData");
         this.dataEl.style.display = "none";
       }

@@ -239,8 +239,12 @@ export default abstract class MceElement extends SelectableElement {
    * @param editor The TinyMCE editor instance
    * @returns The created node
    */
-  public static createInsertNode(atCursor: boolean, editor: Editor) {
-    const node = editor.dom.create("div");
+  public static createInsertNode(
+    atCursor: boolean,
+    editor: Editor,
+    inline = false
+  ) {
+    const node = editor.dom.create(inline ? "span" : "div");
     if (atCursor) {
       const insertNode = editor.selection.getNode();
       const inBlock = insertNode.closest(`*[data-cdb-content="Simple"]`);
@@ -252,8 +256,13 @@ export default abstract class MceElement extends SelectableElement {
       ) {
         editor.dom.add(editor.dom.getRoot(), node);
       } else if (!editor.dom.isBlock(insertNode)) {
-        //  If the cursor is in a non-block element, insert the grid after the element
-        editor.dom.insertAfter(node, insertNode);
+        if (inline) {
+          editor.selection.collapse();
+          editor.selection.getRng().insertNode(node);
+        } else {
+          //  If the cursor is in a non-block element, insert the grid after the element
+          editor.dom.insertAfter(node, insertNode);
+        }
       } else {
         if ((insertNode as HTMLElement)?.dataset.mceCaret === "after") {
           editor.dom.insertAfter(node, insertNode);

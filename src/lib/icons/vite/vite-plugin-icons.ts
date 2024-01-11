@@ -51,10 +51,11 @@ export default function vitePluginIcons(): PluginOption {
         id === resolvedVirtualStylesModuleId ||
         id === resolvedVirtualStylesInlineModuleId
       ) {
+        const base = config.server?.origin + config.base;
         let assets = {
-          ttf: "/@devicons/iconFont.ttf",
-          woff: "/@devicons/iconFont.woff",
-          woff2: "/@devicons/iconFont.woff2",
+          ttf: base + "@devicons/iconFont.ttf",
+          woff: base + "@devicons/iconFont.woff",
+          woff2: base + "@devicons/iconFont.woff2",
         };
         if (config.command === "build") {
           iconset.logger = this;
@@ -107,14 +108,17 @@ export default function vitePluginIcons(): PluginOption {
         switch (req.url) {
           case "/@devicons/iconFont.woff":
             res.setHeader("Content-Type", "font/woff");
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.end(b.woff);
             break;
           case "/@devicons/iconFont.woff2":
             res.setHeader("Content-Type", "font/woff2");
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.end(b.woff2);
             break;
           case "/@devicons/iconFont.ttf":
             res.setHeader("Content-Type", "font/ttf");
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.end(b.ttf);
             break;
           default:

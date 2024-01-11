@@ -4,12 +4,14 @@ export default definePreset({
   name: "canvas-design-blocks",
   options: {},
   handler: async (opts) => {
-    while (!opts.prompts.name || opts.prompts.name === "newBlock") {
-      await prompt({
-        name: "name",
-        text: 'What is the name of this new Block? Use something simple, like "button',
-        default: "newBlock",
-      });
+    let first = true;
+    await prompt({
+      name: "name",
+      text: 'What is the name of this new Block? Use something simple, like "button"',
+      default: "newBlock",
+    });
+    if (!opts.prompts.name) {
+      return;
     }
     await extractTemplates({
       templates: "src/lib/elements/templates",
