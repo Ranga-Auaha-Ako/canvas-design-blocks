@@ -20,7 +20,7 @@
 
 <style lang="postcss">
   .pane {
-    @apply bg-white border-b p-3 py-2 relative w-full;
+    @apply bg-white border-b px-2.5 py-2 relative w-full;
     @apply grid justify-items-start;
     @apply gap-2;
     grid-template-columns: 1fr auto;

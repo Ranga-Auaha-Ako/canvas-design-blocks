@@ -20,6 +20,7 @@ export class GridManager extends ElementManager {
   public elementName: string = "Grid";
   public elementClass: ElementManager["elementClass"] = Grid;
   public selector = ".canvas-grid-editor";
+  icon = "Internal.canvas-design-blocks";
 
   constructor(
     public readonly state: stateObject,

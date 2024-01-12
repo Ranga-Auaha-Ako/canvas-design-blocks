@@ -10,6 +10,7 @@ export class ButtonManager extends ElementManager {
   public elementClass: ElementManager["elementClass"] = Button;
   selector = ".CDB--Button[data-cdb-version]";
   elementName = "Button";
+  icon = "Canvas.link";
 
   constructor(
     public readonly state: stateObject,

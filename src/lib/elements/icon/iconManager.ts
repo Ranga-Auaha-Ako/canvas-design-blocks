@@ -10,6 +10,7 @@ export class IconManager extends ElementManager {
   public elementClass: ElementManager["elementClass"] = Icon;
   selector = ".CDB--Icon[data-cdb-version]";
   elementName = "Icon";
+  icon = "Canvas.button-and-icon-maker";
 
   constructor(
     public readonly state: stateObject,

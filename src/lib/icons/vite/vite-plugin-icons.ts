@@ -10,7 +10,10 @@ iconset.importRichFolder("@instructure/ui-icons/svg/Line", {
   metaPath: path.resolve(__dirname, "../assets/instructure/meta.json"),
 });
 iconset.importRichFolder("../assets/custom");
-
+iconset.importFolder("../assets/internal", {
+  categoryName: "Internal",
+  visible: false,
+});
 export default function vitePluginIcons(): PluginOption {
   const getIconBuffer = async () => {
     if (!buffer) {

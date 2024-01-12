@@ -98,9 +98,12 @@
             add(manager);
           }}
         >
-          <svelte:fragment slot="name"
-            >Add {manager.elementName}</svelte:fragment
-          >
+          <svelte:fragment slot="name">
+            {#if manager.icon}
+              <span class="cdb--icon toolbar-icon">{manager.icon}</span>
+            {/if}
+            Add {manager.elementName}
+          </svelte:fragment>
         </ElementPanel>
       {/each}
       <div class="info-panel">
@@ -147,6 +150,12 @@
         @apply text-right flex-grow;
       }
     }
+  }
+  .toolbar-icon {
+    margin-right: 0.2rem;
+    font-size: 0.9rem;
+    line-height: 1.3em;
+    vertical-align: text-bottom;
   }
 
   .advanced-settings {

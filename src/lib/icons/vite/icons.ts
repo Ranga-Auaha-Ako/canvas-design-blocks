@@ -34,6 +34,7 @@ interface searchableIcons {
 
 interface MetaFile {
   name?: string;
+  visible?: boolean;
   icons: {
     id: string;
     ligature?: string;
@@ -88,7 +89,7 @@ export class IconSet {
     }, {} as Record<string, string>);
   }
   get iconSearchList() {
-    return this.categories.map((cat) => {
+    return this.visibleCategories.map((cat) => {
       return {
         name: cat.name,
         icons: cat.icons.map((icon) => {
@@ -102,12 +103,16 @@ export class IconSet {
       };
     });
   }
+  get visibleCategories() {
+    return this.categories.filter((cat) => cat.icons.length > 0 && cat.visible);
+  }
   importFolder(
     folder: string,
     {
       fromNodeModules = false,
       useSubfoldersAsCategories = false,
       categoryName = "default",
+      visible = true,
       prefix = "",
     }
   ) {
@@ -117,7 +122,7 @@ export class IconSet {
       "./node_modules/"
     );
     const found = glob.sync(`${folder}/**/*.svg`, {
-      cwd: fromNodeModules ? nodeModuleDir : undefined,
+      cwd: fromNodeModules ? nodeModuleDir : __dirname,
       absolute: true,
     });
     found.forEach((foundIcon) => {
@@ -133,8 +138,7 @@ export class IconSet {
       if (category) {
         category.icons.push(icon);
       } else {
-        const newCategory = new IconCategory(catName);
-        newCategory.icons.push(icon);
+        const newCategory = new IconCategory(catName, [icon], visible);
         this.categories.push(newCategory);
       }
     });
@@ -177,7 +181,11 @@ export class IconSet {
         );
         return new Icon(icon.title || icon.name, source, icon);
       });
-      return new IconCategory(parsed.name || folderName || "default", icons);
+      return new IconCategory(
+        parsed.name || folderName || "default",
+        icons,
+        parsed.visible
+      );
     });
     this.categories.push(...categories);
   }
@@ -340,7 +348,11 @@ export class IconSet {
 }
 
 export class IconCategory {
-  constructor(public name: string, public icons: Icon[] = []) {}
+  constructor(
+    public name: string,
+    public icons: Icon[] = [],
+    public visible: boolean = true
+  ) {}
   get iconSVGMap() {
     return this.icons.reduce((acc, icon) => {
       return {

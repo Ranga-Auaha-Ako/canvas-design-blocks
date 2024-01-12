@@ -9,6 +9,7 @@ export class ButtonBarManager extends ElementManager {
   public elementClass: ElementManager["elementClass"] = ButtonBar;
   selector = ".CDB--ButtonBar[data-cdb-version]";
   elementName = "Button Bar";
+  icon = "Internal.steps";
 
   constructor(
     public readonly state: stateObject,

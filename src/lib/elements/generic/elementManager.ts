@@ -14,6 +14,7 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   abstract elementClass: Omit<typeof MceElement, "new"> & MceElementStatics;
   // Details about the element
   abstract elementName: string;
+  abstract icon?: string;
 
   public set = this._elements.set;
   public update = this._elements.update;
