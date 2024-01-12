@@ -290,7 +290,7 @@ export class IconSet {
           resolve(tempSvgFile);
         })
         .on("error", function (err) {
-          _this.logger.warn("Error writing SVG font", err);
+          _this.logger.warn("Error writing SVG font: " + err);
           reject(err);
         });
 

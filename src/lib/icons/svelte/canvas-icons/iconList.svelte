@@ -141,7 +141,7 @@
               }}
             >
               <span class="cdb--icon">
-                {category.name}.{icon.l}
+                {`${category.name}.${icon.l}`}
               </span>
             </button>
           {/each}

@@ -4,20 +4,21 @@ import { IconSet } from "./icons";
 import fs from "fs";
 import path from "path";
 
+export const iconset = new IconSet();
+iconset.importRichFolder("@instructure/ui-icons/svg/Line", {
+  fromNodeModules: true,
+  metaPath: path.resolve(__dirname, "../assets/instructure/meta.json"),
+});
+iconset.importRichFolder("../assets/custom");
+
 export default function vitePluginIcons(): PluginOption {
-  const iconset = new IconSet();
-  let buffer: ReturnType<typeof iconset.createIconFont> | undefined;
   const getIconBuffer = async () => {
     if (!buffer) {
-      iconset.importRichFolder("@instructure/ui-icons/svg/Line", {
-        fromNodeModules: true,
-        metaPath: path.resolve(__dirname, "../assets/instructure/meta.json"),
-      });
-      iconset.importRichFolder("../assets/custom");
       buffer = iconset.createIconFont();
     }
     return buffer;
   };
+  let buffer: ReturnType<typeof iconset.createIconFont> | undefined;
   const virtualModuleId = "virtual:blocks-icons";
   const virtualStylesModuleId = "virtual:blocks-icons.css";
   const virtualStylesInlineModuleId = "virtual:blocks-icons-editor-styles";
@@ -63,12 +64,14 @@ export default function vitePluginIcons(): PluginOption {
           // This relies on Vite to manage the asset, but __VITE_ASSET__ is not
           // documented and could change at any time.
           // Issue: https://github.com/vitejs/vite/issues/13459
-          this.emitFile({
-            type: "asset",
-            needsCodeReference: false,
-            name: `iconFont.svg`,
-            source: b.svg,
-          });
+
+          // Don't emit this svg file - it's not needed and is very large.
+          // this.emitFile({
+          //   type: "asset",
+          //   needsCodeReference: false,
+          //   name: `iconFont.svg`,
+          //   source: b.svg,
+          // });
           assets = {
             ttf: `__VITE_ASSET__${this.emitFile({
               type: "asset",

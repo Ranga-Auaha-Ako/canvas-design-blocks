@@ -1,18 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import {
-    CustomIconState,
-    IconState,
-    IconType,
-    getIconData,
-    isCustomIcon,
-    isInstIcon,
-    isUniversalIcon,
-    loadCustomIcons,
-  } from "./iconPicker";
-  import { customIcon, iconData, instIcon } from "./canvas-icons/icons";
+  import { IconState, getIconData, isCustomIcon } from "./iconPicker";
   import { colord, type Colord } from "colord";
-  const dispatch = createEventDispatcher();
 
   export let icon: IconState;
   export let colorOverride: string | undefined = undefined;
@@ -52,32 +40,17 @@
         ]
       : "No iconEl"
   );
+  // This is required because in some cases Safari doesn't normalize the node to have a single inner text, and having split text nodes breaks the ligatures holding the icon together.
+  $: if (iconEl && data?.c && data?.l) iconEl.normalize();
 </script>
 
-{#await data}
+{#if data}
   <span
     class="cdb--icon"
-    style:color={color?.toHex() || undefined}
     aria-hidden="true"
+    style:color={color?.toHex() || undefined}
     data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
+    class:safeBackground={shouldEnforceBackground}
+    bind:this={iconEl}>{`${data.c}.${data.l}`}</span
   >
-    {#if isCustomIcon(icon) && icon.lig}
-      {icon.lig}
-    {:else}
-      &nbsp;
-    {/if}
-  </span>
-{:then d}
-  {#if d}
-    <span
-      class="cdb--icon"
-      aria-hidden="true"
-      style:color={color?.toHex() || undefined}
-      data-mce-style={color ? `color: ${color?.toHex()}` : undefined}
-      class:safeBackground={shouldEnforceBackground}
-      bind:this={iconEl}
-    >
-      {d.c}.{d.l}
-    </span>
-  {/if}
-{/await}
+{/if}

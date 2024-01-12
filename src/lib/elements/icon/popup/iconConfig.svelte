@@ -50,32 +50,28 @@
   <div class="main">
     <div class="flex gap-4 justify-center">
       <div class="col flex-grow flex-shrink">
-        {#await icons}
-          <span class="cdb--icon icon-loading">Canvas.refresh</span>
-        {:then allIcons}
-          <div class="iconListContainer">
-            <IconList
-              icons={allIcons}
-              options={{
-                editColor: true,
-                card: false,
-                maxHeight: "60vh",
-              }}
-              on:colorChange={({ detail }) => {
-                if (detail.color) $iconData.color = colord(detail.color);
-              }}
-              on:selectIcon={({ detail }) => {
-                $iconData.icon = {
-                  id: detail.icon.i,
-                  type: detail.type,
-                };
-                if (detail.color) $iconData.color = colord(detail.color);
-                icon.deselectAll();
-              }}
-              asModal={true}
-            />
-          </div>
-        {/await}
+        <div class="iconListContainer">
+          <IconList
+            {icons}
+            options={{
+              editColor: true,
+              card: false,
+              maxHeight: "60vh",
+            }}
+            on:colorChange={({ detail }) => {
+              if (detail.color) $iconData.color = colord(detail.color);
+            }}
+            on:selectIcon={({ detail }) => {
+              $iconData.icon = {
+                id: detail.icon.i,
+                type: detail.type,
+              };
+              if (detail.color) $iconData.color = colord(detail.color);
+              icon.deselectAll();
+            }}
+            asModal={true}
+          />
+        </div>
       </div>
       <div class="col w-24 p-2 flex-shrink-0">
         <!-- Preview area for icon -->
@@ -89,17 +85,11 @@
             <span>?</span>
           {/if}
         </div>
-        {#await iconInfo}
-          <p>Loading...</p>
-        {:then info}
-          {#if info}
-            <p class="text-center text-xs">
-              {info.c}: {info.n}
-            </p>
-          {/if}
-        {:catch error}
-          <p class="text-center text-xs">Error loading icon info</p>
-        {/await}
+        {#if iconInfo}
+          <p class="text-center text-xs">
+            {iconInfo.c}: {iconInfo.n}
+          </p>
+        {/if}
       </div>
     </div>
   </div>

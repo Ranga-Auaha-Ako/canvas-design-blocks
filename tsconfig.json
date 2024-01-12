@@ -23,6 +23,7 @@
   "exclude": [
     "./dist/**/*",
     "./public/**/*",
+    "./src/lib/elements/templates/__**/*",
     "./node_modules/**/*",
     "./*.config.js",
     "./*.config.cjs",
