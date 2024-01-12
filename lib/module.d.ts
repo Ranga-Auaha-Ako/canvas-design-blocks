@@ -12,8 +12,15 @@ declare module "virtual:inst-env";
 
 declare module "virtual:blocks-icons" {
   import type { IconSet as IconSetType } from "$lib/icons/vite/icons";
+  import { iconset } from "$lib/icons/vite/vite-plugin-icons";
   export default IconSetType.prototype.iconSearchList;
+  const categoryNames = iconset.categories.map(
+    (category) => category.name as const
+  ) as const;
+  export type IconCategories = categoryNames;
 }
 declare module "virtual:blocks-icons-editor-styles" {
   export default string;
 }
+
+declare module "async-disk-cache";

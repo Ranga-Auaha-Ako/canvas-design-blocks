@@ -23,7 +23,17 @@ img.cdb--custom-icon {
 .cdb--icon {
   @apply select-none align-bottom;
   font-family: "BlocksIcons";
+  display: inline-block;
+  font-feature-settings: "liga" on;
   &.safeBackground {
     @apply bg-white rounded ring-2 ring-white;
   }
+}
+_::-webkit-full-page-media,
+_:future,
+:root .cdb--icon {
+  /* Safari-specific fixes */
+  min-height: 1em;
+  min-width: 1em;
+  text-align: left;
 }

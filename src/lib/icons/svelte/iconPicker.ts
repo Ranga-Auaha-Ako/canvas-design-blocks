@@ -47,8 +47,9 @@ export const isInstIcon = (
 ): icon is InstIconState => !isCustomIcon(icon);
 
 // import { icons as InstIcons } from "virtual:inst-icons";
-const iconPromise = import("virtual:blocks-icons").then((i) => i.default);
-export type category = Awaited<typeof iconPromise>[0];
+import icons from "virtual:blocks-icons";
+export { icons };
+export type category = (typeof icons)[0];
 export type icon = category["icons"][0];
 
 export const instClassToId = (
@@ -56,22 +57,19 @@ export const instClassToId = (
   type: IconType.Solid | IconType.Line
 ) => `Inst.${classStr}.${type}`;
 
-export { iconPromise as icons };
-
-export async function getIconData(
+export function getIconData(
   icon:
     | Pick<InstIconState, "type" | "class">
     | Pick<CustomIconState, "type" | "id">
     | Pick<universalIconState, "type" | "id">
-): Promise<(icon & { c: string }) | undefined> {
-  const ics = await iconPromise;
+): (icon & { c: string }) | undefined {
   if (isCustomIcon(icon) || isUniversalIcon(icon)) {
-    return ics
+    return icons
       .flatMap((c) => c.icons.map((i) => ({ ...i, c: c.name })))
       .find((ic) => ic.i === icon.id);
   } else {
     // Icon is an instructure icon. Attempt to find it in the iconset.
-    const instCat = ics.find((c) => c.name === "Canvas");
+    const instCat = icons.find((c) => c.name === "Canvas");
     if (!instCat) return undefined;
     // Get new ID
     // Old ID: Inst.admin.1 (category.id.type)
