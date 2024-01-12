@@ -7,7 +7,8 @@
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
-  import { getIconData } from "$lib/icons/svelte/iconPicker";
+  import { getIconData, icons } from "$lib/icons/svelte/iconPicker";
+  import IconList from "$lib/icons/svelte/canvas-icons/iconList.svelte";
 
   export let props: { icon: Icon };
   export let isModal: boolean = false;
@@ -49,29 +50,32 @@
   <div class="main">
     <div class="flex gap-4 justify-center">
       <div class="col flex-grow flex-shrink">
-        <ColourPicker
-          label="Colour"
-          id={nanoid() + "-setting-background"}
-          bind:colour={$iconData.color}
-          contrastColour={colord("#ffffff")}
-          showNone={false}
-          asModal={isModal}
-        />
-        <button
-          class="Button"
-          on:click={() => {
-            iconPicker.open();
-          }}>Select Icon</button
-        >
-        {#if !isReadable}
-          <div class="colour-alert" transition:slide|global>
-            <p class="alert-details">
-              <span class="font-bold">Warning:</span> This icon may be hard to see
-              for some students. Consider using a darker colour to improve contrast
-              against the white background.
-            </p>
+        {#await icons}
+          <span class="cdb--icon icon-loading">Canvas.refresh</span>
+        {:then allIcons}
+          <div class="iconListContainer">
+            <IconList
+              icons={allIcons}
+              options={{
+                editColor: true,
+                card: false,
+                maxHeight: "60vh",
+              }}
+              on:colorChange={({ detail }) => {
+                if (detail.color) $iconData.color = colord(detail.color);
+              }}
+              on:selectIcon={({ detail }) => {
+                $iconData.icon = {
+                  id: detail.icon.i,
+                  type: detail.type,
+                };
+                if (detail.color) $iconData.color = colord(detail.color);
+                icon.deselectAll();
+              }}
+              asModal={true}
+            />
           </div>
-        {/if}
+        {/await}
       </div>
       <div class="col w-24 p-2 flex-shrink-0">
         <!-- Preview area for icon -->
@@ -123,6 +127,9 @@
     .icon-preview {
       @apply rounded shadow-inner bg-gray-50 flex items-center justify-center aspect-square;
       font-size: 3em;
+    }
+    .icon-loading {
+      @apply text-3xl animate-spin block text-center opacity-50 mx-auto p-4;
     }
   }
 </style>

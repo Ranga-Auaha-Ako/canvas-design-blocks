@@ -122,7 +122,7 @@ export class Icon extends SvelteElement<IconData> {
           crossAxis: true,
         },
         autoPlacement: {
-          allowedPlacements: ["top", "bottom"],
+          allowedPlacements: ["top", "bottom", "right"],
         },
         offset: 15,
       },
