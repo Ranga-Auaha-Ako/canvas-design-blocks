@@ -26,6 +26,7 @@
       color?: string;
       type: IconType.Custom;
     };
+    colorChange: { color: string };
   }>();
   const selectIcon = (data: { icon: icon; color?: string }) => {
     dispatch("selectIcon", { ...data, type: IconType.Custom });
@@ -45,6 +46,7 @@
       },
     }
   );
+  $: dispatch("colorChange", { color: $iconColor.toHex() });
   let results = icons;
   const filterIcons = debounce(
     (query: string) => {
@@ -108,7 +110,11 @@
     </p>
   </div>
 {/if}
-<ScrollContainer bind:this={scroller}>
+<ScrollContainer
+  bind:this={scroller}
+  maxHeight={options.maxHeight}
+  card={options.card === undefined ? true : options.card}
+>
   <div
     class="categories"
     style:color={options.editColor ? $iconColor.toHex() : "black"}
@@ -160,7 +166,7 @@
   }
 
   .colour-alert {
-    @apply mb-4 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition;
+    @apply mb-2 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
     p {
       @apply m-0;
     }
@@ -187,7 +193,7 @@
     .category {
       @apply flex flex-col gap-2;
       h3 {
-        @apply text-lg font-bold w-full text-black;
+        @apply text-lg font-bold w-full text-black mt-0;
       }
     }
   }

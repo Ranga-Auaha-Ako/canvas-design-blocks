@@ -9,6 +9,7 @@
     }, 50);
   };
   export let card = true;
+  export let maxHeight = "650px";
 
   let container: HTMLDivElement;
   let containerScroll = 0;
@@ -17,7 +18,12 @@
   update();
 </script>
 
-<div class="overflow" class:active={scrollDistance > 0} class:card>
+<div
+  class="overflow"
+  class:active={scrollDistance > 0}
+  class:card
+  style:--maxHeight={maxHeight}
+>
   <div
     class="scroll-container"
     bind:this={container}
@@ -46,7 +52,7 @@
     }
   }
   .scroll-container {
-    @apply overflow-y-auto relative p-2;
-    max-height: calc(650px - 9rem);
+    @apply overflow-y-auto relative p-2 pt-0;
+    max-height: calc(var(--maxHeight) - 9rem);
   }
 </style>

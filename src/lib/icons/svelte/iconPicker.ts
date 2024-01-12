@@ -135,5 +135,7 @@ export function getIconState(
 }
 
 export interface IconPickerOptions {
+  card?: boolean;
   editColor?: boolean;
+  maxHeight?: string;
 }
