@@ -103,13 +103,13 @@ export const loadApp = async () => {
 
   // Create Element Managers
   const managers = [
-    GridManager,
+    ButtonBarManager,
     ButtonManager,
+    GridManager,
+    CourseHeaderManager,
+    IconManager,
     ImageCardManager,
     ProfilesManager,
-    CourseHeaderManager,
-    ButtonBarManager,
-    IconManager,
   ];
   loaded_blocks = managers.map((el) => new el(state, editor));
   // Migrate old blocks
