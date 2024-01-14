@@ -96,12 +96,13 @@
   {:else if visibleItems.length > 0}
     <!-- Current position is hidden -->
     <p class="no-published">
-      The module you are currently on is hidden. Try adding some to your course!
+      The module you are currently on is hidden. Try making it visible or adding
+      some buttons here.
     </p>
   {:else}
     <!-- No items -->
     <p class="no-published">
-      No Published Modules Found! Try adding some to your course to see this.
+      No buttons are visible. Try adding some by clicking here!
     </p>
   {/if}
 </div>
