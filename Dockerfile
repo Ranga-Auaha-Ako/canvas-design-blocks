@@ -4,6 +4,8 @@ FROM node:20.10.0 AS build
 WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "yarn.lock", "./"]
 RUN yarn
+RUN apt-get update || : && apt-get install python -y
+RUN pip install picosvg
 COPY . .
 
 ARG CANVAS_BLOCKS_BASE_DOMAINS
