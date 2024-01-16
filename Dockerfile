@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "yarn.lock", "./"]
 RUN yarn
 RUN apt-get update || : && apt-get install python3 python3-pip -y
-RUN pip3 install picosvg
+RUN pip3 install picosvg --break-system-packages
 COPY . .
 
 ARG CANVAS_BLOCKS_BASE_DOMAINS
