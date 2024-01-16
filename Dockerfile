@@ -1,12 +1,21 @@
 # Dockerfile
+# STEP 1: Copy icon repository
+ARG CANVAS_BLOCKS_ICONS_LIBRARY_IMAGE=busybox
+FROM $CANVAS_BLOCKS_ICONS_LIBRARY_IMAGE as icons
+
+
+# STEP 2: Install and configure Yarn
 FROM node:20.10.0 AS build
 
 WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "yarn.lock", "./"]
 RUN yarn
+
+# Step 4: Build icon repository
 RUN apt-get update || : && apt-get install python3 python3-pip -y
 RUN pip3 install picosvg --break-system-packages
 COPY ./src/lib/icons ./src/lib/icons
+COPY --from=icons /icons ./src/lib/icons/assets/custom
 RUN yarn icons
 COPY . .
 
