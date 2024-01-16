@@ -15,6 +15,7 @@ import dotenv from "dotenv";
 import pLimit from "p-limit";
 import { promisify } from "util";
 const exec = promisify(callbackExec);
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 dotenv.config();
 
