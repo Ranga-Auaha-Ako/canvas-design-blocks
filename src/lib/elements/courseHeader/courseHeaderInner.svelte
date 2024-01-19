@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { HeaderData } from "./courseHeader";
+  import { HeaderData, HeaderLevel } from "./courseHeader";
   import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -23,14 +23,34 @@
   {/if}
   <div class="overlay">
     <!-- svelte-ignore a11y-missing-content -->
-    <h3
-      class="headerTitle"
-      contenteditable="true"
-      bind:innerText={cdbData.title}
-      on:input={() => {
-        dispatch("update", cdbData);
-      }}
-    />
+    {#if !cdbData.level || cdbData.level === HeaderLevel.h2}
+      <h2
+        class="headerTitle"
+        contenteditable="true"
+        bind:innerText={cdbData.title}
+        on:input={() => {
+          dispatch("update", cdbData);
+        }}
+      />
+    {:else if cdbData.level === HeaderLevel.h3}
+      <h3
+        class="headerTitle"
+        contenteditable="true"
+        bind:innerText={cdbData.title}
+        on:input={() => {
+          dispatch("update", cdbData);
+        }}
+      />
+    {:else}
+      <h4
+        class="headerTitle"
+        contenteditable="true"
+        bind:innerText={cdbData.title}
+        on:input={() => {
+          dispatch("update", cdbData);
+        }}
+      />
+    {/if}
     <div
       class="headerOverview"
       contenteditable="true"

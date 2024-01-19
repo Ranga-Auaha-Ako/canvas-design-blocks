@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { type CourseHeader, ValidThemes, HeaderTheme } from "../courseHeader";
+  import {
+    type CourseHeader,
+    ValidThemes,
+    HeaderTheme,
+    ValidLevels,
+    HeaderLevel,
+  } from "../courseHeader";
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
@@ -105,6 +111,14 @@
         choices={ValidThemes}
         labels={Object.keys(HeaderTheme)}
         bind:value={$headerData.theme}
+      />
+    </div>
+    <div>
+      <ButtonRadio
+        title="Header Level"
+        choices={ValidLevels}
+        labels={Object.keys(HeaderLevel)}
+        bind:value={$headerData.level}
       />
     </div>
     <button class="Button" on:click={openPicker}>Select image</button>
