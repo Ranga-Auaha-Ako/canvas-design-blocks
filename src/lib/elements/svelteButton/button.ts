@@ -46,6 +46,7 @@ export interface ButtonData {
   size: ButtonSize;
   icon: IconState | undefined;
   color?: Colord;
+  textColor?: Colord;
   fullWidth?: boolean;
 }
 
@@ -58,6 +59,7 @@ class ButtonState implements SvelteState<ButtonData> {
     title: "",
     label: "Button Text",
     color: colord(theme.primary),
+    textColor: colord("#fff"),
     size: DefaultSize,
     url: "#",
     target: "_self",
@@ -79,6 +81,7 @@ class ButtonState implements SvelteState<ButtonData> {
       url: ButtonState.defaultState.url,
       target: ButtonState.defaultState.target,
       color: ButtonState.defaultState.color,
+      textColor: ButtonState.defaultState.textColor,
       fullWidth: ButtonState.defaultState.fullWidth,
       icon: undefined,
     };
@@ -117,6 +120,9 @@ class ButtonState implements SvelteState<ButtonData> {
         title: unsafeState.title || ButtonState.defaultState.title,
         label: unsafeState.label || ButtonState.defaultState.label,
         color: color,
+        textColor: unsafeState.textColor
+          ? colord(unsafeState.textColor)
+          : ButtonState.defaultState.textColor,
         size: size || DefaultSize,
         url: ButtonState.defaultState.url,
         target: unsafeState.target || ButtonState.defaultState.target,

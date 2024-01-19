@@ -19,12 +19,15 @@
   class="DesignBlocks--Btn {cdbData.size}"
   class:Button--full={cdbData.fullWidth}
   style:background-color={cdbData.color?.toHex()}
-  style:color="#fff"
+  style:color={cdbData.textColor?.toHex() || "#fff"}
   href={cdbData.url}
   target={cdbData.target !== "_self" ? cdbData.target : undefined}
 >
   {#if cdbData.icon}
-    <IconElement icon={cdbData.icon} colorOverride={"#fff"} />
+    <IconElement
+      icon={cdbData.icon}
+      colorOverride={cdbData.textColor?.toHex() || "#fff"}
+    />
   {/if}
   <span class="text">{cdbData.label}</span>
 </a>
