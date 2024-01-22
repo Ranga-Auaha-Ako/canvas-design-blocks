@@ -20,9 +20,11 @@
       content: "Canvas.drag-handle";
       font-family: "BlocksIcons";
       cursor: pointer;
-      &:has(:focus-within),
-      &[data-mce-selected],
-      &:active {
+    }
+    &:has(:focus-visible),
+    &[data-mce-selected],
+    &:active {
+      &:before {
         @apply visible opacity-100 scale-110 -translate-x-3;
         opacity: 1;
         pointer-events: auto;
