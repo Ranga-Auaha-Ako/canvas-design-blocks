@@ -75,7 +75,10 @@
                 {#if item.icon}
                   <IconElement
                     icon={item.icon}
-                    colorOverride={index <= visiblePosition ? "#fff" : "#000"}
+                    colorOverride={index <= visiblePosition ||
+                    cdbData.theme !== ButtonBarTheme.Progress
+                      ? "#fff"
+                      : "#000"}
                   />
                 {:else}
                   <IconElement
@@ -83,7 +86,10 @@
                       type: IconType.Line,
                       id: instClassToId("module", IconType.Line),
                     }}
-                    colorOverride={index <= visiblePosition ? "#fff" : "#000"}
+                    colorOverride={index <= visiblePosition ||
+                    cdbData.theme !== ButtonBarTheme.Progress
+                      ? "#fff"
+                      : "#000"}
                   />
                 {/if}
               </span>
