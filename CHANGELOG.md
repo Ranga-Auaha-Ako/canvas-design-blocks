@@ -18,6 +18,10 @@ Please write a brief description at the top of each version in "Overview". This 
 
 - #48: New "Button Bar" block
 - #29: New "Icon" element
+- #9: Drag handle for grids
+- #58: Select header level in Course Headers
+- #46: Improve blank profile UX
+- Allow users to hide "Bio" title in profile
 
 ### Changed
 
