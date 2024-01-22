@@ -28,7 +28,7 @@
       @apply block w-4 h-4 leading-none;
     } */
     & h3 {
-      @apply block m-0 text-base text-left;
+      @apply block m-0 text-sm text-left;
     }
     /* .add-button {
       @apply h-full px-2;

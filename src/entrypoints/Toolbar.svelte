@@ -154,7 +154,7 @@
   .toolbar-icon {
     margin-right: 0.2rem;
     font-size: 0.9rem;
-    line-height: 1.3em;
+    line-height: 1.15em;
     vertical-align: text-bottom;
   }
 
