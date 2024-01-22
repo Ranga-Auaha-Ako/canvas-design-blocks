@@ -14,10 +14,11 @@ export type SvelteStateClass<State> = new (
   node?: HTMLElement
 ) => SvelteState<State>;
 
-export interface ElementComponent<stateDataType, localState>
+export interface ElementComponent<stateDataType, localState, instanceType>
   extends SvelteComponent<{
     cdbData: stateDataType;
     localState: Writable<localState>;
+    instance?: instanceType;
     destroyHandler: () => void;
   }> {}
 
@@ -39,7 +40,13 @@ export abstract class SvelteElement<
   public static markupVersion = "1.0.0";
   public SvelteState: SvelteState<stateDataType>;
   private dataEl: HTMLElement | undefined;
-  private lastContents: ElementComponent<stateDataType, localState> | undefined;
+  private lastContents:
+    | ElementComponent<
+        stateDataType,
+        localState,
+        SvelteElement<stateDataType, localState>
+      >
+    | undefined;
   public customEvents?: Map<string, (detail: any) => any>;
   public inline: boolean = false;
 
@@ -48,7 +55,11 @@ export abstract class SvelteElement<
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<
-      ElementComponent<stateDataType, localState>
+      ElementComponent<
+        stateDataType,
+        localState,
+        SvelteElement<stateDataType, localState>
+      >
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
@@ -127,6 +138,7 @@ export abstract class SvelteElement<
             props: {
               cdbData: elState,
               localState: localState,
+              instance: this as SvelteElement<stateDataType, localState>,
               destroyHandler: () => {
                 this.destroyHandler();
               },

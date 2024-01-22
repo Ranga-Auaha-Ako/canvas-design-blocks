@@ -1,6 +1,6 @@
 <script lang="ts">
   import theme from "$lib/util/theme";
-  import { ProfileData } from "./profileGrid";
+  import { ProfileData, type ProfileGrid } from "./profileGrid";
   import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -8,6 +8,7 @@
   export let cdbData: ProfileData[];
   // svelte-ignore unused-export-let
   export let localState: any;
+  export let instance: ProfileGrid;
   export let destroyHandler: () => void;
 
   onDestroy(() => {
@@ -28,8 +29,8 @@
           class="profile-photo"
           src={profile.thumbnail}
           alt="Photo of {profile.firstNameLastName}"
-          on:click={() => {
-            dispatch("changePhoto", profile);
+          on:click|nonpassive|stopPropagation={() => {
+            instance.changePhoto({ detail: profile });
           }}
           on:keydown={(e) => {
             if (e.key === "Enter") {
@@ -78,7 +79,9 @@
     </div>
     {#if profile.showOverview}
       <div class="bio">
-        <h4>Bio</h4>
+        {#if profile.showBioTitle}
+          <h4>Bio</h4>
+        {/if}
         <div
           contenteditable="true"
           class="bioContent"
