@@ -1,4 +1,5 @@
 <script lang="ts">
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { HeaderData, HeaderLevel, HeaderTheme } from "./courseHeader";
   import { createEventDispatcher, onDestroy } from "svelte";
 
@@ -19,6 +20,14 @@
 <div class="headerInner {cdbData.theme}" tabindex="0">
   {#if cdbData.image}
     {#if cdbData.theme === HeaderTheme["Modern"]}
+      {#if cdbData.icon}
+        <div class="iconComponent">
+          <IconElement icon={cdbData.icon}></IconElement>
+        </div>
+        <div class="iconOverlay">
+          <IconElement icon={cdbData.icon}></IconElement>
+        </div>
+      {/if}
       <div class="imageComponent">
         <img
           class="headerImage"

@@ -9,6 +9,8 @@ import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import HeaderConfig from "./popup/headerConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import { sanitizeUrl } from "@braintree/sanitize-url";
+import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
+
 export enum HeaderTheme {
   Light = "HeaderTheme-light",
   Dark = "HeaderTheme-dark",
@@ -40,6 +42,7 @@ export interface HeaderData {
   }[];
   theme: HeaderTheme;
   level?: HeaderLevel;
+  icon?: IconState;
 }
 
 class HeaderState implements SvelteState<HeaderData> {
@@ -94,6 +97,8 @@ class HeaderState implements SvelteState<HeaderData> {
     state.overview =
       node?.querySelector(".headerOverview")?.innerHTML ||
       HeaderState.defaultState.overview;
+    let icon = getIconState(unsafeState?.icon);
+    if (icon) state.icon = icon;
     this.state.set(state);
   }
   get stateString() {

@@ -63,16 +63,28 @@
       }
     }
     &.HeaderTheme-modern {
-      @apply grid p-0;
-      grid-template-columns: minmax(18rem, 1fr) 1fr;
-      grid-template-areas: "content image";
+      @apply grid p-0 pl-8 bg-white z-10;
+      grid-template-columns: auto minmax(18rem, 1fr) 1fr;
+      grid-template-areas: "icon content image";
+      .iconOverlay {
+        @apply absolute left-0 top-0 h-full opacity-5 -z-10;
+        @apply flex items-center -translate-x-1/3;
+        font-size: 14rem;
+      }
+      .iconComponent {
+        @apply relative flex items-center justify-center mr-8 py-8;
+        --icon-width: 4.5rem;
+        width: var(--icon-width);
+        font-size: var(--icon-width);
+        grid-area: icon;
+      }
       .imageComponent {
         @apply relative;
         grid-area: image;
         .imageOverlay {
           &:before,
           &:after {
-            @apply absolute block w-40 origin-left;
+            @apply absolute block w-40 origin-top-right;
             @apply top-0;
             transform: rotate(-28.7deg);
             height: 200%;
@@ -80,19 +92,54 @@
           }
           &:before {
             @apply bg-white;
-            @apply z-10 -left-20 right-auto;
+            @apply z-10 right-full left-auto;
           }
           &:after {
             @apply bg-white bg-opacity-30 backdrop-blur-sm backdrop-saturate-150;
-            @apply z-0 left-0 right-auto;
+            @apply z-0 left-auto;
+            right: calc(100% - 3rem);
+            top: -5rem;
           }
         }
       }
       .overlay {
-        @apply p-8 pr-4;
+        @apply py-8;
         grid-area: content;
         .headerOverview {
           @apply max-w-none;
+        }
+      }
+    }
+  }
+}
+
+@container (max-width: 540px) {
+  .CourseHeader[data-cdb-version] {
+    .headerInner.HeaderTheme-modern {
+      @apply gap-0 pl-3;
+      grid-template-columns: auto auto 0;
+      .overlay {
+        @apply mr-16 py-6;
+      }
+      .iconOverlay {
+        @apply hidden;
+      }
+      .iconComponent {
+        @apply mr-3 py-6 items-start;
+        --icon-width: 3rem;
+      }
+      .imageComponent {
+        @apply w-28 max-h-full h-28 absolute right-0 top-0;
+        grid-area: none;
+        .imageOverlay {
+          &:before,
+          &:after {
+            @apply -rotate-45;
+          }
+          &:after {
+            right: calc(100% - 1rem);
+            top: -1rem;
+          }
         }
       }
     }
