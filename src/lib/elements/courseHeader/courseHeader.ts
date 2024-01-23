@@ -13,6 +13,7 @@ export enum HeaderTheme {
   Light = "HeaderTheme-light",
   Dark = "HeaderTheme-dark",
   Blur = "HeaderTheme-blur",
+  Modern = "HeaderTheme-modern",
 }
 
 export enum HeaderLevel {

@@ -8,7 +8,7 @@ FROM $CANVAS_BLOCKS_ICONS_LIBRARY_IMAGE as icons
 FROM node:20.10.0 AS build
 
 WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "yarn.lock", "./"]
+COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", ".yarnrc.yml", "yarn.lock", "./"]
 RUN yarn
 
 # Step 4: Build icon repository

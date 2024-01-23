@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { HeaderData, HeaderLevel } from "./courseHeader";
+  import { HeaderData, HeaderLevel, HeaderTheme } from "./courseHeader";
   import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -18,8 +18,20 @@
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <div class="headerInner {cdbData.theme}" tabindex="0">
   {#if cdbData.image}
-    <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
-    <div class="imageOverlay">&nbsp;</div>
+    {#if cdbData.theme === HeaderTheme["Modern"]}
+      <div class="imageComponent">
+        <img
+          class="headerImage"
+          src={cdbData.image}
+          alt=""
+          role="presentation"
+        />
+        <div class="imageOverlay">&nbsp;</div>
+      </div>
+    {:else}
+      <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
+      <div class="imageOverlay">&nbsp;</div>
+    {/if}
   {/if}
   <div class="overlay">
     <!-- svelte-ignore a11y-missing-content -->
