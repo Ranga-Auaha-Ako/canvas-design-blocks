@@ -116,35 +116,44 @@
   }
 }
 
-@container (max-width: 540px) {
-  .CourseHeader[data-cdb-version] {
-    .headerInner.HeaderTheme-modern {
-      @apply gap-0 pl-3;
-      grid-template-columns: auto auto 0;
-      .overlay {
-        @apply mr-16 py-6;
-      }
-      .iconOverlay {
-        @apply hidden;
-      }
-      .iconComponent {
-        @apply mr-3 py-6 items-start;
-        --icon-width: 3rem;
-      }
-      .imageComponent {
-        @apply w-28 max-h-full h-28 absolute right-0 top-0;
-        grid-area: none;
-        .imageOverlay {
-          &:before,
-          &:after {
-            @apply -rotate-45;
-          }
-          &:after {
-            right: calc(100% - 1rem);
-            top: -1rem;
-          }
+.CourseHeaderMobileLayout {
+  .headerInner.HeaderTheme-modern {
+    @apply gap-0 pl-3;
+    grid-template-columns: auto auto 0;
+    .overlay {
+      @apply mr-16 py-6;
+    }
+    .iconOverlay {
+      @apply hidden;
+    }
+    .iconComponent {
+      @apply mr-3 py-6 items-start;
+      --icon-width: 3rem;
+    }
+    .imageComponent {
+      @apply w-28 max-h-full h-28 absolute right-0 top-0;
+      grid-area: none;
+      .imageOverlay {
+        &:before,
+        &:after {
+          @apply -rotate-45;
+        }
+        &:after {
+          right: calc(100% - 1rem);
+          top: -1rem;
         }
       }
     }
+  }
+}
+
+@container (max-width: 540px) {
+  .CourseHeader[data-cdb-version] {
+    @apply CourseHeaderMobileLayout;
+  }
+}
+@media (max-width: 400px) {
+  .CourseHeader[data-cdb-version] {
+    @apply CourseHeaderMobileLayout;
   }
 }
