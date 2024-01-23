@@ -72,15 +72,18 @@
         font-size: 14rem;
       }
       .iconComponent {
-        @apply relative flex items-center justify-center mr-8 py-8;
+        @apply relative flex items-center justify-center mr-8 py-8 z-0;
         --icon-width: 4.5rem;
         width: var(--icon-width);
         font-size: var(--icon-width);
         grid-area: icon;
       }
       .imageComponent {
-        @apply relative;
+        @apply relative  -z-10;
         grid-area: image;
+        .headerImage {
+          @apply -z-30;
+        }
         .imageOverlay {
           &:before,
           &:after {
@@ -92,18 +95,18 @@
           }
           &:before {
             @apply bg-white;
-            @apply z-10 right-full left-auto;
+            @apply -z-10 right-full left-auto;
           }
           &:after {
             @apply bg-white bg-opacity-30 backdrop-blur-sm backdrop-saturate-150;
-            @apply z-0 left-auto;
+            @apply -z-20 left-auto;
             right: calc(100% - 3rem);
             top: -5rem;
           }
         }
       }
       .overlay {
-        @apply py-8;
+        @apply py-8 z-0;
         grid-area: content;
         .headerOverview {
           @apply max-w-none;
