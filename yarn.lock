@@ -86,6 +86,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.6.3":
+  version: 7.23.8
+  resolution: "@babel/runtime@npm:7.23.8"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: ba5e8fbb32ef04f6cab5e89c54a0497c2fde7b730595cc1af93496270314f13ff2c6a9360fdb2f0bdd4d6b376752ce3cf85642bd6b876969a6a62954934c2df8
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.9.2":
   version: 7.22.11
   resolution: "@babel/runtime@npm:7.22.11"
@@ -1555,6 +1564,7 @@ __metadata:
     compare-versions: "npm:^6.1.0"
     dotenv: "npm:^16.3.1"
     fast-glob: "npm:^3.3.2"
+    fetch-paginate: "npm:^6.1.0"
     filesize: "npm:^10.1.0"
     hash-sum: "npm:^2.0.0"
     html-void-elements: "npm:3.0.0"
@@ -1578,6 +1588,7 @@ __metadata:
     size-limit: "npm:^11.0.1"
     sortablejs: "npm:^1.15.1"
     svelte: "npm:^4.2.8"
+    svelte-paginate: "npm:^0.1.0"
     svelte-persisted-store: "npm:^0.9.0"
     svelte-portal: "npm:^2.2.0"
     svelte-preprocess: "npm:^5.1.3"
@@ -1876,6 +1887,13 @@ __metadata:
   version: 1.2.7
   resolution: "core-js@npm:1.2.7"
   checksum: 2b2966e40833f522129da4cc979688760654e9b38e32b06517a94c0edf2882d8990c4b1b0087cb2abfbe6219fdb21dc64343fa264a6b6280ec88c3682b8eee66
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.3.3":
+  version: 3.35.1
+  resolution: "core-js@npm:3.35.1"
+  checksum: ebc8e22c36d13bcf2140cbc1d8ad65d1b08192bff4c43ade70c72eac103cb4dcfbc521f2b1ad1c74881b0a4353e64986537893ae4f07888e49228340efa13ae6
   languageName: node
   linkType: hard
 
@@ -2546,6 +2564,17 @@ __metadata:
   dependencies:
     pend: "npm:~1.2.0"
   checksum: 304dd70270298e3ffe3bcc05e6f7ade2511acc278bc52d025f8918b48b6aa3b77f10361bddfadfe2a28163f7af7adbdce96f4d22c31b2f648ba2901f0c5fc20e
+  languageName: node
+  linkType: hard
+
+"fetch-paginate@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "fetch-paginate@npm:6.1.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.6.3"
+    core-js: "npm:^3.3.3"
+    parse-link-header: "npm:^1.0.1"
+  checksum: 60f9f9b663305d9c66930398ec4c86fd157057f90cc74622681100675980b1e24d10b4221e5cade96b0f9b53d34401300b02fe3ce21d644d03b1c5493bade67b
   languageName: node
   linkType: hard
 
@@ -4126,6 +4155,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse-link-header@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "parse-link-header@npm:1.0.1"
+  dependencies:
+    xtend: "npm:~4.0.1"
+  checksum: 7d0c1f94b4d400ac8605e6d18aced0139e15a08f3dc886567894953727db82bb387febb9a7a6837a4809ca75abd32364bb54d447c050db4a017754ff8949c1fa
+  languageName: node
+  linkType: hard
+
 "parse-unit@npm:^1.0.1":
   version: 1.0.1
   resolution: "parse-unit@npm:1.0.1"
@@ -5312,6 +5350,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"svelte-paginate@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "svelte-paginate@npm:0.1.0"
+  checksum: 2720d5b476a9c48528c531c3355b49db0c19ea9ce97af0ebf73c8b86bd0a44d81c216d458a40a68e78750ece7b398ac8fef7ad9214997744a5648e9a90757843
+  languageName: node
+  linkType: hard
+
 "svelte-persisted-store@npm:^0.9.0":
   version: 0.9.0
   resolution: "svelte-persisted-store@npm:0.9.0"
@@ -6091,6 +6136,13 @@ __metadata:
   version: 2.2.0
   resolution: "xmlchars@npm:2.2.0"
   checksum: b64b535861a6f310c5d9bfa10834cf49127c71922c297da9d4d1b45eeaae40bf9b4363275876088fbe2667e5db028d2cd4f8ee72eed9bede840a67d57dab7593
+  languageName: node
+  linkType: hard
+
+"xtend@npm:~4.0.1":
+  version: 4.0.2
+  resolution: "xtend@npm:4.0.2"
+  checksum: 366ae4783eec6100f8a02dff02ac907bf29f9a00b82ac0264b4d8b832ead18306797e283cf19de776538babfdcb2101375ec5646b59f08c52128ac4ab812ed0e
   languageName: node
   linkType: hard
 

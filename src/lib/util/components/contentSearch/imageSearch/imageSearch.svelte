@@ -5,47 +5,27 @@
   import { fade, slide } from "svelte/transition";
   import { filesize } from "filesize";
   import mock from "./mock";
-  let imageQuery = "";
+  import { FileSearch, FitlerTypes, mockData } from "../search";
   let debounce: number | undefined;
 
   const setQuery = (value: string) => {
     if (debounce !== undefined) clearTimeout(debounce);
     debounce = window.setTimeout(() => {
-      if (value.length > 2) imageQuery = value;
-      else imageQuery = "";
+      if (value.length > 2) $imageQuery = value;
+      else $imageQuery = "";
     }, 200);
   };
   const COURSE_ID = window.ENV?.COURSE_ID;
-  const searchFiles = async (query: string | undefined = undefined) => {
-    if (import.meta.env.DEV && window.location.hostname === "localhost") {
-      // Mock data
-      return mock.filter((item) => {
-        return query
-          ? item.display_name.toLowerCase().includes(query.toLowerCase())
-          : true;
-      });
-    }
-    if (!COURSE_ID) return [];
-    const url = `/api/v1/courses/${COURSE_ID}/files?content_types=image&sort=created_at&order=desc${
-      query ? `&search_term=${query}` : ""
-    }&per_page=12&limit=12`;
-    const response = await fetch(url);
-    const files = await response.json();
-    return files;
-  };
 
-  $: results = searchFiles(imageQuery);
+  const shouldMock =
+    import.meta.env.DEV && window.location.hostname === "localhost";
+  const results = shouldMock
+    ? mockData
+    : new FileSearch("", FitlerTypes.Images);
+  let imageQuery = results.query;
+  let imageResults = results.data;
 
   const dispatch = createEventDispatcher();
-  const getFileURL = (file: any) => {
-    if (import.meta.env.DEV && window.location.hostname === "localhost") {
-      return `https://canvas.auckland.ac.nz/courses/77467/files/${file.id}/preview`;
-    }
-    return new URL(
-      `/courses/${COURSE_ID}/files/${file.id}/preview`,
-      document.URL
-    ).toString();
-  };
 
   let searchInput: HTMLInputElement;
 
@@ -63,7 +43,7 @@
     on:input={(e) => setQuery(e.currentTarget.value)}
   />
   <div class="imageResults">
-    {#await results}
+    {#await $imageResults}
       <div class="status-msg">
         <p>Loading...</p>
       </div>
@@ -74,7 +54,7 @@
           <button
             class="tox-button tox-button--secondary"
             on:click={() => {
-              imageQuery = "";
+              $imageQuery = "";
               searchInput.value = "";
             }}>Clear Search</button
           >
@@ -84,7 +64,7 @@
           <div class="imageResult" in:fade|global>
             <button
               class="imageChoice"
-              on:click={() => dispatch("selectImage", getFileURL(file))}
+              on:click={() => dispatch("selectImage", file.image)}
             >
               <img src={file.thumbnail_url} alt={file.display_name} />
             </button>
@@ -140,7 +120,9 @@
       @apply bg-center rounded shadow border-0;
       @apply transition-all duration-300;
       @apply cursor-pointer;
-      background-position: 0px 0px, 10px 10px;
+      background-position:
+        0px 0px,
+        10px 10px;
       background-size: 20px 20px;
       background-image: linear-gradient(
           45deg,

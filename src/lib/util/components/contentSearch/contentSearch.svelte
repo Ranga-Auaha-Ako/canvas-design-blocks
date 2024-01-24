@@ -33,6 +33,7 @@
             ? undefined
             : (value as InternalLinks),
       },
+      syncTabs: false,
     }
   );
   export let filter: FitlerTypes | undefined = undefined;
@@ -61,12 +62,13 @@
   };
 
   $: results = searchContent($linkType, query, filter);
+  $: resultData = results.data;
 
   let searchInput: HTMLInputElement;
 
   let scrollCont: ScrollContainer;
-  $: results.then(() => {
-    scrollCont.update();
+  $: results.data.subscribe(() => {
+    scrollCont?.update();
   });
 </script>
 
@@ -106,7 +108,7 @@
         </button>
         <div class="fileList" {id} role="region" aria-labelledby="{id}-header">
           {#if type === $linkType}
-            {#await results}
+            {#await $resultData}
               <div class="fileListResults">
                 <div class="status-msg" in:fade|global>
                   <p>Loading...</p>
@@ -132,7 +134,7 @@
                 {:else}
                   {#each files as file}
                     <button
-                      class:unpublished={!file.published}
+                      class:unpublished={"published" in file && !file.published}
                       on:click={() => {
                         dispatch("select", file);
                       }}
@@ -140,12 +142,12 @@
                       <i class="icon-Line icon-{getIcon(file)}" />
                       <span class="linkName">{file.name}</span>
                       <div class="publishedStatus">
-                        {#if file.published === false}
+                        {#if "published" in file && file.published === false}
                           <i
                             class="icon-Solid icon-unpublish"
                             title="Unpublished"
                           />
-                        {:else if file.published === true}
+                        {:else if "published" in file && file.published === true}
                           <i
                             class="icon-Solid icon-publish"
                             title="Published"

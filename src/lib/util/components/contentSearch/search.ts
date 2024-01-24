@@ -1,3 +1,4 @@
+import { Readable, Writable, derived, readable, writable } from "svelte/store";
 import mock from "./mock";
 
 export enum InternalLinks {
@@ -25,194 +26,369 @@ export interface Link {
 
 export interface File extends Link {
   size: number;
+  display_name: string;
 }
 export interface Image extends File {
   image: string;
+  created_at: string;
   thumbnail_url: string;
 }
 
 const COURSE_ID = window.ENV?.COURSE_ID;
 
-export async function searchFiles(
-  query: string | undefined = undefined,
-  filter = FitlerTypes.All
-): Promise<typeof filter extends FitlerTypes.Images ? Image[] : File[]> {
-  const url = `/api/v1/courses/${COURSE_ID}/files?${
-    filter === FitlerTypes.Images ? "content_types=image&" : ""
-  }sort=created_at&order=desc${
-    query ? `&search_term=${query}` : ""
-  }&per_page=12&limit=12`;
-  const response = await fetch(url);
-  const files = (await response.json()) as Record<string, any>[];
-  if (!files) return [];
-  return files.map<typeof filter extends FitlerTypes.Images ? Image : File>(
-    (f) => {
+class MockSearch<L = Link> {
+  public readonly data;
+  public readonly total = readable(new Promise((set) => set(mock.length)));
+  public readonly links = readable<
+    Promise<{
+      current?: string;
+      prev?: string;
+      first?: string;
+      last?: string;
+    }>
+  >(new Promise((set) => set({})));
+  constructor(data: L[] = []) {
+    this.data = readable(new Promise<L[]>((set) => set(data)));
+  }
+}
+
+export const mockData = new MockSearch<Image>(mock as any);
+
+abstract class ContentSearch<L = Link> implements MockSearch<L> {
+  abstract urlBase: string | undefined;
+  public page = writable(1);
+  public perPage = writable(12);
+  public query = writable("");
+  public readonly url = derived(
+    [this.page, this.perPage, this.query],
+    ([$page, $perPage, $query]) => {
+      const u = new URL(this.urlBase, document.URL);
+      if ($query) {
+        u.searchParams.set("query", $query);
+      }
+      u.searchParams.set("page", String($page));
+      u.searchParams.set("per_page", String($perPage));
+      return u.toString();
+    }
+  );
+  public readonly _state = derived(this.url, ($url) => {
+    return new Promise<
+      ReturnType<(typeof ContentSearch)["parseLinkHeader"]> & { data: L[] }
+    >((set) => {
+      if (!this.urlBase)
+        return new Promise((set) => set({ links: {}, data: [] }));
+      fetch($url)
+        .then(async (response) => {
+          const links = ContentSearch.parseLinkHeader(
+            response.headers.get("Link") || ""
+          );
+          const json = await response.json();
+          set({
+            data: await this.getLinks(json),
+            ...links,
+          });
+        })
+        .catch(() => {
+          set({ links: {}, data: [], total: 0 });
+        });
+    });
+  });
+  public readonly data = derived(this._state, ($state) =>
+    $state.then((s) => s.data)
+  );
+  public readonly links = derived(this._state, ($state) =>
+    $state.then((s) => s.links)
+  );
+  public readonly total = derived(this._state, ($state) =>
+    $state.then((s) => s.total || s.data.length)
+  );
+  abstract getLinks(data: Record<string, any>[]): Promise<L[]>;
+  static parseLinkHeader(link: string) {
+    const links = link.split(",");
+    const parsedLinks: {
+      current?: string;
+      prev?: string;
+      first?: string;
+      last?: string;
+    } = {};
+    links.forEach((link) => {
+      type linkRels = keyof typeof parsedLinks;
+      const match = link.match(/<([^>]+)>; rel="([^"]+)"/);
+      if (match) {
+        parsedLinks[match[2] as linkRels] = match[1];
+      }
+    });
+    let total;
+    if (parsedLinks.last) {
+      const last = parsedLinks.last.split("?");
+      if (last[1]) {
+        const lastParams = new URLSearchParams(last[1]);
+        const lastPage = lastParams.get("page");
+        const perPage = lastParams.get("per_page");
+        if (lastPage && perPage) {
+          total = Number(lastPage) * Number(perPage);
+        }
+      }
+    }
+    return {
+      links: parsedLinks,
+      total,
+    };
+  }
+  constructor(protected _query = "", _page = 1, _perPage = 12) {
+    if (_query) this.query.set(_query);
+    if (_page !== 1) this.page.set(_page);
+    if (_perPage !== 12) this.perPage.set(_perPage);
+  }
+}
+
+export class FileSearch<F extends FitlerTypes> extends ContentSearch<
+  F extends FitlerTypes.Images ? Image : File
+> {
+  get urlBase() {
+    return `/api/v1/courses/${COURSE_ID}/files?${
+      this.filter === FitlerTypes.Images ? "content_types=image&" : ""
+    }sort=created_at&order=desc`;
+  }
+  constructor(
+    query?: string,
+    public filter: F = FitlerTypes.All as F,
+    page?: number,
+    perPage?: number
+  ) {
+    super(query, page, perPage);
+  }
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<F extends FitlerTypes.Images ? Image : File>((f) => {
       let file: any = {
         name: f.display_name,
+        display_name: f.display_name,
         size: f.size,
         url: f.url,
         type: InternalLinks.File,
         published: f.published,
-      };
-      if (filter === FitlerTypes.Images) {
+      } as File;
+      if (this.filter === FitlerTypes.Images) {
         file.image = getImageUrl(f);
+        file.thumbnail_url = f.thumbnail_url;
+        file.created_at = f.created_at;
       }
       return file;
-    }
-  );
+    });
+  }
 }
 
-export async function searchDiscussions(query?: string, type?: InternalLinks) {
-  const url = `/api/v1/courses/${COURSE_ID}/discussion_topics?${
-    type === InternalLinks.Announcements ? "only_announcements=true&" : ""
-  }per_page=12&limit=12${query ? `&search_term=${query}` : ""}`;
-  const response = await fetch(url);
-  const announcements = (await response.json()) as Record<string, any>[];
-  if (!announcements) return [];
-  return announcements.map<Link>((a) => {
-    return {
-      name: a.title,
-      url: a.html_url,
-      type: InternalLinks.Discussions,
-      published: a.published,
-    };
-  });
+export class DiscussionSearch extends ContentSearch<Link> {
+  urlBase = `/api/v1/courses/${COURSE_ID}/discussion_topics`;
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<Link>((a) => {
+      return {
+        name: a.title,
+        url: a.html_url,
+        type: InternalLinks.Discussions,
+        published: a.published,
+      };
+    });
+  }
 }
 
-export async function searchAssignments(query?: string) {
-  const url = `/api/v1/courses/${COURSE_ID}/assignments?per_page=12&limit=12${
-    query ? `&search_term=${query}` : ""
-  }`;
-  const response = await fetch(url);
-  const assignments = (await response.json()) as Record<string, any>[];
-  if (!assignments) return [];
-  return assignments.map<Link>((a) => {
-    return {
-      name: a.name,
-      url: a.html_url,
-      type: InternalLinks.Assignments,
-      published: a.published,
-    };
-  });
+export class AnnouncementSearch extends DiscussionSearch {
+  urlBase = `/api/v1/courses/${COURSE_ID}/discussion_topics?only_announcements=true`;
 }
 
-export async function searchQuizzes(query?: string) {
-  const url = `/api/v1/courses/${COURSE_ID}/quizzes?per_page=12&limit=12${
-    query ? `&search_term=${query}` : ""
-  }`;
-  const response = await fetch(url);
-  const quizzes = (await response.json()) as Record<string, any>[];
-  if (!quizzes) return [];
-  return quizzes.map<Link>((q) => {
-    return {
-      name: q.title,
-      url: q.html_url,
-      type: InternalLinks.Quizzes,
-      published: q.published,
-    };
-  });
+export class AssignmentSearch extends ContentSearch<Link> {
+  urlBase = `/api/v1/courses/${COURSE_ID}/assignments`;
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<Link>((a) => {
+      return {
+        name: a.name,
+        url: a.html_url,
+        type: InternalLinks.Assignments,
+        published: a.published,
+      };
+    });
+  }
 }
 
-export async function searchPages(query?: string) {
-  const url = `/api/v1/courses/${COURSE_ID}/pages?per_page=12&limit=12${
-    query ? `&search_term=${query}` : ""
-  }`;
-  const response = await fetch(url);
-  const pages = (await response.json()) as Record<string, any>[];
-  if (!pages) return [];
-  return pages.map<Link>((p) => {
-    return {
-      name: p.title,
-      url: p.html_url,
-      type: InternalLinks.Pages,
-      published: p.published,
-    };
-  });
+export class OldQuizSearch extends ContentSearch<Link> {
+  urlBase = `/api/v1/courses/${COURSE_ID}/quizzes`;
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<Link>((q) => {
+      return {
+        name: q.title,
+        url: q.html_url,
+        type: InternalLinks.Quizzes,
+        published: q.published,
+      };
+    });
+  }
 }
 
-export async function searchModules(query?: string, includeItems = false) {
-  const url = `/api/v1/courses/${COURSE_ID}/modules?per_page=12&limit=12${
-    query ? `&search_term=${query}` : ""
-  }${includeItems ? "&include[]=items" : ""}`;
-  const response = await fetch(url);
-  const modules = (await response.json()) as Record<string, any>[];
-  if (!modules) return [];
-  return modules.map<
-    Link & {
-      id: string;
-      items?: { id: number; published: boolean; page_url?: string }[];
-    }
-  >((m) => {
-    return {
-      id: m.id,
-      name: m.name,
-      url: `/courses/${COURSE_ID}/modules/${m.id}`,
-      type: InternalLinks.Modules,
-      published: m.published,
-      items: includeItems ? m.items : undefined,
-    };
-  });
+export class NewQuizSearch extends ContentSearch<Link> {
+  urlBase = `/api/quiz/v1/courses/${COURSE_ID}/quizzes`;
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<Link>((q) => {
+      return {
+        name: q.title,
+        url: q.html_url,
+        type: InternalLinks.Quizzes,
+        published: q.published,
+      };
+    });
+  }
 }
 
-export async function searchNavigation(query?: string) {
-  const url = `/api/v1/courses/${COURSE_ID}/tabs?per_page=12&limit=12${
-    query ? `&search_term=${query}` : ""
-  }`;
-  const response = await fetch(url);
-  const navigation = (await response.json()) as Record<string, any>[];
-  if (!navigation) return [];
-  return navigation.map<Link>((n) => {
-    return {
-      name: n.label,
-      url: n.html_url,
-      type: InternalLinks.Navigation,
-      published: n.hidden,
-    };
-  });
+export class QuizSearch implements MockSearch<Link> {
+  urlBase = undefined;
+  oldQuizSearch: OldQuizSearch;
+  newQuizSearch: NewQuizSearch;
+  public _state: ContentSearch["_state"];
+  getLinks(data: Record<string, any>[]): Promise<Link[]> {
+    return (async () => [])();
+  }
+  public page: Writable<number> = writable(1);
+  public perPage: Writable<number> = writable(12);
+  public query: Writable<string> = writable("");
+  public url: Readable<string> = readable("");
+  public data: Readable<Promise<Link[]>>;
+  public links: Readable<
+    Promise<{
+      current?: string | undefined;
+      prev?: string | undefined;
+      first?: string | undefined;
+      last?: string | undefined;
+    }>
+  >;
+  public total: Readable<Promise<number>>;
+  constructor(...args: ConstructorParameters<typeof ContentSearch>) {
+    this.oldQuizSearch = new OldQuizSearch(...args);
+    this.newQuizSearch = new NewQuizSearch(...args);
+
+    this.page.subscribe((page) => {
+      this.oldQuizSearch.page.set(page);
+      this.newQuizSearch.page.set(page);
+    });
+    this.perPage.subscribe((perPage) => {
+      this.oldQuizSearch.perPage.set(perPage);
+      this.newQuizSearch.perPage.set(perPage);
+    });
+    this.query.subscribe((query) => {
+      this.oldQuizSearch.query.set(query);
+      this.newQuizSearch.query.set(query);
+    });
+    this._state = derived(
+      [this.newQuizSearch._state, this.oldQuizSearch._state],
+      ($quizType) => {
+        return Promise.all([$quizType[0], $quizType[1]]).then(([u1, u2]) => ({
+          ...u1,
+          data: [...u1.data, ...u2.data],
+          total: (u1.total || 0) + (u2.total || 0),
+        }));
+      }
+    );
+    this.data = derived(this._state, ($state) => $state.then((s) => s.data));
+    this.links = derived(this._state, ($state) => $state.then((s) => s.links));
+    this.total = derived(this._state, ($state) =>
+      $state.then((s) => s.total || s.data.length)
+    );
+  }
 }
 
-export async function searchContent(
-  linkType?: InternalLinks,
+export class PageSearch extends ContentSearch<Link> {
+  urlBase = `/api/v1/courses/${COURSE_ID}/pages`;
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<Link>((p) => {
+      return {
+        name: p.title,
+        url: p.html_url,
+        type: InternalLinks.Pages,
+        published: p.published,
+      };
+    });
+  }
+}
+
+export class ModuleSearch<F extends boolean> extends ContentSearch<
+  Link & {
+    id: string;
+    items?: { id: number; published: boolean; page_url?: string }[];
+  }
+> {
+  get urlBase() {
+    return `/api/v1/courses/${COURSE_ID}/modules${
+      this.includeItems ? "?include[]=items" : ""
+    }`;
+  }
+  constructor(
+    query?: string,
+    public includeItems: F = false as F,
+    page?: number,
+    perPage?: number
+  ) {
+    super(query, page, perPage);
+  }
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<
+      Link & {
+        id: string;
+        page_url?: string;
+        items?: { id: number; published: boolean; page_url?: string }[];
+      }
+    >((m) => {
+      return {
+        id: m.id,
+        name: m.name,
+        url: `/courses/${COURSE_ID}/modules/${m.id}`,
+        type: InternalLinks.Modules,
+        published: m.published,
+        items: this.includeItems ? m.items : undefined,
+      };
+    });
+  }
+}
+
+export class NavigationSearch extends ContentSearch<Link> {
+  urlBase = `/api/v1/courses/${COURSE_ID}/tabs`;
+  async getLinks(data: Record<string, any>[]) {
+    return data.map<Link>((n) => {
+      return {
+        name: n.label,
+        url: n.html_url,
+        type: InternalLinks.Navigation,
+        published: n.hidden,
+      };
+    });
+  }
+}
+
+export function searchContent<T extends InternalLinks>(
+  linkType?: T,
   query: string | undefined = undefined,
   filter = FitlerTypes.All
-): Promise<
-  typeof linkType extends InternalLinks.File
-    ? typeof filter extends FitlerTypes.Images
-      ? Image[]
-      : File[]
-    : Link[]
-> {
+) {
   if (import.meta.env.DEV && window.location.hostname === "localhost") {
-    // Mock data
-    return mock
-      .filter((item) => {
-        return query
-          ? item.name.toLowerCase().includes(query.toLowerCase())
-          : true;
-      })
-      .map<Image>((f) => {
-        return { ...f, image: getImageUrl(f) };
-      });
+    return mockData;
   }
-  if (!COURSE_ID) return [];
+  if (!COURSE_ID) return new MockSearch<Image>();
   switch (linkType) {
     case InternalLinks.File:
-      return searchFiles(query, filter);
+      return new FileSearch(query, filter);
     case InternalLinks.Announcements:
+      return new AnnouncementSearch(query);
     case InternalLinks.Discussions:
-      return searchDiscussions(query, linkType);
+      return new DiscussionSearch(query);
     case InternalLinks.Assignments:
-      return searchAssignments(query);
+      return new AssignmentSearch(query);
     case InternalLinks.Quizzes:
-      return searchQuizzes(query);
+      return new QuizSearch(query);
     case InternalLinks.Pages:
-      return searchPages(query);
+      return new PageSearch(query);
     case InternalLinks.Modules:
-      return searchModules(query);
+      return new ModuleSearch(query);
     case InternalLinks.Navigation:
-      return searchNavigation(query);
+      return new NavigationSearch(query);
     default:
-      return [];
+      return new MockSearch<Image>();
   }
 }
 
