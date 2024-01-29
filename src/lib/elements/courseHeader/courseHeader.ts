@@ -80,17 +80,24 @@ class HeaderState implements SvelteState<HeaderData> {
     let level = ValidLevels.includes(unsafeState?.level as HeaderLevel)
       ? unsafeState?.level
       : DefaultLevel;
+    const headerImage =
+      node?.querySelector<HTMLImageElement>("img.headerImage");
+    const linkURLs =
+      node?.querySelectorAll<HTMLAnchorElement>(".headerLinks > a");
     let state: HeaderData = {
       title: unsafeState?.title || HeaderState.defaultState.title,
       overview: "",
-      image: unsafeState?.image || HeaderState.defaultState.image,
+      image: headerImage?.src || HeaderState.defaultState.image,
       links:
-        unsafeState?.links?.map((l) => ({
-          title: l?.title || "",
-          url: sanitizeUrl(l?.url || "").replace(/^about:blank$/, ""),
-          id: l?.id || nanoid(),
-          target: l.target || undefined,
-        })) || HeaderState.defaultState.links,
+        unsafeState?.links?.map((l, index) => {
+          const url = linkURLs?.[index]?.href || "";
+          return {
+            title: l?.title || "",
+            url,
+            id: l?.id || nanoid(),
+            target: l.target || undefined,
+          };
+        }) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
       level: level || DefaultLevel,
     };
@@ -103,8 +110,13 @@ class HeaderState implements SvelteState<HeaderData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { overview: _, ...headerData } = state;
-    return JSON.stringify(headerData);
+    const { overview: _o, links, ...headerData } = state;
+    return JSON.stringify({
+      ...headerData,
+      links: links.map(({ url: _, ...item }) => ({
+        ...item,
+      })),
+    });
   }
 }
 
