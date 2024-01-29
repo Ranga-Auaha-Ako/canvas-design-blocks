@@ -51,6 +51,7 @@ class MockSearch<L = Link> {
   >(new Promise((set) => set({})));
   public page: Writable<number> = writable(1);
   public perPage: Writable<number> = writable(12);
+  public query: Writable<string> = writable("");
   constructor(data: L[] = []) {
     this.data = readable(new Promise<L[]>((set) => set(data)));
   }

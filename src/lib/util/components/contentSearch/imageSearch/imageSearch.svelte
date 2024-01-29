@@ -7,6 +7,7 @@
   import mock from "./mock";
   import { FileSearch, FitlerTypes, mockData } from "../search";
   let debounce: number | undefined;
+  import { LightPaginationNav } from "svelte-paginate";
 
   const setQuery = (value: string) => {
     if (debounce !== undefined) clearTimeout(debounce);
@@ -24,6 +25,9 @@
     : new FileSearch("", FitlerTypes.Images);
   let imageQuery = results.query;
   let imageResults = results.data;
+  $: resultTotal = results.total;
+  $: resultPage = results.page;
+  $: resultPerPage = results.perPage;
 
   const dispatch = createEventDispatcher();
 
@@ -89,6 +93,19 @@
       </div>
     {/await}
   </div>
+
+  {#await $resultTotal then total}
+    {#if total && $resultPerPage}
+      <LightPaginationNav
+        totalItems={total}
+        pageSize={$resultPerPage}
+        currentPage={$resultPage}
+        limit={1}
+        showStepOptions={true}
+        on:setPage={(e) => ($resultPage = e.detail.page)}
+      />
+    {/if}
+  {/await}
 </div>
 
 <style lang="postcss">
