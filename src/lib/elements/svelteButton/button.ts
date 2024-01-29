@@ -138,10 +138,11 @@ class ButtonState implements SvelteState<ButtonData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { url: _, color, ...buttonData } = state;
+    const { url: _, color, textColor, ...buttonData } = state;
     return JSON.stringify({
       ...buttonData,
       color: color?.toHex(),
+      textColor: textColor?.toHex(),
     });
   }
 }

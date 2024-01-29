@@ -59,6 +59,15 @@ export default class Column extends MceElement {
         attributeFilter: ["style", "class"],
       });
     }
+    // // Remove any accidentally created inner column divs
+    // this.innerNode.querySelectorAll(":scope > div.cgb-col").forEach((e) => {
+    //   // Pop children out of the inner column
+    //   [...e.childNodes].forEach((n) => {
+    //     e.insertBefore(n, e);
+    //   });
+    //   // Remove the inner column
+    //   e.remove();
+    // });
     this.startObserving();
   }
 
