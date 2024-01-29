@@ -32,6 +32,7 @@ Please write a brief description at the top of each version in "Overview". This 
 ### Fixed
 
 - #37: Built-in icons don't load on mobile, plus sizing issues
+- #43: Full-width buttons fixed on Firefox
 
 ## [2.10.0] - 2023-10-24
 
