@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { getImageUrl, type Image } from "./search";
+  import { type Image } from "./search";
   import { createEventDispatcher } from "svelte";
   import { filesize } from "filesize";
   export let files: Image[];
@@ -48,7 +48,9 @@
       @apply bg-center rounded shadow border-0;
       @apply transition-all duration-300;
       @apply cursor-pointer;
-      background-position: 0px 0px, 10px 10px;
+      background-position:
+        0px 0px,
+        10px 10px;
       background-size: 20px 20px;
       background-image: linear-gradient(
           45deg,

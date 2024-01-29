@@ -12,10 +12,7 @@ import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";
-import {
-  getIcon,
-  searchModules,
-} from "$lib/util/components/contentSearch/search";
+import { Link, ModuleSearch } from "$lib/util/components/contentSearch/search";
 
 export enum ButtonBarTheme {
   Progress = "progress",
@@ -49,12 +46,24 @@ export interface ButtonBarData {
 const COURSE_ID = window.ENV?.COURSE_ID;
 async function getModuleItems(): Promise<{
   items: ButtonBarItem[];
-  modules: Awaited<ReturnType<typeof searchModules>>;
+  modules: (Link & {
+    id: string;
+    page_url?: string;
+    items?:
+      | {
+          id: number;
+          published: boolean;
+          page_url?: string;
+          items?: { id: number; published: boolean; page_url?: string }[];
+        }[]
+      | undefined;
+  })[];
 }> {
   if (!COURSE_ID) return { items: [], modules: [] };
-  const modules = await searchModules(undefined, true);
+  const modules = new ModuleSearch(undefined, true);
+  const items = await get(modules.data);
   return {
-    items: modules
+    items: items
       .filter((m) => m.published)
       .map((m, index) => {
         return {
@@ -63,7 +72,7 @@ async function getModuleItems(): Promise<{
           url: m.url,
         };
       }),
-    modules,
+    modules: items,
   };
 }
 
