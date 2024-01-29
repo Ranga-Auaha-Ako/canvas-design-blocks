@@ -134,7 +134,7 @@
   .cgb-openButton {
     @apply relative w-full h-8 py-1 px-2;
     @apply flex flex-row items-center;
-    @apply transition text-sm border border-gray-200 rounded;
+    @apply transition-all text-sm border border-gray-200 rounded;
     .update-ping {
       @apply absolute -top-1 -right-1 z-40;
       @apply w-2 h-2 bg-primary ring-1 ring-white ring-opacity-55 rounded-full;
@@ -157,6 +157,7 @@
       }
     }
     &.has-update {
+      @apply text-xs transition;
       max-width: calc(100% - 0.2rem);
     }
     & img {
