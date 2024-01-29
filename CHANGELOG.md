@@ -12,12 +12,13 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ### Overview
 
-- Canvas Design Blocks has had a spring cleaning! Icons now work better, load faster, and have improved support for mobile devices. We've also created a new "Button Bar" block, which allows you to create a row of buttons or a progress bar with a single click. Happy new year!
+- Canvas Design Blocks has had a spring cleaning! Icons now work better, load faster, and have improved support for mobile devices. You can step through pages of link and image search results, and we've also created a new "Button Bar" block, which allows you to create a row of buttons or a progress bar with a single click. Happy new year!
 
 ### Added
 
 - #48: New "Button Bar" block
 - #29: New "Icon" element
+- #44: Search results are now paginated
 - #9: Drag handle for grids
 - #58: Select header level in Course Headers
 - #46: Improve blank profile UX
