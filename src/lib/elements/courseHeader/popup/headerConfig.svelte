@@ -142,11 +142,24 @@
         bind:value={$headerData.level}
       />
     </div>
-    <button class="Button Button--block Button--small" on:click={openPicker}>
-      <i class="cdb--icon" aria-hidden="true"> Canvas.image </i>
+    <div class="flex gap-2">
+      <button class="Button Button--block Button--small" on:click={openPicker}>
+        <i class="cdb--icon" aria-hidden="true"> Canvas.image </i>
 
-      Select image</button
-    >
+        Select image</button
+      >
+      {#if $headerData.image}
+        <button
+          class="Button Button--small aspect-square mt-0 grow-0"
+          title="Remove image"
+          on:click={() => {
+            $headerData.image = "";
+          }}
+        >
+          <i class="cdb--icon" aria-hidden="true"> Canvas.x </i>
+        </button>
+      {/if}
+    </div>
     {#if $headerData.theme === HeaderTheme["Modern"]}
       <div class="flex gap-2">
         <button

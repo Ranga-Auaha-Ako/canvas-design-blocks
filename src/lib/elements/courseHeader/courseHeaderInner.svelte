@@ -17,17 +17,21 @@
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-<div class="headerInner {cdbData.theme}" tabindex="0">
-  {#if cdbData.image}
-    {#if cdbData.theme === HeaderTheme["Modern"]}
-      {#if cdbData.icon}
-        <div class="iconComponent">
-          <IconElement icon={cdbData.icon}></IconElement>
-        </div>
-        <div class="iconOverlay">
-          <IconElement icon={cdbData.icon}></IconElement>
-        </div>
-      {/if}
+<div
+  class="headerInner {cdbData.theme}"
+  class:noImage={!cdbData.image}
+  tabindex="0"
+>
+  {#if cdbData.theme === HeaderTheme["Modern"]}
+    {#if cdbData.icon}
+      <div class="iconComponent">
+        <IconElement icon={cdbData.icon}></IconElement>
+      </div>
+      <div class="iconOverlay">
+        <IconElement icon={cdbData.icon}></IconElement>
+      </div>
+    {/if}
+    {#if cdbData.image}
       <div class="imageComponent">
         <img
           class="headerImage"
@@ -37,10 +41,10 @@
         />
         <div class="imageOverlay">&nbsp;</div>
       </div>
-    {:else}
-      <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
-      <div class="imageOverlay">&nbsp;</div>
     {/if}
+  {:else if cdbData.image}
+    <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
+    <div class="imageOverlay">&nbsp;</div>
   {/if}
   <div class="overlay">
     <!-- svelte-ignore a11y-missing-content -->

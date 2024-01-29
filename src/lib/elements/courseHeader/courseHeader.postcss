@@ -66,6 +66,11 @@
       @apply grid p-0 pl-8 z-10 text-black bg-white;
       grid-template-columns: auto minmax(18rem, 1fr) 1fr;
       grid-template-areas: "icon content image";
+      &.noImage {
+        @apply pr-8;
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "icon content";
+      }
       .iconOverlay {
         @apply absolute left-0 top-0 h-full opacity-5 -z-10;
         @apply flex items-center -translate-x-1/3;
@@ -142,6 +147,15 @@
           right: calc(100% - 1rem);
           top: -1rem;
         }
+      }
+    }
+
+    &.noImage {
+      @apply pr-4;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: "icon content";
+      .overlay {
+        @apply mr-0;
       }
     }
   }
