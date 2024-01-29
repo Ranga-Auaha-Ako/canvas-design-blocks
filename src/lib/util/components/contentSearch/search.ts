@@ -66,9 +66,10 @@ abstract class ContentSearch<L = Link> implements MockSearch<L> {
   public readonly url = derived(
     [this.page, this.perPage, this.query],
     ([$page, $perPage, $query]) => {
+      if (!this.urlBase) return "";
       const u = new URL(this.urlBase, document.URL);
       if ($query) {
-        u.searchParams.set("query", $query);
+        u.searchParams.set("search_term", $query);
       }
       if (!isNaN($perPage)) {
         u.searchParams.set("page", String($page));

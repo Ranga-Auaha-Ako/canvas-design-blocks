@@ -212,10 +212,10 @@
   }
 
   .accordion-header {
-    @apply w-full p-2 px-3 text-left align-middle leading-none transition;
+    @apply w-full p-2 px-3 align-middle leading-none transition flex gap-2;
     @apply text-lg font-bold border-b;
     > button {
-      @apply text-lg font-bold;
+      @apply text-lg font-bold grow text-left;
     }
     i {
       @apply mr-3;
