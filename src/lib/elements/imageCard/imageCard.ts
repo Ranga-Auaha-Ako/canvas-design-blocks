@@ -9,10 +9,7 @@ import type { McePopover } from "../generic/popover/popover";
 import ImageCardInner from "./imageCardInner.svelte";
 import ImageCardConfig from "./popup/imageCardConfig.svelte";
 import { sanitizeUrl } from "@braintree/sanitize-url";
-import {
-  IconState,
-  getIconState,
-} from "$lib/util/components/iconSearch/iconPicker";
+import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
 import { persisted } from "svelte-persisted-store";
 
 export enum ImageCardTheme {

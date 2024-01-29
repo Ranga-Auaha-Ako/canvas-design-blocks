@@ -3,7 +3,7 @@
   import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
-  import { slide } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { changes, changeversion, version } from "$lib/util/constants";
   import Grid from "$lib/elements/grid/grid";
@@ -45,6 +45,8 @@
       cdb_version: version,
     });
   }
+  $: hasUpdate =
+    !changeversion || compareVersions($last_opened_ver, changeversion) < 0;
 </script>
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
@@ -52,6 +54,7 @@
     class="cgb-openButton"
     title="Canvas Design Blocks"
     class:cgb-active={$open}
+    class:has-update={hasUpdate}
     on:click={() => {
       $open = !$open;
       dispatch("open");
@@ -59,10 +62,13 @@
   >
     <div class="details">Design Blocks</div>
     <img src={IconWhite} alt="" />
+    {#if hasUpdate}
+      <div class="update-ping" title="Update available!" out:fade></div>
+    {/if}
   </button>
 
   {#if $open}
-    {#if !changeversion || compareVersions($last_opened_ver, changeversion) < 0}
+    {#if hasUpdate}
       <div class="new-popup" transition:slide|global>
         <h3>Design Blocks {version}</h3>
         <p>
@@ -98,9 +104,12 @@
             add(manager);
           }}
         >
-          <svelte:fragment slot="name"
-            >Add {manager.elementName}</svelte:fragment
-          >
+          <svelte:fragment slot="name">
+            {#if manager.icon}
+              <span class="cdb--icon toolbar-icon">{manager.icon}</span>
+            {/if}
+            Add {manager.elementName}
+          </svelte:fragment>
         </ElementPanel>
       {/each}
       <div class="info-panel">
@@ -123,13 +132,33 @@
     display: contents;
   }
   .cgb-openButton {
-    @apply w-full h-8 py-1 px-2;
+    @apply relative w-full h-8 py-1 px-2;
     @apply flex flex-row items-center;
-    @apply transition text-sm border border-gray-200 rounded;
+    @apply transition-all text-sm border border-gray-200 rounded;
+    .update-ping {
+      @apply absolute -top-1 -right-1 z-40;
+      @apply w-2 h-2 bg-primary ring-1 ring-white ring-opacity-55 rounded-full;
+      &:before {
+        @apply absolute inset-0 w-full h-full bg-primary rounded-full;
+        @apply animate-ping;
+        animation-duration: 2s;
+        content: " ";
+      }
+    }
     &.cgb-active {
       @apply bg-primary text-white border-2 border-primary;
       /* Match Canvas border radius setting */
       border-radius: 3px;
+      .update-ping {
+        @apply ring-primary bg-white;
+        &:before {
+          @apply bg-white;
+        }
+      }
+    }
+    &.has-update {
+      @apply text-xs transition;
+      max-width: calc(100% - 0.2rem);
     }
     & img {
       @apply h-full p-0.5;
@@ -147,6 +176,12 @@
         @apply text-right flex-grow;
       }
     }
+  }
+  .toolbar-icon {
+    margin-right: 0.2rem;
+    font-size: 0.9rem;
+    line-height: 1.15em;
+    vertical-align: text-bottom;
   }
 
   .advanced-settings {

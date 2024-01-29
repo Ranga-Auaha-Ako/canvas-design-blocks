@@ -16,7 +16,7 @@
   import { Writable } from "svelte/store";
   import OrderableList from "$lib/util/components/orderableList.svelte";
   import { nanoid } from "nanoid";
-  import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
+  import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
   import { persisted } from "svelte-persisted-store";
 
@@ -94,7 +94,7 @@
     if (cardIndex === undefined) return;
     iconPicker.close();
     $rowData.cards[cardIndex].icon = {
-      id: detail.icon.id,
+      id: detail.icon.i,
       color: detail.color,
       type: detail.type,
     };

@@ -9,14 +9,26 @@ import { SvelteElement, SvelteState } from "../generic/svelteElement";
 import HeaderConfig from "./popup/headerConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import { sanitizeUrl } from "@braintree/sanitize-url";
+import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
+
 export enum HeaderTheme {
   Light = "HeaderTheme-light",
   Dark = "HeaderTheme-dark",
   Blur = "HeaderTheme-blur",
+  Modern = "HeaderTheme-modern",
+}
+
+export enum HeaderLevel {
+  h2 = "h2",
+  h3 = "h3",
+  h4 = "h4",
 }
 
 export const ValidThemes = Object.values(HeaderTheme);
 export const DefaultTheme = HeaderTheme.Dark;
+
+export const ValidLevels = Object.values(HeaderLevel);
+export const DefaultLevel = HeaderLevel.h2;
 
 export interface HeaderData {
   title: string;
@@ -29,6 +41,8 @@ export interface HeaderData {
     target?: string;
   }[];
   theme: HeaderTheme;
+  level?: HeaderLevel;
+  icon?: IconState;
 }
 
 class HeaderState implements SvelteState<HeaderData> {
@@ -50,6 +64,7 @@ class HeaderState implements SvelteState<HeaderData> {
       },
     ],
     theme: DefaultTheme,
+    level: DefaultLevel,
   };
   state: Writable<HeaderData> = writable();
   public set = this.state.set;
@@ -62,6 +77,9 @@ class HeaderState implements SvelteState<HeaderData> {
     let theme = ValidThemes.includes(unsafeState?.theme as HeaderTheme)
       ? unsafeState?.theme
       : DefaultTheme;
+    let level = ValidLevels.includes(unsafeState?.level as HeaderLevel)
+      ? unsafeState?.level
+      : DefaultLevel;
     let state: HeaderData = {
       title: unsafeState?.title || HeaderState.defaultState.title,
       overview: "",
@@ -74,10 +92,13 @@ class HeaderState implements SvelteState<HeaderData> {
           target: l.target || undefined,
         })) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
+      level: level || DefaultLevel,
     };
     state.overview =
       node?.querySelector(".headerOverview")?.innerHTML ||
       HeaderState.defaultState.overview;
+    let icon = getIconState(unsafeState?.icon);
+    if (icon) state.icon = icon;
     this.state.set(state);
   }
   get stateString() {

@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { type CourseHeader, ValidThemes, HeaderTheme } from "../courseHeader";
+  import {
+    type CourseHeader,
+    ValidThemes,
+    HeaderTheme,
+    ValidLevels,
+    HeaderLevel,
+  } from "../courseHeader";
   import { fade } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
@@ -8,6 +14,9 @@
   import { nanoid } from "nanoid";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
   import writableDerived from "svelte-writable-derived";
+  import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
+  import { onDestroy } from "svelte";
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
 
   export let props: { courseHeader: CourseHeader };
   // export let isDominant: Writable<boolean>;
@@ -81,6 +90,24 @@
       return $headerData;
     }
   );
+
+  const iconPicker = new IconPicker({
+    target: document.body,
+    props: {
+      options: { editColor: true },
+    },
+  });
+  iconPicker.$on("selectIcon", ({ detail }) => {
+    iconPicker.close();
+    $headerData.icon = {
+      id: detail.icon.i,
+      color: detail.color,
+      type: detail.type,
+    };
+  });
+  onDestroy(() => {
+    iconPicker.$destroy();
+  });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -107,7 +134,50 @@
         bind:value={$headerData.theme}
       />
     </div>
-    <button class="Button" on:click={openPicker}>Select image</button>
+    <div>
+      <ButtonRadio
+        title="Header Level"
+        choices={ValidLevels}
+        labels={Object.keys(HeaderLevel)}
+        bind:value={$headerData.level}
+      />
+    </div>
+    <button class="Button Button--block Button--small" on:click={openPicker}>
+      <i class="cdb--icon" aria-hidden="true"> Canvas.image </i>
+
+      Select image</button
+    >
+    {#if $headerData.theme === HeaderTheme["Modern"]}
+      <div class="flex gap-2">
+        <button
+          class="Button Button--small mt-0 grow"
+          on:click={() => {
+            iconPicker.open();
+          }}
+        >
+          {#if !$headerData.icon}
+            <i class="cdb--icon" aria-hidden="true">
+              Canvas.button-and-icon-maker
+            </i>
+          {:else}
+            <IconElement icon={$headerData.icon} colorOverride="#000" />
+          {/if}
+
+          Select Icon
+        </button>
+        {#if $headerData.icon}
+          <button
+            class="Button Button--small aspect-square mt-0 grow-0"
+            title="Remove icon"
+            on:click={() => {
+              $headerData.icon = undefined;
+            }}
+          >
+            <i class="cdb--icon" aria-hidden="true"> Canvas.x </i>
+          </button>
+        {/if}
+      </div>
+    {/if}
   </div>
   <div class="col">
     <!-- Links -->

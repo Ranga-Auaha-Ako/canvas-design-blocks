@@ -12,12 +12,18 @@ const CANVAS_HOST = process.env.CANVAS_BLOCKS_BASE_DOMAINS?.split(",")[0];
 if (!CANVAS_HOST)
   throw new Error("Missing CANVAS_BLOCKS_BASE_DOMAINS in .env file");
 const page = `https://${CANVAS_HOST}/404.html`;
-const response = await fetch(page);
+
+const response = await fetch(page).catch((error) => {
+  console.error("Failed to fetch the page: ", page);
+  console.error(error.cause);
+  throw error;
+});
+console.log("Using this page for Canvas Styles: ", page);
 
 class CustomResourceLoader extends ResourceLoader {
   fetch(url: string, options: any) {
     // Override the contents of this script to do something unusual.
-    if (url.startsWith("https://d36ecknnh9g8sb.cloudfront.net/")) {
+    if (url.startsWith(process.env.CANVAS_BLOCKS_THEME_HOST || "\0")) {
       return Promise.resolve(Buffer.from("")) as ReturnType<
         ResourceLoader["fetch"]
       >;

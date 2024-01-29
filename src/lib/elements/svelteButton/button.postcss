@@ -1,4 +1,4 @@
-@import "../../util/components/iconSearch/iconElement.postcss";
+@import "../../icons/svelte/iconElement.postcss";
 
 .DesignBlocks--Btn {
   @apply relative inline-flex overflow-clip transition;
@@ -60,5 +60,8 @@
 }
 
 .CDB--Button[data-cdb-version]:has(.Button--full) {
+  @apply block;
+}
+.CDB--Button.fullWidth[data-cdb-version] {
   @apply block;
 }

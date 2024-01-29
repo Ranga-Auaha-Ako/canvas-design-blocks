@@ -2,17 +2,18 @@
   import { nanoid } from "nanoid";
 
   export let title: string;
-  export let choices: string[];
+  export let choices: any[];
   export let labels = choices;
-  export let value: string;
+  export let value: any;
   export let id = nanoid();
   export let fullWidth: boolean = false;
+  export let comparator: (a: any, b: any) => boolean = (a, b) => a === b;
 </script>
 
 <span class="label-text">{title}</span>
 <div class="btn-group" style:--btn-items={choices.length} class:fullWidth>
   {#each choices as choice, index}
-    <label class="btn" class:active={value === choice}>
+    <label class="btn" class:active={comparator(value, choice)}>
       <slot {index}>
         <span>{labels[index]}</span>
       </slot>

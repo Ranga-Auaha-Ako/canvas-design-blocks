@@ -117,9 +117,6 @@
 </div>
 
 <style lang="postcss">
-  .cgb-component {
-    @contents;
-  }
   .layoutList {
     @apply absolute top-0 left-0;
     @apply mx-auto z-20 overflow-hidden cursor-auto box-content;

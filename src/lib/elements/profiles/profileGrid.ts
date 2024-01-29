@@ -35,6 +35,7 @@ export interface ProfileData {
     address: string;
   };
   showOverview: boolean;
+  showBioTitle: boolean;
   color?: Colord;
 }
 
@@ -77,6 +78,7 @@ class ProfileState implements SvelteState<ProfileData[]> {
         },
         overview: "",
         showOverview: p?.showOverview === undefined ? true : p?.showOverview,
+        showBioTitle: p?.showBioTitle === undefined ? true : p?.showBioTitle,
         color: getColorOrDefault(p?.color),
       })) || [];
     const personNodes = node?.querySelectorAll(".profileItem");

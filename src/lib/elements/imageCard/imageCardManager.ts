@@ -8,6 +8,7 @@ export class ImageCardManager extends ElementManager {
   public elementName = "Image Cards";
   public elementClass: ElementManager["elementClass"] = ImageCard;
   public selector = ".ImageCards[data-cdb-version]";
+  public icon = "Canvas.image";
 
   constructor(
     public readonly state: stateObject,

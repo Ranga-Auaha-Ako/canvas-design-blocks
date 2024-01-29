@@ -18,7 +18,7 @@
   import { nanoid } from "nanoid";
   import ScrollContainer from "../scrollContainer.svelte";
   import { persisted } from "svelte-persisted-store";
-  import type { Writable } from "svelte/store";
+  import { PaginationNav } from "svelte-paginate";
 
   let internalLinkTypesList = Object.values(InternalLinks);
 
@@ -33,6 +33,7 @@
             ? undefined
             : (value as InternalLinks),
       },
+      syncTabs: false,
     }
   );
   export let filter: FitlerTypes | undefined = undefined;
@@ -61,12 +62,16 @@
   };
 
   $: results = searchContent($linkType, query, filter);
+  $: resultData = results.data;
+  $: resultTotal = results.total;
+  $: resultPage = results.page;
+  $: resultPerPage = results.perPage;
 
   let searchInput: HTMLInputElement;
 
   let scrollCont: ScrollContainer;
-  $: results.then(() => {
-    scrollCont.update();
+  $: results.data.subscribe(() => {
+    scrollCont?.update();
   });
 </script>
 
@@ -84,29 +89,45 @@
     <div class="fileResults">
       {#each internalLinkTypesList as type}
         {@const id = nanoid()}
-        <button
-          class="accordion-header"
-          class:active={type === $linkType}
-          id="{id}-header"
-          aria-expanded={type === $linkType}
-          aria-controls={id}
-          on:click={() => {
-            if (type === $linkType) $linkType = undefined;
-            else $linkType = type;
-          }}
-        >
-          <i
-            class="icon-Solid"
-            class:icon-arrow-open-down={$linkType !== type}
-            class:icon-arrow-open-up={$linkType === type}
-          />
-          <span>
-            {type}
-          </span>
-        </button>
+        <div class="accordion-header" class:active={type === $linkType}>
+          <button
+            id="{id}-header"
+            aria-expanded={type === $linkType}
+            aria-controls={id}
+            on:click={() => {
+              if (type === $linkType) $linkType = undefined;
+              else $linkType = type;
+            }}
+          >
+            <i
+              class="icon-Solid"
+              class:icon-arrow-open-down={$linkType !== type}
+              class:icon-arrow-open-up={$linkType === type}
+            />
+            <span>
+              {type}
+            </span>
+          </button>
+          <div class="paginate-right">
+            {#if type === $linkType}
+              {#await $resultTotal then total}
+                {#if total && $resultPerPage}
+                  <PaginationNav
+                    totalItems={total}
+                    pageSize={$resultPerPage}
+                    currentPage={$resultPage}
+                    limit={1}
+                    showStepOptions={true}
+                    on:setPage={(e) => ($resultPage = e.detail.page)}
+                  />
+                {/if}
+              {/await}
+            {/if}
+          </div>
+        </div>
         <div class="fileList" {id} role="region" aria-labelledby="{id}-header">
           {#if type === $linkType}
-            {#await results}
+            {#await $resultData}
               <div class="fileListResults">
                 <div class="status-msg" in:fade|global>
                   <p>Loading...</p>
@@ -132,7 +153,7 @@
                 {:else}
                   {#each files as file}
                     <button
-                      class:unpublished={!file.published}
+                      class:unpublished={"published" in file && !file.published}
                       on:click={() => {
                         dispatch("select", file);
                       }}
@@ -140,12 +161,12 @@
                       <i class="icon-Line icon-{getIcon(file)}" />
                       <span class="linkName">{file.name}</span>
                       <div class="publishedStatus">
-                        {#if file.published === false}
+                        {#if "published" in file && file.published === false}
                           <i
                             class="icon-Solid icon-unpublish"
                             title="Unpublished"
                           />
-                        {:else if file.published === true}
+                        {:else if "published" in file && file.published === true}
                           <i
                             class="icon-Solid icon-publish"
                             title="Published"
@@ -191,13 +212,31 @@
   }
 
   .accordion-header {
-    @apply w-full p-2 px-3 text-left align-middle leading-none transition;
+    @apply w-full p-2 px-3 align-middle leading-none transition flex gap-2;
     @apply text-lg font-bold border-b;
+    > button {
+      @apply text-lg font-bold grow text-left;
+    }
     i {
       @apply mr-3;
     }
     &.active {
       /* @apply border-gray-300 border border-b-0 rounded-t; */
+    }
+    .paginate-right {
+      @apply inline-block align-bottom float-end;
+      :global(.pagination-nav) {
+        @apply flex gap-2 items-center flex-nowrap;
+        :global(.option) {
+          @apply cursor-pointer;
+          &:hover {
+            @apply underline;
+          }
+        }
+        :global(.option.active) {
+          @apply text-blue-500;
+        }
+      }
     }
   }
 

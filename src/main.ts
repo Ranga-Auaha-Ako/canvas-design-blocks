@@ -1,6 +1,8 @@
 import { writable } from "svelte/store";
 import type { Editor } from "tinymce";
 import "./app.postcss";
+import "virtual:blocks-icons.css";
+import blockStyles from "virtual:blocks-icons-editor-styles";
 import "$lib/util/tailwind.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import Toolbar from "./entrypoints/Toolbar.svelte";
@@ -15,6 +17,9 @@ import ImageCardManager from "$lib/elements/imageCard/imageCardManager";
 import ProfilesManager from "$lib/elements/profiles/profilesManager";
 import CourseHeaderManager from "$lib/elements/courseHeader/courseHeaderManager";
 import ImageCardLegacy from "$lib/elements/imageCard/imageCardLegacy";
+import ButtonBarManager from "$lib/elements/buttonBar/buttonBarManager";
+import IconManager from "$lib/elements/icon/iconManager";
+import gtag from "$lib/util/gtag";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -98,11 +103,13 @@ export const loadApp = async () => {
 
   // Create Element Managers
   const managers = [
-    GridManager,
+    ButtonBarManager,
     ButtonManager,
+    GridManager,
+    CourseHeaderManager,
+    IconManager,
     ImageCardManager,
     ProfilesManager,
-    CourseHeaderManager,
   ];
   loaded_blocks = managers.map((el) => new el(state, editor));
   // Migrate old blocks
@@ -115,7 +122,7 @@ export const loadApp = async () => {
 
   // Inject tailwind base styles into editor
   const pageStylesEl = editor.getDoc().createElement("style");
-  pageStylesEl.innerHTML = tailwindStyles;
+  pageStylesEl.innerHTML = tailwindStyles + blockStyles;
   editor.getBody().insertAdjacentElement("beforebegin", pageStylesEl);
 
   // Add class to page body when toolbar is open

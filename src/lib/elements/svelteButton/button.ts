@@ -13,7 +13,7 @@ import {
   IconType,
   getIconState,
   icons,
-} from "$lib/util/components/iconSearch/iconPicker";
+} from "$lib/icons/svelte/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";
@@ -46,6 +46,7 @@ export interface ButtonData {
   size: ButtonSize;
   icon: IconState | undefined;
   color?: Colord;
+  textColor?: Colord;
   fullWidth?: boolean;
 }
 
@@ -58,6 +59,7 @@ class ButtonState implements SvelteState<ButtonData> {
     title: "",
     label: "Button Text",
     color: colord(theme.primary),
+    textColor: colord("#fff"),
     size: DefaultSize,
     url: "#",
     target: "_self",
@@ -79,6 +81,7 @@ class ButtonState implements SvelteState<ButtonData> {
       url: ButtonState.defaultState.url,
       target: ButtonState.defaultState.target,
       color: ButtonState.defaultState.color,
+      textColor: ButtonState.defaultState.textColor,
       fullWidth: ButtonState.defaultState.fullWidth,
       icon: undefined,
     };
@@ -117,6 +120,9 @@ class ButtonState implements SvelteState<ButtonData> {
         title: unsafeState.title || ButtonState.defaultState.title,
         label: unsafeState.label || ButtonState.defaultState.label,
         color: color,
+        textColor: unsafeState.textColor
+          ? colord(unsafeState.textColor)
+          : ButtonState.defaultState.textColor,
         size: size || DefaultSize,
         url: ButtonState.defaultState.url,
         target: unsafeState.target || ButtonState.defaultState.target,
@@ -132,10 +138,11 @@ class ButtonState implements SvelteState<ButtonData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { url: _, color, ...buttonData } = state;
+    const { url: _, color, textColor, ...buttonData } = state;
     return JSON.stringify({
       ...buttonData,
       color: color?.toHex(),
+      textColor: textColor?.toHex(),
     });
   }
 }
@@ -206,6 +213,15 @@ export class Button extends SvelteElement<ButtonData> {
         if (this.popover.isActive) {
           this.popover.hide();
         }
+      }
+    });
+
+    this.SvelteState.subscribe((state) => {
+      // We need to mark full width buttons as such
+      if (state.fullWidth) {
+        this.node.classList.add("fullWidth");
+      } else {
+        this.node.classList.remove("fullWidth");
       }
     });
     this.setupObserver();

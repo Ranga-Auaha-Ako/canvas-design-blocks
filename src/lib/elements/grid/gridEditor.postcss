@@ -14,6 +14,23 @@
     &[contentEditable="false"][data-mce-selected] {
       @apply outline-secondary outline-dashed outline-2 bg-opacity-10;
     }
+    &:before {
+      @apply absolute block text-black text-base -left-2 -top-1;
+      @apply invisible opacity-0 transition-all;
+      content: "Canvas.drag-handle";
+      font-family: "BlocksIcons";
+      cursor: pointer;
+    }
+    &:has(:focus-visible),
+    &[data-mce-selected],
+    &:active {
+      &:before {
+        @apply visible opacity-100 scale-110 -translate-x-3;
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
     & .grid-row {
       @apply flex gap-3 relative;
       & [class=^="col-"],

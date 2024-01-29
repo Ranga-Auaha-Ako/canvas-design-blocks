@@ -8,6 +8,32 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.11.0] - 2024-01-10
+
+### Overview
+
+- Canvas Design Blocks has had a spring cleaning! Icons now work better, load faster, and have improved support for mobile devices. You can step through pages of link and image search results, and we've also created a new "Button Bar" block, which allows you to create a row of buttons or a progress bar with a single click. Happy new year!
+
+### Added
+
+- #48: New "Button Bar" block
+- #29: New "Icon" element
+- #44: Search results are now paginated
+- #9: Drag handle for grids
+- #58: Select header level in Course Headers
+- #46: Improve blank profile UX
+- Allow users to hide "Bio" title in profile
+
+### Changed
+
+- #24: Integrated Iconset generation - Canvas Design Blocks no longer relies on third party host for icons, and uses an iconfont rather than individual SVGs. This means that icons load faster, and are more reliable on mobile devices.
+- Sort toolbar alphabetically, and add icons
+
+### Fixed
+
+- #37: Built-in icons don't load on mobile, plus sizing issues
+- #43: Full-width buttons fixed on Firefox
+
 ## [2.10.0] - 2023-10-24
 
 ### Added

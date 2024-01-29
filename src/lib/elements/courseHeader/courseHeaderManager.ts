@@ -8,6 +8,7 @@ export class CourseHeaderManager extends ElementManager {
   selector = ".CourseHeader[data-cdb-version]";
   public elementClass: ElementManager["elementClass"] = CourseHeader;
   elementName = "Header";
+  icon = "Canvas.header";
 
   constructor(
     public readonly state: stateObject,

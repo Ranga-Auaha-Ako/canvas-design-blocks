@@ -10,6 +10,7 @@ export class ProfilesManager extends ElementManager {
   selector = ".Profiles[data-cdb-version]";
   public elementClass: ElementManager["elementClass"] = ProfileGrid;
   elementName = "Profiles";
+  icon = "Canvas.educators";
 
   constructor(
     public readonly state: stateObject,

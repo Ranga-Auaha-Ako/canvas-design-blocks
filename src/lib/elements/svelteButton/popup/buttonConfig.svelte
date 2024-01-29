@@ -9,7 +9,7 @@
   import { fade, slide } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
-  import IconPicker from "$lib/util/components/iconSearch/iconPicker.svelte";
+  import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
@@ -51,14 +51,16 @@
   iconPicker.$on("selectIcon", ({ detail }) => {
     iconPicker.close();
     $buttonData.icon = {
-      id: detail.icon.id,
+      id: detail.icon.i,
       type: detail.type,
     };
   });
   onDestroy(() => {
     iconPicker.$destroy();
   });
-  $: contrastLevel = $buttonData.color?.contrast(colord("#ffffff"));
+  $: contrastLevel = $buttonData.color?.contrast(
+    $buttonData.textColor || colord("#ffffff")
+  );
   $: isReadable =
     contrastLevel === undefined || (contrastLevel && contrastLevel >= 7);
 </script>
@@ -106,20 +108,34 @@
       />
     </div>
     <div class="col">
+      <div>
+        <ButtonRadio
+          title="Text Colour"
+          choices={[colord("#000"), colord("#fff")]}
+          labels={["Dark", "Light"]}
+          bind:value={$buttonData.textColor}
+          comparator={(a, b) => a.toHex() === b.toHex()}
+        />
+      </div>
       <ColourPicker
-        label="Colour"
+        label="Button Colour"
         id={nanoid() + "-setting-background"}
         bind:colour={$buttonData.color}
-        contrastColour={colord("#ffffff")}
+        contrastColour={$buttonData?.textColor || colord("#ffffff")}
         showNone={false}
         asModal={isModal}
       />
       {#if !isReadable}
         <div class="colour-alert" transition:slide|global>
           <p class="alert-details">
-            <span class="font-bold">Warning:</span> The text in this button may be
-            hard to read for some students. Consider using a darker colour to improve
-            contrast against the white text.
+            <span class="font-bold">Warning:</span> The text in this button may
+            be hard to read for some students. {#if $buttonData.textColor?.isLight()}
+              Consider using a darker colour to improve contrast against the
+              light text.
+            {:else}
+              Consider using a lighter colour to improve contrast against the
+              dark text.
+            {/if}
           </p>
         </div>
       {/if}

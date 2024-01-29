@@ -62,6 +62,7 @@
               : "No bio available..."
           }</p>`,
           showOverview: true,
+          showBioTitle: true,
           emailAddress: {
             address: person.email,
           },
@@ -135,14 +136,24 @@
         </button>
       </div>
       <div class="options">
-        <label for="fullWidth" class="checkbox-fullwidth">
+        <label for="showOverview" class="checkbox-fullwidth">
           <input
             type="checkbox"
-            id="fullWidth"
+            id="showOverview"
             bind:checked={$people[activeIndex].showOverview}
           />
           Show Overview
         </label>
+        {#if $people[activeIndex].showOverview}
+          <label for="showBioTitle" class="checkbox-fullwidth">
+            <input
+              type="checkbox"
+              id="showBioTitle"
+              bind:checked={$people[activeIndex].showBioTitle}
+            />
+            Show "Bio" title above overview
+          </label>
+        {/if}
         <ColourPicker
           label="Colour"
           id={nanoid() + "-setting-background"}

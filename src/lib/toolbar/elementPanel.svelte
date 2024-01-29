@@ -20,7 +20,7 @@
 
 <style lang="postcss">
   .pane {
-    @apply bg-white border-b p-3 py-2 relative w-full;
+    @apply bg-white border-b px-2.5 py-2 relative w-full;
     @apply grid justify-items-start;
     @apply gap-2;
     grid-template-columns: 1fr auto;
@@ -28,7 +28,7 @@
       @apply block w-4 h-4 leading-none;
     } */
     & h3 {
-      @apply block m-0 text-base text-left;
+      @apply block m-0 text-sm text-left;
     }
     /* .add-button {
       @apply h-full px-2;

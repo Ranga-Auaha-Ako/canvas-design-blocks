@@ -24,6 +24,8 @@ export interface CustomIconState {
   id: string;
   type: IconType.Custom;
   color?: string;
+  /** The ligature to use for the icon. Will only be used while waiting for the new data to load */
+  lig?: string;
 }
 
 export interface universalIconState {
@@ -44,71 +46,41 @@ export const isInstIcon = (
   icon: Pick<IconState, "type">
 ): icon is InstIconState => !isCustomIcon(icon);
 
-let icons: iconData = [];
 // import { icons as InstIcons } from "virtual:inst-icons";
-const InstIcons = import("virtual:inst-icons");
+import icons from "virtual:blocks-icons";
+export { icons };
+export type category = (typeof icons)[0];
+export type icon = category["icons"][0];
 
-InstIcons.then((i) =>
-  Object.entries(i.icons).forEach(([iconPath, url]) => {
-    const [type, ...nameArr] = iconPath.split(".");
-    const name = nameArr.join(".");
-    if (!type || !name) return;
-    let typeEnum: IconType.Solid | IconType.Line;
-    if (type === "Solid") typeEnum = IconType.Solid;
-    else if (type === "Line") typeEnum = IconType.Line;
-    else return;
-    // Create/get category
-    const catName = `Instructure ${type} Icons`;
-    let category = icons.find(
-      (c): c is instCategory => c.name === catName && c.type === typeEnum
-    );
-    if (!category) {
-      category = {
-        name: catName,
-        type: typeEnum,
-        icons: [],
-      };
-      icons.push(category);
-    }
-    // Add icon
-    category.icons.push({
-      id: instClassToId(name, typeEnum),
-      url,
-      term: name,
-    } as instIcon);
-  })
-);
-
-const instClassToId = (
+export const instClassToId = (
   classStr: string,
   type: IconType.Solid | IconType.Line
 ) => `Inst.${classStr}.${type}`;
 
-export { icons };
-
-export async function getIconData(
+export function getIconData(
   icon:
     | Pick<InstIconState, "type" | "class">
     | Pick<CustomIconState, "type" | "id">
     | Pick<universalIconState, "type" | "id">
-): Promise<instIcon | customIcon | undefined> {
-  const ics = await loadCustomIcons();
+): (icon & { c: string }) | undefined {
   if (isCustomIcon(icon) || isUniversalIcon(icon)) {
-    let found: customIcon | instIcon | undefined;
-    for (const cat of ics) {
-      if (cat.type !== icon.type) continue;
-      found = cat.icons.find((ic) => ic.id === icon.id);
-      if (found) break;
-    }
-    return found;
-  } else if (isInstIcon(icon)) {
-    let found: instIcon | undefined;
-    for (const cat of ics) {
-      if (cat.type !== icon.type) continue;
-      found = cat.icons.find((ic) => ic.term === icon.class);
-      if (found) break;
-    }
-    return found;
+    return icons
+      .flatMap((c) => c.icons.map((i) => ({ ...i, c: c.name })))
+      .find((ic) => ic.i === icon.id);
+  } else {
+    // Icon is an instructure icon. Attempt to find it in the iconset.
+    const instCat = icons.find((c) => c.name === "Canvas");
+    if (!instCat) return undefined;
+    // Get new ID
+    // Old ID: Inst.admin.1 (category.id.type)
+    // New ID: Canvas.Line.admin (category.type.id)
+    const oldID = isInstIcon(icon)
+      ? instClassToId(icon.class, icon.type)
+      : (icon as CustomIconState).id;
+    const [_inst, id, _type] = oldID.split("Inst.");
+    const match = instCat.icons.find((ic) => ic.i === `Canvas.Line.${id}`);
+    if (!match) return undefined;
+    return { ...match, c: instCat.name };
   }
 }
 
@@ -133,6 +105,13 @@ export function getIconState(
         : undefined,
   };
   if (isUniversalIcon(formedIcon) || isCustomIcon(formedIcon)) {
+    if (
+      !formedIcon.id &&
+      formedIcon.type !== IconType.Custom &&
+      formedIcon.class
+    ) {
+      formedIcon.id = `Inst.Line.${formedIcon.class}`;
+    }
     const icon = {
       type: formedIcon.type,
       id: formedIcon.id,
@@ -154,26 +133,7 @@ export function getIconState(
 }
 
 export interface IconPickerOptions {
+  card?: boolean;
   editColor?: boolean;
-}
-
-let hasLoadedCustomIcons: false | Promise<iconData> = false;
-export async function loadCustomIcons() {
-  if (hasLoadedCustomIcons !== false) return await hasLoadedCustomIcons;
-  const getFunc = (async () => {
-    if (!import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS) return icons;
-    const data = (await fetch(
-      `https://${import.meta.env.CANVAS_BLOCKS_USE_CANVAS_ICONS}/meta.json`
-    ).then((r) => r.json())) as customIconsMeta;
-    data.forEach((cat) => {
-      icons.push({
-        name: cat.name,
-        type: IconType.Custom,
-        icons: cat.icons,
-      });
-    });
-    return icons;
-  })();
-  hasLoadedCustomIcons = getFunc;
-  return await getFunc;
+  maxHeight?: string;
 }

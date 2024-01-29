@@ -7,7 +7,7 @@
     ValidThemes,
   } from "./imageCard";
   import { createEventDispatcher, onDestroy } from "svelte";
-  import IconElement from "$lib/util/components/iconSearch/iconElement.svelte";
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
 
   const dispatch = createEventDispatcher();
 
