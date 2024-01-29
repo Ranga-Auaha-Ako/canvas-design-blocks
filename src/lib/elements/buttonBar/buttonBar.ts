@@ -105,15 +105,19 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
         ? colord(unsafeState.color)
         : colord(theme.primary);
       state.position = unsafeState.position || 0;
-      if (unsafeState.items) {
+      const buttonURLs =
+        node?.querySelectorAll<HTMLAnchorElement>(".buttonBar > a");
+      if (unsafeState.items && buttonURLs) {
         unsafeState.items.forEach((item, index) => {
           let stateItem: ButtonBarItem = {
             moduleID: item.moduleID,
             label: item.label || `Module ${index + 1}`,
-            url: sanitizeUrl(item?.url || "").replace(/^about:blank$/, ""),
+            url: "",
             icon: undefined,
             hide: !!item.hide,
           };
+          // Update URL
+          stateItem.url = buttonURLs[index]?.href || "";
           stateItem.icon = getIconState(item.icon);
           const existingIndex = state.items.findIndex(
             (i) => i.moduleID === stateItem.moduleID
@@ -133,7 +137,7 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
     const { items, color, ...stateData } = state;
     return JSON.stringify({
       ...stateData,
-      items: items.map((item) => ({
+      items: items.map(({ url, ...item }) => ({
         ...item,
       })),
       color: color?.toHex(),

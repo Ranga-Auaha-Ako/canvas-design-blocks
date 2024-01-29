@@ -8,7 +8,13 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
-## [2.11.0] - 2024-01-10
+## [2.11.1] - 2024-01-30
+
+### Fixed
+
+- Fix #23: Inherit image and link URLs from DOM, resolving migration issues
+
+## [2.11.0] - 2024-01-30
 
 ### Overview
 
