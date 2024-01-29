@@ -27,6 +27,7 @@ Please write a brief description at the top of each version in "Overview". This 
 ### Changed
 
 - #24: Integrated Iconset generation - Canvas Design Blocks no longer relies on third party host for icons, and uses an iconfont rather than individual SVGs. This means that icons load faster, and are more reliable on mobile devices.
+- Sort toolbar alphabetically, and add icons
 
 ### Fixed
 
