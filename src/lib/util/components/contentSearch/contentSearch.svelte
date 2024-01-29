@@ -18,8 +18,7 @@
   import { nanoid } from "nanoid";
   import ScrollContainer from "../scrollContainer.svelte";
   import { persisted } from "svelte-persisted-store";
-  import type { Writable } from "svelte/store";
-  import { LightPaginationNav } from "svelte-paginate";
+  import { PaginationNav } from "svelte-paginate";
 
   let internalLinkTypesList = Object.values(InternalLinks);
 
@@ -90,26 +89,42 @@
     <div class="fileResults">
       {#each internalLinkTypesList as type}
         {@const id = nanoid()}
-        <button
-          class="accordion-header"
-          class:active={type === $linkType}
-          id="{id}-header"
-          aria-expanded={type === $linkType}
-          aria-controls={id}
-          on:click={() => {
-            if (type === $linkType) $linkType = undefined;
-            else $linkType = type;
-          }}
-        >
-          <i
-            class="icon-Solid"
-            class:icon-arrow-open-down={$linkType !== type}
-            class:icon-arrow-open-up={$linkType === type}
-          />
-          <span>
-            {type}
-          </span>
-        </button>
+        <div class="accordion-header" class:active={type === $linkType}>
+          <button
+            id="{id}-header"
+            aria-expanded={type === $linkType}
+            aria-controls={id}
+            on:click={() => {
+              if (type === $linkType) $linkType = undefined;
+              else $linkType = type;
+            }}
+          >
+            <i
+              class="icon-Solid"
+              class:icon-arrow-open-down={$linkType !== type}
+              class:icon-arrow-open-up={$linkType === type}
+            />
+            <span>
+              {type}
+            </span>
+          </button>
+          <div class="paginate-right">
+            {#if type === $linkType}
+              {#await $resultTotal then total}
+                {#if total && $resultPerPage}
+                  <PaginationNav
+                    totalItems={total}
+                    pageSize={$resultPerPage}
+                    currentPage={$resultPage}
+                    limit={1}
+                    showStepOptions={true}
+                    on:setPage={(e) => ($resultPage = e.detail.page)}
+                  />
+                {/if}
+              {/await}
+            {/if}
+          </div>
+        </div>
         <div class="fileList" {id} role="region" aria-labelledby="{id}-header">
           {#if type === $linkType}
             {#await $resultData}
@@ -161,14 +176,6 @@
                     </button>
                     <hr />
                   {/each}
-                  <LightPaginationNav
-                    totalItems={results.total}
-                    pageSize={$resultPerPage}
-                    currentPage={$resultPage}
-                    limit={1}
-                    showStepOptions={true}
-                    on:setPage={(e) => ($resultPage = e.detail.page)}
-                  />
                 {/if}
               </div>
             {:catch error}
@@ -207,11 +214,29 @@
   .accordion-header {
     @apply w-full p-2 px-3 text-left align-middle leading-none transition;
     @apply text-lg font-bold border-b;
+    > button {
+      @apply text-lg font-bold;
+    }
     i {
       @apply mr-3;
     }
     &.active {
       /* @apply border-gray-300 border border-b-0 rounded-t; */
+    }
+    .paginate-right {
+      @apply inline-block align-bottom float-end;
+      :global(.pagination-nav) {
+        @apply flex gap-2 items-center flex-nowrap;
+        :global(.option) {
+          @apply cursor-pointer;
+          &:hover {
+            @apply underline;
+          }
+        }
+        :global(.option.active) {
+          @apply text-blue-500;
+        }
+      }
     }
   }
 

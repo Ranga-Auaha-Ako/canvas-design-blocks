@@ -38,7 +38,9 @@ const COURSE_ID = window.ENV?.COURSE_ID;
 
 class MockSearch<L = Link> {
   public readonly data;
-  public readonly total = readable(new Promise((set) => set(mock.length)));
+  public readonly total = readable(
+    new Promise<number>((set) => set(mock.length))
+  );
   public readonly links = readable<
     Promise<{
       current?: string;
@@ -68,8 +70,10 @@ abstract class ContentSearch<L = Link> implements MockSearch<L> {
       if ($query) {
         u.searchParams.set("query", $query);
       }
-      u.searchParams.set("page", String($page));
-      u.searchParams.set("per_page", String($perPage));
+      if (!isNaN($perPage)) {
+        u.searchParams.set("page", String($page));
+        u.searchParams.set("per_page", String($perPage));
+      }
       return u.toString();
     }
   );
@@ -81,10 +85,11 @@ abstract class ContentSearch<L = Link> implements MockSearch<L> {
         return new Promise((set) => set({ links: {}, data: [] }));
       fetch($url)
         .then(async (response) => {
+          const json = (await response.json()) as Record<string, any>[];
           const links = ContentSearch.parseLinkHeader(
-            response.headers.get("Link") || ""
+            response.headers.get("Link") || "",
+            json
           );
-          const json = await response.json();
           set({
             data: await this.getLinks(json),
             ...links,
@@ -105,7 +110,7 @@ abstract class ContentSearch<L = Link> implements MockSearch<L> {
     $state.then((s) => s.total || s.data.length)
   );
   abstract getLinks(data: Record<string, any>[]): Promise<L[]>;
-  static parseLinkHeader(link: string) {
+  static parseLinkHeader(link: string, results: Record<string, any>[]) {
     const links = link.split(",");
     const parsedLinks: {
       current?: string;
@@ -120,7 +125,7 @@ abstract class ContentSearch<L = Link> implements MockSearch<L> {
         parsedLinks[match[2] as linkRels] = match[1];
       }
     });
-    let total;
+    let total = results.length;
     if (parsedLinks.last) {
       const last = parsedLinks.last.split("?");
       if (last[1]) {
@@ -350,7 +355,11 @@ export class ModuleSearch<F extends boolean> extends ContentSearch<
 }
 
 export class NavigationSearch extends ContentSearch<Link> {
+  public perPage = writable(NaN);
   urlBase = `/api/v1/courses/${COURSE_ID}/tabs`;
+  constructor() {
+    super(undefined, undefined, NaN);
+  }
   async getLinks(data: Record<string, any>[]) {
     return data.map<Link>((n) => {
       return {
