@@ -19,6 +19,7 @@
   import ScrollContainer from "../scrollContainer.svelte";
   import { persisted } from "svelte-persisted-store";
   import type { Writable } from "svelte/store";
+  import { LightPaginationNav } from "svelte-paginate";
 
   let internalLinkTypesList = Object.values(InternalLinks);
 
@@ -63,6 +64,9 @@
 
   $: results = searchContent($linkType, query, filter);
   $: resultData = results.data;
+  $: resultTotal = results.total;
+  $: resultPage = results.page;
+  $: resultPerPage = results.perPage;
 
   let searchInput: HTMLInputElement;
 
@@ -157,6 +161,14 @@
                     </button>
                     <hr />
                   {/each}
+                  <LightPaginationNav
+                    totalItems={results.total}
+                    pageSize={$resultPerPage}
+                    currentPage={$resultPage}
+                    limit={1}
+                    showStepOptions={true}
+                    on:setPage={(e) => ($resultPage = e.detail.page)}
+                  />
                 {/if}
               </div>
             {:catch error}
