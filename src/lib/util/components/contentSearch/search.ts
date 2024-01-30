@@ -368,7 +368,7 @@ export class NavigationSearch extends ContentSearch<Link> {
         name: n.label,
         url: n.html_url,
         type: InternalLinks.Navigation,
-        published: n.hidden,
+        published: !n.hidden,
       };
     });
   }
