@@ -17,7 +17,7 @@
     destroyHandler();
   });
 
-  $: transparentColor = colord(cdbData.color?.toHex() || "#fff").alpha(0.5);
+  $: transparentColor = colord(cdbData.color?.toHex() || "#fff").alpha(0.3);
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
