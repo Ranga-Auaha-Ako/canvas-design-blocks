@@ -10,6 +10,7 @@ import HeaderConfig from "./popup/headerConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
+import { colord, type Colord } from "colord";
 
 export enum HeaderTheme {
   Light = "HeaderTheme-light",
@@ -39,8 +40,10 @@ export interface HeaderData {
     url: string;
     id: string;
     target?: string;
+    icon?: IconState;
   }[];
   theme: HeaderTheme;
+  color?: Colord;
   level?: HeaderLevel;
   icon?: IconState;
 }
@@ -63,6 +66,7 @@ class HeaderState implements SvelteState<HeaderData> {
         id: nanoid(),
       },
     ],
+    color: undefined,
     theme: DefaultTheme,
     level: DefaultLevel,
   };
@@ -80,18 +84,31 @@ class HeaderState implements SvelteState<HeaderData> {
     let level = ValidLevels.includes(unsafeState?.level as HeaderLevel)
       ? unsafeState?.level
       : DefaultLevel;
+    const headerImage =
+      node?.querySelector<HTMLImageElement>("img.headerImage");
+    const linkURLs =
+      node?.querySelectorAll<HTMLAnchorElement>(".headerLinks > a");
+
     let state: HeaderData = {
       title: unsafeState?.title || HeaderState.defaultState.title,
       overview: "",
-      image: unsafeState?.image || HeaderState.defaultState.image,
+      image: headerImage?.src || HeaderState.defaultState.image,
       links:
-        unsafeState?.links?.map((l) => ({
-          title: l?.title || "",
-          url: sanitizeUrl(l?.url || "").replace(/^about:blank$/, ""),
-          id: l?.id || nanoid(),
-          target: l.target || undefined,
-        })) || HeaderState.defaultState.links,
+        unsafeState?.links?.map((l, index) => {
+          const url = linkURLs?.[index]?.href || "";
+          let icon = getIconState(l.icon);
+          return {
+            title: l.title || "",
+            url,
+            id: l.id || nanoid(),
+            icon: icon || undefined,
+            target: l.target || undefined,
+          };
+        }) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
+      color: unsafeState?.color
+        ? colord(unsafeState?.color)
+        : HeaderState.defaultState?.color,
       level: level || DefaultLevel,
     };
     state.overview =
@@ -103,8 +120,14 @@ class HeaderState implements SvelteState<HeaderData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { overview: _, ...headerData } = state;
-    return JSON.stringify(headerData);
+    const { overview: _o, color, links, ...headerData } = state;
+    return JSON.stringify({
+      ...headerData,
+      color: color?.toHex() || undefined,
+      links: links.map(({ url: _, ...item }) => ({
+        ...item,
+      })),
+    });
   }
 }
 

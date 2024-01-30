@@ -84,13 +84,16 @@ class CardRowState implements SvelteState<RowData> {
       size: size || get(DefaultSize),
       theme: theme || get(DefaultTheme),
     };
+    const cardLinks = node?.querySelectorAll<HTMLAnchorElement>("a.ImageCard");
+    const cardImages =
+      node?.querySelectorAll<HTMLImageElement>("img.ImageCardImage");
     if (unsafeState?.cards) {
-      state.cards = unsafeState.cards.map((card) => {
+      state.cards = unsafeState.cards.map((card, index) => {
         let icon = getIconState(card.icon);
         return {
           label: card.label || "",
-          link: sanitizeUrl(card.link || "").replace(/^about:blank$/, ""),
-          image: card.image || "",
+          link: cardLinks?.[index]?.href || "#",
+          image: cardImages?.[index]?.src || "",
           id: card.id || nanoid(),
           icon: icon,
         };
@@ -110,8 +113,13 @@ class CardRowState implements SvelteState<RowData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { ...rowData } = state;
-    return JSON.stringify(rowData);
+    const { cards, ...stateData } = state;
+    return JSON.stringify({
+      ...stateData,
+      cards: cards.map(({ link: _, image: __, ...card }) => ({
+        ...card,
+      })),
+    });
   }
 }
 

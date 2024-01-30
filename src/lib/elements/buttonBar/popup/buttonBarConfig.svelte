@@ -13,6 +13,7 @@
   import { LocalState } from "$lib/elements/imageCard/imageCard";
   import ItemPages from "$lib/util/components/itemPages/itemPages.svelte";
   import { text } from "stream/consumers";
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
 
   export let props: {
     buttonBar: ButtonBar;
@@ -164,12 +165,23 @@
                   }}
                 />
               </div>
+
               <button
                 class="btn btn-secondary"
                 on:click={() => {
                   iconPicker.open();
-                }}>Select Icon</button
+                }}
               >
+                {#if $buttonBarData.items[itemIndex].icon}
+                  <IconElement
+                    icon={$buttonBarData.items[itemIndex].icon}
+                    colorOverride="#000"
+                    }
+                  />
+                {/if}
+
+                Select Icon
+              </button>
               <div class="text-right">
                 <button
                   class="btn btn-danger btn-small"

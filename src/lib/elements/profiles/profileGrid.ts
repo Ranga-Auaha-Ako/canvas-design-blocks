@@ -63,7 +63,7 @@ class ProfileState implements SvelteState<ProfileData[]> {
         firstName: p?.firstName || "",
         lastName: p?.lastName || "",
         firstNameLastName: p?.firstNameLastName || "",
-        thumbnail: p?.thumbnail || "",
+        thumbnail: "",
         positions: (
           p?.positions as
             | string[]
@@ -81,18 +81,22 @@ class ProfileState implements SvelteState<ProfileData[]> {
         showBioTitle: p?.showBioTitle === undefined ? true : p?.showBioTitle,
         color: getColorOrDefault(p?.color),
       })) || [];
-    const personNodes = node?.querySelectorAll(".profileItem");
+    const personNodes =
+      node?.querySelectorAll<HTMLDivElement>("div.profileItem");
     personNodes?.forEach((pNode, index) => {
       if (state.length - 1 < index) return;
       state[index].overview =
         pNode.querySelector(".bioContent")?.innerHTML || "";
+      const profileThumbnail =
+        pNode?.querySelector<HTMLImageElement>("img.profile-photo");
+      state[index].thumbnail = profileThumbnail?.src || "";
     });
     this.state.set(state);
   }
   get stateString() {
     const state = get(this.state);
     const safeState = state.map((s) => {
-      const { overview: _, color, ...person } = s;
+      const { overview: _, thumbnail: __, color, ...person } = s;
       return { ...person, color: color?.toHex() };
     });
     return JSON.stringify(safeState);

@@ -6,7 +6,7 @@
     ValidLevels,
     HeaderLevel,
   } from "../courseHeader";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
   import { ModalDialog } from "$lib/util/components/modalDialog/modal";
   import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
@@ -17,12 +17,15 @@
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import { onDestroy } from "svelte";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
+  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import { colord } from "colord";
 
   export let props: { courseHeader: CourseHeader };
   // export let isDominant: Writable<boolean>;
   // export let dominantPopover: Readable<boolean> | undefined = undefined;
   $: courseHeader = props.courseHeader;
   $: headerData = courseHeader.SvelteState;
+  export let isModal: boolean = false;
   let configEl: HTMLElement;
   let newLinkText: HTMLInputElement;
   let newLinkTextLabel: HTMLInputElement;
@@ -91,14 +94,20 @@
     }
   );
 
-  const iconPicker = new IconPicker({
+  $: isReadable =
+    !$headerData.color ||
+    ($headerData.color?.isDark()
+      ? $headerData.color.isReadable("#fff", { level: "AAA" })
+      : $headerData.color?.isReadable("#000", { level: "AAA" }));
+
+  const headerIconPicker = new IconPicker({
     target: document.body,
     props: {
       options: { editColor: true },
     },
   });
-  iconPicker.$on("selectIcon", ({ detail }) => {
-    iconPicker.close();
+  headerIconPicker.$on("selectIcon", ({ detail }) => {
+    headerIconPicker.close();
     $headerData.icon = {
       id: detail.icon.i,
       color: detail.color,
@@ -106,7 +115,26 @@
     };
   });
   onDestroy(() => {
-    iconPicker.$destroy();
+    headerIconPicker.$destroy();
+  });
+
+  const buttonIconPicker = new IconPicker({
+    target: document.body,
+    props: {
+      options: { editColor: false },
+    },
+  });
+  buttonIconPicker.$on("selectIcon", ({ detail }) => {
+    buttonIconPicker.close();
+    if (editLinkIndex === undefined || !$headerData.links[editLinkIndex])
+      return;
+    $headerData.links[editLinkIndex].icon = {
+      id: detail.icon.i,
+      type: detail.type,
+    };
+  });
+  onDestroy(() => {
+    buttonIconPicker.$destroy();
   });
 </script>
 
@@ -142,17 +170,30 @@
         bind:value={$headerData.level}
       />
     </div>
-    <button class="Button Button--block Button--small" on:click={openPicker}>
-      <i class="cdb--icon" aria-hidden="true"> Canvas.image </i>
+    <div class="flex gap-2">
+      <button class="Button Button--block Button--small" on:click={openPicker}>
+        <i class="cdb--icon" aria-hidden="true"> Canvas.image </i>
 
-      Select image</button
-    >
+        Select image</button
+      >
+      {#if $headerData.image}
+        <button
+          class="Button Button--small aspect-square mt-0 grow-0"
+          title="Remove image"
+          on:click={() => {
+            $headerData.image = "";
+          }}
+        >
+          <i class="cdb--icon" aria-hidden="true"> Canvas.x </i>
+        </button>
+      {/if}
+    </div>
     {#if $headerData.theme === HeaderTheme["Modern"]}
       <div class="flex gap-2">
         <button
           class="Button Button--small mt-0 grow"
           on:click={() => {
-            iconPicker.open();
+            headerIconPicker.open();
           }}
         >
           {#if !$headerData.icon}
@@ -177,6 +218,29 @@
           </button>
         {/if}
       </div>
+      <ColourPicker
+        label="Background Colour"
+        id={nanoid() + "-setting-background"}
+        bind:colour={$headerData.color}
+        contrastColour={"Light/Dark"}
+        style="wide"
+        showNone={true}
+        asModal={isModal}
+      />
+      {#if !isReadable}
+        <div class="colour-alert" transition:slide|global>
+          <p class="alert-details">
+            <span class="font-bold">Warning:</span> The text in this button may
+            be hard to read for some students. {#if $headerData.color?.isLight()}
+              Consider using a darker colour to improve contrast against the
+              light text.
+            {:else}
+              Consider using a lighter colour to improve contrast against the
+              dark text.
+            {/if}
+          </p>
+        </div>
+      {/if}
     {/if}
   </div>
   <div class="col">
@@ -214,8 +278,42 @@
             }}
           />
 
+          <!-- Icon Picker for button -->
+          <div class="flex gap-2 mt-2">
+            <button
+              class="Button Button--small mt-0 grow"
+              on:click={() => {
+                buttonIconPicker.open();
+              }}
+            >
+              {#if !$headerData.links[editLinkIndex].icon}
+                <i class="cdb--icon" aria-hidden="true">
+                  Canvas.button-and-icon-maker
+                </i>
+              {:else}
+                <IconElement
+                  icon={$headerData.links[editLinkIndex].icon}
+                  colorOverride="#000"
+                />
+              {/if}
+
+              Select Icon
+            </button>
+            {#if $headerData.links[editLinkIndex].icon}
+              <button
+                class="Button Button--small aspect-square mt-0 grow-0"
+                title="Remove icon"
+                on:click={() => {
+                  $headerData.links[editLinkIndex].icon = undefined;
+                }}
+              >
+                <i class="cdb--icon" aria-hidden="true"> Canvas.x </i>
+              </button>
+            {/if}
+          </div>
+
           <!-- Select box for opening in new tab -->
-          <label for="newTab" class="checkbox">
+          <label for="newTab" class="checkbox mt-2">
             <input
               type="checkbox"
               id="newTab"
@@ -322,6 +420,13 @@
     @apply accent-primary;
     & input {
       @apply w-4 h-4;
+    }
+  }
+
+  .colour-alert {
+    @apply border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
+    p {
+      @apply m-0;
     }
   }
 </style>
