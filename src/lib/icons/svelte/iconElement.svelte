@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { findNearestBackgroundColor } from "$lib/util/deriveColour";
   import { IconState, getIconData, isCustomIcon } from "./iconPicker";
   import { colord, type Colord } from "colord";
 
@@ -14,32 +15,12 @@
   $: data = getIconData(icon);
 
   $: elWindow = iconEl?.ownerDocument.defaultView;
-  const findNearestBackgroundColor: (el: HTMLElement) => string = (el) => {
-    if (el === elWindow?.document.body || !elWindow) {
-      return "#0000";
-    }
-    const computedStyle = elWindow.getComputedStyle(el);
-    const backgroundColor = computedStyle.backgroundColor;
-    const c = colord(backgroundColor);
-    if (c.alpha() === 0 && el.parentElement) {
-      return findNearestBackgroundColor(el.parentElement);
-    }
-    return c.toHex();
-  };
   let iconEl: HTMLSpanElement | undefined;
   $: shouldEnforceBackground = iconEl
-    ? colord(findNearestBackgroundColor(iconEl)).alpha() === 0
+    ? colord(
+        findNearestBackgroundColor(iconEl, elWindow ? elWindow : undefined)
+      ).alpha() === 0
     : false;
-  $: console.log(
-    shouldEnforceBackground,
-    elWindow,
-    iconEl
-      ? [
-          findNearestBackgroundColor(iconEl),
-          colord(findNearestBackgroundColor(iconEl)),
-        ]
-      : "No iconEl"
-  );
   // This is required because in some cases Safari doesn't normalize the node to have a single inner text, and having split text nodes breaks the ligatures holding the icon together.
   $: if (iconEl && data?.c && data?.l) iconEl.normalize();
 </script>

@@ -188,7 +188,7 @@
             </div>
             <div class="grow">
               <div class="form-group">
-                <label class="block">Card Link (URL):</label>
+                <p class="block text-sm my-0 mb-1">Card Link (URL):</p>
                 <LinkInput
                   link={$rowData.cards[cardIndex].link}
                   on:save={({ detail }) => {
@@ -250,10 +250,6 @@
     .rowTheme {
       @apply flex gap-x-2 items-center;
       @apply mb-2;
-    }
-
-    input[type="url"] {
-      @apply py-3;
     }
 
     .ImageCard--elements {

@@ -182,8 +182,7 @@
       @apply flex flex-col gap-2;
     }
   }
-  input[type="text"],
-  input[type="url"] {
+  input[type="text"] {
     @apply border border-gray-300 rounded px-2 py-3 w-full mb-0;
     &:focus {
       @apply outline-none border-blue-500;

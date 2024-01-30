@@ -6,19 +6,9 @@
   import { nanoid } from "nanoid";
   import { colord } from "colord";
   import { persisted as localStorageWritable } from "svelte-persisted-store";
-  import {
-    customCategory,
-    customIcon,
-    getIconClass,
-    instCategory,
-    instIcon,
-    isCustomCategory,
-    isInstCategory,
-  } from "./icons";
-
-  import { iconData } from "./icons";
   import ScrollContainer from "$lib/util/components/scrollContainer.svelte";
   import { slide } from "svelte/transition";
+  import { findNearestBackgroundColor } from "$lib/util/deriveColour";
 
   const dispatch = createEventDispatcher<{
     selectIcon: {
@@ -35,6 +25,7 @@
   export let icons: category[];
   export let options: IconPickerOptions;
   export let asModal: boolean = false;
+  export let targetNode: HTMLElement | undefined = undefined;
   let filterQuery = "";
   let iconColor = localStorageWritable(
     "cdb-preferences-iconColor",
@@ -76,8 +67,18 @@
   let scroller: ScrollContainer;
   $: results, scroller?.update();
 
-  $: contrastLevel = $iconColor.contrast(colord("#ffffff"));
-  $: isReadable = contrastLevel && contrastLevel >= 7;
+  $: elWindow = targetNode?.ownerDocument.defaultView;
+  $: nearestColour = targetNode
+    ? colord(
+        findNearestBackgroundColor(targetNode, elWindow ? elWindow : undefined)
+      )
+    : colord("#fff");
+  $: contrastLevel =
+    nearestColour.alpha() === 0
+      ? $iconColor?.contrast("#fff")
+      : $iconColor?.contrast(nearestColour);
+  $: isReadable =
+    contrastLevel === undefined || (contrastLevel && contrastLevel >= 7);
 </script>
 
 <div class="searchFilter">
@@ -171,23 +172,6 @@
       @apply m-0;
     }
   }
-
-  .overflow {
-    @apply relative rounded overflow-clip shadow;
-    &:after {
-      @apply absolute h-4 bg-gradient-to-t from-gray-500 pointer-events-none;
-      @apply bottom-0 left-0 w-full;
-      @apply opacity-0 transition-opacity;
-      content: " ";
-    }
-    &.active:after {
-      @apply opacity-20;
-    }
-  }
-  .search-container {
-    @apply overflow-y-auto relative p-2;
-    max-height: calc(650px - 9rem);
-  }
   .categories {
     @apply grid grid-flow-row gap-2;
     .category {
@@ -214,9 +198,5 @@
         font-size: 1.75rem;
       }
     }
-  }
-  .iconPickerFrame {
-    @apply w-full;
-    height: 80vh;
   }
 </style>

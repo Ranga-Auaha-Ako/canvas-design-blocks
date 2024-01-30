@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
-  import Portal from "svelte-portal/src/Portal.svelte";
   import { fade, slide } from "svelte/transition";
   import { filesize } from "filesize";
-  import mock from "./mock";
   import { FileSearch, FitlerTypes, mockData } from "../search";
   let debounce: number | undefined;
   import { LightPaginationNav } from "svelte-paginate";
@@ -16,10 +13,8 @@
       else $imageQuery = "";
     }, 200);
   };
-  const COURSE_ID = window.ENV?.COURSE_ID;
 
-  const shouldMock =
-    import.meta.env.DEV && window.location.hostname === "localhost";
+  const shouldMock = window.location.hostname === "localhost";
   const results = shouldMock
     ? mockData
     : new FileSearch("", FitlerTypes.Images);
