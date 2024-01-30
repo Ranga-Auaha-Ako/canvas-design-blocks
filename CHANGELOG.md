@@ -13,6 +13,7 @@ Please write a brief description at the top of each version in "Overview". This 
 ### Fixed
 
 - Fix #23: Inherit image and link URLs from DOM, resolving migration issues
+- Various bugfixes and improvements to the modern theme released in 2.11.0
 
 ## [2.11.0] - 2024-01-30
 
