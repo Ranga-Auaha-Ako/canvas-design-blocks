@@ -117,40 +117,35 @@
       }}
     />
     <div class="headerLinks">
-      {#if cdbData.theme === HeaderTheme.Modern}
-        {#each cdbData.links as link}
-          <a
-            class="headerLink"
-            href={link.url}
-            target={link.target !== undefined ? link.target : "_blank"}
-            rel="noopener noreferrer"
-            style:background-color={cdbData.color &&
-            cdbData.theme === HeaderTheme["Modern"]
-              ? contrastColor
-              : undefined}
-            style:color={cdbData.theme === HeaderTheme["Modern"]
-              ? cdbData.color?.toHex()
-              : undefined}
-            data-mce-style={cdbData.color &&
-            cdbData.theme === HeaderTheme["Modern"]
-              ? `color: ${cdbData.color?.toHex()}; background-color: ${contrastColor}`
-              : undefined}
-          >
-            {link.title}
-          </a>
-        {/each}
-      {:else}
-        {#each cdbData.links as link}
-          <a
-            class="headerLink"
-            href={link.url}
-            target={link.target !== undefined ? link.target : "_blank"}
-            rel="noopener noreferrer"
-          >
-            {link.title}
-          </a>
-        {/each}
-      {/if}
+      {#each cdbData.links as link}
+        <a
+          class="headerLink"
+          href={link.url}
+          target={link.target !== undefined ? link.target : "_blank"}
+          rel="noopener noreferrer"
+          style:background-color={cdbData.color &&
+          cdbData.theme === HeaderTheme["Modern"]
+            ? contrastColor
+            : undefined}
+          style:color={cdbData.theme === HeaderTheme["Modern"]
+            ? cdbData.color?.toHex()
+            : undefined}
+          data-mce-style={cdbData.color &&
+          cdbData.theme === HeaderTheme["Modern"]
+            ? `color: ${cdbData.color?.toHex()}; background-color: ${contrastColor}`
+            : undefined}
+        >
+          {#if link.icon}
+            <IconElement
+              icon={link.icon}
+              colorOverride={cdbData.theme === HeaderTheme["Modern"]
+                ? cdbData.color?.toHex()
+                : "#fff"}
+            />
+          {/if}
+          {link.title}
+        </a>
+      {/each}
     </div>
   </div>
 </div>

@@ -40,6 +40,7 @@ export interface HeaderData {
     url: string;
     id: string;
     target?: string;
+    icon?: IconState;
   }[];
   theme: HeaderTheme;
   color?: Colord;
@@ -95,10 +96,12 @@ class HeaderState implements SvelteState<HeaderData> {
       links:
         unsafeState?.links?.map((l, index) => {
           const url = linkURLs?.[index]?.href || "";
+          let icon = getIconState(l.icon);
           return {
-            title: l?.title || "",
+            title: l.title || "",
             url,
-            id: l?.id || nanoid(),
+            id: l.id || nanoid(),
+            icon: icon || undefined,
             target: l.target || undefined,
           };
         }) || HeaderState.defaultState.links,

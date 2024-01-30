@@ -100,14 +100,14 @@
       ? $headerData.color.isReadable("#fff", { level: "AAA" })
       : $headerData.color?.isReadable("#000", { level: "AAA" }));
 
-  const iconPicker = new IconPicker({
+  const headerIconPicker = new IconPicker({
     target: document.body,
     props: {
       options: { editColor: true },
     },
   });
-  iconPicker.$on("selectIcon", ({ detail }) => {
-    iconPicker.close();
+  headerIconPicker.$on("selectIcon", ({ detail }) => {
+    headerIconPicker.close();
     $headerData.icon = {
       id: detail.icon.i,
       color: detail.color,
@@ -115,7 +115,26 @@
     };
   });
   onDestroy(() => {
-    iconPicker.$destroy();
+    headerIconPicker.$destroy();
+  });
+
+  const buttonIconPicker = new IconPicker({
+    target: document.body,
+    props: {
+      options: { editColor: false },
+    },
+  });
+  buttonIconPicker.$on("selectIcon", ({ detail }) => {
+    buttonIconPicker.close();
+    if (editLinkIndex === undefined || !$headerData.links[editLinkIndex])
+      return;
+    $headerData.links[editLinkIndex].icon = {
+      id: detail.icon.i,
+      type: detail.type,
+    };
+  });
+  onDestroy(() => {
+    buttonIconPicker.$destroy();
   });
 </script>
 
@@ -174,7 +193,7 @@
         <button
           class="Button Button--small mt-0 grow"
           on:click={() => {
-            iconPicker.open();
+            headerIconPicker.open();
           }}
         >
           {#if !$headerData.icon}
@@ -259,8 +278,42 @@
             }}
           />
 
+          <!-- Icon Picker for button -->
+          <div class="flex gap-2 mt-2">
+            <button
+              class="Button Button--small mt-0 grow"
+              on:click={() => {
+                buttonIconPicker.open();
+              }}
+            >
+              {#if !$headerData.links[editLinkIndex].icon}
+                <i class="cdb--icon" aria-hidden="true">
+                  Canvas.button-and-icon-maker
+                </i>
+              {:else}
+                <IconElement
+                  icon={$headerData.links[editLinkIndex].icon}
+                  colorOverride="#000"
+                />
+              {/if}
+
+              Select Icon
+            </button>
+            {#if $headerData.links[editLinkIndex].icon}
+              <button
+                class="Button Button--small aspect-square mt-0 grow-0"
+                title="Remove icon"
+                on:click={() => {
+                  $headerData.links[editLinkIndex].icon = undefined;
+                }}
+              >
+                <i class="cdb--icon" aria-hidden="true"> Canvas.x </i>
+              </button>
+            {/if}
+          </div>
+
           <!-- Select box for opening in new tab -->
-          <label for="newTab" class="checkbox">
+          <label for="newTab" class="checkbox mt-2">
             <input
               type="checkbox"
               id="newTab"

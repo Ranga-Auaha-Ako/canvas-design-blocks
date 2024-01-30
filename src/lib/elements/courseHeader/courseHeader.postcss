@@ -109,13 +109,22 @@
         }
       }
       .overlay {
-        @apply py-8 z-0 bg-inherit flex flex-col justify-center;
+        @apply py-8 z-0 bg-inherit flex flex-col justify-center gap-3;
         grid-area: content;
+        .headerTitle {
+          @apply my-0 leading-none;
+        }
         .headerOverview {
-          @apply max-w-none;
+          @apply max-w-none leading-none;
+        }
+        p:first-child {
+          @apply mt-0;
         }
         p:last-child {
           @apply mb-0;
+        }
+        .headerLinks {
+          @apply mt-1;
         }
       }
     }
