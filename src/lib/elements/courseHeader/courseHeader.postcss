@@ -92,7 +92,7 @@
         .imageOverlay,
         .imageOverlay--blur:after {
           @apply absolute block w-80 origin-top-right bg-inherit;
-          @apply -top-0.5 rounded-none;
+          @apply -top-4 rounded-none;
           @apply bg-inherit;
           @apply -z-10 right-full left-auto;
           @apply rotate-[-28.7deg];
@@ -104,12 +104,12 @@
         .imageOverlay--blur:after {
           @apply bg-inherit;
           @apply backdrop-blur-sm backdrop-saturate-150;
-          @apply -z-20 translate-x-16 -translate-y-10;
+          @apply -z-20 translate-x-16 -translate-y-10 w-24;
           content: " ";
         }
       }
       .overlay {
-        @apply py-8 z-0 bg-inherit flex flex-col justify-center gap-3;
+        @apply py-8 z-0 flex flex-col justify-center gap-3;
         grid-area: content;
         .headerTitle {
           @apply my-0 leading-none;
