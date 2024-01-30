@@ -38,7 +38,7 @@
 
   export let id: string = nanoid();
   export let colour: Colord | undefined = undefined;
-  export let contrastColour: Colord | undefined = undefined;
+  export let contrastColour: Colord | undefined | "Light/Dark" = undefined;
   export let showAccessible: boolean = true;
   export let isText: boolean = false;
   export let label: string;
@@ -49,10 +49,16 @@
   export let style: "default" | "wide" | "minimal" = "default";
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
-    const c = colord(colour);
+    let c = colord(colour);
+    let foundConColour =
+      conColour === "Light/Dark"
+        ? c.isLight()
+          ? colord("#000000")
+          : colord("#ffffff")
+        : conColour;
     // Only adjust colour if contrast is not readable (AA not AAA)
-    if (conColour && showAccessible && !conColour.isReadable(c)) {
-      if (conColour.isLight()) {
+    if (foundConColour && showAccessible && !foundConColour.isReadable(c)) {
+      if (foundConColour.isLight()) {
         return c.darken(0.1);
       } else {
         return c.desaturate(0.3).lighten(0.5);
@@ -72,16 +78,26 @@
         name: "Secondary",
       },
     ];
-    const addCol = (r: Record<string, string>, smart = true) =>
+    const addCol = (r: Record<string, string>, smart = true) => {
+      const newCols = Object.entries(r).filter(([name, c]) => {
+        const col = smart ? smartColour(c, contrastColour) : colord(c);
+        return !colours.some((c) => c.code?.toHex() === col.toHex());
+      });
       colours.push(
-        ...Object.entries(r).map(([name, c]) => ({
+        ...newCols.map(([name, c]) => ({
           code: smart ? smartColour(c, contrastColour) : colord(c),
           name,
         }))
       );
+    };
     if (theme.palette) {
-      if (contrastColour?.isDark()) addCol(theme.palette.light, false);
-      else addCol(theme.palette.dark);
+      if (contrastColour === "Light/Dark") {
+        addCol(theme.palette.light, false);
+        addCol(theme.palette.dark, false);
+      } else {
+        if (contrastColour?.isDark()) addCol(theme.palette.light, false);
+        else addCol(theme.palette.dark);
+      }
     }
     if (showNone) {
       colours.push({ code: undefined, name: "None" });
@@ -149,6 +165,18 @@
 
   $: updateCustomColour(colour);
   $: updateColourFromCustom(customColourVal);
+
+  $: isInaccessible = (option: Colord | undefined) => {
+    if (!showAccessible || !option) return false;
+    if (contrastColour === "Light/Dark") {
+      return option.isDark()
+        ? !option.isReadable(colord("#ffffff"))
+        : !option.isReadable(colord("#000000"));
+    }
+    return (
+      contrastColour && !option.isReadable(contrastColour, { level: "AAA" })
+    );
+  };
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -193,11 +221,7 @@
           <div class="colourPicker">
             {#each options as option}
               {#if !(option.code === undefined && contrastColour !== undefined && isText)}
-                {@const inaccessible =
-                  showAccessible &&
-                  contrastColour &&
-                  option.code &&
-                  !option.code.isReadable(contrastColour, { level: "AAA" })}
+                {@const inaccessible = isInaccessible(option.code)}
 
                 <button
                   class="colour colour-option"

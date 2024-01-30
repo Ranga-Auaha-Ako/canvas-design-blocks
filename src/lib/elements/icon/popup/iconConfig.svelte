@@ -4,7 +4,6 @@
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import { colord } from "colord";
   import { onDestroy } from "svelte";
-  import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { getIconData, icons } from "$lib/icons/svelte/iconPicker";

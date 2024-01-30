@@ -10,6 +10,7 @@ import HeaderConfig from "./popup/headerConfig.svelte";
 import type { McePopover } from "../generic/popover/popover";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
+import { colord, type Colord } from "colord";
 
 export enum HeaderTheme {
   Light = "HeaderTheme-light",
@@ -41,6 +42,7 @@ export interface HeaderData {
     target?: string;
   }[];
   theme: HeaderTheme;
+  color?: Colord;
   level?: HeaderLevel;
   icon?: IconState;
 }
@@ -63,6 +65,7 @@ class HeaderState implements SvelteState<HeaderData> {
         id: nanoid(),
       },
     ],
+    color: undefined,
     theme: DefaultTheme,
     level: DefaultLevel,
   };
@@ -84,6 +87,7 @@ class HeaderState implements SvelteState<HeaderData> {
       node?.querySelector<HTMLImageElement>("img.headerImage");
     const linkURLs =
       node?.querySelectorAll<HTMLAnchorElement>(".headerLinks > a");
+
     let state: HeaderData = {
       title: unsafeState?.title || HeaderState.defaultState.title,
       overview: "",
@@ -99,6 +103,9 @@ class HeaderState implements SvelteState<HeaderData> {
           };
         }) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
+      color: unsafeState?.color
+        ? colord(unsafeState?.color)
+        : HeaderState.defaultState?.color,
       level: level || DefaultLevel,
     };
     state.overview =
@@ -110,9 +117,10 @@ class HeaderState implements SvelteState<HeaderData> {
   }
   get stateString() {
     const state = get(this.state);
-    const { overview: _o, links, ...headerData } = state;
+    const { overview: _o, color, links, ...headerData } = state;
     return JSON.stringify({
       ...headerData,
+      color: color?.toHex() || undefined,
       links: links.map(({ url: _, ...item }) => ({
         ...item,
       })),

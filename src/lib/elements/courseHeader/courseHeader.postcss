@@ -84,34 +84,32 @@
         grid-area: icon;
       }
       .imageComponent {
-        @apply relative  -z-10;
+        @apply relative -z-10 bg-inherit;
         grid-area: image;
         .headerImage {
           @apply -z-30;
         }
-        .imageOverlay {
-          &:before,
-          &:after {
-            @apply absolute block w-40 origin-top-right;
-            @apply top-0;
-            transform: rotate(-28.7deg);
-            height: 200%;
-            content: " ";
-          }
-          &:before {
-            @apply bg-white;
-            @apply -z-10 right-full left-auto;
-          }
-          &:after {
-            @apply bg-white bg-opacity-30 backdrop-blur-sm backdrop-saturate-150;
-            @apply -z-20 left-auto;
-            right: calc(100% - 3rem);
-            top: -5rem;
-          }
+        .imageOverlay,
+        .imageOverlay--blur:after {
+          @apply absolute block w-80 origin-top-right bg-inherit;
+          @apply -top-0.5 rounded-none;
+          @apply bg-inherit;
+          @apply -z-10 right-full left-auto;
+          @apply rotate-[-28.7deg];
+          height: 200%;
+        }
+        .imageOverlay--blur {
+          @apply w-0 h-0;
+        }
+        .imageOverlay--blur:after {
+          @apply bg-inherit;
+          @apply backdrop-blur-sm backdrop-saturate-150;
+          @apply -z-20 translate-x-8 -translate-y-10;
+          content: " ";
         }
       }
       .overlay {
-        @apply py-8 z-0;
+        @apply py-8 z-0 bg-inherit;
         grid-area: content;
         .headerOverview {
           @apply max-w-none;
