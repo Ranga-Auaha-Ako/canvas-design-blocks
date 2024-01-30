@@ -124,7 +124,7 @@
     @apply gap-0 pl-3;
     grid-template-columns: auto auto 0;
     .overlay {
-      @apply mr-16 py-6;
+      @apply mr-16 py-6 bg-transparent;
     }
     .iconOverlay {
       @apply hidden;
@@ -136,15 +136,12 @@
     .imageComponent {
       @apply w-28 max-h-full h-28 absolute right-0 top-0;
       grid-area: none;
-      .imageOverlay {
-        &:before,
-        &:after {
-          @apply -rotate-45;
-        }
-        &:after {
-          right: calc(100% - 1rem);
-          top: -1rem;
-        }
+      .imageOverlay,
+      .imageOverlay--blur:after {
+        @apply -rotate-45;
+      }
+      .imageOverlay--blur:after {
+        @apply translate-x-3 -translate-y-3;
       }
     }
 

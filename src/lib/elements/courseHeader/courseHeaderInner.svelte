@@ -24,9 +24,13 @@
 <div
   class="headerInner {cdbData.theme}"
   class:noImage={!cdbData.image}
-  style:background-color={cdbData.color?.toHex()}
-  style:color={cdbData.color ? contrastColor : undefined}
-  data-mce-style={cdbData.color
+  style:background-color={cdbData.theme === HeaderTheme["Modern"]
+    ? cdbData.color?.toHex()
+    : undefined}
+  style:color={cdbData.color && cdbData.theme === HeaderTheme["Modern"]
+    ? contrastColor
+    : undefined}
+  data-mce-style={cdbData.color && cdbData.theme === HeaderTheme["Modern"]
     ? `background: ${cdbData.color?.toHex()}; color: ${contrastColor}`
     : undefined}
   class:isDark={cdbData.theme === HeaderTheme.Modern
@@ -113,16 +117,40 @@
       }}
     />
     <div class="headerLinks">
-      {#each cdbData.links as link}
-        <a
-          class="headerLink"
-          href={link.url}
-          target={link.target !== undefined ? link.target : "_blank"}
-          rel="noopener noreferrer"
-        >
-          {link.title}
-        </a>
-      {/each}
+      {#if cdbData.theme === HeaderTheme.Modern}
+        {#each cdbData.links as link}
+          <a
+            class="headerLink"
+            href={link.url}
+            target={link.target !== undefined ? link.target : "_blank"}
+            rel="noopener noreferrer"
+            style:background-color={cdbData.color &&
+            cdbData.theme === HeaderTheme["Modern"]
+              ? contrastColor
+              : undefined}
+            style:color={cdbData.theme === HeaderTheme["Modern"]
+              ? cdbData.color?.toHex()
+              : undefined}
+            data-mce-style={cdbData.color &&
+            cdbData.theme === HeaderTheme["Modern"]
+              ? `color: ${cdbData.color?.toHex()}; background-color: ${contrastColor}`
+              : undefined}
+          >
+            {link.title}
+          </a>
+        {/each}
+      {:else}
+        {#each cdbData.links as link}
+          <a
+            class="headerLink"
+            href={link.url}
+            target={link.target !== undefined ? link.target : "_blank"}
+            rel="noopener noreferrer"
+          >
+            {link.title}
+          </a>
+        {/each}
+      {/if}
     </div>
   </div>
 </div>
