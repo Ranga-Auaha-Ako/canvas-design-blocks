@@ -109,10 +109,13 @@
         }
       }
       .overlay {
-        @apply py-8 z-0 bg-inherit;
+        @apply py-8 z-0 bg-inherit flex flex-col justify-center;
         grid-area: content;
         .headerOverview {
           @apply max-w-none;
+        }
+        p:last-child {
+          @apply mb-0;
         }
       }
     }
