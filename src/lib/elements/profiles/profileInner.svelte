@@ -82,10 +82,17 @@
         {#if profile.showBioTitle}
           <h4>Bio</h4>
         {/if}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
           contenteditable="true"
           class="bioContent"
           bind:innerHTML={profile.overview}
+          on:keydown|capture={(e) => {
+            e.stopPropagation();
+          }}
+          on:paste={(e) => {
+            e.stopPropagation();
+          }}
           on:input={() => {
             dispatch("update", cdbData);
           }}

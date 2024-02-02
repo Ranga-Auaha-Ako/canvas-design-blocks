@@ -108,14 +108,21 @@
         }}
       />
     {/if}
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="headerOverview"
       contenteditable="true"
+      on:keydown|capture={(e) => {
+        e.stopPropagation();
+      }}
+      on:paste={(e) => {
+        e.stopPropagation();
+      }}
       bind:innerHTML={cdbData.overview}
       on:input={() => {
         dispatch("update", cdbData);
       }}
-    />
+    ></div>
     <div class="headerLinks">
       {#each cdbData.links as link}
         <a
