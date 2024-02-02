@@ -8,6 +8,12 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.11.2] - 2024-02-02
+
+### Fixed
+
+- Fix #49: Pasting content into header blocks now works
+
 ## [2.11.1] - 2024-01-30
 
 ### Fixed
