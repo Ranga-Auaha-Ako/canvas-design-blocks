@@ -18,6 +18,46 @@ const changeVer = changelog.versions.find(
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
+  if (mode === "sandpit") {
+    return {
+      build: {
+        target: "es2018",
+        manifest: true,
+        cssMinify: "lightningcss",
+      },
+      plugins: [
+        svelte({
+          emitCss: true,
+        }),
+        getIconsPlugin(),
+        vitePluginCanvasStyles(),
+        visualizer({
+          filename: "./dist/stats.html",
+        }),
+      ],
+      css: {
+        lightningcss: {
+          targets: "last 2 versions or >= 0.25%, not dead",
+        },
+      },
+      resolve: {
+        alias: {
+          $lib: path.resolve("./src/lib"),
+          $assets: path.resolve("./src/assets"),
+        },
+      },
+      define: {
+        __APP_VERSION__:
+          JSON.stringify(process.env.npm_package_version) || "unknown",
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+        __THEME__: JSON.stringify(
+          JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
+        ),
+        __LATEST_CHANGE__: JSON.stringify(changeVer?.parsed.Overview),
+        __LATEST_CHANGE_VERSION__: JSON.stringify(changeVer.version),
+      },
+    };
+  }
   if (mode === "theme-loader") {
     return {
       build: {

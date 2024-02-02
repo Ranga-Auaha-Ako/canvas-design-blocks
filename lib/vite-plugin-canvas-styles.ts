@@ -60,7 +60,7 @@ export default function vitePluginCanvasStyles(): PluginOption {
     },
     async load(id: string) {
       if (id === resolvedVirtualModuleId) {
-        if (config.command === "build") return "";
+        if (config.command === "build" && config.mode !== "sandpit") return "";
         const realCanvasHTML = await body;
         const InstScript = Array.from(
           realCanvasHTML.window.document.querySelectorAll("script")
@@ -73,7 +73,7 @@ export default function vitePluginCanvasStyles(): PluginOption {
       }
     },
     async transformIndexHtml() {
-      if (config.command === "build") return;
+      if (config.command === "build" && config.mode !== "sandpit") return;
       const realCanvasHTML = await body;
       let newTags: HtmlTagDescriptor[] = [];
       Array.from(
