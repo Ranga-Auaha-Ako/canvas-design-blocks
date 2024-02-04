@@ -1,5 +1,11 @@
-import { Readable, Writable, derived, readable, writable } from "svelte/store";
-import mock from "./mock";
+import {
+  Readable,
+  Writable,
+  derived,
+  get,
+  readable,
+  writable,
+} from "svelte/store";
 
 export enum InternalLinks {
   Pages = "Pages",
@@ -38,9 +44,7 @@ const COURSE_ID = window.ENV?.COURSE_ID;
 
 class MockSearch<L = Link> {
   public readonly data;
-  public readonly total = readable(
-    new Promise<number>((set) => set(mock.length))
-  );
+  public readonly total;
   public readonly links = readable<
     Promise<{
       current?: string;
@@ -52,12 +56,17 @@ class MockSearch<L = Link> {
   public page: Writable<number> = writable(1);
   public perPage: Writable<number> = writable(12);
   public query: Writable<string> = writable("");
-  constructor(data: L[] = []) {
-    this.data = readable(new Promise<L[]>((set) => set(data)));
+  constructor(data: L[] | PromiseLike<L[]> = []) {
+    this.data = readable(Promise.resolve(data));
+    this.total = derived(this.data, ($data, set) => {
+      $data.then((d) => set(d.length));
+    });
   }
 }
 
-export const mockData = new MockSearch<Image>(mock as any);
+export const mockData = import.meta.env.PROD
+  ? new MockSearch<Image>([])
+  : new MockSearch<Image>(import("./mock").then((d) => d.default) as any);
 
 abstract class ContentSearch<L = Link> implements MockSearch<L> {
   abstract urlBase: string | undefined;

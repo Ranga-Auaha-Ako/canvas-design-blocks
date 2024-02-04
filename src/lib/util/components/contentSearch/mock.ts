@@ -1,16 +1,26 @@
 import { File } from "./search";
 
-const fakeFile = "https://picsum.photos/200/300";
-const fakeThumbnail = "https://picsum.photos/20/30";
+const mockImages = import.meta.glob("./mock/*.jpg", {
+  eager: true,
+  import: "default",
+});
+const mockThumbs = import.meta.glob("./mock/thumb/*.jpg", {
+  eager: true,
+  import: "default",
+});
 
-export default Array(10)
-  .fill({})
-  .map((_, i) => ({
-    name: `File ${i}`,
-    display_name: `File ${i}`,
-    created_at: "",
-    url: `${fakeFile}?index=${i}`,
-    image: `${fakeFile}?index=${i}`,
-    thumbnail_url: `${fakeThumbnail}?index=${i}`,
+export default Object.entries(mockImages).map<File>(([name, image], i) => {
+  const filename = name.split("/").pop();
+  const matchedThumb = Object.entries(mockThumbs).find(([thumbName]) =>
+    thumbName.includes(filename || "\0")
+  );
+  return {
+    name: filename || `File ${i}`,
+    display_name: filename || `File ${i}`,
+    created_at: "0",
+    url: `${image}`,
+    image: `${image}`,
+    thumbnail_url: `${matchedThumb ? matchedThumb[1] : image}`,
     size: 100,
-  })) as File[];
+  } as File;
+});
