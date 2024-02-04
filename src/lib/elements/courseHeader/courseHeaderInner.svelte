@@ -1,7 +1,12 @@
 <script lang="ts">
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { colord } from "colord";
-  import { HeaderData, HeaderLevel, HeaderTheme } from "./courseHeader";
+  import {
+    type CourseHeader,
+    HeaderData,
+    HeaderLevel,
+    HeaderTheme,
+  } from "./courseHeader";
   import { createEventDispatcher, onDestroy } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -9,6 +14,7 @@
   export let cdbData: HeaderData;
   // svelte-ignore unused-export-let
   export let localState: any;
+  export let instance: CourseHeader;
 
   export let destroyHandler: () => void;
 
@@ -115,8 +121,34 @@
       on:keydown|capture={(e) => {
         e.stopPropagation();
       }}
-      on:paste={(e) => {
-        e.stopPropagation();
+      on:paste|stopPropagation|preventDefault={(e) => {
+        // Strip formatting from pasted text
+        const text = e.clipboardData?.getData("text/plain");
+        const html = e.clipboardData?.getData("text/html");
+        const tinymce = false && e.clipboardData?.getData("x-tinymce/html");
+        const content = tinymce || html || text;
+        if (content) {
+          const win = instance.window;
+          const doc = win.document;
+          const sel = win.getSelection();
+          if (sel?.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const newContent = doc
+              .createRange()
+              .createContextualFragment(content);
+            // Strip colour formatting
+            debugger;
+            newContent.querySelectorAll("[style]").forEach((el) => {
+              if (el instanceof win.HTMLElement) {
+                el.style.color = "";
+                el.style.backgroundColor = "";
+              }
+            });
+            range.insertNode(newContent);
+          }
+          sel?.collapseToEnd();
+        }
       }}
       bind:innerHTML={cdbData.overview}
       on:input={() => {
