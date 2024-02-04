@@ -1,6 +1,16 @@
 #tinymce .CourseHeader {
 }
 .CourseHeader[data-cdb-version] {
+  .headerLinks {
+    @apply flex flex-wrap justify-start gap-4;
+    a:not(.headerLink) {
+      display: none;
+    }
+    .headerLink {
+      @apply text-lg bg-black bg-opacity-60 text-white rounded-md px-4 py-2;
+      text-decoration: none !important;
+    }
+  }
   .headerInner {
     @apply relative box-border overflow-clip w-full rounded-md shadow-strong p-4;
     @apply bg-cover bg-center;
@@ -51,16 +61,6 @@
     }
     .headerOverview {
       @apply max-w-prose text-base;
-    }
-    .headerLinks {
-      @apply flex flex-wrap justify-start gap-4;
-      a:not(.headerLink) {
-        display: none;
-      }
-      .headerLink {
-        @apply text-lg bg-black bg-opacity-60 text-white rounded-md px-4 py-2;
-        text-decoration: none !important;
-      }
     }
     &.HeaderTheme-modern {
       @apply grid p-0 pl-8 z-10 text-black bg-white;
@@ -127,6 +127,12 @@
           @apply mt-1;
         }
       }
+    }
+  }
+  .headerLinks.headerLinks--modern {
+    @apply bg-primary shadow rounded mt-2;
+    .headerLink {
+      @apply text-white bg-primary rounded-md px-4 py-2;
     }
   }
 }
