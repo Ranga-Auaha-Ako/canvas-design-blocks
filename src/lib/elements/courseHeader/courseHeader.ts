@@ -26,7 +26,7 @@ export enum HeaderLevel {
 }
 
 export const ValidThemes = Object.values(HeaderTheme);
-export const DefaultTheme = HeaderTheme.Dark;
+export const DefaultTheme = HeaderTheme.Modern;
 
 export const ValidLevels = Object.values(HeaderLevel);
 export const DefaultLevel = HeaderLevel.h2;
