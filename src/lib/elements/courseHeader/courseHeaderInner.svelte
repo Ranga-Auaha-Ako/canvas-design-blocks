@@ -198,26 +198,18 @@
         href={link.url}
         target={link.target !== undefined ? link.target : "_blank"}
         rel="noopener noreferrer"
-        style:background-color={cdbData.color &&
-        cdbData.theme === HeaderTheme["Modern"]
-          ? contrastColor
-          : undefined}
-        style:color={cdbData.theme === HeaderTheme["Modern"]
-          ? cdbData.color?.toHex()
-          : undefined}
-        data-mce-style={cdbData.color && cdbData.theme === HeaderTheme["Modern"]
-          ? `color: ${cdbData.color?.toHex()}; background-color: ${contrastColor}`
-          : undefined}
       >
         {#if link.icon}
-          <IconElement
-            icon={link.icon}
-            colorOverride={cdbData.theme === HeaderTheme["Modern"]
-              ? cdbData.color?.toHex()
-              : "#fff"}
-          />
+          <IconElement icon={link.icon} colorOverride={"#fff"} />
         {/if}
-        {link.title}
+        <span class="headerLink--titles">
+          {#each link.title.split("\n") as title, index}
+            <span class="headerLink--title">{title}</span>
+            {#if index !== link.title.split("\n").length - 1}
+              <br />
+            {/if}
+          {/each}
+        </span>
       </a>
     {/each}
   </div>
