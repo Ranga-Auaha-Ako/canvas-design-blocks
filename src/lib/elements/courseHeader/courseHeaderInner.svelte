@@ -192,7 +192,7 @@
     {/if}
   </div>
   {#if cdbData.theme === HeaderTheme.Modern && cdbData.links.length > 0}
-    <div class="headerLinks">
+    <div class="headerLinks headerLinkTray">
       {#each cdbData.links as link}
         <a
           class="headerLink"
