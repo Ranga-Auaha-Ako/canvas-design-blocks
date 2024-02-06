@@ -8,6 +8,7 @@
     HeaderTheme,
   } from "./courseHeader";
   import { createEventDispatcher, onDestroy } from "svelte";
+  import theme from "$lib/util/theme";
 
   const dispatch = createEventDispatcher();
 
@@ -30,6 +31,7 @@
 <div
   class="headerInner {cdbData.theme}"
   class:noImage={!cdbData.image}
+  class:hasColor={cdbData.color}
   style:background-color={cdbData.theme === HeaderTheme["Modern"]
     ? cdbData.color?.toHex()
     : undefined}
@@ -189,28 +191,32 @@
       </div>
     {/if}
   </div>
+  {#if cdbData.theme === HeaderTheme.Modern && cdbData.links.length > 0}
+    <div class="headerLinks">
+      {#each cdbData.links as link}
+        <a
+          class="headerLink"
+          href={link.url}
+          target={link.target !== undefined ? link.target : "_blank"}
+          rel="noopener noreferrer"
+          style:color={cdbData.color ? contrastColor : undefined}
+        >
+          {#if link.icon}
+            <IconElement
+              icon={link.icon}
+              colorOverride={cdbData.color ? contrastColor : theme.primary}
+            />
+          {/if}
+          <span class="headerLink--titles">
+            {#each link.title.split("\n") as title, index}
+              <span class="headerLink--title">{title}</span>
+              {#if index !== link.title.split("\n").length - 1}
+                <br />
+              {/if}
+            {/each}
+          </span>
+        </a>
+      {/each}
+    </div>
+  {/if}
 </div>
-{#if cdbData.theme === HeaderTheme.Modern}
-  <div class="headerLinks headerLinks--modern">
-    {#each cdbData.links as link}
-      <a
-        class="headerLink"
-        href={link.url}
-        target={link.target !== undefined ? link.target : "_blank"}
-        rel="noopener noreferrer"
-      >
-        {#if link.icon}
-          <IconElement icon={link.icon} colorOverride={"#fff"} />
-        {/if}
-        <span class="headerLink--titles">
-          {#each link.title.split("\n") as title, index}
-            <span class="headerLink--title">{title}</span>
-            {#if index !== link.title.split("\n").length - 1}
-              <br />
-            {/if}
-          {/each}
-        </span>
-      </a>
-    {/each}
-  </div>
-{/if}

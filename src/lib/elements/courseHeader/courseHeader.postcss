@@ -2,7 +2,7 @@
 }
 .CourseHeader[data-cdb-version] {
   .headerLinks {
-    @apply flex flex-wrap justify-start gap-4;
+    @apply flex flex-wrap justify-start gap-4 gap-y-3;
     a:not(.headerLink) {
       display: none;
     }
@@ -64,12 +64,12 @@
     }
     &.HeaderTheme-modern {
       @apply grid p-0 pl-8 z-10 text-black bg-white;
-      grid-template-columns: auto minmax(18rem, 1fr) 1fr;
-      grid-template-areas: "icon content image";
+      grid-template-columns: auto minmax(17rem, 1fr) 1fr;
+      grid-template-areas: "icon content image" "links links links";
       &.noImage {
         @apply pr-8;
         grid-template-columns: auto 1fr;
-        grid-template-areas: "icon content";
+        grid-template-areas: "icon content" "links links";
       }
       .iconOverlay {
         @apply absolute left-0 top-0 h-full opacity-5 -z-10;
@@ -84,10 +84,10 @@
         grid-area: icon;
       }
       .imageComponent {
-        @apply relative -z-10 bg-inherit;
+        @apply relative -z-10 bg-inherit overflow-hidden;
         grid-area: image;
         .headerImage {
-          @apply -z-30;
+          @apply -z-30 rounded-none;
         }
         .imageOverlay,
         .imageOverlay--blur:after {
@@ -127,13 +127,39 @@
           @apply mt-1;
         }
       }
-    }
-  }
-  .headerLinks.headerLinks--modern {
-    @apply bg-primary shadow rounded mt-2 text-white gap-0;
-    .headerLink {
-      @apply text-inherit bg-transparent px-4 py-2 m-0;
-      @apply flex gap-2;
+      .headerLinks {
+        @apply bg-gray-100 text-white gap-0 -ml-8 border-0 border-solid border-t border-gray-200;
+        @apply p-2 px-3 gap-6;
+        grid-area: links;
+        .headerLink {
+          @apply text-inherit p-0 m-0 bg-transparent text-primary rounded-none;
+          @apply flex gap-2 items-center leading-tight text-base relative;
+          &:after {
+            @apply absolute -right-3 w-px bg-gray-200;
+            height: calc(100% - 0.25rem);
+            top: 0.125rem;
+            content: " ";
+          }
+          &:last-child:after {
+            @apply hidden;
+          }
+          &:hover {
+            @apply underline;
+          }
+          :global(.cdb--icon) {
+            @apply text-lg;
+          }
+        }
+      }
+      &.isDark .headerLinks {
+        @apply bg-gray-800 border-gray-400 text-white;
+        .headerLink {
+          @apply text-white;
+        }
+      }
+      &.hasColor .headerLinks {
+        @apply bg-opacity-30;
+      }
     }
   }
 }
@@ -167,10 +193,16 @@
     &.noImage {
       @apply pr-4;
       grid-template-columns: auto 1fr;
-      grid-template-areas: "icon content";
+      grid-template-areas: "icon content" "links links";
       .overlay {
         @apply mr-0;
       }
+      .headerLinks {
+        @apply -mr-4;
+      }
+    }
+    .headerLinks {
+      @apply -ml-3;
     }
   }
 }
