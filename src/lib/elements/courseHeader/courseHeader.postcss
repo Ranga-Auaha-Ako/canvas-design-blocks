@@ -116,6 +116,7 @@
         grid-area: content;
         .headerTitle {
           @apply my-0 leading-none;
+          color: inherit !important;
         }
         .headerOverview {
           @apply max-w-none leading-none;
@@ -126,6 +127,9 @@
         p:last-child {
           @apply mb-0;
         }
+        p {
+          color: inherit !important;
+        }
         .headerLinks {
           @apply mt-1;
         }
@@ -133,14 +137,15 @@
       .headerLinks.headerLinkTray {
         @apply flex flex-wrap justify-start;
         @apply bg-gray-100 text-white gap-0 -ml-8 gap-y-3;
-        @apply border-0 border-solid border-t border-black border-opacity-10;
+        @apply border-0 border-solid border-t border-black border-opacity-10 text-primary;
         @apply p-2 px-3 gap-6 min-h-7;
         grid-area: links;
         .headerLink {
           @apply bg-black bg-opacity-60 px-4 py-2;
-          @apply text-inherit p-0 m-0 bg-transparent text-primary rounded-none;
+          @apply text-inherit p-0 m-0 bg-transparent rounded-none;
           @apply flex gap-2 items-center text-base leading-tight relative;
           text-decoration: none !important;
+          color: inherit !important;
           &:after {
             @apply absolute -right-3 w-px bg-gray-200;
             height: calc(100% - 0.25rem);
