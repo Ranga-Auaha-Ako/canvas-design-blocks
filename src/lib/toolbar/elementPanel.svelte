@@ -1,12 +1,31 @@
 <script lang="ts">
+  import { nanoid } from "nanoid";
   import { createEventDispatcher, onMount } from "svelte";
-  export let background: string | undefined = undefined;
+  export let name: string = "Element";
 
   const dispatch = createEventDispatcher();
 </script>
 
 <div class="cgb-component">
-  <button on:click={() => dispatch("add")} class="pane" style:background>
+  <button
+    on:click={() => dispatch("add")}
+    class="pane"
+    title="Add {name}"
+    draggable="true"
+    on:dragstart={(e) => {
+      if (!e.dataTransfer) return;
+      const id = `cdb-${nanoid()}`;
+      e.dataTransfer.setData("cdb-element/name", name);
+      e.dataTransfer.setData("cdb-element/id", id);
+      e.dataTransfer.setData("text/plain", "");
+      e.dataTransfer.setData(
+        "text/html",
+        `<span id="${id}" data-mce-type="bookmark" style="overflow:hidden;line-height:0px"></span>`
+      );
+      e.dataTransfer.effectAllowed = "copy";
+      e.dataTransfer.dropEffect = "copy";
+    }}
+  >
     <h3 class="element-name">
       <slot name="name" />
     </h3>
@@ -23,15 +42,16 @@
     @apply bg-white border-b px-2.5 py-2 relative w-full;
     @apply grid justify-items-start;
     @apply gap-2;
+    @apply transition;
     grid-template-columns: 1fr auto;
-    /* & .icon-help {
-      @apply block w-4 h-4 leading-none;
-    } */
+    &:hover {
+      @apply bg-gray-100 scale-105;
+    }
+    &:active {
+      @apply bg-gray-200 scale-100;
+    }
     & h3 {
       @apply block m-0 text-sm text-left;
     }
-    /* .add-button {
-      @apply h-full px-2;
-    } */
   }
 </style>

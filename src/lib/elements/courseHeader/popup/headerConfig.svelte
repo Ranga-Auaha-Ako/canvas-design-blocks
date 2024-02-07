@@ -250,7 +250,7 @@
         <div class="editActions">
           <button
             title="Finish editing link"
-            on:click={() => {
+            on:click|stopPropagation={() => {
               editLinkId = undefined;
             }}
           >

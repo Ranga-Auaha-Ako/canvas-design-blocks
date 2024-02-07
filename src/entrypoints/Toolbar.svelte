@@ -103,12 +103,13 @@
           on:add={() => {
             add(manager);
           }}
+          name={manager.elementName}
         >
           <svelte:fragment slot="name">
             {#if manager.icon}
               <span class="cdb--icon toolbar-icon">{manager.icon}</span>
             {/if}
-            Add {manager.elementName}
+            {manager.elementName}
           </svelte:fragment>
         </ElementPanel>
       {/each}
