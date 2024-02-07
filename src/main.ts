@@ -20,6 +20,7 @@ import ImageCardLegacy from "$lib/elements/imageCard/imageCardLegacy";
 import ButtonBarManager from "$lib/elements/buttonBar/buttonBarManager";
 import IconManager from "$lib/elements/icon/iconManager";
 import gtag from "$lib/util/gtag";
+import { nanoid } from "nanoid";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -133,6 +134,32 @@ export const loadApp = async () => {
       document.body.classList.remove("cdb-toolbar-open");
     }
   });
+  // Handle dragging elements into the editor.
+  editor.getContainer().addEventListener("dragover", (e) => {});
+  editor.on(
+    "drop",
+    (e) => {
+      const { dataTransfer } = e;
+      if (dataTransfer?.types.includes("cdb-element/name")) {
+        editor.focus();
+        const blockName = dataTransfer.getData("cdb-element/name");
+        const blockId = dataTransfer.getData("cdb-element/id");
+        const block = loaded_blocks.find((b) => b.elementName === blockName);
+        if (block && blockName && blockId) {
+          setTimeout(() => {
+            const insertedEl = editor.dom.doc.getElementById(blockId);
+            if (insertedEl) {
+              editor.selection.select(insertedEl);
+              editor.selection.collapse(false);
+              block.create(true);
+              insertedEl.remove();
+            }
+          }, 50);
+        }
+      }
+    },
+    true
+  );
   // Hide app when TinyMCE editor is removed
   editor.on("detach", () => {
     console.log("Editor removed");
