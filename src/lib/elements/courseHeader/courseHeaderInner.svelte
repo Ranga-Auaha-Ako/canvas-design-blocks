@@ -192,14 +192,17 @@
     {/if}
   </div>
   {#if cdbData.theme === HeaderTheme.Modern && cdbData.links.length > 0}
-    <div class="headerLinks headerLinkTray">
+    <div
+      class="headerLinks headerLinkTray"
+      style:color={cdbData.color ? contrastColor : undefined}
+      data-mce-style={cdbData.color ? `color: ${contrastColor}` : undefined}
+    >
       {#each cdbData.links as link}
         <a
           class="headerLink"
           href={link.url}
           target={link.target !== undefined ? link.target : "_blank"}
           rel="noopener noreferrer"
-          style:color={cdbData.color ? contrastColor : undefined}
         >
           {#if link.icon}
             <IconElement
