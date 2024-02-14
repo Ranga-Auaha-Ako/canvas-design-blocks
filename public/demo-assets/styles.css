@@ -1,0 +1,28 @@
+#header a.block-link {
+	color: white;
+	text-decoration: none;
+	text-align: center;
+	display: block;
+	padding: 0.5em 0.25em;
+	font-weight: 700;
+	font-size: 0.8em;
+	font-family: monospace;
+	flex-grow: 1;
+	word-wrap: break-word;
+	background: #0000001f;
+	transition: 0.25s ease all;
+	display: flex;
+	overflow: hidden;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#header a.block-link.active {
+	background: #ffffff2b;
+}
+
+#header a.block-link:hover {
+	background: #ffffff2b;
+	text-decoration: underline;
+	transform: scale(0.9);
+}

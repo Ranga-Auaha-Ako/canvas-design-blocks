@@ -8,6 +8,24 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.11.2] - 2024-02-02
+
+### Overview
+
+- "Modern" is now the default header theme - give it a go! Pasting into header blocks also now works as expected.
+
+### Changed
+
+- Modern is now the default theme.
+- Modern theme: reworked header links completely to be more visually appealing.
+- Can now build into "sandpit mode" which provides a non-canvas environment for testing the production build of the tool.
+- "Mock" files in seach results are pulled from a real directory rather than using picsum.photos placeholder images.
+- Modern theme: links can now span two lines to allow Maori translations to be displayed.
+
+### Fixed
+
+- Fix #49: Pasting content into header blocks now works
+
 ## [2.11.1] - 2024-01-30
 
 ### Fixed

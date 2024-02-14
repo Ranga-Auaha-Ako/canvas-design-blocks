@@ -1,10 +1,6 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
-  import Portal from "svelte-portal/src/Portal.svelte";
-  import { fade, slide } from "svelte/transition";
-  import { filesize } from "filesize";
-  import mock from "./mock";
+  import { fade } from "svelte/transition";
   import {
     FitlerTypes,
     InternalLinks,

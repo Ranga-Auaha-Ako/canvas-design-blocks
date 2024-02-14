@@ -277,24 +277,11 @@
         line-height: 0;
       }
     }
-    .col {
-      @apply flex flex-col gap-2;
-    }
   }
-  input[type="text"],
-  input[type="url"] {
+  input[type="text"] {
     @apply border border-gray-300 rounded px-2 py-3 w-full mb-0;
     &:focus {
       @apply outline-none border-blue-500;
-    }
-  }
-  .checkbox-fullwidth {
-    @apply flex items-center gap-2;
-    @apply text-gray-500;
-    @apply cursor-pointer;
-    @apply accent-primary;
-    & input {
-      @apply w-4 h-4;
     }
   }
   .card-slot {

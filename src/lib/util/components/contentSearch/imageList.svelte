@@ -34,12 +34,6 @@
   .imageResults {
     @apply grid grid-cols-4 gap-2 content-baseline;
     aspect-ratio: 4 / 3;
-    .status-msg {
-      @apply col-span-full row-span-full flex flex-col items-center justify-center;
-      p {
-        @apply text-center;
-      }
-    }
   }
   .imageResult {
     @apply relative;

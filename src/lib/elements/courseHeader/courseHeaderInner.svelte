@@ -1,14 +1,21 @@
 <script lang="ts">
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { colord } from "colord";
-  import { HeaderData, HeaderLevel, HeaderTheme } from "./courseHeader";
+  import {
+    type CourseHeader,
+    HeaderData,
+    HeaderLevel,
+    HeaderTheme,
+  } from "./courseHeader";
   import { createEventDispatcher, onDestroy } from "svelte";
+  import theme from "$lib/util/theme";
 
   const dispatch = createEventDispatcher();
 
   export let cdbData: HeaderData;
   // svelte-ignore unused-export-let
   export let localState: any;
+  export let instance: CourseHeader;
 
   export let destroyHandler: () => void;
 
@@ -24,6 +31,7 @@
 <div
   class="headerInner {cdbData.theme}"
   class:noImage={!cdbData.image}
+  class:hasColor={cdbData.color}
   style:background-color={cdbData.theme === HeaderTheme["Modern"]
     ? cdbData.color?.toHex()
     : undefined}
@@ -108,44 +116,110 @@
         }}
       />
     {/if}
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="headerOverview"
       contenteditable="true"
+      on:keydown|capture={(e) => {
+        e.stopPropagation();
+      }}
+      on:paste|stopPropagation|preventDefault={(e) => {
+        // Strip formatting from pasted text
+        const text = e.clipboardData?.getData("text/plain");
+        const html = e.clipboardData?.getData("text/html");
+        const tinymce = false && e.clipboardData?.getData("x-tinymce/html");
+        const content = tinymce || html || text;
+        if (content) {
+          const win = instance.window;
+          const doc = win.document;
+          const sel = win.getSelection();
+          if (sel?.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const newContent = doc
+              .createRange()
+              .createContextualFragment(content);
+            // Strip colour formatting
+            debugger;
+            newContent.querySelectorAll("[style]").forEach((el) => {
+              if (el instanceof win.HTMLElement) {
+                el.style.color = "";
+                el.style.backgroundColor = "";
+              }
+            });
+            range.insertNode(newContent);
+          }
+          sel?.collapseToEnd();
+        }
+      }}
       bind:innerHTML={cdbData.overview}
       on:input={() => {
         dispatch("update", cdbData);
       }}
-    />
-    <div class="headerLinks">
+    ></div>
+    {#if [HeaderTheme.Dark, HeaderTheme.Light, HeaderTheme.Blur].includes(cdbData.theme)}
+      <div class="headerLinks">
+        {#each cdbData.links as link}
+          <a
+            class="headerLink"
+            href={link.url}
+            target={link.target !== undefined ? link.target : "_blank"}
+            rel="noopener noreferrer"
+            style:background-color={cdbData.color &&
+            cdbData.theme === HeaderTheme["Modern"]
+              ? contrastColor
+              : undefined}
+            style:color={cdbData.theme === HeaderTheme["Modern"]
+              ? cdbData.color?.toHex()
+              : undefined}
+            data-mce-style={cdbData.color &&
+            cdbData.theme === HeaderTheme["Modern"]
+              ? `color: ${cdbData.color?.toHex()}; background-color: ${contrastColor}`
+              : undefined}
+          >
+            {#if link.icon}
+              <IconElement
+                icon={link.icon}
+                colorOverride={cdbData.theme === HeaderTheme["Modern"]
+                  ? cdbData.color?.toHex()
+                  : "#fff"}
+              />
+            {/if}
+            {link.title}
+          </a>
+        {/each}
+      </div>
+    {/if}
+  </div>
+  {#if cdbData.theme === HeaderTheme.Modern && cdbData.links.length > 0}
+    <div
+      class="headerLinks headerLinkTray"
+      style:color={cdbData.color ? contrastColor : undefined}
+      data-mce-style={cdbData.color ? `color: ${contrastColor}` : undefined}
+    >
       {#each cdbData.links as link}
         <a
           class="headerLink"
           href={link.url}
           target={link.target !== undefined ? link.target : "_blank"}
           rel="noopener noreferrer"
-          style:background-color={cdbData.color &&
-          cdbData.theme === HeaderTheme["Modern"]
-            ? contrastColor
-            : undefined}
-          style:color={cdbData.theme === HeaderTheme["Modern"]
-            ? cdbData.color?.toHex()
-            : undefined}
-          data-mce-style={cdbData.color &&
-          cdbData.theme === HeaderTheme["Modern"]
-            ? `color: ${cdbData.color?.toHex()}; background-color: ${contrastColor}`
-            : undefined}
         >
           {#if link.icon}
             <IconElement
               icon={link.icon}
-              colorOverride={cdbData.theme === HeaderTheme["Modern"]
-                ? cdbData.color?.toHex()
-                : "#fff"}
+              colorOverride={cdbData.color ? contrastColor : theme.primary}
             />
           {/if}
-          {link.title}
+          <span class="headerLink--titles">
+            {#each link.title.split("\n") as title, index}
+              <span class="headerLink--title">{title}</span>
+              {#if index !== link.title.split("\n").length - 1}
+                <br />
+              {/if}
+            {/each}
+          </span>
         </a>
       {/each}
     </div>
-  </div>
+  {/if}
 </div>

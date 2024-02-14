@@ -242,9 +242,12 @@ export default abstract class MceElement extends SelectableElement {
   public static createInsertNode(
     atCursor: boolean,
     editor: Editor,
-    inline = false
+    inline = false,
+    elType: keyof HTMLElementTagNameMap = "div"
   ) {
-    const node = editor.dom.create(inline ? "span" : "div");
+    const node = editor.dom.create(
+      inline ? (elType === "div" ? "span" : elType) : elType
+    );
     if (atCursor) {
       const insertNode = editor.selection.getNode();
       const inBlock = insertNode.closest(`*[data-cdb-content="Simple"]`);
@@ -255,14 +258,12 @@ export default abstract class MceElement extends SelectableElement {
         insertNode.closest("body") === null
       ) {
         editor.dom.add(editor.dom.getRoot(), node);
+      } else if (inline) {
+        editor.selection.collapse();
+        editor.selection.getRng().insertNode(node);
       } else if (!editor.dom.isBlock(insertNode)) {
-        if (inline) {
-          editor.selection.collapse();
-          editor.selection.getRng().insertNode(node);
-        } else {
-          //  If the cursor is in a non-block element, insert the grid after the element
-          editor.dom.insertAfter(node, insertNode);
-        }
+        //  If the cursor is in a non-block element, insert the block after the element
+        editor.dom.insertAfter(node, insertNode);
       } else {
         if ((insertNode as HTMLElement)?.dataset.mceCaret === "after") {
           editor.dom.insertAfter(node, insertNode);

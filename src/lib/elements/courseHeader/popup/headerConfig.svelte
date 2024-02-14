@@ -250,7 +250,7 @@
         <div class="editActions">
           <button
             title="Finish editing link"
-            on:click={() => {
+            on:click|stopPropagation={() => {
               editLinkId = undefined;
             }}
           >
@@ -260,11 +260,34 @@
         </div>
         <div class="linkOptions">
           <label for="linkTitle-{editLinkId}">Title</label>
-          <input
-            type="text"
-            id="linkTitle-{editLinkId}"
-            bind:value={$headerData.links[editLinkIndex].title}
-          />
+          {#if $headerData.theme === HeaderTheme.Modern}
+            <textarea
+              id="linkTitle-{editLinkId}"
+              bind:value={$headerData.links[editLinkIndex].title}
+              rows={$headerData.links[editLinkIndex].title.split("\n").length >
+              1
+                ? 2
+                : 1}
+              on:input={(e) => {
+                // Limit the number of lines to 2
+                if (!e.target) return;
+                //@ts-ignore
+                if (e.target.value.split("\n").length > 2) {
+                  //@ts-ignore
+                  e.target.value = e.target.value
+                    .split("\n")
+                    .slice(0, 2)
+                    .join("\n");
+                }
+              }}
+            ></textarea>
+          {:else}
+            <input
+              id="linkTitle-{editLinkId}"
+              bind:value={$headerData.links[editLinkIndex].title}
+              type="text"
+            />
+          {/if}
           <label for="linkUrl-{editLinkId}">URL</label>
           <LinkInput
             id="linkUrl-{editLinkId}"

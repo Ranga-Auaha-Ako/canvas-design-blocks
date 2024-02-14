@@ -146,14 +146,4 @@
       @apply px-2 py-3 w-full h-8;
     }
   }
-
-  .tabs {
-    @apply flex flex-row gap-2;
-    .tab {
-      @apply border border-gray-300 rounded px-2 py-1 transition text-base;
-      &.active {
-        @apply bg-gray-200;
-      }
-    }
-  }
 </style>

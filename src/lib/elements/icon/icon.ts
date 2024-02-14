@@ -96,8 +96,20 @@ export class Icon extends SvelteElement<IconData> {
     editor: Editor,
     highlight: boolean
   ) {
+    // If currently on a blank line, insert an h2
+    const curNode = editor.selection.getNode() as HTMLElement;
+    if (editor.dom.isEmpty(curNode)) {
+      const insertedEl = editor.dom.create("h2", {}, "&nbsp;");
+      editor.dom.insertAfter(insertedEl, curNode);
+      editor.dom.remove(curNode);
+      editor.selection.select(insertedEl.childNodes[0]);
+      editor.selection.collapse(true);
+    }
     const node = this.createInsertNode(atCursor, editor, true);
-    return new this(state, editor, manager, node);
+    editor.selection.collapse(false);
+    const NewIcon = new this(state, editor, manager, node);
+    NewIcon.select();
+    return NewIcon;
   }
 
   constructor(

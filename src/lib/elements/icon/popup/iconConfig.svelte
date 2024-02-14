@@ -8,9 +8,9 @@
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { getIconData, icons } from "$lib/icons/svelte/iconPicker";
   import IconList from "$lib/icons/svelte/canvas-icons/iconList.svelte";
+  import { findNearestBackgroundColor } from "$lib/util/deriveColour";
 
   export let props: { icon: Icon };
-  export let isModal: boolean = false;
   $: icon = props.icon;
   $: iconData = icon.SvelteState;
   $: iconInfo = $iconData.icon ? getIconData($iconData.icon) : undefined;
@@ -30,9 +30,6 @@
   onDestroy(() => {
     iconPicker.$destroy();
   });
-  $: contrastLevel = $iconData.color?.contrast(colord("#ffffff"));
-  $: isReadable =
-    contrastLevel === undefined || (contrastLevel && contrastLevel >= 7);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -52,6 +49,7 @@
         <div class="iconListContainer">
           <IconList
             {icons}
+            targetNode={icon.node}
             options={{
               editColor: true,
               card: false,
@@ -107,18 +105,9 @@
         line-height: 0;
       }
     }
-    .colour-alert {
-      @apply border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
-      p {
-        @apply m-0;
-      }
-    }
     .icon-preview {
       @apply rounded shadow-inner bg-gray-50 flex items-center justify-center aspect-square;
       font-size: 3em;
-    }
-    .icon-loading {
-      @apply text-3xl animate-spin block text-center opacity-50 mx-auto p-4;
     }
   }
 </style>
