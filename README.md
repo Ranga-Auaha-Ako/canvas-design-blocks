@@ -34,18 +34,34 @@
 
 - Make links stand out with customisable buttons
 - Swap button colours and add icons to make your buttons pop
-  ![Grids](docs/assets/button.png)
+  ![Buttons](docs/assets/button.png)
 
 ### Headers
 
 - Create headers for your course pages, with built-in background image and layout options
-  ![Grids](docs/assets/header.jpeg)
+  ![Headers](docs/assets/header.png)
 
 ### Image Card Navigation
 
 - Create image cards with customisable links to other pages in your course
 - Best used for top-level navigation
-  ![Grids](docs/assets/image-cards.png)
+  ![Image Cards](docs/assets/image-cards.png)
+
+### Profiles
+
+- Automatically load in Canvas user profiles into your pages
+- Customise the layout and display of the profile
+  ![Profile](docs/assets/profile.png)
+
+### Button Bar
+
+- Create a bar of buttons to highlight important links, or indicate progress through a course
+  ![Button Bar](docs/assets/button-bar.png)
+
+### Custom Icons
+
+- Use a library of Canvas and institutional icons to help with quick scanning of page content and to highlight important information
+  ![Custom Icons](docs/assets/icons.png)
 
 ### Deep integration into Canvas RCE
 
