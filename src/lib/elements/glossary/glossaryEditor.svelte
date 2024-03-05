@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { termDefinition } from "./glossaryClientManager";
+  import {
+    GlossaryClientManager,
+    glossaryState,
+    termDefinition,
+  } from "./glossaryClientManager";
   import Cookie from "js-cookie";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
@@ -7,12 +11,22 @@
   const CSRF = Cookie.get("_csrf_token");
 
   export let glossaryData: string;
-  let parsedData: termDefinition[] = [];
+  export let manager: GlossaryClientManager;
+  let parsedData: glossaryState = { terms: [], institutionDefaults: true };
   try {
-    parsedData = JSON.parse(glossaryData);
-  } catch (error) {
-    parsedData = [];
+    const oldPageData = JSON.parse(glossaryData);
+    if (typeof oldPageData.terms === "undefined")
+      throw new Error("Invalid JSON");
+    if (typeof oldPageData.institutionDefaults === "undefined")
+      throw new Error("Invalid JSON");
+    parsedData = oldPageData;
+  } catch (err) {
+    parsedData = {
+      terms: [],
+      institutionDefaults: true,
+    };
   }
+  const instDefaults = manager.institutionTerms;
   let newTerm: termDefinition = { term: "", definition: "" };
   let saving = false;
 </script>
@@ -26,9 +40,13 @@
         highlighted in the course content, and students can click on them to see
         the definition.
       </p>
+      <label>
+        <input type="checkbox" bind:checked={parsedData.institutionDefaults} />
+        Include {instDefaults.length} institution default terms
+      </label>
     </div>
     <div class="glossary-table">
-      {#each parsedData as term, i}
+      {#each parsedData.terms as term, i}
         <div class="glossary-item">
           <label class="input-group term">
             <span>Term</span>
@@ -41,7 +59,9 @@
           <button
             title="Delete"
             on:click={() => {
-              parsedData = parsedData.filter((_, index) => index !== i);
+              parsedData.terms = parsedData.terms.filter(
+                (_, index) => index !== i
+              );
             }}
           >
             <IconElement
@@ -54,7 +74,7 @@
       <form
         class="glossary-item"
         on:submit|preventDefault={(e) => {
-          parsedData = [...parsedData, { ...newTerm }];
+          parsedData.terms = [...parsedData.terms, { ...newTerm }];
           newTerm.term = "";
           newTerm.definition = "";
         }}
@@ -132,7 +152,7 @@
                   }
                   return true;
                 });
-                parsedData = newData.map((term) => ({
+                parsedData.terms = newData.map((term) => ({
                   term: term.term,
                   definition: term.definition,
                 }));

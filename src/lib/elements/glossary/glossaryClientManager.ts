@@ -7,13 +7,33 @@ import { ElementComponent, SvelteElement } from "../generic/svelteElement";
 
 export type termDefinition = { term: string; definition: string };
 
-class GlossaryClientManager {
+export type glossaryState = {
+  terms: termDefinition[];
+  institutionDefaults: boolean;
+};
+
+export class GlossaryClientManager {
   public terms: termDefinition[] = [];
+  public institutionDefaults: boolean = false;
   public termNodes: HTMLSpanElement[] = [];
+  get institutionTerms() {
+    const institutionDefaults = import.meta.env
+      .CANVAS_BLOCKS_GLOSSARY_DEFINITIONS;
+    if (institutionDefaults) {
+      const defaults = JSON.parse(institutionDefaults) as termDefinition[];
+      return defaults;
+    }
+    return [];
+  }
+  get allTerms() {
+    return this.institutionDefaults
+      ? [...this.terms, ...this.institutionTerms]
+      : this.terms;
+  }
   getTermRegex() {
     return new RegExp(
       "\\b(" +
-        this.terms.map((t) => escapeStringRegexp(t.term)).join("|") +
+        this.allTerms.map((t) => escapeStringRegexp(t.term)).join("|") +
         ")\\b",
       "i"
     );
@@ -77,6 +97,7 @@ class GlossaryClientManager {
         target: container,
         props: {
           glossaryData: contents,
+          manager: this,
         },
       });
       return;
@@ -99,9 +120,9 @@ class GlossaryClientManager {
     const body = glossaryPage.body;
     // Then, get the glossary terms (if they exist)
     try {
-      JSON.parse(body).forEach((term: termDefinition) => {
-        this.terms.push({ term: term.term, definition: term.definition });
-      });
+      const state: glossaryState = JSON.parse(body);
+      this.terms = state.terms;
+      this.institutionDefaults = state.institutionDefaults;
     } catch (error) {
       return;
     }
@@ -119,7 +140,7 @@ class GlossaryClientManager {
       new DefinitionList({
         target: el,
         props: {
-          terms: this.terms,
+          terms: this.allTerms,
           termNodes: foundTermNodes,
         },
       });
@@ -130,7 +151,7 @@ class GlossaryClientManager {
     this.termNodes.forEach((termNode) => {
       const term = termNode.dataset.cdbTerm;
       if (!term) return;
-      const definition = this.terms.find(
+      const definition = this.allTerms.find(
         (t) => t.term.toLowerCase() === term.toLowerCase()
       )?.definition;
       if (!definition) return;
