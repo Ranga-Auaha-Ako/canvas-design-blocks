@@ -30,9 +30,11 @@
       <slot name="name" />
     </h3>
     <div class="add-button">
-      <div class="icon">
-        <i class="icon-line icon-add" aria-hidden="true" />
-      </div>
+      <slot name="icon">
+        <div class="icon">
+          <i class="icon-line icon-add" aria-hidden="true" />
+        </div>
+      </slot>
     </div>
   </button>
 </div>

@@ -21,6 +21,9 @@ import ButtonBarManager from "$lib/elements/buttonBar/buttonBarManager";
 import IconManager from "$lib/elements/icon/iconManager";
 import gtag from "$lib/util/gtag";
 import { nanoid } from "nanoid";
+import { type ClientElementManager } from "$lib/elements/generic/client-enabled/svelteClientManager";
+import glossaryClientManager from "$lib/elements/glossary/glossaryClientManager";
+import GlossaryToolbarPanel from "$lib/elements/glossary/glossaryToolbarPanel.svelte";
 
 if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
@@ -47,7 +50,7 @@ if (import.meta.env.DEV) {
 
 let attempts = 0;
 let hasLoaded = false;
-const getEditor = () =>
+export const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
     if (!window.tinymce || window.tinymce?.activeEditor?.getBody() === null) {
       setTimeout(() => {
@@ -85,6 +88,23 @@ const loadToolbar = (props?: Toolbar["$$prop_def"]) => {
 };
 
 let loaded_blocks: ElementManager[] = [];
+// Create Element Managers
+type implementedClass<T extends abstract new (...args: any) => any> = (new (
+  ...args: ConstructorParameters<T>
+) => InstanceType<T>) &
+  T;
+const managers: implementedClass<typeof ElementManager>[] = [
+  ButtonBarManager,
+  ButtonManager,
+  GridManager,
+  CourseHeaderManager,
+  IconManager,
+  ImageCardManager,
+  ProfilesManager,
+];
+const clientManagers: { renderClientComponent: () => unknown }[] = [
+  glossaryClientManager,
+];
 
 export const loadApp = async () => {
   // Track users who view content made with DesignBlocks
@@ -94,6 +114,12 @@ export const loadApp = async () => {
       cdb_version: version,
     });
   }
+
+  // Load any client-side elements
+  clientManagers.forEach((manager) => {
+    manager.renderClientComponent();
+  });
+
   // If tool is already loaded, exit
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
@@ -102,16 +128,6 @@ export const loadApp = async () => {
   });
   if (!editor) return;
 
-  // Create Element Managers
-  const managers = [
-    ButtonBarManager,
-    ButtonManager,
-    GridManager,
-    CourseHeaderManager,
-    IconManager,
-    ImageCardManager,
-    ProfilesManager,
-  ];
   loaded_blocks = managers.map((el) => new el(state, editor));
   // Migrate old blocks
   new ImageCardLegacy(state, editor, loaded_blocks[2] as ImageCardManager);
@@ -119,6 +135,7 @@ export const loadApp = async () => {
   const toolbar = loadToolbar({
     state,
     managers: loaded_blocks,
+    additionalItems: [GlossaryToolbarPanel],
   });
 
   // Inject tailwind base styles into editor

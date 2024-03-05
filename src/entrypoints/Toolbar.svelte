@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { ComponentType, createEventDispatcher, onMount } from "svelte";
   import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
@@ -16,6 +16,8 @@
 
   export let state: stateObject | undefined;
   export let managers: ElementManager[];
+
+  export let additionalItems: ComponentType[] = [];
 
   const last_opened_ver = persisted("cdb_version_opened", "2.8.3");
 
@@ -112,6 +114,9 @@
             {manager.elementName}
           </svelte:fragment>
         </ElementPanel>
+      {/each}
+      {#each additionalItems as item}
+        <svelte:component this={item} />
       {/each}
       <div class="info-panel">
         <a
