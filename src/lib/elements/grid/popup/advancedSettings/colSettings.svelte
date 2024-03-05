@@ -67,11 +67,16 @@
         // Text Colour
         oldInnerStyle.color = reflecting.textColor?.toHex() || "";
       }
+      if (reflecting.background && reflecting.background.alpha() > 0) {
+        oldInnerClassList.add("has-background");
+      } else {
+        oldInnerClassList.remove("has-background");
+      }
       return [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList] as [
         typeof oldStyle,
         typeof oldClassList,
         typeof oldInnerStyle,
-        typeof oldInnerClassList
+        typeof oldInnerClassList,
       ];
     }
   );
