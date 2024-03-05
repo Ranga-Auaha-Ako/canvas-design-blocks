@@ -4,6 +4,7 @@ import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
 import GlossaryEditor from "./glossaryEditor.svelte";
 import { ElementComponent, SvelteElement } from "../generic/svelteElement";
+import { courseEnv } from "$lib/util/courseEnv";
 
 export type termDefinition = { term: string; definition: string };
 
@@ -86,10 +87,10 @@ export class GlossaryClientManager {
   async renderClientComponent() {
     // If we're on the glossary page, and the url ends in "/edit", render the editor
     if (
-      window.ENV?.WIKI_PAGE?.url === "cdb-glossary" &&
+      courseEnv?.WIKI_PAGE?.url === "cdb-glossary" &&
       document.location.pathname.endsWith("/edit")
     ) {
-      const contents = window.ENV.WIKI_PAGE.body;
+      const contents = courseEnv.WIKI_PAGE.body;
       const container = document.getElementById("content");
       if (!contents || !container) return;
       document.body.classList.add("cdb-glossary-editor-active");
@@ -107,7 +108,7 @@ export class GlossaryClientManager {
     if (glossaryEls.length === 0) return;
     // First, get the glossary page (if it exists)
     const glossaryPage = await fetch(
-      `/api/v1/courses/${window.ENV.COURSE_ID}/pages/cdb-glossary`
+      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary`
     )
       .then((response) => {
         if (response.ok) {

@@ -13,6 +13,7 @@ import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { Link, ModuleSearch } from "$lib/util/components/contentSearch/search";
+import { courseEnv } from "$lib/util/courseEnv";
 
 export enum ButtonBarTheme {
   Progress = "progress",
@@ -43,7 +44,7 @@ export interface ButtonBarData {
   color?: Colord;
 }
 
-const COURSE_ID = window.ENV?.COURSE_ID;
+const COURSE_ID = courseEnv?.COURSE_ID;
 async function getModuleItems(): Promise<{
   items: ButtonBarItem[];
   modules: (Link & {
@@ -224,7 +225,7 @@ export class ButtonBar extends SvelteElement<ButtonBarData> {
   static async syncModules(svelteState: SvelteState<ButtonBarData>) {
     const { items, modules } = await getModuleItems();
     svelteState.update((state) => {
-      const pageID = window.ENV?.WIKI_PAGE?.url;
+      const pageID = courseEnv?.WIKI_PAGE?.url;
       if (!pageID) return state;
       const moduleWithPage = modules.findIndex((m) => {
         const page = m.items?.find(

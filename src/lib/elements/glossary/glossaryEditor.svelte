@@ -7,6 +7,7 @@
   import Cookie from "js-cookie";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
+  import { courseEnv } from "$lib/util/courseEnv";
 
   const CSRF = Cookie.get("_csrf_token");
 
@@ -111,7 +112,7 @@
         href={`data:application/json;charset=utf-8,${encodeURIComponent(
           glossaryData
         )}`}
-        download="glossary-course-{window.ENV.COURSE_ID}.json"
+        download="glossary-course-{courseEnv.COURSE_ID}.json"
       >
         <IconElement
           icon={{ id: "Inst.Line.download", type: 2 }}
@@ -179,7 +180,7 @@
           if (!CSRF) throw new Error("CSRF token not found");
           saving = true;
           await fetch(
-            `/api/v1/courses/${window.ENV.COURSE_ID}/pages/cdb-glossary`,
+            `/api/v1/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary`,
             {
               method: "PUT",
               credentials: "same-origin",
@@ -189,7 +190,7 @@
               },
               body: JSON.stringify({
                 wiki_page: {
-                  ...window.ENV.WIKI_PAGE,
+                  ...courseEnv.WIKI_PAGE,
                   body: glossaryData,
                   published: false,
                   notify_of_update: false,
