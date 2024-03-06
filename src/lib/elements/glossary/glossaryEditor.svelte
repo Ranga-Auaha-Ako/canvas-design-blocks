@@ -8,6 +8,8 @@
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
+  import { fade, slide } from "svelte/transition";
+  import Modal from "$lib/util/components/modalDialog/modal.svelte";
 
   const CSRF = Cookie.get("_csrf_token");
 
@@ -30,10 +32,14 @@
   const instDefaults = manager.institutionTerms;
   let newTerm: termDefinition = { term: "", definition: "" };
   let saving = false;
+  let saveNotice = false;
+  let showInstDefaults: () => void;
 </script>
 
 <div class="cgb-component">
-  <div class="shadow-lg rounded-lg bg-white border-primary border-2 m-4 p-4">
+  <div
+    class="shadow-lg rounded-lg bg-white border-primary border-2 m-4 p-4 transition"
+  >
     <div class="max-w-prose mx-auto">
       <h1 class="text-3xl text-center block">Glossary Editor</h1>
       <p>
@@ -43,10 +49,51 @@
       </p>
       <label>
         <input type="checkbox" bind:checked={parsedData.institutionDefaults} />
-        Include {instDefaults.length} institution default terms
+        Enable {instDefaults.length} institution-provided glossary terms.
+        <button
+          class="btn-text font-bold"
+          on:click={() => {
+            showInstDefaults();
+          }}
+        >
+          (View)
+        </button>
       </label>
+      <Modal
+        title="Institution-Provided Terms"
+        showSave={false}
+        showCancel={false}
+        showClose={true}
+        bind:open={showInstDefaults}
+      >
+        <dl class="mx-4">
+          {#each instDefaults.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
+            <dt>
+              {term}
+            </dt>
+            <dd class="mb-4">
+              {definition}
+            </dd>
+          {/each}
+        </dl>
+      </Modal>
+      {#if saveNotice}
+        <div
+          class="bg-green-100 border-green-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+          in:slide
+          out:fade
+        >
+          <div class="text-xl">
+            <IconElement
+              icon={{ id: "Inst.Line.check-dark", type: 2 }}
+              colorOverride="#15803D"
+            />
+          </div>
+          <p class="text-green-700">Saved successfully</p>
+        </div>
+      {/if}
     </div>
-    <div class="glossary-table">
+    <div class="glossary-table transition" class:opacity-60={saving}>
       {#each parsedData.terms as term, i}
         <div class="glossary-item">
           <label class="input-group term">
@@ -58,6 +105,7 @@
             <input disabled={saving} type="text" value={term.definition} />
           </label>
           <button
+            class="button"
             title="Delete"
             on:click={() => {
               parsedData.terms = parsedData.terms.filter(
@@ -98,7 +146,7 @@
             required
           />
         </label>
-        <button title="Add Term">
+        <button class="button" title="Add Term">
           <IconElement
             icon={{ id: "Inst.Line.add", type: 2 }}
             colorOverride="#fff"
@@ -121,7 +169,7 @@
         Download
       </a>
       <button
-        class="btn-secondary"
+        class="button btn-secondary"
         disabled={saving}
         on:click={async () => {
           const file = await new Promise((resolve) => {
@@ -173,6 +221,7 @@
         Import
       </button>
       <button
+        class="button"
         disabled={saving}
         on:click={async () => {
           glossaryData = JSON.stringify(parsedData);
@@ -199,6 +248,10 @@
             }
           );
           saving = false;
+          saveNotice = true;
+          setTimeout(() => {
+            saveNotice = false;
+          }, 5000);
         }}
       >
         <IconElement
@@ -242,8 +295,7 @@
   .glossary-actions {
     @apply flex justify-end gap-2 mx-8;
   }
-  button,
-  a.button {
+  .button {
     @apply inline-block text-base rounded bg-primary text-white leading-4 py-2 px-4 align-middle;
     @apply transition;
     &:hover {
@@ -259,6 +311,10 @@
         @apply bg-gray-100;
       }
     }
+  }
+  .btn-text {
+    @apply bg-none text-inherit border-none inline align-baseline;
+    line-height: inherit;
   }
   :global(body.cdb-glossary-editor-active) {
     :global(.edit-form),
