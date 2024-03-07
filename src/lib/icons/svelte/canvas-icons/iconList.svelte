@@ -93,7 +93,9 @@
         label="Icon Colour"
         id={nanoid() + "-setting-background"}
         bind:colour={$iconColor}
-        contrastColour={colord("#ffffff")}
+        contrastColour={nearestColour.alpha() === 0
+          ? colord("#fff")
+          : nearestColour}
         popupDirection={"top"}
         zIndex={12000}
         showNone={false}
@@ -119,6 +121,9 @@
   <div
     class="categories"
     style:color={options.editColor ? $iconColor.toHex() : "black"}
+    style:--icon-background={nearestColour.alpha() === 0
+      ? "#fff"
+      : nearestColour.toHex()}
   >
     {#each results as category}
       <div class="category">
@@ -187,6 +192,7 @@
     .icon {
       @apply rounded border-gray-100 border border-solid bg-white text-center p-2 cursor-pointer;
       @apply transition duration-200 ease-in-out relative z-0 aspect-square overflow-hidden;
+      background-color: var(--icon-background);
       &:hover {
         @apply scale-125 z-10 shadow border-transparent;
       }
