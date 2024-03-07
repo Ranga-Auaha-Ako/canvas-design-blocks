@@ -2,6 +2,7 @@
   import { nanoid } from "nanoid";
   import { createEventDispatcher, onMount } from "svelte";
   export let name: string = "Element";
+  export let title = `Add ${name}`;
 
   const dispatch = createEventDispatcher();
 </script>
@@ -10,7 +11,7 @@
   <button
     on:click={() => dispatch("add")}
     class="pane"
-    title="Add {name}"
+    {title}
     draggable="true"
     on:dragstart={(e) => {
       if (!e.dataTransfer) return;

@@ -3,11 +3,11 @@
   import { IconType } from "$lib/icons/svelte/iconPicker";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import { courseEnv } from "$lib/util/courseEnv";
-  import { PAGE_URL } from "./glossaryClientManager";
+  import { PAGE_CREATED, PAGE_URL } from "./glossaryClientManager";
 </script>
 
 <ElementPanel
-  name="Glossary"
+  title="Edit Glossary"
   on:add={async () => {
     window
       .open(
@@ -19,12 +19,23 @@
   }}
 >
   <svelte:fragment slot="name">
-    <IconElement icon={{ id: "General.icon1-83", type: IconType.Custom }}
-    ></IconElement>
-    Edit Glossary
+    {#await PAGE_CREATED then isCreated}
+      {#if isCreated}
+        Edit Glossary
+      {:else}
+        Create Glossary
+      {/if}
+    {/await}
   </svelte:fragment>
   <svelte:fragment slot="icon">
-    <IconElement icon={{ id: "Inst.Line.arrow-right", type: IconType.Custom }}
-    ></IconElement>
+    {#await PAGE_CREATED then isCreated}
+      {#if isCreated}
+        <IconElement
+          icon={{ id: "Inst.Line.arrow-right", type: IconType.Custom }}
+        />
+      {:else}
+        <IconElement icon={{ id: "Inst.Line.add", type: IconType.Custom }} />
+      {/if}
+    {/await}
   </svelte:fragment>
 </ElementPanel>

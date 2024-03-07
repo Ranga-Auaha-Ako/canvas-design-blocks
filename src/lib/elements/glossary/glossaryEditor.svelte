@@ -1,6 +1,7 @@
 <script lang="ts">
   import {
     GlossaryClientManager,
+    PAGE_CREATED,
     glossaryState,
     termDefinition,
   } from "./glossaryClientManager";
@@ -266,11 +267,21 @@
           needsSave = false;
         }}
       >
-        <IconElement
-          icon={{ id: "Inst.Line.check-dark", type: 2 }}
-          colorOverride="#fff"
-        />
-        Save
+        {#await PAGE_CREATED then isCreated}
+          {#if isCreated}
+            <IconElement
+              icon={{ id: "Inst.Line.check-dark", type: 2 }}
+              colorOverride="#fff"
+            />
+            Save
+          {:else}
+            <IconElement
+              icon={{ id: "Inst.Line.plus", type: 2 }}
+              colorOverride="#fff"
+            />
+            Create
+          {/if}
+        {/await}
       </button>
     </div>
   </div>
