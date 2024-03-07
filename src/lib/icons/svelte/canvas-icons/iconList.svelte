@@ -200,8 +200,10 @@
         @apply ring-2;
       }
       span {
-        @apply block;
+        @apply block mx-auto;
         font-size: 1.75rem;
+        line-height: 1;
+        width: 1.75rem;
       }
     }
   }
