@@ -33,6 +33,7 @@
   let saveNotice = false;
   let errorNotice: false | string = false;
   let needsSave = false;
+  let hasCreated = false;
   $: if (needsSave) {
     window.onbeforeunload = () => {
       return "You have unsaved changes. Are you sure you want to leave?";
@@ -265,10 +266,11 @@
             saveNotice = false;
           }, 5000);
           needsSave = false;
+          hasCreated = true;
         }}
       >
         {#await PAGE_CREATED then isCreated}
-          {#if isCreated}
+          {#if isCreated || hasCreated}
             <IconElement
               icon={{ id: "Inst.Line.check-dark", type: 2 }}
               colorOverride="#fff"
