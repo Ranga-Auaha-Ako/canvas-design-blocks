@@ -1,4 +1,4 @@
-let courseID = window.ENV.COURSE_ID;
+let courseID = window.ENV ? window.ENV.COURSE_ID : undefined;
 if (!courseID) {
   // Pull from the URL
   const url = new URL(window.location.href);
