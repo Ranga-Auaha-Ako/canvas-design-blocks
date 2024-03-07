@@ -19,6 +19,7 @@ const _page_info = new Promise<{ url: string; created: boolean }>(
     const pages = (await fetch(
       `/api/v1/courses/${courseEnv.COURSE_ID}/pages?search_term=${PAGE_NAME}`
     ).then((response) => response.json())) as { title: string; url: string }[];
+    debugger;
     const page = pages.find((page) => page.url.includes(DEFAULT_PAGE_URL));
     if (page) {
       resolve({
@@ -232,7 +233,7 @@ export class GlossaryClientManager {
     const file = await new Promise((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = ".json";
+      input.accept = ".csv";
       input.onchange = () => {
         if (input.files?.length) {
           const reader = new FileReader();
@@ -246,33 +247,23 @@ export class GlossaryClientManager {
     });
     if (typeof file === "string") {
       try {
-        const newData: glossaryState = JSON.parse(file);
-        if (typeof newData !== "object")
-          throw "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file.";
-        if (Array.isArray(newData.terms)) {
-          newData.terms.every((term) => {
-            if (
-              typeof term.term !== "string" ||
-              typeof term.definition !== "string"
-            ) {
-              console.error("Invalid JSON file: Malformed glossary entry.");
-              throw new Error(
-                "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file."
-              );
-            }
-            return true;
-          });
-          this.terms = newData.terms.map((term) => ({
-            term: term.term,
-            definition: term.definition,
-          }));
-          this.institutionDefaults = !!newData.institutionDefaults;
-          return true;
-        } else {
-          console.error("Invalid JSON file: Not correct format");
-        }
+        const [_headers, ...lines] = file.split("\n");
+        const terms = lines.map((line) => {
+          const [term, definition, ...more] = line.split(",");
+          if (more.length > 0)
+            throw new Error(
+              "Glossary file has too many columns: make sure the file is in the correct format."
+            );
+          return { term, definition };
+        });
+        if (terms.some((term) => !term.term || !term.definition))
+          throw new Error(
+            "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file."
+          );
+        this.terms = terms;
+        return true;
       } catch (error) {
-        console.error("Invalid JSON file: Malformed JSON");
+        console.error("Issue reading CSV file:", error);
       }
     }
     throw new Error(
@@ -297,6 +288,7 @@ export class GlossaryClientManager {
         },
         body: JSON.stringify({
           wiki_page: {
+            title: PAGE_NAME,
             body: this.json,
             published: true,
             notify_of_update: false,

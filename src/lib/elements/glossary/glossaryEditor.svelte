@@ -212,16 +212,19 @@
     <div class="glossary-actions">
       <a
         class="button btn-secondary"
-        href={`data:application/json;charset=utf-8,${encodeURIComponent(
-          glossaryData
+        href={`data:text/csv;charset=utf-8,${encodeURIComponent(
+          "Term,Definition\n" +
+            parsedData.terms
+              .map((term) => `${term.term},${term.definition}`)
+              .join("\n")
         )}`}
-        download="glossary-course-{courseEnv.COURSE_ID}.json"
+        download="glossary-course-{courseEnv.COURSE_ID}.csv"
       >
         <IconElement
           icon={{ id: "Inst.Line.download", type: 2 }}
           colorOverride="#000"
         />
-        Download
+        Download CSV
       </a>
       <button
         class="button btn-secondary"
