@@ -1,10 +1,30 @@
-import { ClientElementManager } from "../generic/client-enabled/svelteClientManager";
 import escapeStringRegexp from "escape-string-regexp";
 import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
 import GlossaryEditor from "./glossaryEditor.svelte";
-import { ElementComponent, SvelteElement } from "../generic/svelteElement";
 import { courseEnv } from "$lib/util/courseEnv";
+import GlossaryViewer from "./glossaryViewer.svelte";
+import "./glossary.postcss";
+import Cookie from "js-cookie";
+
+const CSRF = Cookie.get("_csrf_token");
+
+// The name of the glossary page *should* be "cdb-glossary", but it's possible that it's different. Deleting the page will cause any new glossary to be created with names like "cdb-glossary-1", as the name is based on the title of the page. This is a problem because the glossary editor will only look for a page with the exact name "cdb-glossary". To fix this, we need to get the glossary page by its title, and then use the id to fetch the page contents.
+
+const PAGE_NAME = "Course Glossary";
+export const PAGE_URL = new Promise<string>(async (resolve, reject) => {
+  if (!courseEnv.COURSE_ID) return reject("No course ID found");
+  const pages = (await fetch(
+    `/api/v1/courses/${courseEnv.COURSE_ID}/pages?search_term=${PAGE_NAME}`
+  ).then((response) => response.json())) as { title: string; url: string }[];
+  const page = pages.find((page) => page.title === PAGE_NAME);
+  if (page) {
+    resolve(page.url);
+  } else {
+    // Page doesn't exist
+    resolve("course-glossary");
+  }
+});
 
 export type termDefinition = { term: string; definition: string };
 
@@ -27,11 +47,28 @@ export class GlossaryClientManager {
     return [];
   }
   get allTerms() {
-    return this.institutionDefaults
-      ? [...this.terms, ...this.institutionTerms]
-      : this.terms;
+    return (
+      this.institutionDefaults
+        ? [...this.terms, ...this.institutionTerms]
+        : this.terms
+    ).filter((t) => t.term.trim() !== "");
+  }
+
+  get json() {
+    const state: glossaryState = {
+      terms: this.terms,
+      institutionDefaults: this.institutionDefaults,
+    };
+    return JSON.stringify(state);
+  }
+  get hasTerms() {
+    return (
+      this.allTerms.length > 0 &&
+      this.allTerms.some((t) => t.term.trim() !== "")
+    );
   }
   getTermRegex() {
+    if (!this.hasTerms) return new RegExp("$^", "i");
     return new RegExp(
       "\\b(" +
         this.allTerms.map((t) => escapeStringRegexp(t.term)).join("|") +
@@ -42,7 +79,7 @@ export class GlossaryClientManager {
   constructor() {
     // super(GlossaryState, Glossary, ".CDB--Glossary[data-cdb-version]");
   }
-  termWalker(root: HTMLElement) {
+  private termWalker(root: HTMLElement) {
     const regex = this.getTermRegex();
     return document.createTreeWalker(
       root, // The root node of the searched DOM sub-tree.
@@ -63,7 +100,7 @@ export class GlossaryClientManager {
       }
     );
   }
-  addGlossaryTags(node: Text) {
+  private addGlossaryTags(node: Text) {
     const regex = this.getTermRegex();
     let text = node.textContent;
     let currentMatch;
@@ -86,29 +123,39 @@ export class GlossaryClientManager {
   }
   async renderClientComponent() {
     // If we're on the glossary page, and the url ends in "/edit", render the editor
-    if (
-      courseEnv?.WIKI_PAGE?.url === "cdb-glossary" &&
-      document.location.pathname.endsWith("/edit")
-    ) {
+    if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
       const contents = courseEnv.WIKI_PAGE.body;
       const container = document.getElementById("content");
-      if (!contents || !container) return;
+      if (!container) return;
       document.body.classList.add("cdb-glossary-editor-active");
-      new GlossaryEditor({
-        target: container,
-        props: {
-          glossaryData: contents,
-          manager: this,
-        },
-      });
+      if (document.location.pathname.endsWith("/edit")) {
+        new GlossaryEditor({
+          target: container,
+          props: {
+            glossaryData: contents,
+            manager: this,
+          },
+          intro: true,
+        });
+      } else {
+        new GlossaryViewer({
+          target: container,
+          props: {
+            glossaryData: contents,
+            manager: this,
+          },
+          intro: true,
+        });
+      }
       return;
     }
-    const glossaryEls =
-      document.querySelectorAll<HTMLDivElement>("div#wiki_page_show");
+    const glossaryEls = document.querySelectorAll<HTMLDivElement>(
+      "div#wiki_page_show .user_content"
+    );
     if (glossaryEls.length === 0) return;
     // First, get the glossary page (if it exists)
     const glossaryPage = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary`
+      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
     )
       .then((response) => {
         if (response.ok) {
@@ -127,6 +174,8 @@ export class GlossaryClientManager {
     } catch (error) {
       return;
     }
+    // If there are no terms, return
+    if (!this.hasTerms) return;
     // Add glossary tags to the page
     glossaryEls.forEach((el) => {
       const iterator = this.termWalker(el);
@@ -165,6 +214,86 @@ export class GlossaryClientManager {
         },
       });
     });
+  }
+
+  async loadFile() {
+    // Load a file and update the glossary
+    const file = await new Promise((resolve) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = () => {
+        if (input.files?.length) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve(reader.result);
+          };
+          reader.readAsText(input.files[0]);
+        }
+      };
+      input.click();
+    });
+    if (typeof file === "string") {
+      try {
+        const newData: glossaryState = JSON.parse(file);
+        if (typeof newData !== "object")
+          throw "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file.";
+        if (Array.isArray(newData.terms)) {
+          newData.terms.every((term) => {
+            if (
+              typeof term.term !== "string" ||
+              typeof term.definition !== "string"
+            ) {
+              console.error("Invalid JSON file: Malformed glossary entry.");
+              throw new Error(
+                "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file."
+              );
+            }
+            return true;
+          });
+          this.terms = newData.terms.map((term) => ({
+            term: term.term,
+            definition: term.definition,
+          }));
+          this.institutionDefaults = !!newData.institutionDefaults;
+          return true;
+        } else {
+          console.error("Invalid JSON file: Not correct format");
+        }
+      } catch (error) {
+        console.error("Invalid JSON file: Malformed JSON");
+      }
+    }
+    throw new Error(
+      "Failed to read the file. Please ensure you are uploading a glossary file generated by this editor."
+    );
+  }
+
+  async save() {
+    // Post to API
+    if (!CSRF)
+      throw new Error(
+        "CSRF token not found. Try downloading the glossary, reloading the page, and importing it into the page to restore your unsaved changes. If clicking 'Save' still doesn't work, contact support."
+      );
+    await fetch(
+      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`,
+      {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Csrf-Token": CSRF,
+        },
+        body: JSON.stringify({
+          wiki_page: {
+            ...courseEnv.WIKI_PAGE,
+            body: this.json,
+            published: true,
+            notify_of_update: false,
+          },
+        }),
+      }
+    );
   }
 }
 

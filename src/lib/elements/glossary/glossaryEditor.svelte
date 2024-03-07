@@ -4,14 +4,11 @@
     glossaryState,
     termDefinition,
   } from "./glossaryClientManager";
-  import Cookie from "js-cookie";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
   import { fade, slide } from "svelte/transition";
   import Modal from "$lib/util/components/modalDialog/modal.svelte";
-
-  const CSRF = Cookie.get("_csrf_token");
 
   export let glossaryData: string;
   export let manager: GlossaryClientManager;
@@ -33,12 +30,22 @@
   let newTerm: termDefinition = { term: "", definition: "" };
   let saving = false;
   let saveNotice = false;
+  let errorNotice: false | string = false;
+  let needsSave = false;
+  $: if (needsSave) {
+    window.onbeforeunload = () => {
+      return "You have unsaved changes. Are you sure you want to leave?";
+    };
+  } else {
+    window.onbeforeunload = null;
+  }
   let showInstDefaults: () => void;
 </script>
 
 <div class="cgb-component">
   <div
     class="shadow-lg rounded-lg bg-white border-primary border-2 m-4 p-4 transition"
+    in:fade|global
   >
     <div class="max-w-prose mx-auto">
       <h1 class="text-3xl text-center block">Glossary Editor</h1>
@@ -92,17 +99,61 @@
           <p class="text-green-700">Saved successfully</p>
         </div>
       {/if}
+      {#if needsSave}
+        <div
+          class="bg-yellow-100 border-yellow-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+          in:slide
+          out:fade
+        >
+          <div class="text-xl">
+            <IconElement
+              icon={{ id: "Inst.Line.warning", type: 2 }}
+              colorOverride="#FFA500"
+            />
+          </div>
+          <p class="text-yellow-700">Unsaved changes</p>
+        </div>
+      {/if}
+      {#if errorNotice}
+        <button
+          class="bg-red-100 border-red-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center text-left"
+          in:slide
+          out:fade
+          title="Click to dismiss"
+          on:click={() => {
+            errorNotice = false;
+          }}
+        >
+          <div class="text-xl">
+            <IconElement
+              icon={{ id: "Inst.Line.warning", type: 2 }}
+              colorOverride="rgb(248,113,113)"
+            />
+          </div>
+          <p class="text-red-700">{errorNotice}</p>
+        </button>
+      {/if}
     </div>
     <div class="glossary-table transition" class:opacity-60={saving}>
       {#each parsedData.terms as term, i}
         <div class="glossary-item">
           <label class="input-group term">
             <span>Term</span>
-            <input disabled={saving} type="text" value={term.term} />
+            <input
+              disabled={saving}
+              type="text"
+              value={term.term}
+              on:input={() => (needsSave = true)}
+            />
           </label>
           <label class="input-group definition">
             <span>Definition</span>
-            <input disabled={saving} type="text" value={term.definition} />
+            <input
+              disabled={saving}
+              type="text"
+              value={term.definition}
+              on:input={() => (needsSave = true)}
+            />
           </label>
           <button
             class="button"
@@ -111,6 +162,7 @@
               parsedData.terms = parsedData.terms.filter(
                 (_, index) => index !== i
               );
+              needsSave = true;
             }}
           >
             <IconElement
@@ -126,6 +178,7 @@
           parsedData.terms = [...parsedData.terms, { ...newTerm }];
           newTerm.term = "";
           newTerm.definition = "";
+          needsSave = true;
         }}
       >
         <label class="input-group term">
@@ -172,45 +225,15 @@
         class="button btn-secondary"
         disabled={saving}
         on:click={async () => {
-          const file = await new Promise((resolve) => {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = ".json";
-            input.onchange = () => {
-              if (input.files?.length) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                  resolve(reader.result);
-                };
-                reader.readAsText(input.files[0]);
-              }
-            };
-            input.click();
-          });
-          if (typeof file === "string") {
-            try {
-              const newData = JSON.parse(file);
-              if (Array.isArray(newData)) {
-                newData.every((term) => {
-                  if (
-                    typeof term.term !== "string" ||
-                    typeof term.definition !== "string"
-                  ) {
-                    console.error("Invalid JSON file");
-                    return false;
-                  }
-                  return true;
-                });
-                parsedData.terms = newData.map((term) => ({
-                  term: term.term,
-                  definition: term.definition,
-                }));
-              } else {
-                console.error("Invalid JSON file");
-              }
-            } catch (error) {
-              console.error("Invalid JSON file");
-            }
+          let newTerms;
+          try {
+            newTerms = await manager.loadFile();
+          } catch (err) {
+            errorNotice = err.message;
+          }
+          if (newTerms) {
+            parsedData.terms = manager.terms;
+            needsSave = true;
           }
         }}
       >
@@ -224,34 +247,23 @@
         class="button"
         disabled={saving}
         on:click={async () => {
-          glossaryData = JSON.stringify(parsedData);
-          // Post to API
-          if (!CSRF) throw new Error("CSRF token not found");
           saving = true;
-          await fetch(
-            `/api/v1/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary`,
-            {
-              method: "PUT",
-              credentials: "same-origin",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Csrf-Token": CSRF,
-              },
-              body: JSON.stringify({
-                wiki_page: {
-                  ...courseEnv.WIKI_PAGE,
-                  body: glossaryData,
-                  published: false,
-                  notify_of_update: false,
-                },
-              }),
-            }
-          );
+          manager.terms = parsedData.terms;
+          manager.institutionDefaults = parsedData.institutionDefaults;
+          try {
+            await manager.save();
+          } catch (err) {
+            console.error(err);
+            errorNotice = err.message;
+            saving = false;
+            return;
+          }
           saving = false;
           saveNotice = true;
           setTimeout(() => {
             saveNotice = false;
           }, 5000);
+          needsSave = false;
         }}
       >
         <IconElement
@@ -296,7 +308,7 @@
     @apply flex justify-end gap-2 mx-8;
   }
   .button {
-    @apply inline-block text-base rounded bg-primary text-white leading-4 py-2 px-4 align-middle;
+    @apply inline-block text-base text-center rounded bg-primary text-white leading-6 py-2 px-4 align-middle;
     @apply transition;
     &:hover {
       @apply bg-black;
@@ -315,11 +327,5 @@
   .btn-text {
     @apply bg-none text-inherit border-none inline align-baseline;
     line-height: inherit;
-  }
-  :global(body.cdb-glossary-editor-active) {
-    :global(.edit-form),
-    :global(.cgb-toolbar) {
-      display: none !important;
-    }
   }
 </style>
