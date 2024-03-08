@@ -19,7 +19,6 @@ const _page_info = new Promise<{ url: string; created: boolean }>(
     const pages = (await fetch(
       `/api/v1/courses/${courseEnv.COURSE_ID}/pages?search_term=${PAGE_NAME}`
     ).then((response) => response.json())) as { title: string; url: string }[];
-    debugger;
     const page = pages.find((page) => page.url.includes(DEFAULT_PAGE_URL));
     if (page) {
       resolve({
