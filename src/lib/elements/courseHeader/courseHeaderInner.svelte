@@ -140,7 +140,6 @@
               .createRange()
               .createContextualFragment(content);
             // Strip colour formatting
-            debugger;
             newContent.querySelectorAll("[style]").forEach((el) => {
               if (el instanceof win.HTMLElement) {
                 el.style.color = "";
