@@ -131,6 +131,7 @@ export default defineConfig(({ mode, command }) => {
       target: "es2018",
       manifest: true,
       cssMinify: "lightningcss",
+      cssCodeSplit: false,
       rollupOptions: {
         input: "src/main.ts",
         output: {
@@ -142,7 +143,7 @@ export default defineConfig(({ mode, command }) => {
             return "a/[hash].[ext]";
           },
           entryFileNames: "canvas-blocks.min.js",
-          chunkFileNames: "c/[name].js",
+          chunkFileNames: "c/[name]-[hash].js",
           inlineDynamicImports: false,
         },
       },
