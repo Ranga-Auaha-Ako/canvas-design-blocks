@@ -20,7 +20,7 @@
   export let showClose: boolean = false;
 
   $: if (dialog) show ? dialog.showModal() : dialog.close();
-  export let title: string;
+  export let title: string = "";
   let dialog: HTMLDialogElement;
 </script>
 

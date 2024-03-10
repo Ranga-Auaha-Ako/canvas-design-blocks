@@ -13,6 +13,7 @@
 
   export let glossaryData: string;
   export let manager: GlossaryClientManager;
+  export let frameless: boolean = false;
   let parsedData: glossaryState = { terms: [], institutionDefaults: true };
   try {
     const oldPageData = JSON.parse(glossaryData);
@@ -45,10 +46,7 @@
 </script>
 
 <div class="cgb-component">
-  <div
-    class="shadow-lg rounded-lg bg-white border-primary border-2 m-4 p-4 transition"
-    in:fade|global
-  >
+  <div class:editor-frame={!frameless} class="transition" in:fade|global>
     <div class="max-w-prose mx-auto">
       <h1 class="text-3xl text-center block">Glossary Editor</h1>
       <p>
@@ -293,6 +291,9 @@
 </div>
 
 <style lang="postcss">
+  .editor-frame {
+    @apply shadow-lg rounded-lg bg-white border-primary border-2 m-4 p-4;
+  }
   .glossary-table {
     @apply flex flex-col gap-2 mt-8;
     .glossary-item {

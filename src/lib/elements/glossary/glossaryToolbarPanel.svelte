@@ -2,40 +2,77 @@
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType } from "$lib/icons/svelte/iconPicker";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
-  import { courseEnv } from "$lib/util/courseEnv";
-  import { PAGE_CREATED, PAGE_URL } from "./glossaryClientManager";
+  import { courseEnv, getCoursePermissions } from "$lib/util/courseEnv";
+  import { onMount } from "svelte";
+  import glossaryClientManager, {
+    PAGE_CREATED,
+    PAGE_URL,
+  } from "./glossaryClientManager";
+  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import GlossaryEditor from "./glossaryEditor.svelte";
+
+  let openModal: () => void;
+  let closeModal: () => void;
+  let loadEditor = false;
+
+  let CAN_EDIT = false;
+  onMount(async () => {
+    const permissions = await getCoursePermissions();
+    CAN_EDIT = permissions.manage_wiki_create && permissions.manage_wiki_update;
+  });
 </script>
 
-<ElementPanel
-  title="Edit Glossary"
-  on:add={async () => {
-    window
-      .open(
-        `/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}/edit`,
-        "_blank"
-      )
-      ?.focus();
-    // window.location.href = `/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary/edit`;
-  }}
->
-  <svelte:fragment slot="name">
-    {#await PAGE_CREATED then isCreated}
-      {#if isCreated}
-        Edit Glossary
-      {:else}
-        Create Glossary
-      {/if}
-    {/await}
-  </svelte:fragment>
-  <svelte:fragment slot="icon">
-    {#await PAGE_CREATED then isCreated}
-      {#if isCreated}
-        <IconElement
-          icon={{ id: "Inst.Line.arrow-right", type: IconType.Custom }}
+{#if CAN_EDIT}
+  <Modal
+    showSave={false}
+    showCancel={false}
+    showClose={true}
+    bind:open={openModal}
+    bind:close={closeModal}
+  >
+    {#if loadEditor}
+      {#await glossaryClientManager.loadData() then}
+        <GlossaryEditor
+          glossaryData={glossaryClientManager.json}
+          manager={glossaryClientManager}
+          frameless={true}
         />
-      {:else}
-        <IconElement icon={{ id: "Inst.Line.add", type: IconType.Custom }} />
-      {/if}
-    {/await}
-  </svelte:fragment>
-</ElementPanel>
+      {/await}
+    {/if}
+  </Modal>
+  <ElementPanel
+    title="Edit Glossary"
+    on:add={async () => {
+      loadEditor = true;
+      openModal();
+      // window
+      //   .open(
+      //     `/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}/edit`,
+      //     "_blank"
+      //   )
+      //   ?.focus();
+      // // window.location.href = `/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary/edit`;
+    }}
+  >
+    <svelte:fragment slot="name">
+      {#await PAGE_CREATED then isCreated}
+        {#if isCreated}
+          Edit Glossary
+        {:else}
+          Create Glossary
+        {/if}
+      {/await}
+    </svelte:fragment>
+    <svelte:fragment slot="icon">
+      {#await PAGE_CREATED then isCreated}
+        {#if isCreated}
+          <IconElement
+            icon={{ id: "Inst.Line.arrow-right", type: IconType.Custom }}
+          />
+        {:else}
+          <IconElement icon={{ id: "Inst.Line.add", type: IconType.Custom }} />
+        {/if}
+      {/await}
+    </svelte:fragment>
+  </ElementPanel>
+{/if}

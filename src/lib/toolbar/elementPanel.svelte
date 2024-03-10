@@ -1,6 +1,7 @@
 <script lang="ts">
   import { nanoid } from "nanoid";
   import { createEventDispatcher, onMount } from "svelte";
+  import { slide } from "svelte/transition";
   export let name: string = "Element";
   export let title = `Add ${name}`;
 

@@ -132,6 +132,34 @@ export class GlossaryClientManager {
     }
     return foundTermNodes;
   }
+  private _hasLoaded = false;
+  async loadData() {
+    if (this._hasLoaded) return;
+    this._hasLoaded = true;
+    // First, get the glossary page (if it exists)
+    const glossaryPage = await fetch(
+      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        return null;
+      })
+      .catch(() => null);
+    if (!glossaryPage) return;
+    const body = glossaryPage.body;
+    // Then, get the glossary terms (if they exist)
+    try {
+      const state: glossaryState = JSON.parse(body);
+      this.terms = state.terms;
+      this.institutionDefaults = state.institutionDefaults;
+    } catch (error) {
+      return;
+    }
+  }
+
+  public onEditorPage = false;
   async renderClientComponent() {
     // If we're on the glossary page, and the url ends in "/edit", render the editor
     if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
@@ -140,6 +168,7 @@ export class GlossaryClientManager {
       if (!container) return;
       document.body.classList.add("cdb-glossary-editor-active");
       if (document.location.pathname.endsWith("/edit")) {
+        this.onEditorPage = true;
         new GlossaryEditor({
           target: container,
           props: {
@@ -164,27 +193,7 @@ export class GlossaryClientManager {
       "div#wiki_page_show .user_content"
     );
     if (glossaryEls.length === 0) return;
-    // First, get the glossary page (if it exists)
-    const glossaryPage = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
-    )
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        return null;
-      })
-      .catch(() => null);
-    if (!glossaryPage) return;
-    const body = glossaryPage.body;
-    // Then, get the glossary terms (if they exist)
-    try {
-      const state: glossaryState = JSON.parse(body);
-      this.terms = state.terms;
-      this.institutionDefaults = state.institutionDefaults;
-    } catch (error) {
-      return;
-    }
+    await this.loadData();
     // If there are no terms, return
     if (!this.hasTerms) return;
     // Add glossary tags to the page
@@ -295,14 +304,17 @@ export class GlossaryClientManager {
         }),
       }
     );
-    try {
-      const { url } = await res.json();
-      if (url !== courseEnv.WIKI_PAGE?.url || (await PAGE_URL) !== url) {
-        const newPath = `/courses/${courseEnv.COURSE_ID}/pages/${url}/edit`;
-        window.onbeforeunload = null;
-        window.location.href = newPath;
-      }
-    } catch (error) {}
+    if (this.onEditorPage) {
+      // If we're on the editor page, redirect to the new page if the URL has changed
+      try {
+        const { url } = await res.json();
+        if (url !== courseEnv.WIKI_PAGE?.url || (await PAGE_URL) !== url) {
+          const newPath = `/courses/${courseEnv.COURSE_ID}/pages/${url}/edit`;
+          window.onbeforeunload = null;
+          window.location.href = newPath;
+        }
+      } catch (error) {}
+    }
   }
 }
 
