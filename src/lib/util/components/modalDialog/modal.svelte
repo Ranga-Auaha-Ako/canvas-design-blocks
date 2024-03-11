@@ -43,25 +43,28 @@
   >
     <div class="dialogBody">
       <slot name="title">
-        {#if title}
-          <div class="flex">
+        <div class="flex">
+          {#if title}
             <h4 class="grow">
               {title}
             </h4>
-            {#if showClose}
-              <button
-                class="text-xl mr-1"
-                on:click={() => {
-                  dispatch("close");
-                  dialog.close();
-                }}
-              >
-                <IconElement icon={{ id: "Inst.Line.x", type: IconType.Custom }}
-                ></IconElement>
-              </button>
-            {/if}
-          </div>
-        {/if}
+          {:else}
+            <div class="grow"></div>
+          {/if}
+          {#if showClose}
+            <button
+              class="text-xl mr-1"
+              title="Close {title || 'Dialog'}"
+              on:click={() => {
+                dispatch("close");
+                dialog.close();
+              }}
+            >
+              <IconElement icon={{ id: "Inst.Line.x", type: IconType.Custom }}
+              ></IconElement>
+            </button>
+          {/if}
+        </div>
       </slot>
       <slot />
 

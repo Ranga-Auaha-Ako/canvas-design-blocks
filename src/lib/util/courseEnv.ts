@@ -40,7 +40,7 @@ export async function getCoursePermissions(): Promise<
     const data = (await response.json()) as Record<CoursePermission, boolean>;
     return { ...permissions, ...data };
   } catch (error) {
-    console.error(error);
+    console.error("Failed to fetch course permissions", error);
   }
   return permissions;
 }

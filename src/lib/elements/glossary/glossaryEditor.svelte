@@ -46,7 +46,7 @@
 </script>
 
 <div class="cgb-component">
-  <div class:editor-frame={!frameless} class="transition" in:fade|global>
+  <div class:editor-frame={!frameless} class="transition" in:slide|global>
     <div class="max-w-prose mx-auto">
       <h1 class="text-3xl text-center block">Glossary Editor</h1>
       <p>

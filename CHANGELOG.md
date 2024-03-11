@@ -12,12 +12,13 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ### Overview
 
-- New: Glossaries! Create and edit a list of terms and definitions, and display them in a glossary block at the bottom of all course pages automatically. Terms will be highlighted in the text, and hovering over them will display the definition.
+- New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content. Also, you can now copy and paste grid rows.
 
 ### Added
 
 - New "Glossary" editing and viewing interfaces
 - Client-side blocks now possible
+- Copy and paste grid rows
 
 ## [2.11.2] - 2024-02-02
 
