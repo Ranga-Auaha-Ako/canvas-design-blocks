@@ -8,6 +8,17 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.12.0] - 2024-03-11
+
+### Overview
+
+- New: Glossaries! Create and edit a list of terms and definitions, and display them in a glossary block at the bottom of all course pages automatically. Terms will be highlighted in the text, and hovering over them will display the definition.
+
+### Added
+
+- New "Glossary" editing and viewing interfaces
+- Client-side blocks now possible
+
 ## [2.11.2] - 2024-02-02
 
 ### Overview
