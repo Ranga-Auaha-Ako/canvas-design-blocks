@@ -18,6 +18,7 @@
   import type { McePopover } from "./popover";
   import { fade } from "svelte/transition";
 
+  const hasSlot = $$slots.default;
   export let component: typeof SvelteComponent<any> | undefined = undefined;
   export let host: McePopover | undefined = undefined;
   export let show: boolean = false;
@@ -91,6 +92,7 @@
   let x = 0;
   let y = 0;
   let isVisible = false;
+  let arrowVisible = false;
   $: transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
   let arrowX: number | undefined;
   let arrowY: number | undefined;
@@ -99,18 +101,26 @@
   let arrowLeft: string | undefined;
   $: switch (popupPlacement) {
     case "top":
+    case "top-end":
+    case "top-start":
       arrowTop = "calc(100% - 1rem)";
       arrowLeft = arrowX ? `${Math.round(arrowX)}px` : "50%";
       break;
     case "bottom":
+    case "bottom-end":
+    case "bottom-start":
       arrowTop = "-0.5rem";
       arrowLeft = arrowX ? `${Math.round(arrowX)}px` : "50%";
       break;
     case "left":
+    case "left-end":
+    case "left-start":
       arrowLeft = "calc(100% - 1rem)";
       arrowTop = arrowY ? `${Math.round(arrowY)}px` : "50%";
       break;
     case "right":
+    case "right-end":
+    case "right-start":
       arrowLeft = "-0.5rem";
       arrowTop = arrowY ? `${Math.round(arrowY)}px` : "50%";
       break;
@@ -142,12 +152,14 @@
     }
     if (middlewareData.arrow && arrowEl) {
       popupPlacement = position.placement;
+      arrowVisible =
+        target.clientHeight > Math.abs(middlewareData.arrow.centerOffset) * 2;
       arrowX = middlewareData.arrow.x;
       arrowY = middlewareData.arrow.y;
     }
   };
 
-  $: if (component && show && target && popoverEl) {
+  $: if ((component || hasSlot) && show && target && popoverEl) {
     cleanup = autoUpdate(target, popoverEl, updateFunction);
   } else {
     if (cleanup) cleanup();
@@ -164,7 +176,7 @@
     class="cgb-popover-wrapper"
     style:transform
     bind:this={popoverEl}
-    open={component && show && target && popoverEl && isVisible}
+    open={(component || hasSlot) && show && target && popoverEl && isVisible}
     on:close={() => {
       host?.hide();
     }}
@@ -178,13 +190,18 @@
         {dominantPopover}
         {isModal}
       />
+    {:else if show}
+      <slot />
     {/if}
     {#if showArrow}
       <div
-        class="popover--Arrow"
+        class="popover--Arrow transition-opacity"
         bind:this={arrowEl}
         style:top={arrowTop}
         style:left={arrowLeft}
+        style:visibility={arrowVisible ? "visible" : "hidden"}
+        in:fade|global={{ duration: 300, delay: 100 }}
+        out:fade|global={{ duration: 200 }}
       />
     {/if}
   </dialog>

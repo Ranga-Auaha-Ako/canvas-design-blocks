@@ -36,7 +36,7 @@ const state: stateObject = {
 if (import.meta.env.DEV) {
   console.log("Dev mode enabled");
   window.onbeforeunload = function () {};
-  state.showInterface.set(true);
+  // state.showInterface.set(true);
 }
 
 let attempts = 0;

@@ -1,18 +1,18 @@
 <script lang="ts">
   import { ComponentType, createEventDispatcher, onMount } from "svelte";
-  import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
-  import { fade, slide } from "svelte/transition";
+  import { fade, fly, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { changes, changeversion, version } from "$lib/util/constants";
-  import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import type { stateObject } from "src/main";
   import ElementManager from "$lib/elements/generic/elementManager";
   import gtag from "$lib/util/gtag";
   import { persisted } from "svelte-persisted-store";
   import { compareVersions } from "compare-versions";
+  import NewUser from "$lib/toolbar/help/newUser.svelte";
+  import HelpContainer from "$lib/toolbar/help/helpContainer.svelte";
 
   export let state: stateObject | undefined;
   export let managers: ElementManager[];
@@ -49,6 +49,23 @@
   }
   $: hasUpdate =
     !changeversion || compareVersions($last_opened_ver, changeversion) < 0;
+
+  let openButton: HTMLButtonElement;
+  let showTooltip = false;
+  let tooltipTimeout: number;
+  const showTooltipHover = () => {
+    if ($open) return;
+    showTooltip = true;
+    if (tooltipTimeout) window.clearTimeout(tooltipTimeout);
+  };
+  const hideTooltipHover = () => {
+    tooltipTimeout = window.setTimeout(() => {
+      showTooltip = false;
+    }, 200);
+  };
+  $: if ($open) {
+    showTooltip = false;
+  }
 </script>
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
@@ -57,10 +74,15 @@
     title="Canvas Design Blocks"
     class:cgb-active={$open}
     class:has-update={hasUpdate}
+    on:mouseenter={() => showTooltipHover()}
+    on:mouseleave={() => hideTooltipHover()}
+    on:focus={() => showTooltipHover()}
+    on:blur={() => hideTooltipHover()}
     on:click={() => {
       $open = !$open;
       dispatch("open");
     }}
+    bind:this={openButton}
   >
     <div class="details">Design Blocks</div>
     <img src={IconWhite} alt="" />
@@ -68,6 +90,15 @@
       <div class="update-ping" title="Update available!" out:fade></div>
     {/if}
   </button>
+  {#if showTooltip}
+    <HelpContainer
+      target={openButton}
+      on:mouseenter={() => showTooltipHover()}
+      on:mouseleave={() => hideTooltipHover()}
+    >
+      <NewUser></NewUser>
+    </HelpContainer>
+  {/if}
 
   {#if $open}
     {#if hasUpdate}
@@ -135,7 +166,7 @@
 
 <style lang="postcss">
   .cgb-toolbar {
-    display: contents;
+    @apply relative;
   }
   .cgb-openButton {
     @apply relative w-full h-8 py-1 px-2;
@@ -172,6 +203,11 @@
     & .details {
       @apply flex-grow text-left;
     }
+  }
+
+  .tooltip {
+    @apply left-full top-0 absolute;
+    @apply p-4 bg-white rounded shadow-strong border border-gray-200;
   }
 
   .toolbar-menu {
