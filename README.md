@@ -142,7 +142,7 @@ Note: `CANVAS_BLOCKS_THEME` should be the JSON you created in step 2.
 ### Theme Installation
 
 > [!CAUTION]
-> This theme will be visible to all users on your Canvas instance, so ensure you have tested it thoroughly before applying it.
+> This theme will be visible to all users on your Canvas instance, so ensure you have tested it thoroughly before applying it. You may want to use the user script installation method for testing.
 
 1. Host the `dist` folder on a static web server (e.g. S3 behind Cloudfront) which supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
 2. In Canvas, go to **Admin > Themes > Add Theme** and add the following content to the **CSS** section, replacing `{INSERT_HOST_HERE}` with the URL of the folder you hosted in step 2:
