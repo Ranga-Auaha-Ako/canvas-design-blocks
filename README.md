@@ -87,7 +87,7 @@ You will also need to have the following installed:
 git clone https://github.com/Ranga-Auaha-Ako/canvas-design-blocks
 ```
 
-2. Create the JSON for your version of the theme. The JSON should follow this structure (note: remove the commnets before using):
+2. Create the JSON for your version of the theme. The JSON should follow this structure (note: remove the comments before using):
 
 ```JSON
 {
