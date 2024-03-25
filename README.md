@@ -75,18 +75,100 @@ Canvas Design Blocks works as a theme for Canvas, but can be installed as a user
 
 **NOTE: Other users will have to install the script to see the designs, so you will need to use the theme version for production.**
 
+### Building the Theme
+
+Installing this theme requires you to build your own version of the theme, as it requires a number of configuration options to be set.
+
+To do this, follow the steps below:
+
+#### Prerequisites
+
+You will need the following:
+
+- A Canvas instance to test the theme on
+- A static web server to host the theme files. We use [S3](https://aws.amazon.com/s3/) behind [Cloudfront](https://aws.amazon.com/cloudfront/) in production, and [Caprover](https://caprover.com/) to host CI/CD instances for testing.
+
+You will also need to have the following installed:
+
+- [Git](https://git-scm.com/) (for cloning the repository)
+- [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/getting-started/install) (for building the theme)
+- [Python](https://www.python.org/) installed on your machine (for the custom icons)
+- [PicoSVG](https://github.com/googlefonts/picosvg) - you can install this using `pip install picosvg`
+
+#### Configuration and Building
+
+1. Clone the repository into a local folder:
+
+```Shell
+git clone https://github.com/Ranga-Auaha-Ako/canvas-design-blocks
+```
+
+2. Create the JSON for your version of the theme. The JSON should follow this structure:
+
+```JSON
+{
+// Primary colour for the theme
+"primary": "#AB0520",
+// Secondary colour for the theme
+"secondary": "#AB0520",
+// Define colours for each faculty (optional)
+"faculty": {
+  "arts": "#AB0520",
+},
+// Define accessible light & dark colours for use in the theme
+"palette": {
+  "dark": {
+			"barney": "#BF32A4",
+			"info": "#0374B5",
+			"success": "#0B874B",
+			"danger": "#E0061F",
+			"warning": "#FC5E13"
+  },
+  "light": {
+			"white": "#FFFFFF"
+		}
+}
+}
+```
+
+3. Create a `.env` file in the root of the project with the following contents, replacing the values with your own:
+
+```Shell
+CANVAS_BLOCKS_BASE_DOMAINS=YOUR_CANVAS_DOMAIN
+CANVAS_BLOCKS_THEME_CONTACT_NAME=YOUR_CONTACT_NAME
+CANVAS_BLOCKS_THEME_CONTACT_LINK=YOUR_CONTACT_LINK
+CANVAS_BLOCKS_THEME=`PASTE_JSON_HERE`
+CANVAS_BLOCKS_THEME_HOST=YOUR_FILE_HOST
+```
+
+Note: `CANVAS_BLOCKS_THEME` should be the JSON you created in step 2.
+
+`YOUR_CANVAS_DOMAIN` should be the domain of your Canvas instance, e.g. `canvas.instructure.com`.
+
+`YOUR_FILE_HOST` should be the domain where you will host the theme files, e.g. `https://xxx.cloudfront.net/`. It should be a domain that supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
+
+4. (Optional) Create a `custom` folder in `/src/lib/icons/assets/` and create a folder for each category of custom icons you want to include. You can use any SVG icons you like. To allow Design Blocks to use the icons, you will need to creat a `meta.json` file in the category folder. You can view an example at `/src/lib/icon/assets/instructure/meta.json`. Once created, you can edit the file using our [Beta custom icons editor](https://icon-editor.c.raa.amazon.auckland.ac.nz/).
+
+5. Run `yarn install` to install dependencies
+
+6. Run `yarn build` to build the theme. This will take a while, as it needs to convert the SVG icons into a format that can be used in the theme.
+
+7. The theme will be built into the `dist` folder. You can now follow the instructions below to install the theme.
+
 ### Theme Installation
 
-1. Download the latest release from the [Releases](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/releases) page.
-2. Host the extracted folder on a static web server (e.g. S3 behind Cloudfront) which supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
-3. In Canvas, go to **Admin > Themes > Add Theme** and add the following content to the **CSS** section, replacing `{INSERT_HOST_HERE}` with the URL of the folder you hosted in step 2:
+> [!CAUTION]
+> This theme will be visible to all users on your Canvas instance, so ensure you have tested it thoroughly before applying it.
+
+1. Host the `dist` folder on a static web server (e.g. S3 behind Cloudfront) which supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
+2. In Canvas, go to **Admin > Themes > Add Theme** and add the following content to the **CSS** section, replacing `{INSERT_HOST_HERE}` with the URL of the folder you hosted in step 2:
 
 ```css
 @import url("{INSERT_HOST_HERE}/canvas-blocks.css}");
 /* Design Blocks End */
 ```
 
-4. Add the following content to the **JavaScript** section, replacing `{INSERT_HOST_HERE}` with the URL of the folder you hosted in step 2, and `{VERSION}` with the version of the release you downloaded (adding the version number to the URL is reccomended but not required):
+3. Add the following content to the **JavaScript** section, replacing `{INSERT_HOST_HERE}` with the URL of the folder you hosted in step 2, and `{VERSION}` with the version of the release you downloaded (adding the version number to the URL is reccomended but not required):
 
 ```js
 // Design Blocks Start
@@ -103,23 +185,52 @@ Canvas Design Blocks works as a theme for Canvas, but can be installed as a user
 // Design Blocks End
 ```
 
-5. Save and apply the theme. You're done!
+4. Save and apply the theme. You're done!
 
 ### User Script Installation
 
-1. Download the latest release from the [Releases](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/releases) page.
+> [!NOTE]  
+> This method is only for testing the theme. Other users will have to install the script to see the designs, so you will need to use the theme version for production.
+
+1. Host the `dist` folder on a static web server (e.g. S3 behind Cloudfront) which supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
 2. Install the [Tampermonkey](https://www.tampermonkey.net/) browser extension.
-3. Create a new script in Tampermonkey, adjust the `@match` URL to match your Canvas instance, and paste the contents of `canvas-blocks.min.js` into the script.
-4. Add the following content to the **CSS** section, replacing `{INSERT_CSS_HERE}` with the CSS from `canvas-blocks.css`:
+3. Create a new script in Tampermonkey, with the following content:
 
 ```js
-const style = document.createElement("style");
-style.type = "text/css";
-style.textContent = `
-{INSERT_CSS_HERE}
-`;
-document.head.appendChild(style);
+// ==UserScript==
+// @name         Canvas Design Blocks (Test)
+// @namespace    https://raa.auckland.ac.nz
+// @version      0.1
+// @description  Adds Canvas Design Blocks from the development instance to Canvas;;
+// @author       Ranga Auaha Ako, University of Auckland
+// @match        https://*.instructure.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=instructure.com
+// @grant        GM_addElement
+// ==/UserScript==
+
+(function () {
+  const builtVersion = true;
+  if (builtVersion) {
+    GM_addElement("script", {
+      src: "https://_YOUR_THEME_HOST_/canvas-blocks.min.js",
+      type: "module",
+    });
+    GM_addElement("link", {
+      href: "https://_YOUR_THEME_HOST_/canvas-blocks.css",
+      rel: "stylesheet",
+    });
+  } else {
+    GM_addElement("script", {
+      src: "http://localhost:5173/src/main.ts",
+      type: "module",
+    });
+  }
+})();
 ```
+
+3. Replace `_YOUR_THEME_HOST_` with the URL of the folder you hosted in step 1.
+
+4. Update the `@match` line to match the domain of your Canvas instance, if it does not already.
 
 5. Save the script and navigate to your Canvas instance. You're done!
 
