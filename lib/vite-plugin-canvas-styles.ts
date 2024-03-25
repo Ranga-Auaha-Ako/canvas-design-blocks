@@ -75,7 +75,7 @@ export default function vitePluginCanvasStyles(): PluginOption {
         ).find((script) => script.innerHTML.includes("INST = "));
         if (!InstScript) return "";
         return `${InstScript.innerHTML.replace(
-          /(INST|ENV|BRANDABLE_CSS_HANDLEBARS_INDEX)/g,
+          /(INST|ENV|BRANDABLE_CSS_HANDLEBARS_INDEX|REMOTES)/g,
           "window.$1"
         )}`;
       }
