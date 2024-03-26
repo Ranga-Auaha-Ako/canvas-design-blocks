@@ -1,0 +1,40 @@
+{
+  "iconFont.ttf": {
+    "file": "assets/iconFont-rqt8hR3C.ttf",
+    "src": "iconFont.ttf"
+  },
+  "iconFont.woff": {
+    "file": "assets/iconFont-AMgzYaoX.woff",
+    "src": "iconFont.woff"
+  },
+  "iconFont.woff2": {
+    "file": "assets/iconFont-_z5zsqgB.woff2",
+    "src": "iconFont.woff2"
+  },
+  "index.html": {
+    "assets": [
+      "assets/iconFont-_z5zsqgB.woff2",
+      "assets/iconFont-AMgzYaoX.woff",
+      "assets/iconFont-rqt8hR3C.ttf",
+      "assets/blank-user-y4CJBVYL.png"
+    ],
+    "css": [
+      "assets/index-rMCwHDlM.css"
+    ],
+    "dynamicImports": [
+      "node_modules/sortablejs/modular/sortable.esm.js"
+    ],
+    "file": "assets/index-CUPkLbQf.js",
+    "isEntry": true,
+    "src": "index.html"
+  },
+  "node_modules/sortablejs/modular/sortable.esm.js": {
+    "file": "assets/sortable.esm-j4b3RH8u.js",
+    "isDynamicEntry": true,
+    "src": "node_modules/sortablejs/modular/sortable.esm.js"
+  },
+  "src/lib/elements/profiles/blank-user.png": {
+    "file": "assets/blank-user-y4CJBVYL.png",
+    "src": "src/lib/elements/profiles/blank-user.png"
+  }
+}
