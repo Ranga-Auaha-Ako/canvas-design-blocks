@@ -1,0 +1,51 @@
+name: Create Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+    branches:
+      - main
+permissions:
+  contents: write
+env:
+  CANVAS_BLOCKS_THEME_HOST: https://ranga-auaha-ako.github.io/canvas-design-blocks/
+  CLEAR_DIST: false
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Parse Changelog
+        id: changelog
+        uses: ocavue/changelog-parser-action@v1
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install # will run `yarn install` command
+      - name: Copy env
+        run: cp .env.example .env
+      - name: Build App
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: zip
+      - name: Build Sandpit
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build --mode sandpit
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/design-blocks-theme.zip
+          body: |
+            ${{ steps.changelog.outputs.latestBody }}
+          draft: true
+      - name: Deploy Example 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # The folder the action should deploy.
