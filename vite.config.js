@@ -25,6 +25,7 @@ export default defineConfig(({ mode, command }) => {
         target: "es2018",
         manifest: true,
         cssMinify: "lightningcss",
+        emptyOutDir: !(process.env.CLEAR_DIST === "false"),
       },
       plugins: [
         svelte({
@@ -47,7 +48,6 @@ export default defineConfig(({ mode, command }) => {
           $assets: path.resolve("./src/assets"),
         },
       },
-      emptyOutDir: !(process.env.CLEAR_DIST === "false"),
       define: {
         __APP_VERSION__:
           JSON.stringify(process.env.npm_package_version) || "unknown",
