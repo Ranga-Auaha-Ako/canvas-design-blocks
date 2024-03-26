@@ -20,6 +20,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: pip install picosvg
       - name: Parse Changelog
         id: changelog
         uses: ocavue/changelog-parser-action@v1
@@ -46,6 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
+      contents: write
       pages: write
       id-token: write
     environment:
