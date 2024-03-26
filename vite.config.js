@@ -20,6 +20,7 @@ const changeVer = changelog.versions.find(
 export default defineConfig(({ mode, command }) => {
   if (mode === "sandpit") {
     return {
+      base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
       build: {
         target: "es2018",
         manifest: true,
