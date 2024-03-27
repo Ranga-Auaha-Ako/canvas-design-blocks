@@ -15,7 +15,9 @@
 
 - [About](#about)
 - [Features](#features)
+- [Try it for yourself!](#try-it-for-yourself)
 - [Installation](#installation)
+  - [Testing the theme](#testing-the-theme)
   - [Theme Installation](#theme-installation)
   - [User Script Installation](#user-script-installation)
 - [Development](#development)
@@ -53,6 +55,10 @@
 - The editing interface uses popups with settings overlaid on the page, so you can see how your changes will look in real-time, and easily make adjustments
   ![Grids](docs/assets/rce.png)
 
+## Try it for yourself!
+
+You can test out the latest release of Canvas Design Blocks on our **[Sandpit](https://ranga-auaha-ako.github.io/canvas-design-blocks/?block=courseHeader)**. This page is hosted on GitHub Pages, and simulates how the tool would work in a fictional Canvas environment without requiring an install. Note: some features are unavailable in the demo, as they require Canvas to function (for example, searching for links). To see the full functionality, you will need to install the theme in your Canvas instance.
+
 ## Installation
 
 Canvas Design Blocks works as a theme for Canvas, but can be installed as a user script using a browser extension like [Tampermonkey](https://www.tampermonkey.net/) for testing.
@@ -64,7 +70,7 @@ Canvas Design Blocks works as a theme for Canvas, but can be installed as a user
 If you want to skip the details and just try Design Blocks out in a test Canvas environment, you can install the version of the theme hosted on GitHub Pages. To do this, follow the instructions below:
 
 > [!IMPORTANT]
-> Do NOT use this method for production, as the files are hosted on GitHub Pages and may not be available in the future. If they become unavailable, the theme will stop working and Canvas may take up to a minute to load any pages. Additionally, the theme is not customisable using this method. From a security perspective, it is not recommended to use this method in a production environment as it will enable a third party (this GitHub Pages) to inject arbitrary code into your Canvas instance.
+> Do NOT use this method for production, as the files are hosted on GitHub Pages and may not be available in the future. If they become unavailable, the theme will stop working and Canvas may take _up to a minute_ to load any pages. Additionally, the theme is not customisable using this method. From a security perspective, it is not recommended to use this method in a production environment as it will enable a third party (this GitHub Pages) to inject arbitrary code into your Canvas instance.
 
 1. In Canvas, go to **Admin > Themes > Add Theme** (or edit an existing one). In the left-hand editor panel, choose the "Upload" tab at the top.
 2. Download the current styles (or create a new `theme.css` file) and paste the contents of the [Canvas Design Blocks CSS](https://ranga-auaha-ako.github.io/canvas-design-blocks/theme.css) file into the TOP your CSS file. **Note: You need to include the CSS at the top of any other CSS you have in your theme, as it uses an @import statement to pull in the Canvas theme styles.**
