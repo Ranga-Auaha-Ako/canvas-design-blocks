@@ -59,6 +59,18 @@ Canvas Design Blocks works as a theme for Canvas, but can be installed as a user
 
 **NOTE: Other users will have to install the script to see the designs, so you will need to use the theme version for production.**
 
+### Testing the theme
+
+If you want to skip the details and just try Design Blocks out in a test Canvas environment, you can install the version of the theme hosted on GitHub Pages. To do this, follow the instructions below:
+
+> [!IMPORTANT]
+> Do NOT use this method for production, as the files are hosted on GitHub Pages and may not be available in the future. If they become unavailable, the theme will stop working and Canvas may take up to a minute to load any pages. Additionally, the theme is not customisable using this method. From a security perspective, it is not recommended to use this method in a production environment as it will enable a third party (this GitHub Pages) to inject arbitrary code into your Canvas instance.
+
+1. In Canvas, go to **Admin > Themes > Add Theme** (or edit an existing one). In the left-hand editor panel, choose the "Upload" tab at the top.
+2. Download the current styles (or create a new `theme.css` file) and paste the contents of the [Canvas Design Blocks CSS](https://ranga-auaha-ako.github.io/canvas-design-blocks/theme.css) file into the TOP your CSS file. **Note: You need to include the CSS at the top of any other CSS you have in your theme, as it uses an @import statement to pull in the Canvas theme styles.**
+3. Download/create a `theme.js`file, and paste the contents of the [Canvas Design Blocks JS](https://ranga-auaha-ako.github.io/canvas-design-blocks/theme.js) file into the BOTTOM of your JS file. If you don't have a custom JS file, you can simple download and use the Design Blocks JS file as-is.
+4. Save and apply the theme. You're done!
+
 ### Building the Theme
 
 Installing this theme requires you to build your own version of the theme, as it requires a number of configuration options to be set.
