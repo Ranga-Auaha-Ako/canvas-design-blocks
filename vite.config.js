@@ -63,6 +63,7 @@ export default defineConfig(({ mode, command }) => {
   if (mode === "theme-loader") {
     return {
       build: {
+        base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
         target: "es2018",
         lib: {
           entry: resolve(__dirname, "src/theme-loader.ts"),
@@ -71,6 +72,11 @@ export default defineConfig(({ mode, command }) => {
           fileName: "theme-loader",
         },
         emptyOutDir: false,
+      },
+      define: {
+        __APP_VERSION__:
+          JSON.stringify(process.env.npm_package_version) || "unknown",
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       },
     };
   }
