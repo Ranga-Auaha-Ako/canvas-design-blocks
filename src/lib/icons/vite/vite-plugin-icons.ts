@@ -55,7 +55,7 @@ export default function vitePluginIcons(): PluginOption {
         id === resolvedVirtualStylesModuleId ||
         id === resolvedVirtualStylesInlineModuleId
       ) {
-        const base = config.server?.origin + config.base;
+        const base = config.server?.origin || "" + config.base;
         let assets = {
           ttf: base + "@devicons/iconFont.ttf",
           woff: base + "@devicons/iconFont.woff",
