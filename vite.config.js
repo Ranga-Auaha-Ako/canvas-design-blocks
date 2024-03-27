@@ -62,8 +62,8 @@ export default defineConfig(({ mode, command }) => {
   }
   if (mode === "theme-loader") {
     return {
+      base: process.env.CANVAS_BLOCKS_THEME_HOST,
       build: {
-        base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
         target: "es2018",
         lib: {
           entry: resolve(__dirname, "src/theme-loader.ts"),
