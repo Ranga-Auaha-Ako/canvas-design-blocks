@@ -20,10 +20,12 @@ const changeVer = changelog.versions.find(
 export default defineConfig(({ mode, command }) => {
   if (mode === "sandpit") {
     return {
+      base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
       build: {
         target: "es2018",
         manifest: true,
         cssMinify: "lightningcss",
+        emptyOutDir: !(process.env.CLEAR_DIST === "false"),
       },
       plugins: [
         svelte({
@@ -60,6 +62,7 @@ export default defineConfig(({ mode, command }) => {
   }
   if (mode === "theme-loader") {
     return {
+      base: process.env.CANVAS_BLOCKS_THEME_HOST,
       build: {
         target: "es2018",
         lib: {
@@ -69,6 +72,11 @@ export default defineConfig(({ mode, command }) => {
           fileName: "theme-loader",
         },
         emptyOutDir: false,
+      },
+      define: {
+        __APP_VERSION__:
+          JSON.stringify(process.env.npm_package_version) || "unknown",
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       },
     };
   }

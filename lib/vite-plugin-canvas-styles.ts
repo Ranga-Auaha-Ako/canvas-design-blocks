@@ -6,7 +6,7 @@ import {
   ResolvedConfig,
 } from "vite";
 import "dotenv/config";
-import { JSDOM, ResourceLoader } from "jsdom";
+import { JSDOM, ResourceLoader, VirtualConsole } from "jsdom";
 
 const CANVAS_HOST = process.env.CANVAS_BLOCKS_BASE_DOMAINS?.split(",")[0];
 if (!CANVAS_HOST)
@@ -35,13 +35,21 @@ class CustomResourceLoader extends ResourceLoader {
 
 const resourceLoader = new CustomResourceLoader();
 
-const body = response.text().then(
-  (res) =>
-    new JSDOM(res, {
-      resources: resourceLoader,
-      pretendToBeVisual: true,
-    })
-);
+const body = response.text().then((res) => {
+  const virtualConsole = new VirtualConsole();
+  virtualConsole.sendTo(console, { omitJSDOMErrors: true });
+  // https://stackoverflow.com/a/75949433
+  virtualConsole.on("jsdomError", (err) => {
+    if (err.message !== "Could not parse CSS stylesheet") {
+      console.error(err);
+    }
+  });
+  return new JSDOM(res, {
+    resources: resourceLoader,
+    pretendToBeVisual: true,
+    virtualConsole,
+  });
+});
 
 export default function vitePluginCanvasStyles(): PluginOption {
   let config: ResolvedConfig;

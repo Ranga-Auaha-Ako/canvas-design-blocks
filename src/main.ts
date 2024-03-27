@@ -20,6 +20,10 @@ if (import.meta.env.DEV && document.location.hostname === "localhost") {
   await import("virtual:inst-env");
 }
 
+if (import.meta.env.MODE === "sandpit") {
+  await import("./sandpit/sandpit");
+}
+
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
