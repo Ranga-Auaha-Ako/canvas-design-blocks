@@ -64,9 +64,10 @@ class MockSearch<L = Link> {
   }
 }
 
-export const mockData = import.meta.env.PROD
-  ? new MockSearch<Image>([])
-  : new MockSearch<Image>(import("./mock").then((d) => d.default) as any);
+export const mockData =
+  import.meta.env.PROD && import.meta.env.MODE !== "sandpit"
+    ? new MockSearch<Image>([])
+    : new MockSearch<Image>(import("./mock").then((d) => d.default) as any);
 
 abstract class ContentSearch<L = Link> implements MockSearch<L> {
   abstract urlBase: string | undefined;

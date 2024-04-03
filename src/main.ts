@@ -27,7 +27,7 @@ if (import.meta.env.DEV && document.location.hostname === "localhost") {
 }
 
 if (import.meta.env.MODE === "sandpit") {
-  await import("./sandpit/sandpit");
+  import("./sandpit/sandpit");
 }
 
 export interface stateObject {
