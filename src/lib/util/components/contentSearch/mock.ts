@@ -1,10 +1,10 @@
 import { File } from "./search";
 
-const mockImages = import.meta.glob("./mock/*.jpg", {
+const mockImages = import.meta.glob("./mock-assets/*.jpg", {
   eager: true,
   import: "default",
 });
-const mockThumbs = import.meta.glob("./mock/thumb/*.jpg", {
+const mockThumbs = import.meta.glob("./mock-assets/thumb/*.jpg", {
   eager: true,
   import: "default",
 });
