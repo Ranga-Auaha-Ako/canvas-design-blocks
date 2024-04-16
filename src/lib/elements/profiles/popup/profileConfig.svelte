@@ -84,9 +84,16 @@
     ? $people.findIndex((p) => p.id === activeId)
     : undefined;
 
+  $: contrastColor =
+    activeIndex !== undefined
+      ? $people[activeIndex].color?.isDark()
+        ? "#fff"
+        : "#000"
+      : "#fff";
+
   $: contrastLevel =
     activeIndex !== undefined
-      ? $people[activeIndex].color?.contrast(colord("#ffffff"))
+      ? $people[activeIndex].color?.contrast(colord(contrastColor))
       : true;
   $: isReadable =
     contrastLevel === true ||
