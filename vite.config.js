@@ -153,6 +153,9 @@ export default defineConfig(({ mode, command }) => {
           entryFileNames: "canvas-blocks.min.js",
           chunkFileNames: "c/[name]-[hash].js",
           inlineDynamicImports: false,
+          manualChunks: {
+            icons: ["virtual:blocks-icons"],
+          },
         },
       },
       // watch: true

@@ -13,9 +13,10 @@
   import gtag from "$lib/util/gtag";
   import { persisted } from "svelte-persisted-store";
   import { compareVersions } from "compare-versions";
+  import { type Readable } from "svelte/store";
 
   export let state: stateObject | undefined;
-  export let managers: ElementManager[];
+  export let managers: Readable<ElementManager[]>;
 
   export let additionalItems: ComponentType[] = [];
 
@@ -30,7 +31,7 @@
   let openedThisSession = false;
 
   const add = (manager: ElementManager) => {
-    if (!managers) return;
+    if (!$managers) return;
     const newManager = manager.create(true, true);
     if (!openedThisSession) {
       gtag("event", `design_blocks_insert`, {
@@ -50,6 +51,8 @@
   $: hasUpdate =
     !changeversion || compareVersions($last_opened_ver, changeversion) < 0;
 </script>
+
+<svelte:body class:cdb-toolbar-open={$open} />
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
   <button
@@ -100,7 +103,7 @@
       </div>
     {/if}
     <div class="toolbar-menu" transition:slide|global>
-      {#each managers as manager}
+      {#each $managers as manager}
         <ElementPanel
           on:add={() => {
             add(manager);

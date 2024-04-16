@@ -1,9 +1,7 @@
 import escapeStringRegexp from "escape-string-regexp";
 import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
-import GlossaryEditor from "./glossaryEditor.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
-import GlossaryViewer from "./glossaryViewer.svelte";
 import "./glossary.postcss";
 import Cookie from "js-cookie";
 
@@ -167,6 +165,9 @@ export class GlossaryClientManager {
       const container = document.getElementById("content");
       if (!container) return;
       document.body.classList.add("cdb-glossary-editor-active");
+      const { GlossaryEditor, GlossaryViewer } = await import(
+        "./glossaryLoader"
+      );
       if (document.location.pathname.endsWith("/edit")) {
         this.onEditorPage = true;
         new GlossaryEditor({
