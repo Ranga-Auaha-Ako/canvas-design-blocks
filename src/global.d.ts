@@ -10,5 +10,7 @@ declare global {
     dataLayer?: any[];
     _LOADED_DESIGNBLOCKS?: string;
     _UNLOAD_DESIGNBLOCKS?: () => boolean;
+    // Canvas Design Blocks
+    activeCDBGlossaryTooltip?: () => void;
   }
 }

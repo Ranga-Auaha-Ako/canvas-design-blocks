@@ -2,6 +2,7 @@ import type ToolbarType from "./entrypoints/Toolbar.svelte";
 import type ElementManager from "$lib/elements/generic/elementManager";
 import type { SvelteComponent } from "svelte";
 import type { Editor } from "tinymce";
+import type * as editorLoaderType from "$lib/util/loaders/editorLoader";
 import { compareVersions } from "compare-versions/lib/esm/compareVersions";
 import { version } from "$lib/util/constants";
 import { get, writable, type Writable } from "svelte/store";
@@ -39,6 +40,11 @@ const clientManagers: { renderClientComponent: () => unknown }[] = [
 
 // Start by setting up the loader
 async function beginLaunch() {
+  // Immediately load the editor loader if it needs to be loaded
+  let editorLoader;
+  if ("RICH_CONTENT_APP_HOST" in window.ENV) {
+    editorLoader = import("$lib/util/loaders/editorLoader");
+  }
   // Check if the design blocks have already been loaded
   // Handle version comparisions
   if (
@@ -57,11 +63,11 @@ async function beginLaunch() {
     // Load the app
     switch (document.readyState) {
       case "loading":
-        window.addEventListener("DOMContentLoaded", loadApp);
+        window.addEventListener("DOMContentLoaded", () => loadApp());
         break;
       case "interactive":
       case "complete":
-        loadApp();
+        loadApp(editorLoader);
         break;
     }
   } else {
@@ -70,7 +76,9 @@ async function beginLaunch() {
 }
 
 // This function handles the initial launch of the tool, and conditionally loads modules
-async function loadApp() {
+export async function loadApp(
+  editorLoader: Promise<typeof editorLoaderType> | undefined = undefined
+) {
   // Track users who view content made with DesignBlocks
   if (document.querySelector("div[data-cdb-version]")) {
     gtag("event", "design_blocks_viewer", {
@@ -93,9 +101,8 @@ async function loadApp() {
   // ----
 
   // Editor managers are loaded async to reduce initial bundle size
-  const { editorManagers, toolbarPanels, Toolbar } = await import(
-    "$lib/util/loaders/editorLoader"
-  );
+  const { editorManagers, toolbarPanels, Toolbar } =
+    (await editorLoader) || (await import("$lib/util/loaders/editorLoader"));
   state.loadedBlocks.set(editorManagers.map((m) => new m(state, editor)));
   // Add toolbar
   const toolbar = await loadToolbar(Toolbar, {
@@ -114,7 +121,7 @@ async function loadApp() {
     toolbar?.$destroy();
     // Load the app again when the editor is reloaded
     setTimeout(() => {
-      loadApp();
+      loadApp(editorLoader);
     }, 100);
   });
   // Register unload function
