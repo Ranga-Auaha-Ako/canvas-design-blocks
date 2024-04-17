@@ -159,9 +159,10 @@ export class GlossaryClientManager {
 
   public onEditorPage = false;
   async renderClientComponent(force: boolean = false) {
-    if (force || document.readyState !== "complete") {
+    if (!force && document.readyState !== "complete") {
       // Come back when the page is fully loaded
       window.addEventListener("load", () => this.renderClientComponent(true));
+      return;
     }
     // If we're on the glossary page, and the url ends in "/edit", render the editor
     if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
