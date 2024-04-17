@@ -65,7 +65,7 @@ export class GlossaryClientManager {
 
   get json() {
     const state: glossaryState = {
-      terms: this.terms,
+      terms: this.terms.filter((t) => t.term.trim() !== ""),
       institutionDefaults: this.institutionDefaults,
     };
     return JSON.stringify(state);
@@ -269,11 +269,17 @@ export class GlossaryClientManager {
             );
           return { term, definition };
         });
-        if (terms.some((term) => !term.term || !term.definition))
+        if (
+          terms.some(
+            (term) =>
+              typeof term.term !== "string" ||
+              typeof term.definition !== "string"
+          )
+        )
           throw new Error(
             "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file."
           );
-        this.terms = terms;
+        this.terms = terms.filter((term) => term.term.trim() !== "");
         return true;
       } catch (error) {
         console.error("Issue reading CSV file:", error);

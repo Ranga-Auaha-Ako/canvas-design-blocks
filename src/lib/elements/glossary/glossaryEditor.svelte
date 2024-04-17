@@ -10,6 +10,7 @@
   import { courseEnv } from "$lib/util/courseEnv";
   import { fade, slide } from "svelte/transition";
   import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import { tick } from "svelte";
 
   export let glossaryData: string;
   export let manager: GlossaryClientManager;
@@ -21,12 +22,22 @@
       throw new Error("Invalid JSON");
     if (typeof oldPageData.institutionDefaults === "undefined")
       throw new Error("Invalid JSON");
-    parsedData = oldPageData;
+    parsedData = {
+      terms: [...oldPageData.terms, { term: "", definition: "" }],
+      institutionDefaults: oldPageData.institutionDefaults,
+    };
   } catch (err) {
     parsedData = {
-      terms: [],
+      terms: [{ term: "", definition: "" }],
       institutionDefaults: true,
     };
+  }
+  $: if (
+    parsedData.terms[parsedData.terms.length - 1].definition !== "" ||
+    parsedData.terms[parsedData.terms.length - 1].term !== ""
+  ) {
+    console.log("Woah!");
+    parsedData.terms = [...parsedData.terms, { term: "", definition: "" }];
   }
   const instDefaults = manager.institutionTerms;
   let newTerm: termDefinition = { term: "", definition: "" };
@@ -35,6 +46,7 @@
   let errorNotice: false | string = false;
   let needsSave = false;
   let hasCreated = false;
+  $: needsSave, (parsedData.terms = parsedData.terms);
   $: if (needsSave) {
     window.onbeforeunload = () => {
       return "You have unsaved changes. Are you sure you want to leave?";
@@ -84,135 +96,124 @@
           {/each}
         </dl>
       </Modal>
-      {#if saveNotice}
-        <div
-          class="bg-green-100 border-green-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
-          in:slide
-          out:fade
-        >
-          <div class="text-xl">
-            <IconElement
-              icon={{ id: "Inst.Line.check-dark", type: 2 }}
-              colorOverride="#15803D"
-            />
-          </div>
-          <p class="text-green-700">Saved successfully</p>
-        </div>
-      {/if}
-      {#if needsSave}
-        <div
-          class="bg-yellow-100 border-yellow-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
-          in:slide
-          out:fade
-        >
-          <div class="text-xl">
-            <IconElement
-              icon={{ id: "Inst.Line.warning", type: 2 }}
-              colorOverride="#FFA500"
-            />
-          </div>
-          <p class="text-yellow-700">Unsaved changes</p>
-        </div>
-      {/if}
-      {#if errorNotice}
-        <button
-          class="bg-red-100 border-red-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center text-left"
-          in:slide
-          out:fade
-          title="Click to dismiss"
-          on:click={() => {
-            errorNotice = false;
-          }}
-        >
-          <div class="text-xl">
-            <IconElement
-              icon={{ id: "Inst.Line.warning", type: 2 }}
-              colorOverride="rgb(248,113,113)"
-            />
-          </div>
-          <p class="text-red-700">{errorNotice}</p>
-        </button>
-      {/if}
     </div>
     <div class="glossary-table transition" class:opacity-60={saving}>
-      {#each parsedData.terms as term, i}
-        <div class="glossary-item">
-          <label class="input-group term">
-            <span>Term</span>
-            <input
-              disabled={saving}
-              type="text"
-              value={term.term}
-              on:input={() => (needsSave = true)}
-            />
-          </label>
-          <label class="input-group definition">
-            <span>Definition</span>
-            <input
-              disabled={saving}
-              type="text"
-              value={term.definition}
-              on:input={() => (needsSave = true)}
-            />
-          </label>
-          <button
-            class="button"
-            title="Delete"
-            on:click={() => {
-              parsedData.terms = parsedData.terms.filter(
-                (_, index) => index !== i
-              );
-              needsSave = true;
+      <div class="glossary-table--header">
+        <div class="number"></div>
+        <div class="term">Term</div>
+        <div class="definition">Definition</div>
+        <div class="actions"></div>
+      </div>
+      <div class="glossary-table--body">
+        {#each parsedData.terms as term, i}
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <div
+            class="glossary-item"
+            class:hasError={term.term.trim() === "" &&
+              i !== parsedData.terms.length - 1}
+            on:keydown={async (e) => {
+              newTerm = { term: "", definition: "" };
+              if (e.key === "Enter") {
+                parsedData.terms.splice(i + 1, 0, newTerm);
+                parsedData.terms = parsedData.terms;
+                await tick();
+                const input = document.querySelector(
+                  `.glossary-item:nth-child(${i + 2}) input`
+                );
+                if (input) {
+                  //@ts-ignore
+                  input.focus();
+                }
+              }
             }}
           >
-            <IconElement
-              icon={{ id: "Inst.Line.trash", type: 2 }}
-              colorOverride="#fff"
+            <span class="rowNumber">
+              {#if i === parsedData.terms.length - 1}
+                +
+              {:else}
+                {i + 1}
+              {/if}
+            </span>
+            <input
+              disabled={saving}
+              type="text"
+              bind:value={term.term}
+              on:input={() => (needsSave = true)}
+              on:keydown={(e) => {
+                if (e.key === "Backspace" && term.term === "") {
+                  parsedData.terms = parsedData.terms.filter(
+                    (_, index) => index !== i
+                  );
+                  needsSave = true;
+                }
+              }}
             />
-          </button>
-        </div>
-      {/each}
-      <form
-        class="glossary-item"
-        on:submit|preventDefault={(e) => {
-          parsedData.terms = [...parsedData.terms, { ...newTerm }];
-          newTerm.term = "";
-          newTerm.definition = "";
-          needsSave = true;
-        }}
-      >
-        <label class="input-group term">
-          <span>Term</span>
-          <input
-            disabled={saving}
-            type="text"
-            bind:value={newTerm.term}
-            required
-          />
-        </label>
-        <label class="input-group definition">
-          <span>Definition</span>
-          <input
-            disabled={saving}
-            type="text"
-            bind:value={newTerm.definition}
-            required
-          />
-        </label>
-        <button class="button" title="Add Term">
-          <IconElement
-            icon={{ id: "Inst.Line.add", type: 2 }}
-            colorOverride="#fff"
-          />
-        </button>
-      </form>
+            <input
+              disabled={saving}
+              type="text"
+              bind:value={term.definition}
+              on:input={() => (needsSave = true)}
+              on:keydown={(e) => {
+                if (e.key === "Backspace" && term.definition === "") {
+                  // Focus on the term input
+                  const input = document.querySelector(
+                    `.glossary-item:nth-child(${i + 1}) input`
+                  );
+                  if (input) {
+                    //@ts-ignore
+                    input.focus();
+                  }
+                }
+              }}
+            />
+            <div class="glossary-table--item-actions">
+              {#if i === parsedData.terms.length - 1}
+                <button
+                  class="button"
+                  title="Add Term"
+                  on:click={() => {
+                    parsedData.terms = [
+                      ...parsedData.terms,
+                      { term: "", definition: "" },
+                    ];
+                    needsSave = true;
+                  }}
+                >
+                  <IconElement
+                    icon={{ id: "Inst.Line.add", type: 2 }}
+                    colorOverride="#333"
+                  />
+                </button>
+              {:else}
+                <button
+                  class="button"
+                  title="Delete"
+                  on:click={() => {
+                    parsedData.terms = parsedData.terms.filter(
+                      (_, index) => index !== i
+                    );
+                    needsSave = true;
+                  }}
+                >
+                  <IconElement
+                    icon={{ id: "Inst.Line.trash", type: 2 }}
+                    colorOverride="#333"
+                  />
+                </button>
+              {/if}
+            </div>
+          </div>
+        {/each}
+      </div>
     </div>
+
     <div class="glossary-actions">
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
           "Term,Definition\n" +
             parsedData.terms
+              .filter((term) => term.term.trim() !== "")
               .map((term) => `${term.term},${term.definition}`)
               .join("\n")
         )}`}
@@ -287,6 +288,55 @@
         {/await}
       </button>
     </div>
+    {#if saveNotice}
+      <div
+        class="bg-green-100 border-green-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+        in:slide
+        out:fade
+      >
+        <div class="text-xl">
+          <IconElement
+            icon={{ id: "Inst.Line.check-dark", type: 2 }}
+            colorOverride="#15803D"
+          />
+        </div>
+        <p class="text-green-700">Saved successfully</p>
+      </div>
+    {/if}
+    {#if needsSave}
+      <div
+        class="bg-yellow-100 border-yellow-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+        in:slide
+        out:fade
+      >
+        <div class="text-xl">
+          <IconElement
+            icon={{ id: "Inst.Line.warning", type: 2 }}
+            colorOverride="#FFA500"
+          />
+        </div>
+        <p class="text-yellow-700">Unsaved changes</p>
+      </div>
+    {/if}
+    {#if errorNotice}
+      <button
+        class="bg-red-100 border-red-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center text-left"
+        in:slide
+        out:fade
+        title="Click to dismiss"
+        on:click={() => {
+          errorNotice = false;
+        }}
+      >
+        <div class="text-xl">
+          <IconElement
+            icon={{ id: "Inst.Line.warning", type: 2 }}
+            colorOverride="rgb(248,113,113)"
+          />
+        </div>
+        <p class="text-red-700">{errorNotice}</p>
+      </button>
+    {/if}
   </div>
 </div>
 
@@ -295,54 +345,84 @@
     @apply shadow-lg rounded-lg bg-white border-primary border-2 m-4 p-4;
   }
   .glossary-table {
-    @apply flex flex-col gap-2 mt-8;
+    @apply mb-8 p-4;
+    .glossary-table--header,
+    .glossary-table--body,
     .glossary-item {
-      @apply p-3 pt-1 border rounded;
-      @apply flex mx-8 gap-2 justify-items-center items-end;
-      .input-group {
-        @apply flex flex-col m-0 p-0;
-        &.term {
-          flex-grow: 1;
-        }
-        &.definition {
-          flex-grow: 3;
-        }
-        span {
-          @apply font-bold m-0 p-0;
-        }
-        input {
-          @apply w-full m-0 h-8;
-          &:invalid {
-            color: inherit;
-            border-color: #ccc;
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-          }
-        }
+      @apply grid;
+      grid-template-columns: 2rem 1fr 1fr 2rem;
+      grid-auto-rows: 2rem;
+    }
+    .glossary-table--header {
+      @apply font-bold leading-none border-b border-gray-200;
+      .term,
+      .definition {
+        @apply leading-8 pl-2 border-l border-gray-200;
       }
     }
-  }
-  .glossary-actions {
-    @apply flex justify-end gap-2 mx-8;
-  }
-  .button {
-    @apply inline-block text-base text-center rounded bg-primary text-white leading-6 py-2 px-4 align-middle;
-    @apply transition;
-    &:hover {
-      @apply bg-black;
-      text-decoration: none;
-    }
-    &:disabled {
-      @apply bg-gray-400 opacity-50;
-    }
-    &.btn-secondary {
-      @apply bg-white text-black border border-primary;
+    .glossary-item {
+      @apply col-span-4 m-0;
+      @apply transition;
+      @apply border-y border-solid border-transparent;
+      .rowNumber {
+        @apply text-center self-center font-mono font-light text-xs;
+      }
+      input {
+        @apply w-full h-full m-0 py-0 px-2;
+        @apply border-0 shadow-none bg-transparent rounded-none border-l border-transparent;
+      }
+      .glossary-table--item-actions {
+        @apply pointer-events-none opacity-0 transition;
+        .button {
+          @apply text-gray-800 h-full;
+        }
+      }
       &:hover {
-        @apply bg-gray-100;
+        @apply border-gray-100;
+      }
+      &:nth-child(1) {
+        @apply border-t-0;
+      }
+      &:focus-within {
+        @apply bg-white;
+        @apply border-gray-200;
+        input {
+          @apply border-gray-200;
+        }
+      }
+      &.hasError {
+        @apply border-red-200 bg-red-50;
+      }
+
+      &:hover,
+      &:focus-within {
+        .glossary-table--item-actions {
+          @apply pointer-events-auto opacity-100;
+        }
       }
     }
   }
   .btn-text {
     @apply bg-none text-inherit border-none inline align-baseline;
     line-height: inherit;
+  }
+  .glossary-actions {
+    .button {
+      @apply inline-block text-sm text-center rounded bg-primary text-white leading-3 py-2 px-3 align-middle;
+      @apply transition;
+      &:hover {
+        @apply bg-black;
+        text-decoration: none;
+      }
+      &:disabled {
+        @apply bg-gray-400 opacity-50;
+      }
+      &.btn-secondary {
+        @apply bg-white text-black border border-primary;
+        &:hover {
+          @apply bg-gray-100;
+        }
+      }
+    }
   }
 </style>
