@@ -16,6 +16,21 @@ const changeVer = changelog.versions.find(
     v.parsed.Overview
 );
 
+const visualizers = [
+  {
+    filename: "./dist/flame.html",
+    template: "flamegraph",
+  },
+  {
+    filename: "./dist/stats.html",
+    template: "treemap",
+  },
+  {
+    filename: "./dist/network.html",
+    template: "network",
+  },
+];
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   if (mode === "sandpit") {
@@ -33,9 +48,12 @@ export default defineConfig(({ mode, command }) => {
         }),
         getIconsPlugin(),
         vitePluginCanvasStyles(),
-        visualizer({
-          filename: "./dist/stats.html",
-        }),
+        ...visualizers.map((v) =>
+          visualizer({
+            ...v,
+            brotliSize: true,
+          })
+        ),
       ],
       css: {
         lightningcss: {
@@ -128,11 +146,12 @@ export default defineConfig(({ mode, command }) => {
     ].concat(
       // @ts-ignore
       mode.includes("beta")
-        ? [
+        ? visualizers.map((v) =>
             visualizer({
-              filename: "./dist/stats.html",
-            }),
-          ]
+              ...v,
+              brotliSize: true,
+            })
+          )
         : []
     ),
     build: {
