@@ -47,9 +47,9 @@
     {/each}
   </dl>
 
-  <h2 class="">Institution-Provided Terms</h2>
-  <dl class="mx-4">
-    {#if parsedData.institutionDefaults}
+  {#if parsedData.institutionDefaults}
+    <h2 class="">Institution-Provided Terms</h2>
+    <dl class="mx-4">
       {#each manager.institutionTerms.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
         <dt>
           {term}
@@ -58,8 +58,6 @@
           {definition}
         </dd>
       {/each}
-    {:else}
-      <p>No institution-provided terms are enabled.</p>
-    {/if}
-  </dl>
+    </dl>
+  {/if}
 </div>

@@ -174,6 +174,7 @@ export default defineConfig(({ mode, command }) => {
           inlineDynamicImports: false,
           manualChunks: {
             icons: ["virtual:blocks-icons"],
+            sortable: ["sortablejs"],
           },
         },
       },

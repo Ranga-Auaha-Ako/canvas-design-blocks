@@ -65,7 +65,12 @@ export class GlossaryClientManager {
 
   get json() {
     const state: glossaryState = {
-      terms: this.terms.filter((t) => t.term.trim() !== ""),
+      terms: this.terms
+        .filter((t) => t.term.trim() !== "")
+        .map((t) => ({
+          term: t.term,
+          definition: t.definition,
+        })),
       institutionDefaults: this.institutionDefaults,
     };
     return JSON.stringify(state);
