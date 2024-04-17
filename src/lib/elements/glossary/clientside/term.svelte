@@ -92,34 +92,37 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<span on:mouseenter={() => showTooltip()} on:mouseleave={() => hideTooltip()}>
-  <button
+<span on:mouseenter={() => showTooltip()} on:mouseleave={() => hideTooltip()}
+  ><button
     aria-labelledby={open ? `${id}-label` : undefined}
     on:click={() => forceToggle()}
-    bind:this={termEl}
-  >
-    {term}
-  </button>
-  <span
+    bind:this={termEl}>{term}</button
+  ><!-- svelte-ignore a11y-click-events-have-key-events --><span
     bind:this={defEl}
     class:open
     class="dfn"
     style:transform
     id={`${id}-label`}
-  >
-    <span
+    on:click|stopPropagation
+    ><span
       class="dfn-arrow"
       style:top={arrowY != null ? `${arrowY}px` : undefined}
       style:left={arrowX != null ? `${arrowX}px` : undefined}
       bind:this={arrowEl}
-    ></span>
-    <span class="dfn-text">{definition}</span>
-  </span>
-</span>
+    ></span><span class="dfn-text">{definition}</span></span
+  ></span
+>
 
 <style lang="postcss">
   button {
     @apply appearance-none bg-transparent border-0 cursor-help underline decoration-dotted;
+    font-family: inherit;
+    font-size: 1em;
+    line-height: unset;
+    padding: 0;
+    display: inline;
+    font-weight: unset;
+    vertical-align: unset;
   }
   .dfn {
     @apply invisible opacity-0 transition-opacity duration-300;
