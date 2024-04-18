@@ -1,6 +1,6 @@
 import { Readable, Writable, derived, get, writable } from "svelte/store";
 import MceElement from "../generic/mceElement";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import { Editor } from "tinymce";
 import { nanoid } from "nanoid";
 import { ImageCardManager } from "./imageCardManager";

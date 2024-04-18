@@ -1,6 +1,6 @@
 // This file handles the migration of non-svelte imageCards to svelte imageCards
 
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import ImageCardManager from "./imageCardManager";
 import { get } from "svelte/store";
 import {

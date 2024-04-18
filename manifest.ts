@@ -68,7 +68,7 @@ export default defineManifest(async (env) => ({
   web_accessible_resources: [
     {
       matches: BaseDomains.map((d) => `*://${d}/*`),
-      resources: ["src/main.ts"],
+      resources: ["src/desktop.ts"],
     },
   ],
 

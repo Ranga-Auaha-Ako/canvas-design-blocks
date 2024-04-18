@@ -9,7 +9,7 @@ import {
 } from "svelte/store";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import ProfileInner from "./profileInner.svelte";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import { Editor } from "tinymce";
 import { nanoid } from "nanoid";
 import { ProfilesManager } from "./profilesManager";

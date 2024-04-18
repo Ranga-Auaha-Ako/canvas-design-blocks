@@ -5,10 +5,20 @@
   "license": "GPL-3.0-or-later",
   "size-limit": [
     {
-      "name": "Initial Load",
+      "name": "Desktop (Initial Load)",
       "brotli": true,
       "path": [
         "dist/canvas-blocks.min.js",
+        "dist/canvas-blocks.css",
+        "dist/theme-loader.umd.cjs"
+      ]
+    },
+    {
+      "name": "Mobile App",
+      "brotli": true,
+      "path": [
+        "dist/canvas-blocks-mobile.min.js",
+        "dist/canvas-blocks-mobile.css",
         "dist/theme-loader.umd.cjs"
       ]
     },
@@ -16,8 +26,9 @@
       "name": "Full app launch",
       "brotli": true,
       "path": [
-        "dist/c/*.js",
+        "dist/c-desktop/*",
         "dist/canvas-blocks.min.js",
+        "dist/canvas-blocks.css",
         "dist/theme-loader.umd.cjs"
       ]
     }
@@ -25,9 +36,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:mobile": "vite build --mode mobile",
+    "build:desktop": "vite build --mode desktop",
+    "build:all": "vite build --mode desktop && vite build --mode mobile",
     "preview": "vite preview",
     "zip": "yarn build-theme && cd ./dist/ && bestzip design-blocks-theme.zip *",
-    "build-theme": "vite build && vite build --mode theme-loader && node ./scripts/buildTheme.js",
+    "build-theme": "yarn build:all && vite build --mode theme-loader && vite build --mode theme-loader-mobile && node ./scripts/buildTheme.js",
     "icons": "tsx ./src/lib/icons/buildIcons.ts",
     "size": "yarn build-theme && size-limit"
   },

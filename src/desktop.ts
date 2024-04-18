@@ -6,7 +6,7 @@ import type * as editorLoaderType from "$lib/util/loaders/editorLoader";
 import { compareVersions } from "compare-versions/lib/esm/compareVersions";
 import { version } from "$lib/util/constants";
 import { get, writable, type Writable } from "svelte/store";
-import glossaryClientManager from "$lib/elements/glossary/glossaryClientManager";
+import { clientManagers } from "./shared";
 
 // These are required for client-side elements to load
 import blockStyles from "virtual:blocks-icons-editor-styles";
@@ -16,6 +16,8 @@ import "$lib/util/tailwind.postcss";
 import "virtual:blocks-icons.css";
 import "./app.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
+
+export { clientManagers };
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -32,11 +34,6 @@ const state: stateObject = {
   configComponent: writable(null),
   loadedBlocks: writable([]),
 };
-
-// These are the client-side managers that are loaded always
-const clientManagers: { renderClientComponent: () => unknown }[] = [
-  glossaryClientManager,
-];
 
 // Start by setting up the loader
 async function beginLaunch() {
@@ -95,9 +92,23 @@ export async function loadApp(
     console.error(e);
     return null;
   });
-  if (!editor) return;
+
+  // Register unload function
+  window._UNLOAD_DESIGNBLOCKS = () => {
+    if (hasLoaded) {
+      console.log(`Unloading app: ${__APP_VERSION__}`);
+      toolbar?.$destroy();
+      get(state.loadedBlocks).forEach((block) => block.detatch());
+      hasLoaded = false;
+      return true;
+    }
+    return false;
+  };
+
   // ----
   // ---- EVERYTHING BELOW THIS LINE ONLY RUNS IN EDIT MODE ----
+  if (!editor) return;
+  // ----
   // ----
 
   // Editor managers are loaded async to reduce initial bundle size
@@ -124,17 +135,6 @@ export async function loadApp(
       loadApp(editorLoader);
     }, 100);
   });
-  // Register unload function
-  window._UNLOAD_DESIGNBLOCKS = () => {
-    if (hasLoaded) {
-      console.log(`Unloading app: ${__APP_VERSION__}`);
-      toolbar?.$destroy();
-      get(state.loadedBlocks).forEach((block) => block.detatch());
-      hasLoaded = false;
-      return true;
-    }
-    return false;
-  };
 }
 
 // Loads the toolbar

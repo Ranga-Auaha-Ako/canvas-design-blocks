@@ -15,7 +15,7 @@ import GridManager from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
 import MceElement from "$lib/elements/generic/mceElement";
 import type { MceElementStatics } from "$lib/elements/generic/mceElement";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import { deleteGrid } from "./popup/delete/deleteGrid";
 
 export class Grid extends MceElement implements Readable<Row[]> {

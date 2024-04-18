@@ -239,7 +239,7 @@ Note: `CANVAS_BLOCKS_THEME` should be the JSON you created in step 2.
     });
   } else {
     GM_addElement("script", {
-      src: "http://localhost:5173/src/main.ts",
+      src: "http://localhost:5173/src/desktop.ts",
       type: "module",
     });
   }
@@ -290,7 +290,7 @@ New elements have the following high-level components:
 
 1. An **Element Manager**, which is responsible for overseeing all instances of the element on the page, and handling the discovery and creation of new instances of the element.
 
-   - All element managers should extend the [`ElementManager`](src/lib/elements/generic/elementManager.ts) class, and be loaded in `main.ts`
+   - All element managers should extend the [`ElementManager`](src/lib/elements/generic/elementManager.ts) class, and be loaded in `desktop.ts`
 
 2. An **Element**, which represents a specific instance of the element on the page. This is responsible for rendering the element in the TinyMCE editor, and handling any changes made to the element. There are two ways to do this.
 

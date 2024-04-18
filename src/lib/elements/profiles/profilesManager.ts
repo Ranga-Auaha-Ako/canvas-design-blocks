@@ -1,4 +1,4 @@
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { ProfileGrid } from "./profileGrid";

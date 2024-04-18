@@ -8,7 +8,7 @@
   import { changes, changeversion, version } from "$lib/util/constants";
   import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
-  import type { stateObject } from "src/main";
+  import type { stateObject } from "src/desktop";
   import ElementManager from "$lib/elements/generic/elementManager";
   import gtag from "$lib/util/gtag";
   import { persisted } from "svelte-persisted-store";

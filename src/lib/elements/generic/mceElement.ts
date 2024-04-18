@@ -7,7 +7,7 @@ import { SelectableElement } from "./selectableElement";
 import { htmlVoidElements } from "html-void-elements";
 import type { Editor } from "tinymce";
 import type { Placement } from "@floating-ui/dom";
-import type { stateObject } from "src/main";
+import type { stateObject } from "src/desktop";
 import writableDerived from "svelte-writable-derived";
 
 const voidElementsSet = new Set(htmlVoidElements);

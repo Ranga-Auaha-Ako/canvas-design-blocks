@@ -1,4 +1,4 @@
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import { CourseHeader } from "./courseHeader";
 import "./courseHeader.postcss";
