@@ -201,7 +201,9 @@ export class GlossaryClientManager {
       return;
     }
     const glossaryEls = document.querySelectorAll<HTMLDivElement>(
-      "div#wiki_page_show .user_content"
+      import.meta.env.MODE.includes("mobile")
+        ? "#content"
+        : "div#wiki_page_show .user_content"
     );
     if (glossaryEls.length === 0) return;
     await this.loadData();
