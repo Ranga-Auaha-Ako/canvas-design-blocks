@@ -16,6 +16,7 @@ import "$lib/util/tailwind.postcss";
 import "virtual:blocks-icons.css";
 import "./app.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
+import { courseEnv } from "$lib/util/courseEnv";
 
 export { clientManagers };
 
@@ -39,7 +40,7 @@ const state: stateObject = {
 async function beginLaunch() {
   // Immediately load the editor loader if it needs to be loaded
   let editorLoader;
-  if ("RICH_CONTENT_APP_HOST" in window.ENV) {
+  if ("RICH_CONTENT_APP_HOST" in courseEnv) {
     editorLoader = import("$lib/util/loaders/editorLoader");
   }
   // Check if the design blocks have already been loaded
