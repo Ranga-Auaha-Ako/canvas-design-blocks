@@ -186,6 +186,9 @@ export default defineConfig(({ mode, command }) => {
         emptyOutDir: false,
       },
       define: {
+        __APP_NAME__: JSON.stringify(
+          mode.includes("mobile") ? "canvas-blocks-mobile" : "canvas-blocks"
+        ),
         __APP_VERSION__:
           JSON.stringify(process.env.npm_package_version) || "unknown",
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
