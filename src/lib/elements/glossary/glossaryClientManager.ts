@@ -35,7 +35,11 @@ const _page_info = new Promise<{ url: string; created: boolean }>(
 export const PAGE_CREATED = _page_info.then((info) => info.created);
 export const PAGE_URL = _page_info.then((info) => info.url);
 
-export type termDefinition = { term: string; definition: string };
+export type termDefinition = {
+  term: string;
+  definition: string;
+  image?: string;
+};
 
 export type glossaryState = {
   terms: termDefinition[];
@@ -61,6 +65,68 @@ export class GlossaryClientManager {
         ? [...this.terms, ...this.institutionTerms]
         : this.terms
     ).filter((t) => t.term.trim() !== "");
+  }
+
+  get html() {
+    // Create outer container
+    const container = document.createElement("dl");
+    container.classList.add("CDB--Glossary");
+    // Create inner container to store any settings
+    const settings = document.createElement("div");
+    settings.classList.add("CDB--Glossary--Settings");
+    settings.style.display = "none";
+    settings.textContent = JSON.stringify({
+      institutionDefaults: this.institutionDefaults,
+    });
+    container.appendChild(settings);
+    for (const term of this.terms.filter((t) => t.term.trim() !== "")) {
+      const termOuter = document.createElement("div");
+      termOuter.classList.add("CDB--Glossary--Term");
+      const image = term.image;
+      if (image) {
+        const img = document.createElement("img");
+        img.src = image;
+        img.alt = term.term;
+        img.classList.add("CDB--Glossary--Image");
+        termOuter.appendChild(img);
+      }
+      const termEl = document.createElement("dt");
+      termEl.textContent = term.term;
+      termOuter.appendChild(termEl);
+      const definitionEl = document.createElement("dd");
+      definitionEl.classList.add("CDB--Glossary--Definition");
+      definitionEl.innerHTML = term.definition;
+      termOuter.appendChild(definitionEl);
+      container.appendChild(termOuter);
+    }
+    return container.outerHTML;
+  }
+  parseHTML(html: string): glossaryState {
+    const container = document.createElement("div");
+    container.innerHTML = html;
+    const settings = container.querySelector(".CDB--Glossary--Settings");
+    if (settings) {
+      try {
+        const { institutionDefaults } = JSON.parse(
+          settings.textContent || "{}"
+        );
+        this.institutionDefaults = institutionDefaults;
+      } catch (error) {
+        console.error("Error parsing glossary settings:", error);
+      }
+    }
+    const terms = Array.from(
+      container.querySelectorAll(".CDB--Glossary--Term")
+    );
+    this.terms = terms.map((term) => ({
+      term: term.querySelector("dt")?.textContent || "",
+      definition: term.querySelector("dd")?.innerHTML || "",
+      image: term.querySelector("img")?.src,
+    }));
+    return {
+      terms: this.terms,
+      institutionDefaults: this.institutionDefaults,
+    };
   }
 
   get json() {
@@ -154,7 +220,8 @@ export class GlossaryClientManager {
     const body = glossaryPage.body;
     // Then, get the glossary terms (if they exist)
     try {
-      const state: glossaryState = JSON.parse(body);
+      // const state: glossaryState = JSON.parse(body);
+      const state = this.parseHTML(body);
       this.terms = state.terms;
       this.institutionDefaults = state.institutionDefaults;
     } catch (error) {
@@ -172,6 +239,15 @@ export class GlossaryClientManager {
     // If we're on the glossary page, and the url ends in "/edit", render the editor
     if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
       const contents = courseEnv.WIKI_PAGE.body;
+      let parsed: glossaryState = {
+        terms: [],
+        institutionDefaults: false,
+      };
+      try {
+        parsed = this.parseHTML(contents);
+      } catch (error) {
+        console.error("Error parsing glossary page:", error);
+      }
       const container = document.getElementById("content");
       if (!container) return;
       document.body.classList.add("cdb-glossary-editor-active");
@@ -183,7 +259,7 @@ export class GlossaryClientManager {
         new GlossaryEditor({
           target: container,
           props: {
-            glossaryData: contents,
+            glossaryData: parsed,
             manager: this,
           },
           intro: true,
@@ -192,7 +268,7 @@ export class GlossaryClientManager {
         new GlossaryViewer({
           target: container,
           props: {
-            glossaryData: contents,
+            glossaryData: parsed,
             manager: this,
           },
           intro: true,
@@ -316,7 +392,7 @@ export class GlossaryClientManager {
         body: JSON.stringify({
           wiki_page: {
             title: PAGE_NAME,
-            body: this.json,
+            body: this.html,
             published: true,
             notify_of_update: false,
           },

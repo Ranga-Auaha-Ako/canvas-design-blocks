@@ -20,33 +20,13 @@
     institutionDefaults: boolean;
   };
 
-  export let glossaryData: string;
+  export let glossaryData: glossaryState;
   export let manager: GlossaryClientManager;
   export let frameless: boolean = false;
-  let parsedData: glossaryStateID = { terms: [], institutionDefaults: true };
-  try {
-    const oldPageData = JSON.parse(glossaryData);
-    if (typeof oldPageData.terms === "undefined")
-      throw new Error("Invalid JSON");
-    if (typeof oldPageData.institutionDefaults === "undefined")
-      throw new Error("Invalid JSON");
-    parsedData = {
-      terms: [
-        ...oldPageData.terms.map((t: any) => ({
-          term: t?.term,
-          definition: t?.definition,
-          id: nanoid(),
-        })),
-        { term: "", definition: "", id: nanoid() },
-      ],
-      institutionDefaults: oldPageData.institutionDefaults,
-    };
-  } catch (err) {
-    parsedData = {
-      terms: [{ term: "", definition: "", id: nanoid() }],
-      institutionDefaults: true,
-    };
-  }
+  let parsedData: glossaryStateID = {
+    ...glossaryData,
+    terms: glossaryData.terms.map((t) => ({ ...t, id: nanoid() })),
+  };
   $: if (
     parsedData.terms[parsedData.terms.length - 1].definition !== "" ||
     parsedData.terms[parsedData.terms.length - 1].term !== ""
@@ -216,10 +196,9 @@
                 }
               }}
             />
-            <input
-              disabled={saving}
-              type="text"
-              bind:value={term.definition}
+            <div
+              contenteditable="true"
+              class:disabled={saving}
               on:input={() => (needsSave = true)}
               on:keydown={(e) => {
                 if (e.key === "Backspace" && term.definition === "") {
@@ -233,7 +212,8 @@
                   }
                 }
               }}
-            />
+              bind:innerHTML={term.definition}
+            ></div>
             <div class="glossary-table--item-actions">
               {#if i === parsedData.terms.length - 1}
                 <button
@@ -458,9 +438,14 @@
           @apply text-primary scale-125;
         }
       }
-      input {
+      input,
+      div[contenteditable] {
         @apply w-full h-full m-0 py-0 px-2;
         @apply border-0 shadow-none bg-transparent rounded-none border-l border-transparent;
+        @apply leading-8;
+        &:focus {
+          @apply outline-none;
+        }
       }
       .glossary-table--item-actions {
         @apply pointer-events-none opacity-0 transition;

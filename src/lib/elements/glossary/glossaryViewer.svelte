@@ -7,21 +7,7 @@
 
   // This loads on the client side on the glossary page
   export let manager: GlossaryClientManager;
-  export let glossaryData: string;
-  let parsedData: glossaryState = { terms: [], institutionDefaults: true };
-  try {
-    const oldPageData = JSON.parse(glossaryData);
-    if (typeof oldPageData.terms === "undefined")
-      throw new Error("Invalid JSON");
-    if (typeof oldPageData.institutionDefaults === "undefined")
-      throw new Error("Invalid JSON");
-    parsedData = oldPageData;
-  } catch (err) {
-    parsedData = {
-      terms: [],
-      institutionDefaults: true,
-    };
-  }
+  export let glossaryData: glossaryState;
 </script>
 
 <div class="cgb-component">
@@ -37,17 +23,17 @@
     {/if}
   </p>
   <dl class="mx-4">
-    {#each parsedData.terms.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
+    {#each glossaryData.terms.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
       <dt>
         {term}
       </dt>
       <dd class="mb-4">
-        {definition}
+        {@html definition}
       </dd>
     {/each}
   </dl>
 
-  {#if parsedData.institutionDefaults}
+  {#if glossaryData.institutionDefaults}
     <h2 class="">Institution-Provided Terms</h2>
     <dl class="mx-4">
       {#each manager.institutionTerms.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
@@ -55,7 +41,7 @@
           {term}
         </dt>
         <dd class="mb-4">
-          {definition}
+          {@html definition}
         </dd>
       {/each}
     </dl>
