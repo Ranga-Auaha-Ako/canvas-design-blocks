@@ -8,17 +8,21 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+- New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content.
+
 ## [2.12.0] - 2024-03-11
 
 ### Overview
 
-- New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content. Also, you can now copy and paste grid rows.
+- Design Blocks now loads quicker than ever, and you can now copy and paste grid rows.
 
 ### Added
 
-- New "Glossary" editing and viewing interfaces
-- Client-side blocks now possible
+- Profile backgrounds can now be any colour, and the text will automatically adjust to be readable.
+- Add description tooltips to blocks in the toolbar
+- Design Blocks now works on mobile
 - Copy and paste grid rows
+- Client-side blocks now possible
 
 ## [2.11.2] - 2024-02-02
 
