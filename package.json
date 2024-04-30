@@ -35,13 +35,12 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode desktop && vite build --mode mobile",
     "build:mobile": "vite build --mode mobile",
     "build:desktop": "vite build --mode desktop",
-    "build:all": "vite build --mode desktop && vite build --mode mobile",
     "preview": "vite preview",
     "zip": "yarn build-theme && cd ./dist/ && bestzip design-blocks-theme.zip *",
-    "build-theme": "yarn build:all && vite build --mode theme-loader && vite build --mode theme-loader-mobile && node ./scripts/buildTheme.js",
+    "build-theme": "yarn build && vite build --mode theme-loader && vite build --mode theme-loader-mobile && node ./scripts/buildTheme.js",
     "icons": "tsx ./src/lib/icons/buildIcons.ts",
     "size": "yarn build-theme && size-limit"
   },
