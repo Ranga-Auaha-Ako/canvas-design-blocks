@@ -9,6 +9,7 @@ import type { Editor } from "tinymce";
 import type { Placement } from "@floating-ui/dom";
 import type { stateObject } from "src/desktop";
 import writableDerived from "svelte-writable-derived";
+import { debounce } from "perfect-debounce";
 
 const voidElementsSet = new Set(htmlVoidElements);
 voidElementsSet.add("iframe");
@@ -280,6 +281,7 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
+    console.log("Observed!");
     if (this.detached) {
       this.stopObserving();
       return;
@@ -482,7 +484,7 @@ export default abstract class MceElement extends SelectableElement {
     // console.log(`Created mutationObserver for ${node.nodeName}`, node);
     // Create a MutationObserver to watch for changes to the node's attributes
     this.observer = new ownWindow.MutationObserver(
-      this.observerFunc.bind(this)
+      debounce(this.observerFunc.bind(this), 500, { leading: true })
     );
     // Watch for changes to the node's attributes
     this.startObserving();
