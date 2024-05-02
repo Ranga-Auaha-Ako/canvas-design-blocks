@@ -13,28 +13,35 @@ import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
 import { persisted } from "svelte-persisted-store";
 
 export enum ImageCardTheme {
-  Overlay = "imageCardTheme--overlay",
-  Subtitle = "imageCardTheme--subtitle",
-  Icon = "imageCardTheme--icon",
+  Dark = "imageCardTheme--overlay",
+  Light = "imageCardTheme--subtitle",
+  // Icon = "imageCardTheme--icon",
 }
 export const ValidThemes = Object.values(ImageCardTheme);
 export const DefaultTheme = persisted(
   "cdb-imageCardTheme",
-  ImageCardTheme.Overlay
+  ImageCardTheme.Dark
 );
 
 export enum ImageCardSize {
   Small = "imageCardSize--small",
+  "5 Cols" = "imageCardSize--grid-5",
+  "4 Cols" = "imageCardSize--grid-4",
+  "3 Cols" = "imageCardSize--grid-3",
   Large = "imageCardSize--large",
-  "Grid-3" = "imageCardSize--grid-3",
-  "Grid-4" = "imageCardSize--grid-4",
-  "Grid-5" = "imageCardSize--grid-5",
 }
 export const ValidSizes = Object.values(ImageCardSize);
 export const DefaultSize = persisted(
   "cdb-imageCardSize",
-  ImageCardSize["Grid-5"]
+  ImageCardSize["5 Cols"]
 );
+export const ImageCardSizeIcons = {
+  [ImageCardSize.Small]: "small",
+  [ImageCardSize.Large]: "large",
+  [ImageCardSize["3 Cols"]]: "grid-3",
+  [ImageCardSize["4 Cols"]]: "grid-4",
+  [ImageCardSize["5 Cols"]]: "grid-5",
+};
 
 export interface CardData {
   label: string;
@@ -42,12 +49,18 @@ export interface CardData {
   image: string;
   id: string;
   icon?: IconState;
+  imageSettings?: {
+    size: "fill" | "contain" | "cover" | "scale-down";
+  };
 }
 
+export const validFits = ["fill", "contain", "cover", "scale-down"];
 export interface RowData {
   cards: CardData[];
   size: ImageCardSize;
   theme: ImageCardTheme;
+  usesIcon?: boolean;
+  labelOverlaid: boolean;
 }
 
 export interface LocalState {
@@ -63,10 +76,15 @@ class CardRowState implements SvelteState<RowData> {
         link: "#",
         image: "",
         id: nanoid(),
+        imageSettings: {
+          size: "cover",
+        },
       },
     ],
+    labelOverlaid: true,
     theme: get(DefaultTheme),
     size: get(DefaultSize),
+    usesIcon: false,
   };
   state: Writable<RowData> = writable();
   public set = this.state.set;
@@ -83,6 +101,11 @@ class CardRowState implements SvelteState<RowData> {
       cards: [],
       size: size || get(DefaultSize),
       theme: theme || get(DefaultTheme),
+      // Includes migration step for cards from 2.12.0 and prior:
+      usesIcon:
+        //@ts-expect-error
+        unsafeState?.usesIcon || unsafeState?.theme === "imageCardTheme--icon",
+      labelOverlaid: unsafeState?.labelOverlaid ?? true,
     };
     const cardLinks = node?.querySelectorAll<HTMLAnchorElement>("a.ImageCard");
     const cardImages =
@@ -96,6 +119,11 @@ class CardRowState implements SvelteState<RowData> {
           image: cardImages?.[index]?.src || "",
           id: card.id || nanoid(),
           icon: icon,
+          imageSettings: {
+            size: validFits.includes(card?.imageSettings?.size || "")
+              ? card?.imageSettings?.size!
+              : "cover",
+          },
         };
       });
     }

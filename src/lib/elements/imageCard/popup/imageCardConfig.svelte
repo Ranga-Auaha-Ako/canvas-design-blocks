@@ -19,6 +19,8 @@
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
   import { persisted } from "svelte-persisted-store";
+  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import { colord } from "colord";
 
   const dispatch = createEventDispatcher();
 
@@ -40,12 +42,12 @@
 
   export const DefaultTheme = persisted(
     "cdb-imageCardTheme",
-    ImageCardTheme.Overlay
+    ImageCardTheme.Dark
   );
 
   export const DefaultSize = persisted(
     "cdb-imageCardSize",
-    ImageCardSize["Grid-5"]
+    ImageCardSize["5 Cols"]
   );
 
   const openPicker = () => {
@@ -87,7 +89,9 @@
   const iconPicker = new IconPicker({
     target: document.body,
     props: {
-      options: { editColor: true },
+      options: {
+        editColor: true,
+      },
     },
   });
   iconPicker.$on("selectIcon", ({ detail }) => {
@@ -119,64 +123,87 @@
   >
     <i class="icon-end" />
   </button>
-  <div class="rowTheme">
-    <ButtonRadio
-      title="Row Theme"
-      choices={ValidThemes}
-      labels={Object.keys(ImageCardTheme)}
-      bind:value={$rowData.theme}
-      on:change={() => {
-        $DefaultTheme = $rowData.theme;
-      }}
-    />
-    <ButtonRadio
-      title="Row Size"
-      choices={ValidSizes}
-      labels={Object.keys(ImageCardSize)}
-      bind:value={$rowData.size}
-      on:change={() => {
-        $DefaultSize = $rowData.size;
-      }}
-    />
-  </div>
+  <div class="rowTheme"></div>
   <div class="cardPanel">
-    <div class="ImageCard--elements">
-      <div class="ImageCard--list">
-        <OrderableList
-          labelKey="label"
-          idKey="id"
-          bind:items={$rowData.cards}
-          on:edit={({ detail: id }) => {
-            if ($localState) $localState.selectedCard = id;
-          }}
-          on:delete={({ detail: id }) => {
-            const index = ImageCard.getCardIndex($rowData, id);
-            if ($localState && $localState.selectedCard === id) {
-              if (index > 0)
-                $localState.selectedCard = $rowData.cards[index - 1].id;
-              else $localState.selectedCard = $rowData.cards[0].id;
-            }
-          }}
-          showEdit={true}
-          canDelete={$rowData.cards.length > 1}
-          activeClass="ImageCard--active"
-          activeId={$localState?.selectedCard}
-        />
-      </div>
-      <button class="Button Button--small" on:click={() => addCard()}>
-        <i class="icon-plus" aria-hidden="true" />
-        Add Card</button
+    <div class="ImageCard--rowSettings">
+      <ButtonRadio
+        fullWidth={true}
+        title="Graphic Type"
+        choices={[false, true]}
+        labels={["Image", "Icon"]}
+        bind:value={$rowData.usesIcon}
+      />
+      <ButtonRadio
+        fullWidth={true}
+        title="Row Layout"
+        axis="vertical"
+        choices={ValidSizes}
+        labels={Object.keys(ImageCardSize)}
+        bind:value={$rowData.size}
+        on:change={() => {
+          $DefaultSize = $rowData.size;
+        }}
+        let:index
       >
+        <span class="icon-dot" style:--dot--size={index}></span>
+        <span class="grow">{Object.keys(ImageCardSize)[index]}</span>
+      </ButtonRadio>
+      <ButtonRadio
+        fullWidth={true}
+        title="Row Theme"
+        choices={ValidThemes}
+        labels={Object.keys(ImageCardTheme)}
+        bind:value={$rowData.theme}
+        on:change={() => {
+          $DefaultTheme = $rowData.theme;
+        }}
+      />
+      <ButtonRadio
+        fullWidth={true}
+        title="Label Position"
+        choices={[false, true]}
+        labels={["Below", "Overlay"]}
+        disabled={$rowData.usesIcon}
+        bind:value={$rowData.labelOverlaid}
+      />
     </div>
-    {#if $localState && cardIndex !== undefined && cardIndex >= 0 && $rowData.cards[cardIndex]}
-      {#key $localState.selectedCard}
-        <div
-          class="cardSettings"
-          in:fade={{ duration: 300, delay: 100 }}
-          out:fade={{ duration: 150 }}
+    <div class="ImageCard--elementContainer">
+      <div class="ImageCard--elements">
+        <button class="Button Button--small" on:click={() => addCard()}>
+          <i class="icon-plus" aria-hidden="true" />
+          Add Card</button
         >
-          <div class="flex gap-x-2 items-baseline">
-            <div class="grow">
+        <div class="ImageCard--list">
+          <OrderableList
+            labelKey="label"
+            idKey="id"
+            bind:items={$rowData.cards}
+            on:edit={({ detail: id }) => {
+              if ($localState) $localState.selectedCard = id;
+            }}
+            on:delete={({ detail: id }) => {
+              const index = ImageCard.getCardIndex($rowData, id);
+              if ($localState && $localState.selectedCard === id) {
+                if (index > 0)
+                  $localState.selectedCard = $rowData.cards[index - 1].id;
+                else $localState.selectedCard = $rowData.cards[0].id;
+              }
+            }}
+            showEdit={true}
+            canDelete={$rowData.cards.length > 1}
+            activeClass="ImageCard--active"
+            activeId={$localState?.selectedCard}
+          />
+        </div>
+      </div>
+      <div class="ImageCard--elementConfig">
+        {#if $localState && cardIndex !== undefined && cardIndex >= 0 && $rowData.cards[cardIndex]}
+          {#key $localState.selectedCard}
+            <div
+              class="cardSettings"
+              in:fade={{ duration: 300, delay: 100 }}
+              out:fade={{ duration: 150 }}
+            >
               <label for={`${imageCard.id}-text`}>Card Label:</label>
               <textarea
                 class="cardName"
@@ -185,11 +212,10 @@
                 rows="3"
                 maxlength="100"
               />
-            </div>
-            <div class="grow">
               <div class="form-group">
                 <p class="block text-sm my-0 mb-1">Card Link (URL):</p>
                 <LinkInput
+                  fullWidth={true}
                   link={$rowData.cards[cardIndex].link}
                   on:save={({ detail }) => {
                     if (cardIndex === undefined) return;
@@ -198,13 +224,34 @@
                 />
               </div>
 
-              {#if $rowData.theme === ImageCardTheme.Icon}
-                <button
-                  class="Button Button--block"
-                  on:click={() => {
-                    iconPicker.open();
-                  }}>Select Icon</button
-                >
+              {#if $rowData.usesIcon}
+                <div class="mt-2">
+                  <button
+                    class="Button Button--block"
+                    on:click={() => {
+                      iconPicker.open();
+                    }}>Select Icon</button
+                  >
+                </div>
+                <!-- Colour picker for icon -->
+                {#if $rowData.cards[cardIndex].icon}
+                  <div class="mt-2">
+                    <ColourPicker
+                      colour={colord(
+                        $rowData.cards[cardIndex].icon?.color ?? ""
+                      )}
+                      on:select={({ detail: colour }) => {
+                        const icon = $rowData.cards[cardIndex].icon;
+                        if (cardIndex === undefined || !icon || !colour) return;
+                        icon.color = colour.toHex();
+                        $rowData.cards[cardIndex] = $rowData.cards[cardIndex];
+                      }}
+                      contrastColour={colord("#fff")}
+                      label="Icon Colour"
+                      showNone={false}
+                    />
+                  </div>
+                {/if}
               {:else}
                 <button
                   class="Button Button--block"
@@ -212,21 +259,21 @@
                 >
               {/if}
             </div>
+          {/key}
+        {:else}
+          <div class="config cardSettings">
+            <p class="max-w-sm italic">
+              Select a card to edit its settings. You can add a new card by
+              clicking the "Add Card" button.
+            </p>
+            <button class="Button" on:click={() => addCard()}>
+              <i class="icon-plus" aria-hidden="true" />
+              Add Card</button
+            >
           </div>
-        </div>
-      {/key}
-    {:else}
-      <div class="config cardSettings">
-        <p class="max-w-sm italic">
-          Select a card to edit its settings. You can add a new card by clicking
-          the "Add Card" button.
-        </p>
-        <button class="Button" on:click={() => addCard()}>
-          <i class="icon-plus" aria-hidden="true" />
-          Add Card</button
-        >
+        {/if}
       </div>
-    {/if}
+    </div>
   </div>
 </div>
 
@@ -252,29 +299,45 @@
       @apply mb-2;
     }
 
-    .ImageCard--elements {
-      @apply flex flex-col rounded shadow-inner bg-gray-100 p-2 gap-4;
-    }
-
-    .ImageCard--list {
-      max-width: 20ch;
-      max-height: 20ch;
-      @apply overflow-y-auto overflow-x-clip p-1;
-      margin: 0 -0.25rem;
-    }
     .cardName {
       @apply w-full border border-gray-300 rounded p-2;
     }
     .cardPanel {
-      @apply grid gap-4;
-      grid-template-columns: auto 1fr;
-      grid-template-areas: "list config";
-      .ImageCard--elements {
-        grid-area: list;
+      @apply flex flex-wrap gap-4 w-screen max-w-3xl;
+      .ImageCard--rowSettings {
+        h2 {
+          @apply text-lg leading-none m-0;
+        }
       }
-      .cardSettings {
-        grid-area: config;
+
+      .ImageCard--elementContainer {
+        @apply flex flex-1 shrink grow rounded overflow-clip border;
+        .ImageCard--elements {
+          @apply flex flex-col shadow-inner bg-gray-100 p-2 gap-2 shrink-0 col-span-1;
+          .ImageCard--list {
+            @apply overflow-y-auto overflow-x-clip p-1;
+            max-width: 20ch;
+            max-height: 20ch;
+            margin: 0 -0.25rem;
+          }
+        }
+        .ImageCard--elementConfig {
+          @apply grid w-full flex-1 min-w-48 p-2;
+          grid-template-areas: "cardSettings";
+          .cardSettings {
+            @apply overflow-auto;
+            grid-area: cardSettings;
+          }
+        }
       }
     }
+
+    .icon-dot {
+      @apply w-4 h-4 rounded-full bg-primary;
+      transform: scale(calc((var(--dot--size) + 1) / 6));
+    }
+  }
+  :global(.active) > .icon-dot {
+    @apply bg-white;
   }
 </style>

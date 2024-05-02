@@ -1,7 +1,7 @@
 <script lang="ts">
   import { debounce } from "perfect-debounce";
   import { IconPickerOptions, IconType, category, icon } from "../iconPicker";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
   import { colord } from "colord";
@@ -26,6 +26,7 @@
   export let options: IconPickerOptions;
   export let asModal: boolean = false;
   export let targetNode: HTMLElement | undefined = undefined;
+  export let contrastColor: string | undefined = undefined;
   let filterQuery = "";
   let iconColor = localStorageWritable(
     "cdb-preferences-iconColor",
@@ -72,7 +73,9 @@
     ? colord(
         findNearestBackgroundColor(targetNode, elWindow ? elWindow : undefined)
       )
-    : colord("#fff");
+    : contrastColor
+      ? colord(contrastColor)
+      : colord("#fff");
   $: contrastLevel =
     nearestColour.alpha() === 0
       ? $iconColor?.contrast("#fff")
