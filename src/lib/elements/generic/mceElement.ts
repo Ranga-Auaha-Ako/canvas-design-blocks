@@ -281,7 +281,6 @@ export default abstract class MceElement extends SelectableElement {
    * @param mutations Any mutations that have occurred (from the observer)
    */
   public observerFunc(mutations: MutationRecord[]) {
-    console.log("Observed!");
     if (this.detached) {
       this.stopObserving();
       return;
