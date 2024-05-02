@@ -10,17 +10,16 @@ Please write a brief description at the top of each version in "Overview". This 
 
 - New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content.
 
-## [2.12.0] - 2024-03-11
+## [2.12.0] - 2024-05-01
 
 ### Overview
 
-- Design Blocks now loads quicker than ever, and you can now copy and paste grid rows.
+- ✨ New: copy and paste grid rows, and profile backgrounds can now be any colour.
 
 ### Added
 
 - Profile backgrounds can now be any colour, and the text will automatically adjust to be readable.
-- Add description tooltips to blocks in the toolbar
-- Design Blocks now works on mobile
+- Design Blocks now works with a specific build for mobile
 - Copy and paste grid rows
 - Client-side blocks now possible
 
