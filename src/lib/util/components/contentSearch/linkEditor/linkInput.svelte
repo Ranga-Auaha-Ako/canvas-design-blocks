@@ -6,11 +6,13 @@
   export let link: string;
   export let text: string | undefined = undefined;
   export let id: string | undefined = undefined;
+  export let fullWidth: boolean = false;
   let dialog: Modal;
 </script>
 
 <button
   class="editLink"
+  class:fullWidth
   {id}
   on:click={() => {
     dialog.open();
@@ -30,5 +32,8 @@
   .editLink {
     @apply truncate max-w-xs w-full text-left;
     @apply border border-gray-300 rounded px-2 p-1 mb-1;
+    &.fullWidth {
+      @apply w-full max-w-full;
+    }
   }
 </style>

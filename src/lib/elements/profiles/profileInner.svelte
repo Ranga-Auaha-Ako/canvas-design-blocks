@@ -17,11 +17,17 @@
 </script>
 
 {#each cdbData as profile}
+  {@const contrastColor = profile.color?.isLight() ? "#000" : "#fff"}
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-  <div class="profileItem" tabindex="0">
+  <div
+    class="profileItem"
+    class:hasOverview={profile.showOverview}
+    tabindex="0"
+  >
     <div
       class="card"
       style:background-color={profile.color?.toHex() || theme.primary}
+      style:color={contrastColor}
     >
       {#if profile.thumbnail}
         <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->

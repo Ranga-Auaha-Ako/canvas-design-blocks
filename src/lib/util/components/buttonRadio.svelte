@@ -7,11 +7,18 @@
   export let value: any;
   export let id = nanoid();
   export let fullWidth: boolean = false;
+  export let axis: "horizontal" | "vertical" = "horizontal";
   export let comparator: (a: any, b: any) => boolean = (a, b) => a === b;
+  export let disabled: boolean = false;
 </script>
 
 <span class="label-text">{title}</span>
-<div class="btn-group" style:--btn-items={choices.length} class:fullWidth>
+<div
+  class="btn-group btn-{axis}"
+  style:--btn-items={choices.length}
+  class:fullWidth
+  class:disabled
+>
   {#each choices as choice, index}
     <label class="btn" class:active={comparator(value, choice)}>
       <slot {index}>
@@ -29,12 +36,6 @@
 </div>
 
 <style lang="postcss">
-  .fullWidth {
-    @apply w-full;
-    & .btn {
-      @apply grow;
-    }
-  }
   .btn {
     @apply flex justify-center items-center gap-2 px-2 py-1 bg-primary text-white rounded border-none cursor-pointer;
   }
@@ -51,6 +52,21 @@
       & input {
         @apply absolute opacity-0;
       }
+    }
+    &.btn-vertical {
+      @apply flex-col;
+      & .btn {
+        @apply w-full;
+      }
+    }
+    &.disabled {
+      @apply opacity-50 pointer-events-none;
+    }
+  }
+  .fullWidth {
+    @apply w-full;
+    & .btn {
+      @apply grow;
     }
   }
 </style>

@@ -1,7 +1,9 @@
 <script lang="ts">
   import { nanoid } from "nanoid";
   import { createEventDispatcher, onMount } from "svelte";
+  import { slide } from "svelte/transition";
   export let name: string = "Element";
+  export let title = `Add ${name}`;
 
   const dispatch = createEventDispatcher();
 </script>
@@ -10,7 +12,7 @@
   <button
     on:click={() => dispatch("add")}
     class="pane"
-    title="Add {name}"
+    {title}
     draggable="true"
     on:dragstart={(e) => {
       if (!e.dataTransfer) return;
@@ -30,9 +32,11 @@
       <slot name="name" />
     </h3>
     <div class="add-button">
-      <div class="icon">
-        <i class="icon-line icon-add" aria-hidden="true" />
-      </div>
+      <slot name="icon">
+        <div class="icon">
+          <i class="icon-line icon-add" aria-hidden="true" />
+        </div>
+      </slot>
     </div>
   </button>
 </div>

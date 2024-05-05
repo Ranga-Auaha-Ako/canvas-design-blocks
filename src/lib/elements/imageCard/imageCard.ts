@@ -1,6 +1,6 @@
 import { Readable, Writable, derived, get, writable } from "svelte/store";
 import MceElement from "../generic/mceElement";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import { Editor } from "tinymce";
 import { nanoid } from "nanoid";
 import { ImageCardManager } from "./imageCardManager";
@@ -13,28 +13,47 @@ import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
 import { persisted } from "svelte-persisted-store";
 
 export enum ImageCardTheme {
-  Overlay = "imageCardTheme--overlay",
-  Subtitle = "imageCardTheme--subtitle",
-  Icon = "imageCardTheme--icon",
+  Dark = "imageCardTheme--overlay",
+  Light = "imageCardTheme--subtitle",
+  // Icon = "imageCardTheme--icon",
 }
 export const ValidThemes = Object.values(ImageCardTheme);
 export const DefaultTheme = persisted(
   "cdb-imageCardTheme",
-  ImageCardTheme.Overlay
+  ImageCardTheme.Dark
 );
+
+if (!ValidThemes.includes(get(DefaultTheme))) {
+  // Migration step if icon
+  //@ts-expect-error
+  if (get(DefaultTheme) === "imageCardTheme--icon") {
+    console.log("Migrating Image Card theme from icon to light.");
+    DefaultTheme.set(ImageCardTheme.Light);
+  } else {
+    console.warn("Invalid default theme for Image Card. Setting to default.");
+    DefaultTheme.set(ImageCardTheme.Dark);
+  }
+}
 
 export enum ImageCardSize {
   Small = "imageCardSize--small",
+  "5 Cols" = "imageCardSize--grid-5",
+  "4 Cols" = "imageCardSize--grid-4",
+  "3 Cols" = "imageCardSize--grid-3",
   Large = "imageCardSize--large",
-  "Grid-3" = "imageCardSize--grid-3",
-  "Grid-4" = "imageCardSize--grid-4",
-  "Grid-5" = "imageCardSize--grid-5",
 }
 export const ValidSizes = Object.values(ImageCardSize);
 export const DefaultSize = persisted(
   "cdb-imageCardSize",
-  ImageCardSize["Grid-5"]
+  ImageCardSize["5 Cols"]
 );
+export const ImageCardSizeIcons = {
+  [ImageCardSize.Small]: "small",
+  [ImageCardSize.Large]: "large",
+  [ImageCardSize["3 Cols"]]: "grid-3",
+  [ImageCardSize["4 Cols"]]: "grid-4",
+  [ImageCardSize["5 Cols"]]: "grid-5",
+};
 
 export interface CardData {
   label: string;
@@ -42,12 +61,18 @@ export interface CardData {
   image: string;
   id: string;
   icon?: IconState;
+  imageSettings?: {
+    size: "fill" | "contain" | "cover" | "scale-down";
+  };
 }
 
+export const validFits = ["fill", "contain", "cover", "scale-down"];
 export interface RowData {
   cards: CardData[];
   size: ImageCardSize;
   theme: ImageCardTheme;
+  usesIcon?: boolean;
+  labelOverlaid: boolean;
 }
 
 export interface LocalState {
@@ -63,10 +88,15 @@ class CardRowState implements SvelteState<RowData> {
         link: "#",
         image: "",
         id: nanoid(),
+        imageSettings: {
+          size: "cover",
+        },
       },
     ],
+    labelOverlaid: true,
     theme: get(DefaultTheme),
     size: get(DefaultSize),
+    usesIcon: false,
   };
   state: Writable<RowData> = writable();
   public set = this.state.set;
@@ -83,7 +113,15 @@ class CardRowState implements SvelteState<RowData> {
       cards: [],
       size: size || get(DefaultSize),
       theme: theme || get(DefaultTheme),
+      usesIcon: !!unsafeState?.usesIcon,
+      labelOverlaid: unsafeState?.labelOverlaid ?? true,
     };
+    // Migration step for cards from 2.12.0 and prior:
+    //@ts-expect-error - comparision is for old version of type.
+    if (unsafeState?.theme === "imageCardTheme--icon") {
+      state.theme = ImageCardTheme.Light;
+      state.usesIcon = true;
+    }
     const cardLinks = node?.querySelectorAll<HTMLAnchorElement>("a.ImageCard");
     const cardImages =
       node?.querySelectorAll<HTMLImageElement>("img.ImageCardImage");
@@ -96,6 +134,11 @@ class CardRowState implements SvelteState<RowData> {
           image: cardImages?.[index]?.src || "",
           id: card.id || nanoid(),
           icon: icon,
+          imageSettings: {
+            size: validFits.includes(card?.imageSettings?.size || "")
+              ? card?.imageSettings?.size!
+              : "cover",
+          },
         };
       });
     }

@@ -8,6 +8,21 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+- New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content.
+
+## [2.12.0] - 2024-05-01
+
+### Overview
+
+- ✨ New: copy and paste grid rows, and profile backgrounds can now be any colour.
+
+### Added
+
+- Profile backgrounds can now be any colour, and the text will automatically adjust to be readable.
+- Design Blocks now works with a specific build for mobile
+- Copy and paste grid rows
+- Client-side blocks now possible
+
 ## [2.11.2] - 2024-02-02
 
 ### Overview

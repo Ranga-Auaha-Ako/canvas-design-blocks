@@ -1,6 +1,6 @@
 <script lang="ts">
-  // import Sortable from "sortablejs";
-  import { Sortable } from "$lib/util/loaders/sortable";
+  import Sortable from "sortablejs";
+  // import { Sortable } from "$lib/util/loaders/sortable";
   import { createEventDispatcher } from "svelte";
 
   export let labelKey: string;
@@ -44,14 +44,12 @@
   $: sortable =
     canReorder &&
     itemList &&
-    Sortable.then((s) => {
-      new s.default(itemList, {
-        animation: 200,
-        handle: ".dragHandle",
-        onEnd: (event) => {
-          handleItemOrder(event);
-        },
-      });
+    new Sortable(itemList, {
+      animation: 200,
+      handle: ".dragHandle",
+      onEnd: (event) => {
+        handleItemOrder(event);
+      },
     });
 </script>
 

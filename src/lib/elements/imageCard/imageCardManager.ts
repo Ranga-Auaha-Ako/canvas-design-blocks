@@ -1,5 +1,5 @@
 import { ElementManager } from "../generic/elementManager";
-import type { stateObject } from "src/main";
+import type { stateObject } from "src/desktop";
 import "./imageCard.postcss";
 import editorStyles from "./imageCard.postcss?inline";
 import { ImageCard } from "./imageCard";

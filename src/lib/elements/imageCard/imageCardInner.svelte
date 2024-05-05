@@ -21,13 +21,27 @@
   $: isSelected = $localState.isSelected;
 </script>
 
-<div class="ImageCards--row {cdbData.theme} {cdbData.size}">
+<div
+  class="ImageCards--row {cdbData.theme} {cdbData.size}"
+  class:ImageCards--usesIcons={cdbData.usesIcon}
+  class:ImageCard--labelBelow={!cdbData.labelOverlaid}
+>
   {#each cdbData.cards as card, index}
     {@const labelLines = card.label.split("\n")}
     <a
       href={card.link}
       class="ImageCard"
       data-cdb-id={card.id}
+      style:color={cdbData.theme === ImageCardTheme.Dark &&
+      cdbData.usesIcon &&
+      card.icon
+        ? "#fff"
+        : undefined}
+      style:background-color={cdbData.theme === ImageCardTheme.Dark &&
+      cdbData.usesIcon &&
+      card.icon
+        ? card.icon.color
+        : undefined}
       data-mce-selected={$localState.selectedCard == card.id && isSelected
         ? "cbe"
         : undefined}
@@ -52,10 +66,15 @@
         }
       }}
     >
-      {#if cdbData.theme === ImageCardTheme.Icon}
+      {#if cdbData.usesIcon}
         <span class="ImageCardIcon">
           {#if card.icon}
-            <IconElement icon={card.icon} />
+            <IconElement
+              icon={card.icon}
+              colorOverride={cdbData.theme === ImageCardTheme.Dark
+                ? "#fff"
+                : undefined}
+            />
           {/if}
         </span>
       {:else if card.image}

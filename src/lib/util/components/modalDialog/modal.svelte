@@ -1,4 +1,6 @@
 <script lang="ts">
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
+  import { IconType } from "$lib/icons/svelte/iconPicker";
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
   const dispatch = createEventDispatcher<{ save: void; close: void }>();
@@ -15,9 +17,10 @@
   export let show: boolean = false;
   export let showSave: boolean = true;
   export let showCancel: boolean = true;
+  export let showClose: boolean = false;
 
   $: if (dialog) show ? dialog.showModal() : dialog.close();
-  export let title: string;
+  export let title: string = "";
   let dialog: HTMLDialogElement;
 </script>
 
@@ -40,11 +43,28 @@
   >
     <div class="dialogBody">
       <slot name="title">
-        {#if title}
-          <h4>
-            {title}
-          </h4>
-        {/if}
+        <div class="flex">
+          {#if title}
+            <h4 class="grow">
+              {title}
+            </h4>
+          {:else}
+            <div class="grow"></div>
+          {/if}
+          {#if showClose}
+            <button
+              class="text-xl mr-1"
+              title="Close {title || 'Dialog'}"
+              on:click={() => {
+                dispatch("close");
+                dialog.close();
+              }}
+            >
+              <IconElement icon={{ id: "Inst.Line.x", type: IconType.Custom }}
+              ></IconElement>
+            </button>
+          {/if}
+        </div>
       </slot>
       <slot />
 

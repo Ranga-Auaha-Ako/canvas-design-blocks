@@ -155,6 +155,10 @@
       const url = new URL(window.location.href);
       const block = url.searchParams.get("block");
 
+      window.ENV = {
+        RICH_CONTENT_APP_HOST: true,
+      };
+
       // The blocks are defined here.
       const blocks = {
         // --- BUTTON BAR ---
@@ -195,7 +199,7 @@
       }
     </script>
     <script type="module">
-      import { loadApp } from "/src/main.ts";
+      import { loadApp } from "/src/desktop.ts";
     </script>
   </body>
 </html>

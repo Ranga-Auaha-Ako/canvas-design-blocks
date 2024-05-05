@@ -1,3 +1,4 @@
+import { courseEnv } from "$lib/util/courseEnv";
 import {
   Readable,
   Writable,
@@ -40,7 +41,7 @@ export interface Image extends File {
   thumbnail_url: string;
 }
 
-const COURSE_ID = window.ENV?.COURSE_ID;
+const COURSE_ID = courseEnv?.COURSE_ID;
 
 class MockSearch<L = Link> {
   public readonly data;

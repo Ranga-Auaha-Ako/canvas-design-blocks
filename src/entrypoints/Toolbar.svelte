@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { ComponentType, createEventDispatcher, onMount } from "svelte";
   import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
@@ -8,14 +8,17 @@
   import { changes, changeversion, version } from "$lib/util/constants";
   import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
-  import type { stateObject } from "src/main";
+  import type { stateObject } from "src/desktop";
   import ElementManager from "$lib/elements/generic/elementManager";
   import gtag from "$lib/util/gtag";
   import { persisted } from "svelte-persisted-store";
   import { compareVersions } from "compare-versions";
+  import { type Readable } from "svelte/store";
 
   export let state: stateObject | undefined;
-  export let managers: ElementManager[];
+  export let managers: Readable<ElementManager[]>;
+
+  export let additionalItems: ComponentType[] = [];
 
   const last_opened_ver = persisted("cdb_version_opened", "2.8.3");
 
@@ -28,7 +31,7 @@
   let openedThisSession = false;
 
   const add = (manager: ElementManager) => {
-    if (!managers) return;
+    if (!$managers) return;
     const newManager = manager.create(true, true);
     if (!openedThisSession) {
       gtag("event", `design_blocks_insert`, {
@@ -48,6 +51,8 @@
   $: hasUpdate =
     !changeversion || compareVersions($last_opened_ver, changeversion) < 0;
 </script>
+
+<svelte:body class:cdb-toolbar-open={$open} />
 
 <div bind:this={container} class="cgb-toolbar cgb-component">
   <button
@@ -98,7 +103,7 @@
       </div>
     {/if}
     <div class="toolbar-menu" transition:slide|global>
-      {#each managers as manager}
+      {#each $managers as manager}
         <ElementPanel
           on:add={() => {
             add(manager);
@@ -112,6 +117,9 @@
             {manager.elementName}
           </svelte:fragment>
         </ElementPanel>
+      {/each}
+      {#each additionalItems as item}
+        <svelte:component this={item} />
       {/each}
       <div class="info-panel">
         <a

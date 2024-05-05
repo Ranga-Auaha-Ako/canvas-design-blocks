@@ -15,6 +15,8 @@
   }>();
 
   export let options: IconPickerOptions;
+  export let targetNode: HTMLElement | undefined = undefined;
+  export let contrastColor: string | undefined = undefined;
   let modal: Modal;
   export const open = () => modal.open();
   export const close = () => modal.close();
@@ -25,7 +27,14 @@
     {#await icons}
       <!-- Loading -->
     {:then allIcons}
-      <IconList icons={allIcons} {options} on:selectIcon asModal={true} />
+      <IconList
+        {targetNode}
+        {contrastColor}
+        icons={allIcons}
+        {options}
+        on:selectIcon
+        asModal={true}
+      />
     {/await}
   </div>
 </Modal>

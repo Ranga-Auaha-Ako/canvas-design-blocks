@@ -2,6 +2,7 @@
 /// <reference types="vite/client" />
 
 declare const __APP_VERSION__: string;
+declare const __APP_NAME__: string | undefined;
 declare const __LATEST_CHANGE__: string;
 declare const __LATEST_CHANGE_VERSION__: string | null;
 declare const __THEME__:
@@ -20,4 +21,5 @@ interface ImportMetaEnv {
   readonly CANVAS_BLOCKS_BASE_DOMAINS: string;
   readonly CANVAS_BLOCKS_THEME: string;
   readonly CANVAS_BLOCKS_USE_CANVAS_ICONS: string;
+  readonly CANVAS_BLOCKS_GLOSSARY_DEFINITIONS: string;
 }

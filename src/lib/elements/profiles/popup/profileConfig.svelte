@@ -7,6 +7,7 @@
   import blankImg from "../blank-user.png";
   import ColourPicker from "$lib/util/components/colourPicker.svelte";
   import { colord } from "colord";
+  import { courseEnv } from "$lib/util/courseEnv";
 
   export let props: { profileGrid: ProfileGrid };
   export let isModal: boolean = false;
@@ -14,12 +15,12 @@
   $: people = profileGrid.SvelteState;
   let configEl: HTMLElement;
 
-  const allCanvasTeachers = window.ENV.COURSE_ID
+  const allCanvasTeachers = courseEnv.COURSE_ID
     ? fetch(
         (import.meta.env.DEV && window.location.hostname === "localhost"
           ? "https://canvas.auckland.ac.nz/"
           : "") +
-          `/api/v1/courses/${window.ENV.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
+          `/api/v1/courses/${courseEnv.COURSE_ID}/users?enrollment_type[]=teacher&enrollment_type[]=ta&enrollment_type[]=designer&include[]=avatar_url&include[]=bio&per_page=100`
       ).then((res) => res.json())
     : Promise.resolve([]);
 
@@ -83,9 +84,16 @@
     ? $people.findIndex((p) => p.id === activeId)
     : undefined;
 
+  $: contrastColor =
+    activeIndex !== undefined
+      ? $people[activeIndex].color?.isDark()
+        ? "#fff"
+        : "#000"
+      : "#fff";
+
   $: contrastLevel =
     activeIndex !== undefined
-      ? $people[activeIndex].color?.contrast(colord("#ffffff"))
+      ? $people[activeIndex].color?.contrast(colord(contrastColor))
       : true;
   $: isReadable =
     contrastLevel === true ||

@@ -28,7 +28,7 @@
     Placement,
     shift,
   } from "@floating-ui/dom";
-  import { onDestroy, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
   import preventBubble from "../preventBubble";
@@ -47,6 +47,8 @@
   export let showNone = true;
   export let asModal = false;
   export let style: "default" | "wide" | "minimal" = "default";
+
+  const dispatch = createEventDispatcher<{ select: Colord | undefined }>();
 
   const smartColour = (colour: string, conColour: typeof contrastColour) => {
     let c = colord(colour);
@@ -108,6 +110,7 @@
   const select = (c: Colord | undefined) => {
     colour = getColour(c);
     customColour = false;
+    dispatch("select", colour);
   };
 
   let edit = false;
@@ -161,6 +164,7 @@
     if (!col || col.length !== 7) return;
     const newCol = colord(col);
     if (newCol.isValid() && col !== colour?.toHex()) colour = colord(col);
+    dispatch("select", colour);
   };
 
   $: updateCustomColour(colour);

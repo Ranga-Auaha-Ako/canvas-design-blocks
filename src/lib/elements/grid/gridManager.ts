@@ -11,7 +11,7 @@ import Row from "./row";
 import Grid from "./grid";
 import type { Editor } from "tinymce";
 import { SvelteComponent } from "svelte";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import "./grid.postcss";
 import editorStyles from "./gridEditor.postcss?inline";

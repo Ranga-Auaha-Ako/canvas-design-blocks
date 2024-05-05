@@ -1169,6 +1169,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-cookie@npm:^3":
+  version: 3.0.6
+  resolution: "@types/js-cookie@npm:3.0.6"
+  checksum: 173afaf5ea9d86c22395b9d2a00b6adb0006dcfef165d6dcb0395cdc32f5a5dcf9c3c60f97194119963a15849b8f85121e1ae730b03e40bc0c29b84396ba22f9
+  languageName: node
+  linkType: hard
+
 "@types/jsdom@npm:^21.1.6":
   version: 21.1.6
   resolution: "@types/jsdom@npm:21.1.6"
@@ -1795,6 +1802,7 @@ __metadata:
     "@types/css": "npm:^0.0.37"
     "@types/gtag.js": "npm:^0.0.18"
     "@types/hash-sum": "npm:^1.0.2"
+    "@types/js-cookie": "npm:^3"
     "@types/jsdom": "npm:^21.1.6"
     "@types/node": "npm:^20.11.10"
     "@types/sortablejs": "npm:^1.15.7"
@@ -1811,11 +1819,13 @@ __metadata:
     colord: "npm:^2.9.3"
     compare-versions: "npm:^6.1.0"
     dotenv: "npm:^16.4.1"
+    escape-string-regexp: "npm:^5.0.0"
     fast-glob: "npm:^3.3.2"
     fetch-paginate: "npm:^6.1.0"
     filesize: "npm:^10.1.0"
     hash-sum: "npm:^2.0.0"
     html-void-elements: "npm:3.0.0"
+    js-cookie: "npm:^3.0.5"
     jsdom: "npm:^23.2.0"
     lightningcss: "npm:^1.22.1"
     magic-string: "npm:^0.30.5"
@@ -2643,6 +2653,13 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 9497d4dd307d845bd7f75180d8188bb17ea8c151c1edbf6b6717c100e104d629dc2dfb687686181b0f4b7d732c7dfdc4d5e7a8ff72de1b0ca283a75bbb3a9cd9
+  languageName: node
+  linkType: hard
+
+"escape-string-regexp@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "escape-string-regexp@npm:5.0.0"
+  checksum: 6366f474c6f37a802800a435232395e04e9885919873e382b157ab7e8f0feb8fed71497f84a6f6a81a49aab41815522f5839112bd38026d203aea0c91622df95
   languageName: node
   linkType: hard
 
@@ -3524,6 +3541,13 @@ __metadata:
   version: 2.6.4
   resolution: "js-base64@npm:2.6.4"
   checksum: 95d93c4eca0bbe0f2d5ffe8682d9acd23051e5c0ad71873ff5a48dd46a5f19025de9f7b36e63fa3f02f342ae4a8ca4c56e7b590d7300ebb6639ce09675e0fd02
+  languageName: node
+  linkType: hard
+
+"js-cookie@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "js-cookie@npm:3.0.5"
+  checksum: 04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
   languageName: node
   linkType: hard
 

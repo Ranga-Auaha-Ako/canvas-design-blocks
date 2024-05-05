@@ -1,7 +1,7 @@
 import { Writable, get, writable } from "svelte/store";
 import MceElement from "../generic/mceElement";
 import ButtonInner from "./button.svelte";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import { Editor } from "tinymce";
 import { nanoid } from "nanoid";
 import { ButtonManager } from "./buttonManager";

@@ -1,6 +1,6 @@
 import { get, writable } from "svelte/store";
 import type { Writable } from "svelte/store";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import MceElement, {
   MceElementStatics,
 } from "$lib/elements/generic/mceElement";

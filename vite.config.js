@@ -16,70 +16,28 @@ const changeVer = changelog.versions.find(
     v.parsed.Overview
 );
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode, command }) => {
-  if (mode === "sandpit") {
-    return {
-      base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
-      build: {
-        target: "es2018",
-        manifest: true,
-        cssMinify: "lightningcss",
-        emptyOutDir: !(process.env.CLEAR_DIST === "false"),
-      },
-      plugins: [
-        svelte({
-          emitCss: true,
-        }),
-        getIconsPlugin(),
-        vitePluginCanvasStyles(),
-        visualizer({
-          filename: "./dist/stats.html",
-        }),
-      ],
-      css: {
-        lightningcss: {
-          targets: "last 2 versions or >= 0.25%, not dead",
-        },
-      },
-      resolve: {
-        alias: {
-          $lib: path.resolve("./src/lib"),
-          $assets: path.resolve("./src/assets"),
-        },
-      },
-      define: {
-        __APP_VERSION__:
-          JSON.stringify(process.env.npm_package_version) || "unknown",
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-        __THEME__: JSON.stringify(
-          JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
-        ),
-        __LATEST_CHANGE__: JSON.stringify(changeVer?.parsed.Overview),
-        __LATEST_CHANGE_VERSION__: JSON.stringify(changeVer.version),
-      },
-    };
-  }
-  if (mode === "theme-loader") {
-    return {
-      base: process.env.CANVAS_BLOCKS_THEME_HOST,
-      build: {
-        target: "es2018",
-        lib: {
-          entry: resolve(__dirname, "src/theme-loader.ts"),
-          name: "CanvasBlocksLoader",
-          formats: ["umd"],
-          fileName: "theme-loader",
-        },
-        emptyOutDir: false,
-      },
-      define: {
-        __APP_VERSION__:
-          JSON.stringify(process.env.npm_package_version) || "unknown",
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      },
-    };
-  }
+const visualizers = [
+  {
+    filename: "./dist/flame.html",
+    template: "flamegraph",
+  },
+  {
+    filename: "./dist/stats.html",
+    template: "treemap",
+  },
+  {
+    filename: "./dist/network.html",
+    template: "network",
+  },
+];
+
+/**
+ * Generates the configuration object for the application.
+ *
+ * @param {"desktop" | "mobile"} launchFile - The name of the launch file.
+ * @returns {import('vite').UserConfig} The configuration object.
+ */
+const appConfig = (launchFile, { mode, command }) => {
   return {
     server: {
       origin: "http://localhost:5173",
@@ -119,42 +77,124 @@ export default defineConfig(({ mode, command }) => {
       }),
       getIconsPlugin(),
       vitePluginCanvasStyles(),
-      // hoistImportDeps({
-      //   baseUrl:
-      //     command === "serve"
-      //       ? "/"
-      //       : process.env.CANVAS_BLOCKS_THEME_HOST || "",
-      // }),
     ].concat(
       // @ts-ignore
       mode.includes("beta")
-        ? [
+        ? visualizers.map((v) =>
             visualizer({
-              filename: "./dist/stats.html",
-            }),
-          ]
+              ...v,
+              brotliSize: true,
+            })
+          )
         : []
     ),
     build: {
       target: "es2018",
       manifest: true,
       cssMinify: "lightningcss",
+      cssCodeSplit: false,
+      emptyOutDir: launchFile === "desktop",
       rollupOptions: {
-        input: "src/main.ts",
+        input: `src/${launchFile}.ts`,
         output: {
           format: "es",
           assetFileNames: (assetInfo) => {
             if (assetInfo.name.endsWith(".css")) {
-              return "canvas-blocks.css";
+              return launchFile === "desktop"
+                ? "canvas-blocks.css"
+                : `canvas-blocks-${launchFile}.css`;
             }
-            return "a/[hash].[ext]";
+            return `a-${launchFile}/[hash].[ext]`;
           },
-          entryFileNames: "canvas-blocks.min.js",
-          chunkFileNames: "c/[name].js",
+          entryFileNames:
+            launchFile === "desktop"
+              ? "canvas-blocks.min.js"
+              : "canvas-blocks-mobile.min.js",
+          chunkFileNames: `c-${launchFile}/[name]-[hash].js`,
           inlineDynamicImports: false,
+          manualChunks: {
+            icons: ["virtual:blocks-icons"],
+            sortable: ["sortablejs"],
+          },
         },
       },
       // watch: true
     },
   };
+};
+
+// https://vitejs.dev/config/
+export default defineConfig(({ mode, command }) => {
+  if (mode === "sandpit") {
+    return {
+      base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
+      build: {
+        target: "es2018",
+        manifest: true,
+        cssMinify: "lightningcss",
+        emptyOutDir: !(process.env.CLEAR_DIST === "false"),
+      },
+      plugins: [
+        svelte({
+          emitCss: true,
+        }),
+        getIconsPlugin(),
+        vitePluginCanvasStyles(),
+        ...visualizers.map((v) =>
+          visualizer({
+            ...v,
+            brotliSize: true,
+          })
+        ),
+      ],
+      css: {
+        lightningcss: {
+          targets: "last 2 versions or >= 0.25%, not dead",
+        },
+      },
+      resolve: {
+        alias: {
+          $lib: path.resolve("./src/lib"),
+          $assets: path.resolve("./src/assets"),
+        },
+      },
+      define: {
+        __APP_VERSION__:
+          JSON.stringify(process.env.npm_package_version) || "unknown",
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+        __THEME__: JSON.stringify(
+          JSON.parse(process.env.CANVAS_BLOCKS_THEME || "{}")
+        ),
+        __LATEST_CHANGE__: JSON.stringify(changeVer?.parsed.Overview),
+        __LATEST_CHANGE_VERSION__: JSON.stringify(changeVer.version),
+      },
+    };
+  }
+  if (mode.includes("theme-loader")) {
+    return {
+      base: process.env.CANVAS_BLOCKS_THEME_HOST,
+      build: {
+        target: "es2018",
+        lib: {
+          entry: resolve(__dirname, "src/theme-loader.ts"),
+          name: "CanvasBlocksLoader",
+          formats: ["umd"],
+          fileName: mode.includes("mobile")
+            ? "theme-loader-mobile"
+            : "theme-loader",
+        },
+        emptyOutDir: false,
+      },
+      define: {
+        __APP_NAME__: JSON.stringify(
+          mode.includes("mobile") ? "canvas-blocks-mobile" : "canvas-blocks"
+        ),
+        __APP_VERSION__:
+          JSON.stringify(process.env.npm_package_version) || "unknown",
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      },
+    };
+  }
+  if (mode.includes("mobile")) return appConfig("mobile", { mode, command });
+  return appConfig("desktop", { mode, command });
 });

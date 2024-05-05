@@ -13,11 +13,11 @@
       .ImageCard {
         @apply bg-white text-black;
         .ImageCardLabel {
-          @apply bg-white bg-opacity-100 px-4 py-2;
+          @apply bg-white;
         }
       }
     }
-    &.imageCardTheme--icon {
+    .ImageCard {
       .ImageCardIcon {
         @apply flex text-center items-center justify-center text-7xl grow;
         container-type: size;
@@ -28,6 +28,9 @@
             font-size: 1em;
           }
         }
+      }
+      &:hover span {
+        text-decoration: none !important;
       }
     }
     &.imageCardSize--large {
@@ -91,7 +94,7 @@
     }
     .ImageCard {
       @apply rounded-lg shadow-strong overflow-hidden;
-      @apply text-white bg-slate-600;
+      @apply text-white bg-slate-700;
       @apply flex flex-col items-stretch justify-end h-32;
       @apply transition transform;
       container: ImageCard;
@@ -116,6 +119,17 @@
       }
       & > span:has(.ImageCardLabel) {
         display: contents;
+      }
+    }
+    &.ImageCard--labelBelow {
+      .ImageCard {
+        @apply flex-col;
+        .ImageCardImage {
+          @apply relative shrink grow basis-0 h-0;
+        }
+        .ImageCardLabel {
+          @apply bg-opacity-100;
+        }
       }
     }
   }

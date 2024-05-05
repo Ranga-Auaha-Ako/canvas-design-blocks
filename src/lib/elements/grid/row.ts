@@ -17,6 +17,16 @@ import type { McePopover } from "$lib/elements/generic/popover/popover";
 import RowMenu from "$lib/elements/grid/popup/rowMenu.svelte";
 import type { Editor } from "tinymce";
 
+import { persisted } from "svelte-persisted-store";
+const copyStore = persisted<{ copied: string | null }>(
+  "cdb_copy_row",
+  { copied: null },
+  {
+    storage: "session",
+    syncTabs: true,
+  }
+);
+
 export default class Row extends MceElement {
   public selectionMethod: "TinyMCE" | "focus" = "focus";
   public trackInnerText = false;
@@ -217,14 +227,46 @@ export default class Row extends MceElement {
         this.node
       );
     }
-    this.stopObserving();
+    this.startObserving();
   }
 
   public checkChildren() {
     this.stopObserving();
+
+    let lastMatchedCol: number = 0;
+    const colChildren = Array.from(
+      this.node.querySelectorAll<HTMLDivElement>("div.cgb-col[data-cdb-id]")
+    );
+    // Check if our layout has changed
+    const newLayout = RowLayout.getLayout(colChildren);
+    if (newLayout.id !== get(this.layout).id) {
+      this.columns.update((cols) => {
+        let newCols: Column[] = [];
+        colChildren.forEach((colNode, index) => {
+          // See if there's a matching column
+          const col = cols.find((c) => c.node === colNode);
+          if (col) {
+            newCols.push(col);
+          } else {
+            // Create a new column
+            newCols.push(
+              Column.import(this.parentGrid, colNode, newLayout.cols[index])
+            );
+          }
+        });
+        // Remove any columns that are no longer in the layout
+        cols.forEach((col) => {
+          if (!newCols.find((c) => c.node === col.node)) {
+            debugger;
+            col.delete();
+          }
+        });
+        return newCols;
+      });
+    }
     const cols = get(this.columns);
     const colNodes = cols.map((col) => col.node);
-    let lastMatchedCol: number = 0;
+
     // Check if any of the children are not column elements
     Array.from(this.node.children).forEach((child) => {
       const window = deriveWindow(child);
@@ -235,7 +277,7 @@ export default class Row extends MceElement {
         // Check if the child is a cgb interface or otherwise "bogus" and not delete it
         if (child.dataset.mceBogus) return;
 
-        // Check if the child is a column
+        // Check if the child is an existing column
         const colIndex = colNodes.findIndex((col) => col === child);
         if (colIndex >= 0) {
           lastMatchedCol = colIndex;
@@ -255,5 +297,43 @@ export default class Row extends MceElement {
       }
     });
     this.stopObserving();
+  }
+
+  public copy() {
+    const html = this.node.outerHTML;
+    copyStore.set({ copied: html });
+  }
+
+  public canPaste = derived(
+    copyStore,
+    ($copyStore) => $copyStore.copied !== null && $copyStore.copied !== ""
+  );
+
+  public paste(position: "afterend" | "beforebegin" | "replace" = "afterend") {
+    const html = get(copyStore).copied;
+    if (html) {
+      const tempParent = this.parentGrid.editor.dom.create("div");
+      tempParent.innerHTML = html;
+      const newNode = tempParent.children[0] as HTMLElement;
+      // Run a sanity check on the new node
+      if (!newNode || !newNode.dataset.cdbId) {
+        console.warn("Invalid node pasted!");
+      }
+      // Update all IDs to random new ones
+      newNode
+        .querySelectorAll<HTMLElement>("[data-cdb-id]")
+        .forEach((el) => (el.dataset.cdbId = nanoid()));
+      if (position === "replace") {
+        this.node.insertAdjacentElement("afterend", newNode);
+        this.parentGrid.checkChildren();
+        this.delete(true);
+      } else {
+        this.node.insertAdjacentElement(position, newNode);
+        this.parentGrid.checkChildren();
+      }
+      // Trigger new undo level
+      this.editor.undoManager.add();
+      this.deselectAll();
+    }
   }
 }

@@ -36,18 +36,34 @@
 
 - Make links stand out with customisable buttons
 - Swap button colours and add icons to make your buttons pop
-  ![Grids](docs/assets/button.png)
+  ![Buttons](docs/assets/button.png)
 
 ### Headers
 
 - Create headers for your course pages, with built-in background image and layout options
-  ![Grids](docs/assets/header.jpeg)
+  ![Headers](docs/assets/header.png)
 
 ### Image Card Navigation
 
 - Create image cards with customisable links to other pages in your course
 - Best used for top-level navigation
-  ![Grids](docs/assets/image-cards.png)
+  ![Image Cards](docs/assets/image-cards.png)
+
+### Profiles
+
+- Automatically load in Canvas user profiles into your pages
+- Customise the layout and display of the profile
+  ![Profile](docs/assets/profile.png)
+
+### Button Bar
+
+- Create a bar of buttons to highlight important links, or indicate progress through a course
+  ![Button Bar](docs/assets/button-bar.png)
+
+### Custom Icons
+
+- Use a library of Canvas and institutional icons to help with quick scanning of page content and to highlight important information
+  ![Custom Icons](docs/assets/icons.png)
 
 ### Deep integration into Canvas RCE
 
@@ -223,7 +239,7 @@ Note: `CANVAS_BLOCKS_THEME` should be the JSON you created in step 2.
     });
   } else {
     GM_addElement("script", {
-      src: "http://localhost:5173/src/main.ts",
+      src: "http://localhost:5173/src/desktop.ts",
       type: "module",
     });
   }
@@ -274,7 +290,7 @@ New elements have the following high-level components:
 
 1. An **Element Manager**, which is responsible for overseeing all instances of the element on the page, and handling the discovery and creation of new instances of the element.
 
-   - All element managers should extend the [`ElementManager`](src/lib/elements/generic/elementManager.ts) class, and be loaded in `main.ts`
+   - All element managers should extend the [`ElementManager`](src/lib/elements/generic/elementManager.ts) class, and be loaded in `desktop.ts`
 
 2. An **Element**, which represents a specific instance of the element on the page. This is responsible for rendering the element in the TinyMCE editor, and handling any changes made to the element. There are two ways to do this.
 

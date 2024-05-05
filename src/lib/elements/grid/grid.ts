@@ -15,7 +15,7 @@ import GridManager from "./gridManager";
 import confirmDialog from "$lib/util/confirmDialog";
 import MceElement from "$lib/elements/generic/mceElement";
 import type { MceElementStatics } from "$lib/elements/generic/mceElement";
-import { stateObject } from "src/main";
+import { stateObject } from "src/desktop";
 import { deleteGrid } from "./popup/delete/deleteGrid";
 
 export class Grid extends MceElement implements Readable<Row[]> {
@@ -245,7 +245,26 @@ export class Grid extends MceElement implements Readable<Row[]> {
 
   public checkChildren() {
     this.stopObserving();
+    // Check to see if there are any rows that need to be added
+    const rowNodes = Array.from(this.node.children).filter(
+      (e) =>
+        e.classList.contains("grid-row") && (e as HTMLElement)?.dataset.cdbId
+    ) as HTMLElement[];
+    const untrackedRows = rowNodes.filter(
+      (e) => get(this.rows).find((r) => r.node === e) === undefined
+    );
+    if (untrackedRows.length > 0) {
+      console.log("Untracked rows", untrackedRows);
+      this.rows.update((rows) => {
+        untrackedRows.forEach((row) => {
+          rows.push(Row.import(this, row));
+        });
+        return rows;
+      });
+    }
+
     // Trigger a check on all rows
+    get(this.rows).forEach((row) => row.checkSelf());
     get(this.rows).forEach((row) => row.checkChildren());
     this.startObserving();
   }

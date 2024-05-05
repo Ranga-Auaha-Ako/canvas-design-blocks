@@ -94,6 +94,11 @@
         // Text Colour
         oldStyle.color = reflecting.textColor?.toHex() || "";
       }
+      if (reflecting.background && reflecting.background.alpha() > 0) {
+        oldClassList.add("has-background");
+      } else {
+        oldClassList.remove("has-background");
+      }
       return [oldStyle, oldClassList] as [CSSStyleDeclaration, DOMTokenList];
     }
   );
