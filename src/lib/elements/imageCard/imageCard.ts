@@ -23,6 +23,18 @@ export const DefaultTheme = persisted(
   ImageCardTheme.Dark
 );
 
+if (!ValidThemes.includes(get(DefaultTheme))) {
+  // Migration step if icon
+  //@ts-expect-error
+  if (get(DefaultTheme) === "imageCardTheme--icon") {
+    console.log("Migrating Image Card theme from icon to light.");
+    DefaultTheme.set(ImageCardTheme.Light);
+  } else {
+    console.warn("Invalid default theme for Image Card. Setting to default.");
+    DefaultTheme.set(ImageCardTheme.Dark);
+  }
+}
+
 export enum ImageCardSize {
   Small = "imageCardSize--small",
   "5 Cols" = "imageCardSize--grid-5",
@@ -101,12 +113,15 @@ class CardRowState implements SvelteState<RowData> {
       cards: [],
       size: size || get(DefaultSize),
       theme: theme || get(DefaultTheme),
-      // Includes migration step for cards from 2.12.0 and prior:
-      usesIcon:
-        //@ts-expect-error
-        unsafeState?.usesIcon || unsafeState?.theme === "imageCardTheme--icon",
+      usesIcon: !!unsafeState?.usesIcon,
       labelOverlaid: unsafeState?.labelOverlaid ?? true,
     };
+    // Migration step for cards from 2.12.0 and prior:
+    //@ts-expect-error - comparision is for old version of type.
+    if (unsafeState?.theme === "imageCardTheme--icon") {
+      state.theme = ImageCardTheme.Light;
+      state.usesIcon = true;
+    }
     const cardLinks = node?.querySelectorAll<HTMLAnchorElement>("a.ImageCard");
     const cardImages =
       node?.querySelectorAll<HTMLImageElement>("img.ImageCardImage");
