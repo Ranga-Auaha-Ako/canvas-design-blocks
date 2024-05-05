@@ -8,7 +8,8 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 1em;
-    &.imageCardTheme--subtitle {
+    &.imageCardTheme--subtitle,
+    &.imageCardTheme--icon {
       .ImageCard {
         @apply bg-white text-black;
         .ImageCardLabel {
@@ -16,16 +17,14 @@
         }
       }
     }
-    &.ImageCards--usesIcons {
-      .ImageCardIcon {
-        @apply flex text-center items-center justify-center text-7xl grow;
-        container-type: size;
-        & .icon,
-        & img.cdb--custom-icon {
-          font-size: 75cqh;
-          & i[class^="icon-"]:before {
-            font-size: 1em;
-          }
+    .ImageCardIcon {
+      @apply flex text-center items-center justify-center text-7xl grow;
+      container-type: size;
+      & .icon,
+      & img.cdb--custom-icon {
+        font-size: 75cqh;
+        & i[class^="icon-"]:before {
+          font-size: 1em;
         }
       }
     }
