@@ -125,48 +125,6 @@
   </button>
   <div class="rowTheme"></div>
   <div class="cardPanel">
-    <div class="ImageCard--rowSettings">
-      <ButtonRadio
-        fullWidth={true}
-        title="Graphic Type"
-        choices={[false, true]}
-        labels={["Image", "Icon"]}
-        bind:value={$rowData.usesIcon}
-      />
-      <ButtonRadio
-        fullWidth={true}
-        title="Row Layout"
-        axis="vertical"
-        choices={ValidSizes}
-        labels={Object.keys(ImageCardSize)}
-        bind:value={$rowData.size}
-        on:change={() => {
-          $DefaultSize = $rowData.size;
-        }}
-        let:index
-      >
-        <span class="icon-dot" style:--dot--size={index}></span>
-        <span class="grow">{Object.keys(ImageCardSize)[index]}</span>
-      </ButtonRadio>
-      <ButtonRadio
-        fullWidth={true}
-        title="Row Theme"
-        choices={ValidThemes}
-        labels={Object.keys(ImageCardTheme)}
-        bind:value={$rowData.theme}
-        on:change={() => {
-          $DefaultTheme = $rowData.theme;
-        }}
-      />
-      <ButtonRadio
-        fullWidth={true}
-        title="Label Position"
-        choices={[false, true]}
-        labels={["Below", "Overlay"]}
-        disabled={$rowData.usesIcon}
-        bind:value={$rowData.labelOverlaid}
-      />
-    </div>
     <div class="ImageCard--elementContainer">
       <div class="ImageCard--elements">
         <button class="Button Button--small" on:click={() => addCard()}>
@@ -273,6 +231,48 @@
           </div>
         {/if}
       </div>
+    </div>
+    <div class="ImageCard--rowSettings">
+      <ButtonRadio
+        fullWidth={true}
+        title="Graphic Type"
+        choices={[false, true]}
+        labels={["Image", "Icon"]}
+        bind:value={$rowData.usesIcon}
+      />
+      <ButtonRadio
+        fullWidth={true}
+        title="Row Layout"
+        axis="vertical"
+        choices={ValidSizes}
+        labels={Object.keys(ImageCardSize)}
+        bind:value={$rowData.size}
+        on:change={() => {
+          $DefaultSize = $rowData.size;
+        }}
+        let:index
+      >
+        <span class="icon-dot" style:--dot--size={index}></span>
+        <span class="grow">{Object.keys(ImageCardSize)[index]}</span>
+      </ButtonRadio>
+      <ButtonRadio
+        fullWidth={true}
+        title="Row Theme"
+        choices={ValidThemes}
+        labels={Object.keys(ImageCardTheme)}
+        bind:value={$rowData.theme}
+        on:change={() => {
+          $DefaultTheme = $rowData.theme;
+        }}
+      />
+      <ButtonRadio
+        fullWidth={true}
+        title="Label Position"
+        choices={[false, true]}
+        labels={["Below", "Overlay"]}
+        disabled={$rowData.usesIcon}
+        bind:value={$rowData.labelOverlaid}
+      />
     </div>
   </div>
 </div>
