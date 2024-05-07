@@ -206,7 +206,7 @@
             <input
               disabled={saving}
               type="text"
-              bind:value={term.term}
+              bind:value={term.definition}
               on:input={() => (needsSave = true)}
               on:keydown={(e) => {
                 if (e.key === "Backspace" && term.definition === "") {
