@@ -175,7 +175,14 @@
               }
             }}
           >
-            <span class="rowNumber">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <span
+              class="rowNumber"
+              on:click|stopPropagation={(e) => {
+                // Refocus if user clicks here
+                e.currentTarget.parentElement?.querySelector("input")?.focus();
+              }}
+            >
               {#if i === parsedData.terms.length - 1}
                 +
               {:else}

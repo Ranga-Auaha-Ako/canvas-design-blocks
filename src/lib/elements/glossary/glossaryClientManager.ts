@@ -344,13 +344,12 @@ export class GlossaryClientManager {
     });
     if (typeof file === "string") {
       try {
-        const [_headers, ...lines] = file.split("\n");
+        const [headers, ...lines] = file.split("\n");
+        if (!headers.toLowerCase().startsWith("term,definition")) {
+          throw new Error("Glossary headers do not match.");
+        }
         const terms = lines.map((line) => {
           const [term, definition, ...more] = line.split(",");
-          if (more.length > 0)
-            throw new Error(
-              "Glossary file has too many columns: make sure the file is in the correct format."
-            );
           return { term, definition };
         });
         if (
