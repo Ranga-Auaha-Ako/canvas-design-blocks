@@ -165,6 +165,20 @@ let attempts = 0;
 let hasLoaded = false;
 export const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
+    // First check to see if we are on a page which can have an editor
+    const url = window.location.pathname;
+    const valid_locations = [
+      /^\/courses\/\d+\/pages\/.+\/edit$/,
+      /^\/courses\/\d+\/pages\/?$/,
+      /^\/courses\/\d+\/discussion_topics\/new$/,
+      /^\/courses\/\d+\/discussion_topics\/.+\/edit$/,
+      /^\/courses\/\d+\/assignments\/new/,
+      /^\/courses\/\d+\/assignments\/\d+\/edit$/,
+      /^\/courses\/\d+\/quizzes\/\d+\/edit\/?$/,
+    ];
+    if (!valid_locations.some((loc) => loc.test(url))) {
+      reject("Not a valid location for editor");
+    }
     if (!window.tinymce || window.tinymce?.activeEditor?.getBody() === null) {
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
