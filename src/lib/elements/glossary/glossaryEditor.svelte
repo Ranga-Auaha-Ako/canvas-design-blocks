@@ -267,7 +267,13 @@
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          encode(parsedData.terms, { header: true })
+          encode(
+            parsedData.terms.map(({ term, definition }) => ({
+              term,
+              definition,
+            })),
+            { header: true }
+          )
         )}`}
         download="glossary-course-{courseEnv.COURSE_ID}.csv"
       >
