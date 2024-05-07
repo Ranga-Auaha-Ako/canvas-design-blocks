@@ -18,6 +18,12 @@ import "./app.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import { courseEnv } from "$lib/util/courseEnv";
 
+// Sandpit mode
+if (import.meta.env.MODE === "sandpit") {
+  console.log("Sandpit mode enabled");
+  import("./sandpit/sandpit");
+}
+
 export { clientManagers };
 
 export interface stateObject {
@@ -90,7 +96,7 @@ export async function loadApp(
   });
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
-    console.error(e);
+    // No editor, so don't load the app
     return null;
   });
 
@@ -178,7 +184,13 @@ export const getEditor = () =>
       /^\/courses\/\d+\/assignments\/\d+\/edit$/,
       /^\/courses\/\d+\/quizzes\/\d+\/edit\/?$/,
     ];
-    if (!valid_locations.some((loc) => loc.test(url))) {
+    if (
+      !(
+        window.location.hostname === "localhost" ||
+        import.meta.env.MODE === "sandpit" ||
+        valid_locations.some((loc) => loc.test(url))
+      )
+    ) {
       reject("Not a valid location for editor");
     }
     if (!window.tinymce || window.tinymce?.activeEditor?.getBody() === null) {
