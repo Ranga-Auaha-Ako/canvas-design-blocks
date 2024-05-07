@@ -18,6 +18,8 @@ import "./app.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import { courseEnv } from "$lib/util/courseEnv";
 
+export { clientManagers };
+
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
@@ -118,7 +120,7 @@ export async function loadApp(
   const toolbar = await loadToolbar(Toolbar, {
     state,
     managers: state.loadedBlocks,
-    // additionalItems: toolbarPanels,
+    additionalItems: toolbarPanels,
   });
   // Inject tailwind base styles into editor
   const pageStylesEl = editor.getDoc().createElement("style");

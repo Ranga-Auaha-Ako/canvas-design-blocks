@@ -7,7 +7,7 @@ import icon from "$lib/elements/icon/iconManager";
 import imageCard from "$lib/elements/imageCard/imageCardManager";
 import profiles from "$lib/elements/profiles/profilesManager";
 // Client-side Elements
-// import GlossaryToolbarPanel from "$lib/elements/glossary/glossaryToolbarPanel.svelte";
+import GlossaryToolbarPanel from "$lib/elements/glossary/glossaryToolbarPanel.svelte";
 export { default as Toolbar } from "$lib/../entrypoints/Toolbar.svelte";
 // Utils
 import type ElementManager from "$lib/elements/generic/elementManager";
@@ -33,5 +33,5 @@ export const legacyManagers = {
 };
 
 export const toolbarPanels = [
-  // GlossaryToolbarPanel,
+  GlossaryToolbarPanel,
 ] as (typeof SvelteComponent)[];

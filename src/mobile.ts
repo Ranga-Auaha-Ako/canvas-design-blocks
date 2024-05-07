@@ -17,10 +17,10 @@ export async function loadApp() {
       cdb_version: version,
     });
   }
-  // // Load any client-side elements
-  // clientManagers.forEach((manager) => {
-  //   manager.renderClientComponent();
-  // });
+  // Load any client-side elements
+  clientManagers.forEach((manager) => {
+    manager.renderClientComponent();
+  });
 }
 
 // Load the app
