@@ -10,6 +10,16 @@ Please write a brief description at the top of each version in "Overview". This 
 
 - New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content.
 
+## [2.12.1] - 2024-05-05
+
+### Fixed
+
+- Added debounce to mutation observer, preventing situation where the app would hang if an error occured causing the mutation observer to affect iteself and cause a loop.
+
+### Changed
+
+- Updated the image card config panel to make more sense
+
 ## [2.12.0] - 2024-05-01
 
 ### Overview
