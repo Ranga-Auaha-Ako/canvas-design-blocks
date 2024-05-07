@@ -236,7 +236,7 @@ export class GlossaryClientManager {
       window.addEventListener("load", () => this.renderClientComponent(true));
       return;
     }
-    // If we're on the glossary page, and the url ends in "/edit", render the editor
+    // If we're on the glossary page, render the viewer or editor
     if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
       const contents = courseEnv.WIKI_PAGE.body;
       let parsed: glossaryState = {

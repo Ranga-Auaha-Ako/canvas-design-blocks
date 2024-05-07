@@ -33,7 +33,10 @@
     {#if loadEditor}
       {#await glossaryClientManager.loadData() then}
         <GlossaryEditor
-          glossaryData={glossaryClientManager.json}
+          glossaryData={{
+            terms: glossaryClientManager.terms,
+            institutionDefaults: glossaryClientManager.institutionDefaults,
+          }}
           manager={glossaryClientManager}
           frameless={true}
         />

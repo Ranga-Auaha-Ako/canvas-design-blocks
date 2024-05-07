@@ -28,8 +28,8 @@
     terms: glossaryData.terms.map((t) => ({ ...t, id: nanoid() })),
   };
   $: if (
-    parsedData.terms[parsedData.terms.length - 1].definition !== "" ||
-    parsedData.terms[parsedData.terms.length - 1].term !== ""
+    parsedData.terms[parsedData.terms.length - 1]?.definition !== "" ||
+    parsedData.terms[parsedData.terms.length - 1]?.term !== ""
   ) {
     parsedData.terms = [
       ...parsedData.terms,
