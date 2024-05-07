@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { type Icon, ValidThemes, IconTheme } from "../icon";
+  import {
+    type Icon,
+    ValidThemes,
+    IconTheme,
+    ValidSizes,
+    iconSize,
+  } from "../icon";
   import { fade, slide } from "svelte/transition";
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import { colord } from "colord";
@@ -9,6 +15,7 @@
   import { getIconData, icons } from "$lib/icons/svelte/iconPicker";
   import IconList from "$lib/icons/svelte/canvas-icons/iconList.svelte";
   import { findNearestBackgroundColor } from "$lib/util/deriveColour";
+  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
 
   export let props: { icon: Icon };
   $: icon = props.icon;
@@ -87,6 +94,20 @@
             {iconInfo.c}: {iconInfo.n}
           </p>
         {/if}
+        <ButtonRadio
+          fullWidth={true}
+          title="Icon Size"
+          axis="vertical"
+          choices={ValidSizes}
+          labels={Object.keys(iconSize)}
+          bind:value={$iconData.size}
+          let:index
+        >
+          {#if index !== 0}
+            <span class="icon-dot" style:--dot--size={index}></span>
+          {/if}
+          <span class="grow">{Object.keys(iconSize)[index]}</span>
+        </ButtonRadio>
       </div>
     </div>
   </div>
@@ -109,5 +130,12 @@
       @apply rounded shadow-inner bg-gray-50 flex items-center justify-center aspect-square;
       font-size: 3em;
     }
+  }
+  .icon-dot {
+    @apply w-4 h-4 rounded-full bg-primary shrink-0;
+    transform: scale(calc((var(--dot--size) + 1) / 6));
+  }
+  :global(.active) > .icon-dot {
+    @apply bg-white;
   }
 </style>

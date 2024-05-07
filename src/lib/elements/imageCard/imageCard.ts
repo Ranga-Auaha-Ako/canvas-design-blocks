@@ -47,13 +47,6 @@ export const DefaultSize = persisted(
   "cdb-imageCardSize",
   ImageCardSize["5 Cols"]
 );
-export const ImageCardSizeIcons = {
-  [ImageCardSize.Small]: "small",
-  [ImageCardSize.Large]: "large",
-  [ImageCardSize["3 Cols"]]: "grid-3",
-  [ImageCardSize["4 Cols"]]: "grid-4",
-  [ImageCardSize["5 Cols"]]: "grid-5",
-};
 
 export interface CardData {
   label: string;
