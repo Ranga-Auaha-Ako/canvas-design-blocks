@@ -203,9 +203,10 @@
                 }
               }}
             />
-            <div
-              contenteditable="true"
-              class:disabled={saving}
+            <input
+              disabled={saving}
+              type="text"
+              bind:value={term.term}
               on:input={() => (needsSave = true)}
               on:keydown={(e) => {
                 if (e.key === "Backspace" && term.definition === "") {
@@ -219,8 +220,7 @@
                   }
                 }
               }}
-              bind:innerHTML={term.definition}
-            ></div>
+            />
             <div class="glossary-table--item-actions">
               {#if i === parsedData.terms.length - 1}
                 <button
