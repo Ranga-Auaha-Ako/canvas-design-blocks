@@ -4,6 +4,7 @@ import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
 import "./glossary.postcss";
 import Cookie from "js-cookie";
+import { parse } from "comma-separated-values";
 
 const CSRF = Cookie.get("_csrf_token");
 
@@ -344,13 +345,27 @@ export class GlossaryClientManager {
     });
     if (typeof file === "string") {
       try {
-        const [headers, ...lines] = file.split("\n");
-        if (!headers.toLowerCase().startsWith("term,definition")) {
-          throw new Error("Glossary headers do not match.");
-        }
-        const terms = lines.map((line) => {
-          const [term, definition, ...more] = line.split(",");
-          return { term, definition };
+        const data = parse(file, { header: true });
+        if (!Array.isArray(data)) throw new Error("Invalid CSV file.");
+        // Make object keys lowercase
+        data.forEach((row) => {
+          Object.keys(row).forEach((key) => {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey !== key) {
+              row[lowerKey] = row[key];
+              delete row[key];
+            }
+          });
+        });
+        // Check if the headers match
+        if (data.length === 0) return true;
+        if (
+          data[0]["definition"] === undefined ||
+          data[0]["term"] === undefined
+        )
+          throw new Error("Invalid CSV file.");
+        const terms = data.map(({ term, definition }) => {
+          return { term: term || "", definition: definition || "" };
         });
         if (
           terms.some(

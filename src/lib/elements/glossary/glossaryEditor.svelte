@@ -6,6 +6,7 @@
     glossaryState,
     termDefinition,
   } from "./glossaryClientManager";
+  import { encode } from "comma-separated-values";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
@@ -266,11 +267,7 @@
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          "Term,Definition\n" +
-            parsedData.terms
-              .filter((term) => term.term.trim() !== "")
-              .map((term) => `${term.term},${term.definition}`)
-              .join("\n")
+          encode(parsedData.terms, { header: true })
         )}`}
         download="glossary-course-{courseEnv.COURSE_ID}.csv"
       >
@@ -347,7 +344,7 @@
             {/if}
           {/await}
         </button>
-        {#await PAGE_URL then url}
+        <!-- {#await PAGE_URL then url}
           <a
             class="button btn-secondary"
             href={`/courses/${courseEnv.COURSE_ID}/pages/${url}`}
@@ -358,7 +355,7 @@
             />
             View Page
           </a>
-        {/await}
+        {/await} -->
       </div>
     </div>
     {#if saveNotice}
