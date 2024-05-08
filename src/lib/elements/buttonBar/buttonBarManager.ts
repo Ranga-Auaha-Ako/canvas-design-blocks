@@ -2,8 +2,7 @@ import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { ButtonBar } from "./buttonBar";
-import "./buttonBar.postcss";
-import editorStyles from "./buttonBar.postcss?inline";
+import editorStyles from "./element.postcss?inline";
 
 export class ButtonBarManager extends ElementManager {
   public elementClass: ElementManager["elementClass"] = ButtonBar;

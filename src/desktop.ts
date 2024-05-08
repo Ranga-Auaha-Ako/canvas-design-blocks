@@ -91,8 +91,11 @@ export async function loadApp(
     });
   }
   // Load any client-side elements
+  const loadedManagers = [];
   clientManagers.forEach((manager) => {
-    manager.renderClientComponent();
+    const managerInstance = new manager("desktop");
+    loadedManagers.push(managerInstance);
+    managerInstance.renderClientComponent();
   });
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {

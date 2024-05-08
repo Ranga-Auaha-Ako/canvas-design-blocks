@@ -2,7 +2,6 @@ import escapeStringRegexp from "escape-string-regexp";
 import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
-import "./glossary.postcss";
 import Cookie from "js-cookie";
 import { parse } from "comma-separated-values";
 import { ClientManager } from "../generic/clientManager";

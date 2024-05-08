@@ -2,8 +2,7 @@ import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { Button } from "./button";
-import "./button.postcss";
-import editorStyles from "./button.postcss?inline";
+import editorStyles from "./element.postcss?inline";
 //@ts-ignore
 
 export class ButtonManager extends ElementManager {

@@ -1,8 +1,7 @@
 import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import { CourseHeader } from "./courseHeader";
-import "./courseHeader.postcss";
-import editorStyles from "./courseHeader.postcss?inline";
+import editorStyles from "./element.postcss?inline";
 
 export class CourseHeaderManager extends ElementManager {
   selector = ".CourseHeader[data-cdb-version]";

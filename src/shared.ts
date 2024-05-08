@@ -1,6 +1,10 @@
 import { ClientManager } from "$lib/elements/generic/clientManager";
 import glossaryClientManager from "$lib/elements/glossary/glossaryClientManager";
 
+import.meta.glob("$lib/elements/*/element.postcss", {
+  eager: true,
+});
+
 export type implementedClass<T extends abstract new (...args: any) => any> =
   (new (...args: ConstructorParameters<T>) => InstanceType<T>) & T;
 

@@ -2,8 +2,7 @@ import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { Icon } from "./icon";
-import "./icon.postcss";
-import editorStyles from "./icon.postcss?inline";
+import editorStyles from "./element.postcss?inline";
 //@ts-ignore
 
 export class IconManager extends ElementManager {
