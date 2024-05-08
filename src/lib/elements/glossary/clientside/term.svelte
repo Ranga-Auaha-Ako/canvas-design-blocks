@@ -116,13 +116,14 @@
 <style lang="postcss">
   button {
     @apply appearance-none bg-transparent border-0 cursor-help underline decoration-dotted;
+    font-style: inherit;
     font-family: inherit;
-    font-size: 1em;
-    line-height: unset;
+    font-size: inherit;
+    line-height: inherit;
     padding: 0;
     display: inline;
-    font-weight: unset;
-    vertical-align: unset;
+    font-weight: inherit;
+    vertical-align: inherit;
   }
   .dfn {
     @apply invisible opacity-0 transition-opacity duration-300;
