@@ -109,7 +109,7 @@
       style:top={arrowY != null ? `${arrowY}px` : undefined}
       style:left={arrowX != null ? `${arrowX}px` : undefined}
       bind:this={arrowEl}
-    ></span><span class="dfn-text">{definition}</span></span
+    ></span><span class="dfn-text">{@html definition}</span></span
   ></span
 >
 

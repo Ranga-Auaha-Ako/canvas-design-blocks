@@ -120,7 +120,7 @@ export class GlossaryClientManager {
       container.querySelectorAll(".CDB--Glossary--Term")
     );
     this.terms = terms.map((term) => ({
-      term: term.querySelector("dt")?.textContent || "",
+      term: term.querySelector("dt")?.textContent?.trim() || "",
       definition: term.querySelector("dd")?.innerHTML || "",
       image: term.querySelector("img")?.src,
     }));
@@ -152,7 +152,7 @@ export class GlossaryClientManager {
     if (!this.hasTerms) return new RegExp("$^", "i");
     return new RegExp(
       "\\b(" +
-        this.allTerms.map((t) => escapeStringRegexp(t.term)).join("|") +
+        this.allTerms.map((t) => escapeStringRegexp(t.term.trim())).join("|") +
         ")\\b",
       "i"
     );
