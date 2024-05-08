@@ -18,8 +18,11 @@ export async function loadApp() {
     });
   }
   // Load any client-side elements
+  const loadedManagers = [];
   clientManagers.forEach((manager) => {
-    manager.renderClientComponent();
+    const managerInstance = new manager("mobile");
+    loadedManagers.push(managerInstance);
+    managerInstance.renderClientComponent();
   });
 }
 

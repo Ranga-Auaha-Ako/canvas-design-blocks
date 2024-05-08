@@ -6,7 +6,7 @@ import {
 } from "../svelteElement";
 import { get, writable } from "svelte/store";
 
-export class ClientElementManager<stateDataType> {
+export abstract class ClientElementManager<stateDataType> {
   private additionalState: Record<string, unknown> = {};
   private clientComponent:
     | ElementComponent<
@@ -15,14 +15,13 @@ export class ClientElementManager<stateDataType> {
         SvelteElement<stateDataType, unknown>
       >
     | undefined = undefined;
-  constructor(
-    public stateClass: SvelteStateClass<stateDataType>,
-    public svelteClientComponent: SvelteElement<
-      stateDataType,
-      unknown
-    >["svelteComponent"],
-    public selector: string
-  ) {}
+  public abstract stateClass: SvelteStateClass<stateDataType>;
+  public abstract svelteClientComponent: SvelteElement<
+    stateDataType,
+    unknown
+  >["svelteComponent"];
+  public abstract selector: string;
+  constructor(mode: "desktop" | "mobile") {}
   renderClientComponent() {
     // Check to see if element exists in the DOM
     document.querySelectorAll(this.selector).forEach((el) => {
