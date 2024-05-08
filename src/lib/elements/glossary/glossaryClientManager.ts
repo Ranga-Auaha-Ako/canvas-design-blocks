@@ -4,7 +4,6 @@ import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
 import Cookie from "js-cookie";
 import { parse } from "comma-separated-values";
-import { ClientManager } from "../generic/clientManager";
 
 const CSRF = Cookie.get("_csrf_token");
 
@@ -47,7 +46,7 @@ export type glossaryState = {
   institutionDefaults: boolean;
 };
 
-export class GlossaryClientManager extends ClientManager {
+export class GlossaryClientManager {
   public terms: termDefinition[] = [];
   public institutionDefaults: boolean = false;
   public termNodes: HTMLSpanElement[] = [];
@@ -156,6 +155,9 @@ export class GlossaryClientManager extends ClientManager {
         ")\\b",
       "i"
     );
+  }
+  constructor() {
+    // super(GlossaryState, Glossary, ".CDB--Glossary[data-cdb-version]");
   }
   private termWalker(root: HTMLElement) {
     const regex = this.getTermRegex();
@@ -299,11 +301,12 @@ export class GlossaryClientManager extends ClientManager {
         props: {
           terms: this.allTerms,
           termNodes: foundTermNodes,
-          mode: this.mode,
         },
       });
     });
     // Render the glossary component
+    console.log("Rendering Glossary");
+    console.log(this.termNodes);
     this.termNodes.forEach((termNode) => {
       const term = termNode.dataset.cdbTerm;
       if (!term) return;
@@ -423,4 +426,4 @@ export class GlossaryClientManager extends ClientManager {
   }
 }
 
-export default GlossaryClientManager;
+export default new GlossaryClientManager();

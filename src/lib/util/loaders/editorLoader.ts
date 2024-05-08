@@ -12,7 +12,9 @@ export { default as Toolbar } from "$lib/../entrypoints/Toolbar.svelte";
 // Utils
 import type ElementManager from "$lib/elements/generic/elementManager";
 import type { SvelteComponent } from "svelte";
-import type { implementedClass } from "src/shared";
+
+export type implementedClass<T extends abstract new (...args: any) => any> =
+  (new (...args: ConstructorParameters<T>) => InstanceType<T>) & T;
 
 export const editorManagers = [
   buttonBar,

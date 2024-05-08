@@ -4,7 +4,6 @@
 
   export let terms: { term: string; definition: string }[] = [];
   export let termNodes: HTMLElement[] = [];
-  export let mode: "desktop" | "mobile" = "desktop";
   $: foundTerms = terms.filter((t) =>
     termNodes.some(
       (node) => node.dataset.cdbTerm?.toLowerCase() === t.term.toLowerCase()
