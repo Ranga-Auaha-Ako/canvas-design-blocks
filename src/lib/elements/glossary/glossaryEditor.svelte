@@ -14,6 +14,7 @@
   import Modal from "$lib/util/components/modalDialog/modal.svelte";
   import { tick } from "svelte";
   import { nanoid } from "nanoid";
+  import ImportMerger from "./components/importMerger.svelte";
 
   type termDefinitionID = termDefinition & { id: string };
   type glossaryStateID = {
@@ -79,8 +80,28 @@
       },
     });
   });
+
+  let newTerms: termDefinition[] | undefined;
 </script>
 
+{#if newTerms}
+  <ImportMerger
+    originalTerms={parsedData.terms}
+    {newTerms}
+    on:merged={({ detail }) => {
+      parsedData.terms = detail.map((term) => ({
+        term: term.term,
+        definition: term.definition,
+        id: nanoid(),
+      }));
+      needsSave = true;
+      newTerms = undefined;
+    }}
+    on:close={() => {
+      newTerms = undefined;
+    }}
+  ></ImportMerger>
+{/if}
 <div class="cgb-component">
   <div class:editor-frame={!frameless} class="transition" in:slide|global>
     <div>
@@ -287,20 +308,11 @@
         class="button btn-secondary"
         disabled={saving}
         on:click={async () => {
-          let newTerms;
           try {
-            newTerms = await manager.loadFile();
+            newTerms = await manager.parseCSV();
           } catch (err) {
             //@ts-ignore
             errorNotice = err.message;
-          }
-          if (newTerms) {
-            parsedData.terms = manager.terms.map((term) => ({
-              term: term.term,
-              definition: term.definition,
-              id: nanoid(),
-            }));
-            needsSave = true;
           }
         }}
       >
