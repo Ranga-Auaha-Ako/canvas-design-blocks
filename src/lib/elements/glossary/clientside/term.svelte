@@ -42,11 +42,12 @@
     x = position.x;
     y = position.y;
   };
-  $: cleanup =
-    open && defEl && termEl
-      ? autoUpdate(termEl, defEl, updateFunction)
-      : undefined;
-  $: if (!open) cleanup?.();
+  let cleanup: () => void | undefined;
+  $: if (open && defEl && termEl) {
+    if (cleanup) cleanup();
+    cleanup = autoUpdate(termEl, defEl, updateFunction);
+  }
+  $: if (!open && cleanup) cleanup();
 
   let nextAction: number | undefined;
   let forceOpen = false;
@@ -130,6 +131,7 @@
     @apply absolute z-30 top-0 left-0;
     @apply text-sm bg-black text-white px-2 py-1 shadow rounded-sm;
     transition-property: opacity, visibility;
+    max-width: calc(100% - 3rem);
     &.open {
       @apply visible opacity-100 duration-500;
     }
