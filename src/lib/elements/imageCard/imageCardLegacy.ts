@@ -55,16 +55,17 @@ export class ImageCardLegacy {
       );
       const size = ValidSizes.includes(sizeClass as ImageCardSize)
         ? (sizeClass as ImageCardSize)
-        : DefaultSize;
+        : get(DefaultSize);
       const themeClass = [...el.classList].find((c) =>
         c.startsWith("imageCardTheme")
       );
       const theme = ValidThemes.includes(themeClass as ImageCardTheme)
         ? (themeClass as ImageCardTheme)
-        : DefaultTheme;
+        : get(DefaultTheme);
       const state: RowData = {
         size,
         theme,
+        labelOverlaid: false,
         cards: [],
       };
       el.querySelectorAll<HTMLAnchorElement>("a.ImageCard").forEach((card) => {

@@ -246,6 +246,7 @@
   <div class="col">
     <!-- Links -->
     {#if editLinkIndex !== undefined}
+      {@const icon = $headerData.links[editLinkIndex].icon}
       <div class="editLink">
         <div class="editActions">
           <button
@@ -309,15 +310,12 @@
                 buttonIconPicker.open();
               }}
             >
-              {#if !$headerData.links[editLinkIndex].icon}
+              {#if !icon}
                 <i class="cdb--icon" aria-hidden="true">
                   Canvas.button-and-icon-maker
                 </i>
               {:else}
-                <IconElement
-                  icon={$headerData.links[editLinkIndex].icon}
-                  colorOverride="#000"
-                />
+                <IconElement {icon} colorOverride="#000" />
               {/if}
 
               Select Icon

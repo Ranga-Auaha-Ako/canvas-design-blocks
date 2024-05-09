@@ -14,6 +14,8 @@
   export let cdbData: RowData;
   export let localState: Writable<LocalState>;
   export let destroyHandler: () => void;
+  // svelte-ignore unused-export-let
+  export let instance: any;
 
   onDestroy(() => {
     destroyHandler();

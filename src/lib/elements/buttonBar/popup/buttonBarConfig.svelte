@@ -130,6 +130,7 @@
           in:fade={{ duration: 150, delay: 200 }}
         >
           {#if itemIndex >= 0}
+            {@const icon = $buttonBarData.items[itemIndex].icon}
             <div class="card-header">
               <h3 class="card-title truncate">
                 {$buttonBarData.items[itemIndex].label}
@@ -172,12 +173,8 @@
                   iconPicker.open();
                 }}
               >
-                {#if $buttonBarData.items[itemIndex].icon}
-                  <IconElement
-                    icon={$buttonBarData.items[itemIndex].icon}
-                    colorOverride="#000"
-                    }
-                  />
+                {#if icon}
+                  <IconElement {icon} colorOverride="#000" />
                 {/if}
 
                 Select Icon

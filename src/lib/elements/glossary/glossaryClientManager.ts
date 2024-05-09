@@ -3,7 +3,7 @@ import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
 import Cookie from "js-cookie";
-import { parse } from "comma-separated-values";
+import { parse } from "@pinemach/csv";
 
 const CSRF = Cookie.get("_csrf_token");
 
@@ -344,40 +344,21 @@ export class GlossaryClientManager {
     });
     if (typeof file === "string") {
       try {
-        const data = parse(file, { header: true });
+        const [_header, ...data] = parse(file).rows();
         if (!Array.isArray(data)) throw new Error("Invalid CSV file.");
-        // Make object keys lowercase
-        data.forEach((row) => {
-          Object.keys(row).forEach((key) => {
-            const lowerKey = key.toLowerCase();
-            if (lowerKey !== key) {
-              row[lowerKey] = row[key];
-              delete row[key];
-            }
-          });
-        });
-        // Check if the headers match
-        if (data.length === 0) return true;
-        if (
-          data[0]["definition"] === undefined ||
-          data[0]["term"] === undefined
-        )
-          throw new Error("Invalid CSV file.");
-        const terms = data.map(({ term, definition }) => {
-          return { term: term || "", definition: definition || "" };
-        });
-        if (
-          terms.some(
-            (term) =>
-              typeof term.term !== "string" ||
-              typeof term.definition !== "string"
-          )
-        )
+        try {
+          const terms = data
+            .filter(([t, d]) => t.trim() !== "" && d.trim() !== "")
+            .map(([term, definition]) => {
+              return { term: term || "", definition: definition || "" };
+            });
+          this.terms = terms;
+          return true;
+        } catch (error) {
           throw new Error(
             "Glossary file is corrupt or not in the correct format. Make sure you uploaded the correct file."
           );
-        this.terms = terms.filter((term) => term.term.trim() !== "");
-        return true;
+        }
       } catch (error) {
         console.error("Issue reading CSV file:", error);
       }

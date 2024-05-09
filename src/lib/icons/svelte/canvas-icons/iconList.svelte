@@ -36,6 +36,7 @@
         stringify: (value) => (value ? value.toHex() : ""),
         parse: (value) => colord(value),
       },
+      syncTabs: false,
     }
   );
   $: dispatch("colorChange", { color: $iconColor.toHex() });

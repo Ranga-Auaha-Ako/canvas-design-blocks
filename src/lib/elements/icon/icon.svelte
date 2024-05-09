@@ -9,6 +9,8 @@
   export let cdbData: IconData;
   // svelte-ignore unused-export-let
   export let localState: any;
+  // svelte-ignore unused-export-let
+  export let instance: any;
   export let destroyHandler: () => void;
 
   onDestroy(() => {

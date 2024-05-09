@@ -6,7 +6,7 @@
     glossaryState,
     termDefinition,
   } from "./glossaryClientManager";
-  import { encode } from "comma-separated-values";
+  import { write } from "@pinemach/csv";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
@@ -267,13 +267,13 @@
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          encode(
-            parsedData.terms.map(({ term, definition }) => ({
+          write([
+            ["Term", "Definition"],
+            ...parsedData.terms.map(({ term, definition }) => [
               term,
               definition,
-            })),
-            { header: true }
-          )
+            ]),
+          ])
         )}`}
         download="glossary-course-{courseEnv.COURSE_ID}.csv"
       >
@@ -291,6 +291,7 @@
           try {
             newTerms = await manager.loadFile();
           } catch (err) {
+            //@ts-ignore
             errorNotice = err.message;
           }
           if (newTerms) {
@@ -321,6 +322,7 @@
               await manager.save();
             } catch (err) {
               console.error(err);
+              //@ts-ignore
               errorNotice = err.message;
               saving = false;
               return;
