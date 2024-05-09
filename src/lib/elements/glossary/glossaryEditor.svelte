@@ -6,7 +6,7 @@
     glossaryState,
     termDefinition,
   } from "./glossaryClientManager";
-  import { write } from "@pinemach/csv";
+  import { stringify as csvStringify } from "csv-stringify/sync";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
@@ -267,7 +267,7 @@
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          write([
+          csvStringify([
             ["Term", "Definition"],
             ...parsedData.terms.map(({ term, definition }) => [
               term,

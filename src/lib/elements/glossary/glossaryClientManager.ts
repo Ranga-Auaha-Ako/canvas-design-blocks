@@ -3,7 +3,7 @@ import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
 import Cookie from "js-cookie";
-import { parse } from "@pinemach/csv";
+import { parse as csvParse } from "csv-parse/sync";
 
 const CSRF = Cookie.get("_csrf_token");
 
@@ -344,7 +344,11 @@ export class GlossaryClientManager {
     });
     if (typeof file === "string") {
       try {
-        const [_header, ...data] = parse(file).rows();
+        const [_header, ...data] = csvParse(file, {
+          bom: true,
+          skip_empty_lines: true,
+          trim: true,
+        }) as string[][];
         if (!Array.isArray(data)) throw new Error("Invalid CSV file.");
         try {
           const terms = data
