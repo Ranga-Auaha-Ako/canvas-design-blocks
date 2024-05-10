@@ -6,7 +6,7 @@
     glossaryState,
     termDefinition,
   } from "./glossaryClientManager";
-  import { stringify as csvStringify } from "csv-stringify/sync";
+  import { unparse } from "papaparse";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
@@ -288,13 +288,18 @@
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          csvStringify([
-            ["Term", "Definition"],
-            ...parsedData.terms.map(({ term, definition }) => [
-              term,
-              definition,
-            ]),
-          ])
+          unparse(
+            [
+              ["Term", "Definition"],
+              ...parsedData.terms.map(({ term, definition }) => [
+                term,
+                definition,
+              ]),
+            ],
+            {
+              skipEmptyLines: "greedy",
+            }
+          )
         )}`}
         download="glossary-course-{courseEnv.COURSE_ID}.csv"
       >

@@ -15,49 +15,69 @@
   /**
    * Filter function to remove terms from a that are in b
    */
-  const filterFunc = (a: termDefinition[], b: termDefinition[]) => {
-    return a.filter(
-      (term) =>
-        !b.some(
-          (t) => t.term.toLocaleLowerCase() === term.term.toLocaleLowerCase()
-        )
-    );
-  };
+  const termIn = (a: termDefinition, b: termDefinition[]) =>
+    b.some((t) => t.term.toLocaleLowerCase() === a.term.toLocaleLowerCase());
 
-  let mergeType: "append" | "replace" | "overwrite" = "append";
-  function mergeTerms(): termDefinition[] {
-    switch (mergeType) {
-      case "append":
-        return [...originalTerms, ...filterFunc(newTerms, originalTerms)];
+  let mergeType: "keep" | "replace" | "overwrite" = "keep";
+  interface annoatedTermDef extends termDefinition {
+    from: "old" | "new";
+    keep: boolean;
+  }
+  function previewMerge(type = mergeType): annoatedTermDef[] {
+    const originalAnnotated = originalTerms
+      .filter((t) => t.term.trim())
+      .map<annoatedTermDef>((t) => ({ ...t, from: "old", keep: true }));
+    const newAnnotated = newTerms
+      .filter((t) => t.term.trim())
+      .map<annoatedTermDef>((t) => ({
+        ...t,
+        from: "new",
+        keep: true,
+      }));
+    switch (type) {
+      case "keep":
+        return [
+          ...originalAnnotated,
+          ...newAnnotated.map((t) => ({
+            ...t,
+            keep: !termIn(t, originalAnnotated),
+          })),
+        ];
       case "replace":
-        return [...filterFunc(originalTerms, newTerms), ...newTerms];
+        return [
+          ...originalAnnotated.map((t) => ({
+            ...t,
+            keep: !termIn(t, newAnnotated),
+          })),
+          ...newAnnotated,
+        ];
       case "overwrite":
-        return newTerms;
+        return [
+          ...originalAnnotated.map((t) => ({
+            ...t,
+            keep: false,
+          })),
+          ...newAnnotated,
+        ];
     }
+    return [];
+  }
+  function mergeTerms(type = mergeType): termDefinition[] {
+    return previewMerge(type)
+      .filter((t) => t.keep)
+      .map((t) => ({ term: t.term, definition: t.definition }));
   }
 
-  $: actuallyNewTerms =
-    mergeType === "overwrite"
-      ? newTerms
-      : newTerms.filter((term) => {
-          let foundTerm = originalTerms.find(
-            (t) => t.term.toLocaleLowerCase() === term.term.toLocaleLowerCase()
-          );
-          return (
-            foundTerm === undefined ||
-            foundTerm.definition.toLocaleLowerCase() !==
-              term.definition.toLocaleLowerCase()
-          );
-        });
+  $: mergePreview = previewMerge(mergeType);
 </script>
 
-<Modal title="Import CSV" show={true} on:close showSave={false}>
-  <div class="grid grid-cols-3">
+<Modal title="Import CSV" show={true} on:close showSave={false} size="large">
+  <div class="grid grid-cols-3 gap-4 p-4">
     <div class="col-span-1">
       <!-- UI for choosing whether to merge/overwrite new terms -->
       <p>
-        You have {actuallyNewTerms.length} new terms to import. How would you like
-        to handle them?
+        You have {newTerms.length} terms to import. How would you like to handle
+        them?
       </p>
 
       <!-- Radio select for choices -->
@@ -67,10 +87,10 @@
             type="radio"
             bind:group={mergeType}
             name="merge"
-            value="append"
+            value="keep"
             checked
           />
-          Add new terms to glossary
+          Add new terms to glossary without changing existing
         </label>
         <label>
           <input
@@ -106,31 +126,34 @@
       <table class="mergeType--{mergeType}">
         <thead>
           <tr>
-            <th></th>
-            <th>Term</th>
-            <th>Definition</th>
+            <th class="state"></th>
+            <th class="term">Term</th>
+            <th class="definition">Definition</th>
           </tr>
         </thead>
         <tbody>
-          {#each actuallyNewTerms as term}
-            {@const hasOriginal = originalTerms.find(
-              (t) => t.term === term.term
-            )}
-            {@const hasNew = newTerms.find((t) => t.term === term.term)}
-            <tr>
-              <td>
-                {#if hasOriginal && hasNew && hasOriginal.definition !== hasNew.definition}
-                  <IconElement
-                    icon={{ id: "Inst.Line.warning", type: IconType.Custom }}
-                  />
+          {#each mergePreview as term}
+            <tr
+              class:deleting={!term.keep}
+              class:adding={term.keep}
+              class:new={term.from === "new"}
+              class:old={term.from === "old"}
+            >
+              {#if !term.keep}
+                {#if term.from === "old"}
+                  <td title="Removing" class="state"> - </td>
                 {:else}
-                  <IconElement
-                    icon={{ id: "Inst.Line.plus", type: IconType.Custom }}
-                  />
+                  <td title="Not added" class="state"> &times; </td>
                 {/if}
-              </td>
-              <td>{term.term}</td>
-              <td>{term.definition}</td>
+              {:else if term.from === "new"}
+                <td title="Adding" class="state"> + </td>
+              {:else}
+                <td title="Kept" class="state"> &nbsp; </td>
+              {/if}
+              <td class="term" title={term.term}>{term.term}</td>
+              <td class="definition" title={term.definition}
+                >{term.definition}</td
+              >
             </tr>
           {/each}
         </tbody>
@@ -140,4 +163,50 @@
 </Modal>
 
 <style lang="postcss">
+  .col-span-1,
+  .col-span-2 {
+    @apply m-0;
+  }
+  table {
+    @apply border border-gray-300 rounded border-separate overflow-clip table-fixed w-full;
+    thead {
+      @apply bg-gray-100 border-b border-gray-300 h-8;
+    }
+    td,
+    th {
+      &.state {
+        @apply w-8 text-center border-r;
+      }
+      &.term {
+        @apply w-24 truncate px-2;
+      }
+      &.definition {
+        @apply truncate px-2;
+      }
+    }
+    tbody {
+      tr {
+        @apply h-8;
+        &.adding.new {
+          @apply bg-green-100;
+        }
+        &.adding.old {
+        }
+        &.deleting.old {
+          @apply bg-red-100;
+        }
+        &.deleting.new {
+          @apply text-gray-300;
+        }
+        td {
+          @apply border-b border-gray-300;
+        }
+        &:last-child {
+          td {
+            @apply border-b-0;
+          }
+        }
+      }
+    }
+  }
 </style>

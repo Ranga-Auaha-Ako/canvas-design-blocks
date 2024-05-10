@@ -1203,6 +1203,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5":
+  version: 5.3.14
+  resolution: "@types/papaparse@npm:5.3.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: feb4d215903b67442feaa9836a6a5771e78dc6a9da24781e399c6f891622fa82245cd783ab2613c5be43e4a2d6a94da52325538e4485af258166864576ecd0d8
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -1805,6 +1814,7 @@ __metadata:
     "@types/js-cookie": "npm:^3"
     "@types/jsdom": "npm:^21.1.6"
     "@types/node": "npm:^20.11.10"
+    "@types/papaparse": "npm:^5"
     "@types/sortablejs": "npm:^1.15.7"
     "@types/svg2ttf": "npm:^5.0.3"
     "@types/svgicons2svgfont": "npm:^10.0.5"
@@ -1818,8 +1828,6 @@ __metadata:
     cli-progress: "npm:^3.12.0"
     colord: "npm:^2.9.3"
     compare-versions: "npm:^6.1.0"
-    csv-parse: "npm:^5.5.5"
-    csv-stringify: "npm:^6.4.6"
     dotenv: "npm:^16.4.1"
     escape-string-regexp: "npm:^5.0.0"
     fast-glob: "npm:^3.3.2"
@@ -1833,6 +1841,7 @@ __metadata:
     magic-string: "npm:^0.30.5"
     nanoid: "npm:5.0.4"
     p-limit: "npm:^5.0.0"
+    papaparse: "npm:^5.4.1"
     perfect-debounce: "npm:^1.0.0"
     postcss: "npm:8.4.33"
     postcss-editor-styles: "npm:^0.3.0"
@@ -2263,20 +2272,6 @@ __metadata:
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
-  languageName: node
-  linkType: hard
-
-"csv-parse@npm:^5.5.5":
-  version: 5.5.5
-  resolution: "csv-parse@npm:5.5.5"
-  checksum: 717d8e66386cbeed9baea93f231efd3aff967a9b70c27f0c8bb19fa5a723d01b2d426b6728e8f1e5e26731ec4371a5f513e1a524344411735fc8d3848770409e
-  languageName: node
-  linkType: hard
-
-"csv-stringify@npm:^6.4.6":
-  version: 6.4.6
-  resolution: "csv-stringify@npm:6.4.6"
-  checksum: df23b1ff125a6b8634a5b1878b6255e6a666391c4e904b0105e5f23a0bfe1b1abe27cf6c7d8ea923557226b25d93b2b4ae1202fa6b0c17d3bcb0397e9078ff83
   languageName: node
   linkType: hard
 
@@ -4450,6 +4445,13 @@ __metadata:
   version: 1.0.11
   resolution: "pako@npm:1.0.11"
   checksum: 86dd99d8b34c3930345b8bbeb5e1cd8a05f608eeb40967b293f72fe469d0e9c88b783a8777e4cc7dc7c91ce54c5e93d88ff4b4f060e6ff18408fd21030d9ffbe
+  languageName: node
+  linkType: hard
+
+"papaparse@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "papaparse@npm:5.4.1"
+  checksum: 201f37c4813453fed5bfb4c01816696b099d2db9ff1e8fb610acc4771fdde91d2a22b6094721edb0fedb21ca3c46f04263f68be4beb3e35b8c72278f0cedc7b7
   languageName: node
   linkType: hard
 
