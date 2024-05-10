@@ -131,6 +131,7 @@
     @apply absolute z-30 top-0 left-0;
     @apply text-sm bg-black text-white px-2 py-1 shadow rounded-sm;
     transition-property: opacity, visibility;
+    width: 65ch;
     max-width: calc(100% - 3rem);
     &.open {
       @apply visible opacity-100 duration-500;
