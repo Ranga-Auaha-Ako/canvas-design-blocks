@@ -69,6 +69,7 @@
   }
 
   $: mergePreview = previewMerge(mergeType);
+  $: allNew = !newTerms.some((t) => termIn(t, originalTerms));
 </script>
 
 <Modal title="Import CSV" show={true} on:close showSave={false} size="large">
@@ -82,25 +83,38 @@
 
       <!-- Radio select for choices -->
       <div class="flex flex-col">
-        <label>
-          <input
-            type="radio"
-            bind:group={mergeType}
-            name="merge"
-            value="keep"
-            checked
-          />
-          Add new terms to glossary without changing existing
-        </label>
-        <label>
-          <input
-            type="radio"
-            bind:group={mergeType}
-            name="merge"
-            value="replace"
-          />
-          Add new terms and update existing terms
-        </label>
+        {#if allNew}
+          <label>
+            <input
+              type="radio"
+              bind:group={mergeType}
+              name="merge"
+              value="keep"
+              checked
+            />
+            Add new terms to glossary
+          </label>
+        {:else}
+          <label>
+            <input
+              type="radio"
+              bind:group={mergeType}
+              name="merge"
+              value="keep"
+              checked
+            />
+            Add new terms to glossary without changing existing
+          </label>
+          <label>
+            <input
+              type="radio"
+              bind:group={mergeType}
+              name="merge"
+              value="replace"
+            />
+            Add new terms and update existing terms
+          </label>
+        {/if}
         <label>
           <input
             type="radio"
@@ -112,7 +126,7 @@
         </label>
       </div>
       <button
-        class="btn btn-primary"
+        class="btn btn-primary mt-4"
         on:click={() => {
           dispatch(
             "merged",
