@@ -10,6 +10,7 @@
   } from "./glossaryClientManager";
   import Modal from "$lib/util/components/modalDialog/modal.svelte";
   import GlossaryEditor from "./glossaryEditor.svelte";
+  import Portal from "$lib/portal/portal.svelte";
 
   let openModal: () => void;
   let closeModal: () => void;
@@ -23,26 +24,28 @@
 </script>
 
 {#if CAN_EDIT}
-  <Modal
-    showSave={false}
-    showCancel={false}
-    showClose={true}
-    bind:open={openModal}
-    bind:close={closeModal}
-  >
-    {#if loadEditor}
-      {#await glossaryClientManager.loadData() then}
-        <GlossaryEditor
-          glossaryData={{
-            terms: glossaryClientManager.terms,
-            institutionDefaults: glossaryClientManager.institutionDefaults,
-          }}
-          manager={glossaryClientManager}
-          frameless={true}
-        />
-      {/await}
-    {/if}
-  </Modal>
+  <Portal>
+    <Modal
+      showSave={false}
+      showCancel={false}
+      showClose={true}
+      bind:open={openModal}
+      bind:close={closeModal}
+    >
+      {#if loadEditor}
+        {#await glossaryClientManager.loadData() then}
+          <GlossaryEditor
+            glossaryData={{
+              terms: glossaryClientManager.terms,
+              institutionDefaults: glossaryClientManager.institutionDefaults,
+            }}
+            manager={glossaryClientManager}
+            frameless={true}
+          />
+        {/await}
+      {/if}
+    </Modal>
+  </Portal>
   <ElementPanel
     title="Edit Glossary"
     on:add={async () => {

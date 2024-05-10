@@ -303,7 +303,8 @@
       @apply w-full border border-gray-300 rounded p-2;
     }
     .cardPanel {
-      @apply flex flex-wrap gap-4 w-screen max-w-3xl;
+      @apply flex flex-wrap gap-4 max-w-3xl;
+      width: 95vw;
       .ImageCard--rowSettings {
         h2 {
           @apply text-lg leading-none m-0;
