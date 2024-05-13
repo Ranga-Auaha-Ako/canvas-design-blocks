@@ -15,7 +15,7 @@ let accountID =
     : Promise.resolve(null);
 if (!accountID && courseID) {
   // Use API to get account ID
-  accountID = fetch(`/api/v1/courses/${courseID}/account`)
+  accountID = fetch(`/api/v1/courses/${courseID}`)
     .then((response) => response.json())
     .then((data) => data.account_id);
 }
