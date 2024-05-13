@@ -122,15 +122,12 @@
         content - in pages and discussions. Students can click on the term to
         see the definition.
       </p>
-      <p>
-        You can also enable institution-provided terms. These terms are provided
-        by your institution, and can be added to your course glossary. You can
-        enable or disable these terms at any time.
-      </p>
       {#if instDefaults.length > 0}
         <p>
-          You have {instDefaults.length} institution-provided terms available. You
-          can enable or disable these terms at any time.
+          You can also enable institution-provided terms. These terms are
+          provided by your institution, and can be added to your course
+          glossary. You can enable or disable these terms at any time. You have {instDefaults.length}
+          terms available.
           <label class="block">
             <input
               type="checkbox"
