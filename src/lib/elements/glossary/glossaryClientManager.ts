@@ -160,7 +160,14 @@ export class GlossaryClientManager {
     if (!this.hasTerms) return new RegExp("$^", "i");
     return new RegExp(
       "\\b(" +
-        this.allTerms.map((t) => escapeStringRegexp(t.term.trim())).join("|") +
+        this.allTerms
+          .sort((a, b) => {
+            // Sort from longest to shortest
+            // This will prevent shorter terms from being matched first
+            return b.term.length - a.term.length;
+          })
+          .map((t) => escapeStringRegexp(t.term.trim()))
+          .join("|") +
         ")\\b",
       "i"
     );
