@@ -72,7 +72,20 @@
   $: allNew = !newTerms.some((t) => termIn(t, originalTerms));
 </script>
 
-<Modal title="Import CSV" show={true} on:close showSave={false} size="large">
+<Modal
+  title="Import CSV"
+  show={true}
+  on:close
+  showClose={false}
+  showSave={"Merge"}
+  size="large"
+  on:save={() => {
+    dispatch(
+      "merged",
+      mergeTerms().filter((t) => t.term.trim())
+    );
+  }}
+>
   <div class="grid grid-cols-3 gap-4 p-4">
     <div class="col-span-1">
       <!-- UI for choosing whether to merge/overwrite new terms -->
@@ -125,15 +138,6 @@
           Delete glossary and replace with new terms
         </label>
       </div>
-      <button
-        class="btn btn-primary mt-4"
-        on:click={() => {
-          dispatch(
-            "merged",
-            mergeTerms().filter((t) => t.term.trim())
-          );
-        }}>Merge</button
-      >
     </div>
     <div class="col-span-2">
       <!-- Preview new terms -->

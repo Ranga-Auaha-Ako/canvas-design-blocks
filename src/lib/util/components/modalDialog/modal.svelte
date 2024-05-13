@@ -15,8 +15,8 @@
     dialog.close();
   });
   export let show: boolean = false;
-  export let showSave: boolean = true;
-  export let showCancel: boolean = true;
+  export let showSave: boolean | string = true;
+  export let showCancel: boolean | string = true;
   export let showClose: boolean = false;
   export let size: "small" | "large" = "small";
 
@@ -77,7 +77,8 @@
               on:click={() => {
                 dispatch("save");
               }}
-              class="Button Button--success save">Save</button
+              class="Button Button--success save"
+              >{showSave === true ? "Save" : showSave}</button
             >
           {/if}
           {#if showCancel}
@@ -86,7 +87,8 @@
                 dispatch("close");
                 dialog.close();
               }}
-              class="Button cancel">Cancel</button
+              class="Button cancel"
+              >{showCancel === true ? "Cancel" : showCancel}</button
             >
           {/if}
         </slot>
