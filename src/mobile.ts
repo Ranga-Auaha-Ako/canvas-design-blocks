@@ -18,9 +18,11 @@ export async function loadApp() {
     });
   }
   // Load any client-side elements
-  clientManagers.forEach((manager) => {
-    manager.renderClientComponent();
-  });
+  clientManagers.then((c) =>
+    c.forEach((manager) => {
+      manager.renderClientComponent();
+    })
+  );
 }
 
 // Load the app

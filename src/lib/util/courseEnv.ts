@@ -9,6 +9,18 @@ if (!courseID) {
   }
 }
 
+let accountID =
+  window.ENV && window.ENV.ACCOUNT_ID
+    ? Promise.resolve(window.ENV.ACCOUNT_ID)
+    : Promise.resolve(null);
+if (!accountID && courseID) {
+  // Use API to get account ID
+  accountID = fetch(`/api/v1/courses/${courseID}/account`)
+    .then((response) => response.json())
+    .then((data) => data.account_id);
+}
+export { accountID as accountIDPromise };
+
 export const courseEnv = {
   ...window.ENV,
   COURSE_ID: courseID,

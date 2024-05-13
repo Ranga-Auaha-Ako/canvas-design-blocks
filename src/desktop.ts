@@ -88,12 +88,12 @@ export async function loadApp(
       cdb_version: version,
     });
   }
-  if (loadClientSide) {
-    // Load any client-side elements
-    clientManagers.forEach((manager) => {
+  // Load any client-side elements
+  clientManagers.then((c) =>
+    c.forEach((manager) => {
       manager.renderClientComponent();
-    });
-  }
+    })
+  );
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
     // No editor, so don't load the app
@@ -126,7 +126,7 @@ export async function loadApp(
   const toolbar = await loadToolbar(Toolbar, {
     state,
     managers: state.loadedBlocks,
-    additionalItems: loadClientSide ? toolbarPanels : [],
+    additionalItems: toolbarPanels,
   });
   // Inject tailwind base styles into editor
   const pageStylesEl = editor.getDoc().createElement("style");
