@@ -24,7 +24,11 @@ if (import.meta.env.MODE === "sandpit") {
   import("./sandpit/sandpit");
 }
 
-export { clientManagers };
+const loadClientSide =
+  !import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN ||
+  (
+    JSON.parse(import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN) as string[]
+  ).includes(courseEnv.ACCOUNT_ID);
 
 export interface stateObject {
   showInterface: Writable<boolean>;
@@ -90,10 +94,12 @@ export async function loadApp(
       cdb_version: version,
     });
   }
-  // Load any client-side elements
-  clientManagers.forEach((manager) => {
-    manager.renderClientComponent();
-  });
+  if (loadClientSide) {
+    // Load any client-side elements
+    clientManagers.forEach((manager) => {
+      manager.renderClientComponent();
+    });
+  }
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
     // No editor, so don't load the app
@@ -126,7 +132,7 @@ export async function loadApp(
   const toolbar = await loadToolbar(Toolbar, {
     state,
     managers: state.loadedBlocks,
-    additionalItems: toolbarPanels,
+    additionalItems: loadClientSide ? toolbarPanels : [],
   });
   // Inject tailwind base styles into editor
   const pageStylesEl = editor.getDoc().createElement("style");

@@ -1,4 +1,5 @@
 export interface ENV {
+  ACCOUNT_ID: string;
   ASSET_HOST: string;
   active_brand_config_json_url: string;
   active_brand_config: {

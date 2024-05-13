@@ -62,7 +62,16 @@ export class GlossaryClientManager {
   get allTerms() {
     return (
       this.institutionDefaults
-        ? [...this.terms, ...this.institutionTerms]
+        ? [
+            ...this.institutionTerms,
+            ...this.terms.filter(
+              (t) =>
+                t.term.trim() !== "" &&
+                !this.institutionTerms.some(
+                  (it) => it.term.toLowerCase() === t.term.toLowerCase()
+                )
+            ),
+          ]
         : this.terms
     ).filter((t) => t.term.trim() !== "");
   }
