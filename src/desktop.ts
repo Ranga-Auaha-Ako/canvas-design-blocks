@@ -24,12 +24,6 @@ if (import.meta.env.MODE === "sandpit") {
   import("./sandpit/sandpit");
 }
 
-const loadClientSide =
-  !import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN ||
-  (
-    JSON.parse(import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN) as string[]
-  ).includes(courseEnv.ACCOUNT_ID);
-
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
