@@ -8,7 +8,12 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.13.0] - 2024-05-13
+
+### Added
+
 - New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content.
+- Client-side components can now be added to the page, and can be whitelisted to specific account IDs to phase rollout.
 
 ## [2.12.1] - 2024-05-05
 
