@@ -7,7 +7,7 @@ import gtag from "$lib/util/gtag";
 import "$lib/util/tailwind.postcss";
 import "virtual:blocks-icons.css";
 import "./app.postcss";
-import { clientManagers } from "./shared";
+import { clientManagers, shouldLoadClientSide } from "./shared";
 
 export async function loadApp() {
   // Track users who view content made with DesignBlocks
@@ -17,6 +17,9 @@ export async function loadApp() {
       cdb_version: version,
     });
   }
+  shouldLoadClientSide.then((s) =>
+    document.body.insertAdjacentText("beforeend", `Loading Client Side? ${s}`)
+  );
   // Load any client-side elements
   clientManagers.then((c) =>
     c.forEach((manager) => {
