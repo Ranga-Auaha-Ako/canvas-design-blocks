@@ -15,7 +15,7 @@
   import { getIconData, icons } from "$lib/icons/svelte/iconPicker";
   import IconList from "$lib/icons/svelte/canvas-icons/iconList.svelte";
   import { findNearestBackgroundColor } from "$lib/util/deriveColour";
-  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
+  import ButtonRadio from "$lib/components/buttonRadio.svelte";
 
   export let props: { icon: Icon };
   $: icon = props.icon;

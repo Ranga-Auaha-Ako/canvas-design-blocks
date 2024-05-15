@@ -1,5 +1,5 @@
 import { writable, type Writable } from "svelte/store";
-import { ModalDialog } from "$lib/util/components/modalDialog/modal";
+import { ModalDialog } from "$lib/components/modalDialog/modal";
 import IconPickerModalInner from "./iconPickerModalInner.svelte";
 import type { Editor } from "tinymce";
 import type { SelectableElement } from "$lib/elements/generic/selectableElement";

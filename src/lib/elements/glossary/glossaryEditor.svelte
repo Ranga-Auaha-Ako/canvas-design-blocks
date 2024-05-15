@@ -11,7 +11,7 @@
   import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
   import { fade, slide } from "svelte/transition";
-  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import Modal from "$lib/components/modalDialog/modal.svelte";
   import { tick } from "svelte";
   import { nanoid } from "nanoid";
   import ImportMerger from "./components/importMerger.svelte";

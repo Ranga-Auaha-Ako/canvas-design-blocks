@@ -4,7 +4,7 @@
   import { createEventDispatcher } from "svelte";
   import { customIcon, instIcon } from "./canvas-icons/icons";
   import IconList from "./canvas-icons/iconList.svelte";
-  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import Modal from "$lib/components/modalDialog/modal.svelte";
 
   const dispatch = createEventDispatcher<{
     selectIcon: {

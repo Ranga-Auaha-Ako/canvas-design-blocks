@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import ButtonRadio from "../../buttonRadio.svelte";
   import ContentSearch from "../contentSearch.svelte";
   import Modal from "../../modalDialog/modal.svelte";
   import { persisted } from "svelte-persisted-store";

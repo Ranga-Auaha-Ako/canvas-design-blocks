@@ -8,7 +8,7 @@
     PAGE_CREATED,
     PAGE_URL,
   } from "./glossaryClientManager";
-  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import Modal from "$lib/components/modalDialog/modal.svelte";
   import GlossaryEditor from "./glossaryEditor.svelte";
   import Portal from "$lib/portal/portal.svelte";
 

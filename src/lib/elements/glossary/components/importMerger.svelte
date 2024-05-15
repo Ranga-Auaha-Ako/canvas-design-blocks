@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import Modal from "$lib/components/modalDialog/modal.svelte";
   import { createEventDispatcher } from "svelte";
   import type { termDefinition } from "../glossaryClientManager";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";

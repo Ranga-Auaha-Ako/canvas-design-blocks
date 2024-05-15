@@ -3,10 +3,10 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import { getColour } from "$lib/util/components/colourPicker.svelte";
-  import ColourSettings from "$lib/util/components/colourSettings.svelte";
+  import { getColour } from "$lib/components/colourPicker.svelte";
+  import ColourSettings from "$lib/components/colourSettings.svelte";
   import preventBubble from "$lib/util/preventBubble";
-  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
+  import ButtonRadio from "$lib/components/buttonRadio.svelte";
 
   export let row: Row;
 

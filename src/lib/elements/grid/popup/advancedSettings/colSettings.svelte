@@ -4,11 +4,9 @@
   import { nanoid } from "nanoid";
   import writableDerived from "svelte-writable-derived";
   import toPx from "to-px";
-  import ColourPicker, {
-    getColour,
-  } from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker, { getColour } from "$lib/components/colourPicker.svelte";
   import Column from "$lib/elements/grid/column";
-  import ColourSettings from "$lib/util/components/colourSettings.svelte";
+  import ColourSettings from "$lib/components/colourSettings.svelte";
 
   export let column: Column;
 

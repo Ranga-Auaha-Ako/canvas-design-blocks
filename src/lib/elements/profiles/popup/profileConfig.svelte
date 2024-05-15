@@ -2,10 +2,10 @@
   import type { ProfileData, ProfileGrid } from "../profileGrid";
   import { fade, slide } from "svelte/transition";
   import { debounce } from "perfect-debounce";
-  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import OrderableList from "$lib/components/orderableList.svelte";
   import { nanoid } from "nanoid";
   import blankImg from "../blank-user.png";
-  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker from "$lib/components/colourPicker.svelte";
   import { colord } from "colord";
   import { courseEnv } from "$lib/util/courseEnv";
 
