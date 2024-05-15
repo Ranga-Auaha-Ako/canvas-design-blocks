@@ -8,8 +8,9 @@ import.meta.glob("$lib/elements/*/element.postcss", {
 // Determine whether to load client-side blocks
 export const shouldLoadClientSide = accountIDPromise.then(
   (accountID) =>
-    !!accountID &&
-    (!import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN ||
+    !import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN ||
+    import.meta.env.MODE.includes("mobile") ||
+    (!!accountID &&
       (
         JSON.parse(import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN) as string[]
       ).includes(accountID))
