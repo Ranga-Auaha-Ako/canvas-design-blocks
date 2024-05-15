@@ -17,9 +17,6 @@ export async function loadApp() {
       cdb_version: version,
     });
   }
-  shouldLoadClientSide.then((s) =>
-    document.body.insertAdjacentText("beforeend", `Loading Client Side? ${s}`)
-  );
   // Load any client-side elements
   clientManagers.then((c) =>
     c.forEach((manager) => {
