@@ -296,6 +296,18 @@ export class GlossaryClientManager {
         let debug2 = document.createElement("pre");
         debug2.textContent = page2;
         document.body.appendChild(debug2);
+        const glossaryPage = await fetch(
+          `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
+        )
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+            return null;
+          })
+          .catch(() => null);
+        if (!glossaryPage) return;
+        body = glossaryPage.body;
       }
       // Then, get the glossary terms (if they exist)
       try {
