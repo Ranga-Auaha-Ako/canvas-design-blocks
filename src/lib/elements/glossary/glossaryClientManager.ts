@@ -1,7 +1,7 @@
 import escapeStringRegexp from "escape-string-regexp";
 import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
-import { courseEnv } from "$lib/util/courseEnv";
+import { appMode, courseEnv } from "$lib/util/courseEnv";
 import Cookie from "js-cookie";
 import { parse as PapaParse } from "papaparse";
 
@@ -218,22 +218,61 @@ export class GlossaryClientManager {
     return foundTermNodes;
   }
   private _hasLoaded = false;
+  async htmlSandbox(html: string) {
+    const container = document.createElement("iframe");
+    // Enable sandboxing, disallowing scripts
+    container.sandbox.add("allow-same-origin");
+    // Set the source document
+    container.srcdoc = html;
+    // Hide
+    container.style.display = "none";
+    // Append to body
+    document.body.appendChild(container);
+  }
   async loadData() {
     if (this._hasLoaded) return;
     this._hasLoaded = true;
+    let body = "";
     // First, get the glossary page (if it exists)
-    const glossaryPage = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
-    )
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        return null;
-      })
-      .catch(() => null);
-    if (!glossaryPage) return;
-    const body = glossaryPage.body;
+    if (appMode === "desktop") {
+      const glossaryPage = await fetch(
+        `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
+      )
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          return null;
+        })
+        .catch(() => null);
+      if (!glossaryPage) return;
+      body = glossaryPage.body;
+    } else {
+      // On mobile there is no permission to fetch API data, so we need to get the data from the page itself
+      // 1. Fetch list of pages for this course
+      document.body.insertAdjacentHTML(
+        "beforeend",
+        `<h1>Debug 1: Course Page List ${courseEnv.COURSE_ID}</h1>`
+      );
+      const pages = await fetch(`/courses/${courseEnv.COURSE_ID}/pages`).then(
+        (r) => r.text()
+      );
+      // DEBUG: add to DOM for debugging
+      let debug = document.createElement("pre");
+      debug.textContent = pages;
+      document.body.appendChild(debug);
+      document.body.insertAdjacentHTML(
+        "beforeend",
+        `<h1>Debug 2: Glossary Page ${courseEnv.COURSE_ID}</h1>`
+      );
+      const page2 = await fetch(
+        `/courses/${courseEnv.COURSE_ID}/pages/design-blocks-course-glossary`
+      ).then((r) => r.text());
+      // DEBUG: add to DOM for debugging
+      let debug2 = document.createElement("pre");
+      debug2.textContent = page2;
+      document.body.appendChild(debug2);
+    }
     // Then, get the glossary terms (if they exist)
     try {
       // const state: glossaryState = JSON.parse(body);

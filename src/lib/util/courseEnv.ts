@@ -56,3 +56,9 @@ export async function getCoursePermissions(): Promise<
   }
   return permissions;
 }
+
+export const appMode: "mobile" | "desktop" = import.meta.env.MODE.includes(
+  "mobile"
+)
+  ? "mobile"
+  : "desktop";
