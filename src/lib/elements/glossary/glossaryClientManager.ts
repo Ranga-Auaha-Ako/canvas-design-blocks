@@ -264,6 +264,18 @@ export class GlossaryClientManager {
         // 1. Fetch list of pages for this course
         document.body.insertAdjacentHTML(
           "beforeend",
+          `<h1>Debug 0: API Fetch ${courseEnv.COURSE_ID}</h1>`
+        );
+        const pages0 = await fetch(
+          `/api/v1/courses/${courseEnv.COURSE_ID}/pages`
+        ).then((r) => r.text());
+        // DEBUG: add to DOM for debugging
+        let debug0 = document.createElement("pre");
+        debug0.textContent = pages0;
+        document.body.appendChild(debug0);
+        // 1. Fetch list of pages for this course
+        document.body.insertAdjacentHTML(
+          "beforeend",
           `<h1>Debug 1: Course Page List ${courseEnv.COURSE_ID}</h1>`
         );
         const pages = await fetch(`/courses/${courseEnv.COURSE_ID}/pages`).then(
