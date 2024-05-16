@@ -17,12 +17,22 @@ export async function loadApp() {
       cdb_version: version,
     });
   }
+  document.body.insertAdjacentText(
+    "afterbegin",
+    `Loaded DesignBlocks v${version}`
+  );
   // Load any client-side elements
-  clientManagers.then((c) =>
+  clientManagers.then((c) => {
+    document.body.insertAdjacentText(
+      "afterbegin",
+      `Loaded ${c.length} client-side managers: ${c
+        .map((manager) => manager.constructor.name)
+        .join(", ")}`
+    );
     c.forEach((manager) => {
       manager.renderClientComponent();
-    })
-  );
+    });
+  });
 }
 
 // Load the app
