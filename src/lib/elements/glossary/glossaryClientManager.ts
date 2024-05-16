@@ -11,23 +11,33 @@ const CSRF = Cookie.get("_csrf_token");
 
 const PAGE_NAME = "Design Blocks: Course Glossary";
 const DEFAULT_PAGE_URL = "design-blocks-course-glossary";
-const _page_info = new Promise<{ url: string; created: boolean }>(
+const _page_info = new Promise<{ url?: string; created?: boolean }>(
   async (resolve, reject) => {
-    if (!courseEnv.COURSE_ID) return reject("No course ID found");
-    const pages = (await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages?search_term=${PAGE_NAME}`
-    ).then((response) => response.json())) as { title: string; url: string }[];
-    const page = pages.find((page) => page.url.includes(DEFAULT_PAGE_URL));
-    if (page) {
+    try {
+      if (!courseEnv.COURSE_ID) return reject("No course ID found");
+      const pages = (await fetch(
+        `/api/v1/courses/${courseEnv.COURSE_ID}/pages?search_term=${PAGE_NAME}`
+      ).then((response) => response.json())) as {
+        title: string;
+        url: string;
+      }[];
+      const page = pages.find((page) => page.url.includes(DEFAULT_PAGE_URL));
+      if (page) {
+        resolve({
+          created: true,
+          url: page.url,
+        });
+      } else {
+        // Page doesn't exist
+        resolve({
+          created: false,
+          url: DEFAULT_PAGE_URL,
+        });
+      }
+    } catch (error) {
       resolve({
-        created: true,
-        url: page.url,
-      });
-    } else {
-      // Page doesn't exist
-      resolve({
-        created: false,
-        url: DEFAULT_PAGE_URL,
+        created: undefined,
+        url: undefined,
       });
     }
   }
@@ -302,7 +312,10 @@ export class GlossaryClientManager {
     }
     document.body.insertAdjacentText("afterbegin", "Page is loaded...");
     // If we're on the glossary page, render the viewer or editor
-    if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
+    if (
+      courseEnv?.WIKI_PAGE?.url &&
+      courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)
+    ) {
       const contents = courseEnv.WIKI_PAGE.body;
       let parsed: glossaryState = {
         terms: [],
