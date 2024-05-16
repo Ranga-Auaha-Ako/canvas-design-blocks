@@ -294,11 +294,13 @@ export class GlossaryClientManager {
 
   public onEditorPage = false;
   async renderClientComponent(force: boolean = false) {
+    document.body.insertAdjacentText("afterbegin", "Rendering Glossary...");
     if (!force && document.readyState !== "complete") {
       // Come back when the page is fully loaded
       window.addEventListener("load", () => this.renderClientComponent(true));
       return;
     }
+    document.body.insertAdjacentText("afterbegin", "Page is loaded...");
     // If we're on the glossary page, render the viewer or editor
     if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
       const contents = courseEnv.WIKI_PAGE.body;
@@ -340,11 +342,14 @@ export class GlossaryClientManager {
       return;
     }
     const glossaryEls = document.querySelectorAll<HTMLDivElement>(
-      import.meta.env.MODE.includes("mobile")
-        ? "#content"
-        : "div#wiki_page_show .user_content"
+      appMode === "mobile" ? "#content" : "div#wiki_page_show .user_content"
+    );
+    document.body.insertAdjacentText(
+      "afterbegin",
+      `Found ${glossaryEls.length} glossary elements...`
     );
     if (glossaryEls.length === 0) return;
+    document.body.insertAdjacentText("afterbegin", "Loading data...");
     await this.loadData();
     // If there are no terms, return
     if (!this.hasTerms) return;
