@@ -15,10 +15,10 @@
 
 {#if foundTerms.length > 0}
   <div class="cgb-component">
-    <div class="mt-4 border-t border-gray-100 px-3 py-3">
+    <div class="definitionList" class:defList--expanded={expanded}>
       <h2 class="leading-none text-xl">
         <button
-          class=" text-xl w-full"
+          class="text-lg text-left w-full transition focus:outline-none focus-visible:ring-2 ring-primary rounded px-3 py-3"
           {id}
           aria-expanded={expanded}
           aria-controls="{id}-details"
@@ -26,16 +26,26 @@
             expanded = !expanded;
           }}
         >
+          <span class="icon pr-2">
+            <span class="cdb--icon transition" class:rotate-180={expanded}>
+              Canvas.arrow-open-up
+            </span>
+          </span>
           {#if expanded}
             Hide
           {:else}
             Show
           {/if}
-          Glossary
+          Page Glossary
         </button>
       </h2>
 
-      <div role="region" aria-labelledby={id} id="{id}-details">
+      <div
+        class="defList--details"
+        role="region"
+        aria-labelledby={id}
+        id="{id}-details"
+      >
         {#if expanded}
           <div transition:slide>
             {#if foundTerms.length > 0}
@@ -56,3 +66,18 @@
     </div>
   </div>
 {/if}
+
+<style lang="postcss">
+  .definitionList {
+    @apply mt-4 border-t border-gray-100;
+    &.defList--expanded {
+      @apply transition border border-gray-200 rounded-md mb-4;
+      & h2 {
+        @apply border-b border-gray-100;
+      }
+    }
+    & .defList--details {
+      @apply overflow-hidden px-3;
+    }
+  }
+</style>
