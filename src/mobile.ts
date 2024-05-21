@@ -20,7 +20,11 @@ export async function loadApp() {
   // Load any client-side elements
   clientManagers.then((c) =>
     c.forEach((manager) => {
-      manager.renderClientComponent();
+      try {
+        manager.renderClientComponent();
+      } catch (error) {
+        console.error("Failed to load tool:", manager, error);
+      }
     })
   );
 }
