@@ -18,7 +18,7 @@
     <div class="definitionList" class:defList--expanded={expanded}>
       <h2 class="leading-none text-xl">
         <button
-          class="text-lg text-left w-full transition focus:outline-none focus-visible:ring-2 ring-primary rounded px-3 py-3"
+          class="text-lg text-left w-full transition focus:outline-none focus-visible:ring-2 ring-primary rounded px-3 py-2"
           {id}
           aria-expanded={expanded}
           aria-controls="{id}-details"
