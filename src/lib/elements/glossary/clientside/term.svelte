@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Portal from "$lib/portal/portal.svelte";
   import {
     arrow,
     autoUpdate,
@@ -29,6 +30,7 @@
         offset(10),
         shift({
           padding: 10,
+          altBoundary: true,
         }),
         inline(),
         arrow({
@@ -98,19 +100,22 @@
     aria-labelledby={open ? `${id}-label` : undefined}
     on:click={() => forceToggle()}
     bind:this={termEl}>{term}</button
-  ><!-- svelte-ignore a11y-click-events-have-key-events --><span
-    bind:this={defEl}
-    class:open
-    class="dfn"
-    style:transform
-    id={`${id}-label`}
-    on:click|stopPropagation
-    ><span
-      class="dfn-arrow"
-      style:top={arrowY != null ? `${arrowY}px` : undefined}
-      style:left={arrowX != null ? `${arrowX}px` : undefined}
-      bind:this={arrowEl}
-    ></span><span class="dfn-text">{@html definition}</span></span
+  >
+  <Portal>
+    <!-- svelte-ignore a11y-click-events-have-key-events --><span
+      bind:this={defEl}
+      class:open
+      class="dfn"
+      style:transform
+      id={`${id}-label`}
+      on:click|stopPropagation
+      ><span
+        class="dfn-arrow"
+        style:top={arrowY != null ? `${arrowY}px` : undefined}
+        style:left={arrowX != null ? `${arrowX}px` : undefined}
+        bind:this={arrowEl}
+      ></span><span class="dfn-text">{@html definition}</span></span
+    ></Portal
   ></span
 >
 
