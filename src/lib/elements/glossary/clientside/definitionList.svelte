@@ -111,6 +111,11 @@
       }
       &.defList--expanded {
         @apply mb-0 rounded-b-none border-none;
+        box-shadow:
+          0 10px 2rem 0 #00000036,
+          0 5px 8px 0 #0000005c;
+        background: #f4f4f4e3;
+        backdrop-filter: saturate(1.3) contrast(1.3) blur(1.3rem);
       }
       dt {
         @apply text-lg font-bold;
