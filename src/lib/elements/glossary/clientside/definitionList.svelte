@@ -17,6 +17,9 @@
 
 {#if foundTerms.length > 0}
   <div class="cgb-component">
+    {#if isMobile}
+      <div class="mobileSpacer">&nbsp;</div>
+    {/if}
     <div
       class="definitionList"
       class:defList--mobile={isMobile}
@@ -116,5 +119,8 @@
         @apply text-base mx-0;
       }
     }
+  }
+  .mobileSpacer {
+    @apply h-12;
   }
 </style>
