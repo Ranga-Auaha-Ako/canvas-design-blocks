@@ -247,6 +247,10 @@ export class GlossaryClientManager {
 
   public onEditorPage = false;
   async renderClientComponent(force: boolean = false) {
+    if (import.meta.env.MODE.includes("mobile")) {
+      // For now, the mobile app is not suported.
+      return;
+    }
     if (!force && document.readyState !== "complete") {
       // Come back when the page is fully loaded
       window.addEventListener("load", () => this.renderClientComponent(true));
