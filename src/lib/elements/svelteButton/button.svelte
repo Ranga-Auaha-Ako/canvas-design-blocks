@@ -21,7 +21,7 @@
   class="DesignBlocks--Btn {cdbData.size}"
   class:Button--full={cdbData.fullWidth}
   style:background-color={cdbData.color?.toHex()}
-  style:color={cdbData.textColor?.toHex() || "#fff"}
+  style:color|important={cdbData.textColor?.toHex() || "#fff"}
   href={cdbData.url}
   target={cdbData.target !== "_self" ? cdbData.target : undefined}
 >
