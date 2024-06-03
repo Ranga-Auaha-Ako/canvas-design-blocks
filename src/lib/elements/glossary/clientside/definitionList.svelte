@@ -2,6 +2,7 @@
   import { courseEnv } from "$lib/util/courseEnv";
   import { nanoid } from "nanoid";
   import { slide } from "svelte/transition";
+  import { GLOSSARY_ENABLED } from "../glossaryClientManager";
 
   export let terms: { term: string; definition: string }[] = [];
   export let termNodes: HTMLElement[] = [];
@@ -25,7 +26,7 @@
       class:defList--mobile={isMobile}
       class:defList--expanded={expanded}
     >
-      <h2 class="leading-none m-0 text-xl">
+      <h2 class="defList--header">
         <button
           class="defList--button"
           {id}
@@ -36,7 +37,11 @@
           }}
         >
           <span class="icon pr-2">
-            <span class="cdb--icon transition" class:expanded>
+            <span
+              class="cdb--icon transition"
+              class:expanded
+              aria-hidden="true"
+            >
               Canvas.arrow-open-up
             </span>
           </span>
@@ -47,6 +52,27 @@
           {/if}
           Page Glossary
         </button>
+        <input
+          type="checkbox"
+          bind:checked={$GLOSSARY_ENABLED}
+          id="GLOSSARY_ENABLED"
+        />
+        <label
+          for="GLOSSARY_ENABLED"
+          class="defList--enableCheck"
+          title="Highlight Terms?"
+        >
+          <span class="defList--enableCheck--desc">
+            {$GLOSSARY_ENABLED ? "Hide" : "Show"} Tooltips
+          </span>
+          <span class="cdb--icon" aria-hidden="true">
+            {#if $GLOSSARY_ENABLED}
+              Canvas.eye
+            {:else}
+              Canvas.off
+            {/if}
+          </span>
+        </label>
       </h2>
 
       <div
@@ -85,12 +111,48 @@
         @apply border-b border-gray-100;
       }
     }
-    & .defList--button {
-      @apply text-lg text-left w-full transition ring-primary rounded px-3 py-2;
-      @apply focus:outline-none focus-visible:ring-2;
-      & .icon {
-        & .expanded {
-          @apply -scale-y-100;
+    & .defList--header {
+      @apply leading-none m-0 text-xl w-full flex items-center;
+      & .defList--button {
+        @apply text-lg text-left grow transition ring-primary rounded px-3 py-2;
+        @apply focus:outline-none focus-visible:ring-2;
+        & .icon {
+          & .expanded {
+            @apply -scale-y-100;
+          }
+        }
+      }
+
+      #GLOSSARY_ENABLED {
+        @apply sr-only;
+        &:focus-visible {
+          @apply not-sr-only;
+        }
+      }
+      & .defList--enableCheck {
+        @apply text-gray-500 mx-2 cursor-pointer transition m-0 relative text-sm;
+        line-height: 2rem;
+        .cdb--icon {
+          @apply w-8 h-8 text-center rounded-full bg-black bg-opacity-0;
+          font-size: 1.25rem;
+        }
+        .defList--enableCheck--desc {
+          @apply invisible w-0 h-0 opacity-0 transition-opacity overflow-hidden text-nowrap inline-block align-middle select-none;
+          line-height: 2rem;
+        }
+        &:hover {
+          .cdb--icon {
+            @apply bg-opacity-5;
+          }
+          .defList--enableCheck--desc {
+            @apply visible w-auto h-5 opacity-100 leading-none;
+          }
+        }
+      }
+      #GLOSSARY_ENABLED:focus-visible + .defList--enableCheck {
+        @apply ring-2 ring-primary rounded-sm;
+        .defList--enableCheck--desc {
+          @apply visible w-auto h-5 opacity-100 leading-none;
         }
       }
     }

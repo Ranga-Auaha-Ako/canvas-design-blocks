@@ -9,6 +9,7 @@
     shift,
   } from "@floating-ui/dom";
   import { nanoid } from "nanoid";
+  import { GLOSSARY_ENABLED } from "../glossaryClientManager";
   export let term: string;
   export let definition: string;
   const id = nanoid();
@@ -95,13 +96,15 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<span on:mouseenter={() => showTooltip()} on:mouseleave={() => hideTooltip()}
+<span
+  on:mouseenter={() => $GLOSSARY_ENABLED && showTooltip()}
+  on:mouseleave={() => hideTooltip()}
   ><button
+    class:disabledHighlight={!$GLOSSARY_ENABLED}
     aria-labelledby={open ? `${id}-label` : undefined}
-    on:click={() => forceToggle()}
+    on:click={() => $GLOSSARY_ENABLED && forceToggle()}
     bind:this={termEl}>{term}</button
-  >
-  <Portal>
+  ><Portal>
     <!-- svelte-ignore a11y-click-events-have-key-events --><span
       bind:this={defEl}
       class:open
@@ -121,7 +124,7 @@
 
 <style lang="postcss">
   button {
-    @apply appearance-none bg-transparent border-0 cursor-help underline decoration-dotted;
+    @apply appearance-none bg-transparent border-0 cursor-help underline decoration-dotted select-text;
     font-style: inherit;
     font-family: inherit;
     font-size: inherit;
@@ -130,6 +133,11 @@
     display: inline;
     font-weight: inherit;
     vertical-align: inherit;
+
+    &.disabledHighlight {
+      @apply no-underline;
+      cursor: unset;
+    }
   }
   .dfn {
     @apply invisible opacity-0 transition-opacity duration-300;

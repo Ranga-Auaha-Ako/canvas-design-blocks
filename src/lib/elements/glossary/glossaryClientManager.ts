@@ -4,6 +4,7 @@ import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
 import Cookie from "js-cookie";
 import { parse as PapaParse } from "papaparse";
+import { persisted } from "svelte-persisted-store";
 
 const CSRF = Cookie.get("_csrf_token");
 
@@ -34,6 +35,8 @@ const _page_info = new Promise<{ url: string; created: boolean }>(
 );
 export const PAGE_CREATED = _page_info.then((info) => info.created);
 export const PAGE_URL = _page_info.then((info) => info.url);
+
+export const GLOSSARY_ENABLED = persisted("cdb-glossary-enabled", true);
 
 export type termDefinition = {
   term: string;
