@@ -103,7 +103,11 @@
   ></ImportMerger>
 {/if}
 <div class="cgb-component">
-  <div class:editor-frame={!frameless} class="transition" in:slide|global>
+  <div
+    class:editor-frame={!frameless}
+    class="glossaryEditor transition"
+    in:slide|global
+  >
     <div>
       <h1 class="text-3xl block">Glossary Editor</h1>
       <p>
@@ -433,6 +437,9 @@
 </div>
 
 <style lang="postcss">
+  .glossaryEditor {
+    @apply -mt-8;
+  }
   .editor-frame {
     @apply rounded-lg bg-white border-primary border-2 p-4;
     @apply max-w-screen-md;
