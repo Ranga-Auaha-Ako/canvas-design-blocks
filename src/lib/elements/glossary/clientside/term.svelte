@@ -101,8 +101,10 @@
   on:mouseleave={() => hideTooltip()}
   ><button
     class:disabledHighlight={!$GLOSSARY_ENABLED}
-    aria-labelledby={open ? `${id}-label` : undefined}
+    aria-describedby={open ? `${id}-label` : undefined}
     on:click={() => $GLOSSARY_ENABLED && forceToggle()}
+    role={$GLOSSARY_ENABLED ? "button" : "presentation"}
+    disabled={!$GLOSSARY_ENABLED}
     bind:this={termEl}>{term}</button
   ><Portal>
     <!-- svelte-ignore a11y-click-events-have-key-events --><span
@@ -133,6 +135,9 @@
     display: inline;
     font-weight: inherit;
     vertical-align: inherit;
+    &:disabled {
+      @apply text-inherit;
+    }
 
     &.disabledHighlight {
       @apply no-underline;
