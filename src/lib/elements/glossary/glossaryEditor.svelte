@@ -115,7 +115,9 @@
         {#await PAGE_URL then url}
           {#await PAGE_CREATED then isCreated}
             {#if (isCreated || hasCreated) && courseEnv.COURSE_ID}
-              <a href={`/courses/${courseEnv.COURSE_ID}/pages/${url}`}
+              <a
+                target="_blank"
+                href={`/courses/${courseEnv.COURSE_ID}/pages/${url}`}
                 >your course glossary</a
               >.
             {:else}
