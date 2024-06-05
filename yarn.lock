@@ -1840,6 +1840,7 @@ __metadata:
     lightningcss: "npm:^1.22.1"
     magic-string: "npm:^0.30.5"
     nanoid: "npm:5.0.4"
+    p-lazy: "npm:^4.0.0"
     p-limit: "npm:^5.0.0"
     papaparse: "npm:^5.4.1"
     perfect-debounce: "npm:^1.0.0"
@@ -4393,6 +4394,13 @@ __metadata:
     is-docker: "npm:^2.1.1"
     is-wsl: "npm:^2.2.0"
   checksum: bb6b3a58401dacdb0aad14360626faf3fb7fba4b77816b373495988b724fb48941cad80c1b65d62bb31a17609b2cd91c41a181602caea597ca80dfbcc27e84c9
+  languageName: node
+  linkType: hard
+
+"p-lazy@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "p-lazy@npm:4.0.0"
+  checksum: 534b16971836bc8f5a1f5576436916aae0dd23cd53a48ebc2a486eb06c2001a05f9c4a2aed8b2d8c6e59cf4669c18bd793ff15ddee295d9679e67d3bf28f64eb
   languageName: node
   linkType: hard
 

@@ -38,12 +38,6 @@ export const PAGE_URL = _page_info.then((info) => info.url);
 
 export const GLOSSARY_ENABLED = persisted("cdb-glossary-enabled", true);
 
-export type termDefinition = {
-  term: string;
-  definition: string;
-  image?: string;
-};
-
 export type glossaryState = {
   terms: termDefinition[];
   institutionDefaults: boolean;
@@ -53,15 +47,6 @@ export class GlossaryClientManager {
   public terms: termDefinition[] = [];
   public institutionDefaults: boolean = false;
   public termNodes: HTMLSpanElement[] = [];
-  get institutionTerms() {
-    const institutionDefaults = import.meta.env
-      .CANVAS_BLOCKS_GLOSSARY_DEFINITIONS;
-    if (institutionDefaults) {
-      const defaults = JSON.parse(institutionDefaults) as termDefinition[];
-      return defaults;
-    }
-    return [];
-  }
   get allTerms() {
     return (
       this.institutionDefaults
@@ -180,6 +165,16 @@ export class GlossaryClientManager {
   }
   private termWalker(root: HTMLElement) {
     const regex = this.getTermRegex();
+    const InteractiveTags = new Set([
+      "A",
+      "BUTTON",
+      "TEXTAREA",
+      "INPUT",
+      "IFRAME",
+      "DETAILS",
+      "DIALOG",
+      "SELECT",
+    ]);
     return document.createTreeWalker(
       root, // The root node of the searched DOM sub-tree.
       NodeFilter.SHOW_ALL, // Look for text nodes only.
@@ -187,7 +182,7 @@ export class GlossaryClientManager {
         acceptNode(node) {
           // The filter method of interface NodeFilter
           if (node instanceof HTMLElement) {
-            if (node.classList.contains("page-title"))
+            if (InteractiveTags.has(node.tagName))
               return NodeFilter.FILTER_REJECT;
             if (node.dataset.cdbId) return NodeFilter.FILTER_REJECT;
           }

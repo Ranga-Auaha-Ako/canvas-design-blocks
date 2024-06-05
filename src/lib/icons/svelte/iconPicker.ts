@@ -1,15 +1,3 @@
-import { writable, type Writable } from "svelte/store";
-import { ModalDialog } from "$lib/components/modalDialog/modal";
-import IconPickerModalInner from "./iconPickerModalInner.svelte";
-import type { Editor } from "tinymce";
-import type { SelectableElement } from "$lib/elements/generic/selectableElement";
-import type {
-  customIcon,
-  customIconsMeta,
-  iconData,
-  instCategory,
-  instIcon,
-} from "./canvas-icons/icons";
 import { IconType } from "./canvas-icons/icons";
 import { colord } from "colord";
 

@@ -87,6 +87,7 @@
     "lightningcss": "^1.22.1",
     "magic-string": "^0.30.5",
     "nanoid": "5.0.4",
+    "p-lazy": "^4.0.0",
     "p-limit": "^5.0.0",
     "perfect-debounce": "^1.0.0",
     "postcss": "8.4.33",
