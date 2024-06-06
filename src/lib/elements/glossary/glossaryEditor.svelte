@@ -1,20 +1,13 @@
 <script lang="ts">
-  import {
-    GlossaryClientManager,
-    PAGE_CREATED,
-    PAGE_URL,
-    glossaryState,
-    termDefinition,
-  } from "./glossaryClientManager";
   import { unparse } from "papaparse";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
-  import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
   import { fade, slide } from "svelte/transition";
   import Modal from "$lib/components/modalDialog/modal.svelte";
   import { tick } from "svelte";
   import { nanoid } from "nanoid";
   import ImportMerger from "./components/importMerger.svelte";
+  import { Glossary, termDefinition } from "./pageParser";
 
   type termDefinitionID = termDefinition & { id: string };
   type glossaryStateID = {
@@ -22,8 +15,7 @@
     institutionDefaults: boolean;
   };
 
-  export let glossaryData: glossaryState;
-  export let manager: GlossaryClientManager;
+  export let glossaryData: Glossary;
   export let frameless: boolean = false;
   let parsedData: glossaryStateID = {
     ...glossaryData,
@@ -38,7 +30,7 @@
       { term: "", definition: "", id: nanoid() },
     ];
   }
-  const instDefaults = manager.institutionTerms;
+  const instDefaults = glossaryData.institutionTerms;
   let newTerm: termDefinitionID = { term: "", definition: "", id: nanoid() };
   let saving = false;
   let saveNotice = false;
@@ -112,21 +104,17 @@
       <h1 class="text-3xl block">Glossary Editor</h1>
       <p>
         Define terms and definitions for
-        {#await PAGE_URL then url}
-          {#await PAGE_CREATED then isCreated}
-            {#if (isCreated || hasCreated) && courseEnv.COURSE_ID}
-              <a
-                target="_blank"
-                href={`/courses/${courseEnv.COURSE_ID}/pages/${url}`}
-                >your course glossary</a
-              >.
-            {:else}
-              course glossary.
-            {/if}
-          {/await}
-        {/await}These will appear wherever the term is used in the course
-        content - in pages and discussions. Students can click on the term to
-        see the definition.
+        {#if courseEnv.COURSE_ID}
+          <a
+            target="_blank"
+            href={`/courses/${courseEnv.COURSE_ID}/pages/${glossaryData.state.url}`}
+            >your course glossary</a
+          >.
+        {:else}
+          course glossary.
+        {/if}
+        These will appear wherever the term is used in the course content - in pages
+        and discussions. Students can click on the term to see the definition.
       </p>
       {#if instDefaults.length > 0}
         <p>
@@ -317,7 +305,7 @@
         disabled={saving}
         on:click={async () => {
           try {
-            newTerms = await manager.parseCSV();
+            newTerms = await glossaryData.parseCSV();
           } catch (err) {
             //@ts-ignore
             errorNotice = err.message;
@@ -336,10 +324,10 @@
           disabled={saving}
           on:click={async () => {
             saving = true;
-            manager.terms = parsedData.terms;
-            manager.institutionDefaults = parsedData.institutionDefaults;
+            glossaryData.terms = parsedData.terms;
+            glossaryData.institutionDefaults = parsedData.institutionDefaults;
             try {
-              await manager.save();
+              await glossaryData.save();
             } catch (err) {
               console.error(err);
               //@ts-ignore
@@ -356,21 +344,11 @@
             hasCreated = true;
           }}
         >
-          {#await PAGE_CREATED then isCreated}
-            {#if isCreated || hasCreated}
-              <IconElement
-                icon={{ id: "Inst.Line.check-dark", type: 2 }}
-                colorOverride="#fff"
-              />
-              Save
-            {:else}
-              <IconElement
-                icon={{ id: "Inst.Line.plus", type: 2 }}
-                colorOverride="#fff"
-              />
-              Create
-            {/if}
-          {/await}
+          <IconElement
+            icon={{ id: "Inst.Line.check-dark", type: 2 }}
+            colorOverride="#fff"
+          />
+          Save
         </button>
         <!-- {#await PAGE_URL then url}
           <a

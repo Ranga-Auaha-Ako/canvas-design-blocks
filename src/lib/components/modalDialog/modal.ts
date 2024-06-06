@@ -1,6 +1,6 @@
 import { SelectableElement } from "$lib/elements/generic/selectableElement";
 import { nanoid } from "nanoid";
-import type { SvelteComponent, ComponentType } from "svelte";
+import type { ComponentType } from "svelte";
 import type { Editor, WindowManager } from "tinymce";
 
 type DialogSpec = Parameters<WindowManager["open"]>[0];

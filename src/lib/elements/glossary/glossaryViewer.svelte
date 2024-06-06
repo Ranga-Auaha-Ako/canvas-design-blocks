@@ -1,13 +1,9 @@
 <script lang="ts">
   import { courseEnv } from "$lib/util/courseEnv";
-  import type {
-    GlossaryClientManager,
-    glossaryState,
-  } from "./glossaryClientManager";
+  import { Glossary } from "./pageParser";
 
   // This loads on the client side on the glossary page
-  export let manager: GlossaryClientManager;
-  export let glossaryData: glossaryState;
+  export let glossaryData: Glossary;
 </script>
 
 <div class="cgb-component">
@@ -36,7 +32,7 @@
   {#if glossaryData.institutionDefaults}
     <h2 class="">Institution-Provided Terms</h2>
     <dl class="mx-4">
-      {#each manager.institutionTerms.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
+      {#each glossaryData.institutionTerms.sort( (a, b) => a.term.localeCompare(b.term) ) as { term, definition }, i}
         <dt>
           {term}
         </dt>
