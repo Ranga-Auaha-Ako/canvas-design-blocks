@@ -47,7 +47,7 @@ export type UnResolvedGlossaryState =
     }
   | {
       state: GlossaryStates.GLOSSARY_UNLINKED;
-      page_matches: string[];
+      page_matches: { url: string; title: string }[];
       module_id?: number;
     }
   | {
@@ -123,7 +123,6 @@ export async function getGlossaryState(): Promise<GlossaryState> {
           ): item is Extract<(typeof exactMatch.items)[0], { type: "Page" }> =>
             item.type === "Page" && item.title.includes(Glossary.magicToken)
         );
-        debugger;
         if (exactMatch.published === false) {
           return {
             state: GlossaryStates.GLOSSARY_HIDDEN_MODULE as const,
@@ -186,7 +185,10 @@ export async function getGlossaryState(): Promise<GlossaryState> {
       if (possibleMatches.length > 0) {
         return {
           state: GlossaryStates.GLOSSARY_UNLINKED as const,
-          page_matches: possibleMatches.map((page) => page.url),
+          page_matches: possibleMatches.map(({ url, title }) => ({
+            url,
+            title,
+          })),
           module_id: modules?.module_id,
         };
       }

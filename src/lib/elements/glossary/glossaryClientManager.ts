@@ -189,9 +189,9 @@ export class GlossaryClientManager {
     const state = await glossaryState;
     if (state.state !== GlossaryStates.GLOSSARY_LINKED) return;
     const richState = await getRichGlossary(state);
-    const glossary = Glossary.fromHTML(richState);
+    this.glossary = Glossary.fromHTML(richState);
     // If there are no terms, return
-    if (!glossary.hasTerms) return;
+    if (!this.glossary.hasTerms) return;
     // Add glossary tags to the page
     glossaryEls.forEach((el) => {
       const iterator = this.termWalker(el);
@@ -206,18 +206,16 @@ export class GlossaryClientManager {
       new DefinitionList({
         target: el,
         props: {
-          terms: glossary.allTerms,
+          terms: this.glossary!.allTerms,
           termNodes: foundTermNodes,
         },
       });
     });
     // Render the glossary component
-    console.log("Rendering Glossary");
-    console.log(this.termNodes);
     this.termNodes.forEach((termNode) => {
       const term = termNode.dataset.cdbTerm;
       if (!term) return;
-      const definition = glossary.allTerms.find(
+      const definition = this.glossary!.allTerms.find(
         (t) => t.term.toLowerCase() === term.toLowerCase()
       )?.definition;
       if (!definition) return;

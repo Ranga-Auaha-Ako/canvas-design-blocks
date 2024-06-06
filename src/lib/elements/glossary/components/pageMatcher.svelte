@@ -29,7 +29,7 @@
     glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_PAGE
       ? glossaryState.page_url
       : glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
-        ? glossaryState.page_matches[0]
+        ? glossaryState.page_matches[0]?.url
         : undefined;
   let foundPages =
     glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
@@ -40,6 +40,7 @@
   let moduleTitle = Glossary.defaultModuleTitle;
   let loading = false;
   let error = "";
+  let close: () => void;
 </script>
 
 <Modal
@@ -47,13 +48,17 @@
   show={true}
   showSave="Create"
   showClose={true}
-  on:save={() =>
-    Glossary.linkExisting({
+  bind:close
+  on:save={async () => {
+    const res = await Glossary.linkExisting({
       existingModuleId: moduleID,
       existingPageUrl: pageURL,
       pageTitle: pageURL ? undefined : pageTitle,
       moduleTitle: moduleID ? undefined : moduleTitle,
-    })}
+    });
+    close();
+    dispatch("saved", res);
+  }}
   on:close
 >
   <pre>
@@ -80,8 +85,14 @@
   {:else if pageURL && foundPages}
     <select bind:value={pageURL}>
       {#each foundPages as url}
-        <option value={url}>{url}</option>
+        <option value={url.url}>
+          {url.title}
+          {url.title.includes(Glossary.magicToken)
+            ? "(Design Blocks Glossary Page)"
+            : "(Similar Name)"}
+        </option>
       {/each}
+      <option value={Glossary.defaultURL}>Create New Page</option>
     </select>
   {:else}
     <p>Found page: {pageURL}</p>
