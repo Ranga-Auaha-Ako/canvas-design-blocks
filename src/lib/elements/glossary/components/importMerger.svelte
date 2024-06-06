@@ -1,9 +1,9 @@
 <script lang="ts">
   import Modal from "$lib/components/modalDialog/modal.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { termDefinition } from "../glossaryClientManager";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType } from "$lib/icons/svelte/iconPicker";
+  import { termDefinition } from "../pageParser";
 
   export let originalTerms: termDefinition[];
   export let newTerms: termDefinition[];

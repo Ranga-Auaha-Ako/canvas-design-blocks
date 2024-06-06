@@ -1,4 +1,5 @@
 import { courseEnv } from "$lib/util/courseEnv";
+import PageMatcher from "./components/pageMatcher.svelte";
 import type { GlossaryClientManager } from "./glossaryClientManager";
 
 // This file determines where the glossary data is served from, and will potentially flag the user to create a glossary or relink the glossary page if required.
@@ -177,53 +178,76 @@ export type RichGlossaryState = ResolvedGlossaryState & {
   title: string;
 };
 
+class UserExit extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UserExit";
+  }
+}
+
+/**
+ * Retrieves the rich glossary state by fetching page data for the resolved glossary.
+ * @param state - The resolved glossary state.
+ * @returns A promise that resolves to the rich glossary state.
+ */
+export async function getRichGlossary(
+  state: ResolvedGlossaryState
+): Promise<RichGlossaryState> {
+  // Get page data for resolved glossary
+  const pageData = await fetch(
+    `/api/v1/courses/${courseEnv.COURSE_ID}/page/${state.url}`
+  ).then(async (res) => {
+    if (!res.ok)
+      throw new Error(
+        `Failed to fetch page data: Status ${
+          res.status
+        }. Details: ${await res.text()}`
+      );
+    return (await res.json()) as { body: string; title: string };
+  });
+  return {
+    ...state,
+    title: pageData.title,
+    html: pageData.body,
+  };
+}
+
 let _retryCounter = 0;
 /**
  * Active function: Will only ever return a resolved RichGlossaryState. If the glossary is unlinked, the user will be prompted to link the glossary. If the glossary does not exist, the user will be prompted to create the glossary.
  * @returns A promise that resolves to the `ResolvedGlossaryState` type.
  */
-export async function getResolvedGlossary(): Promise<RichGlossaryState> {
+export async function getResolvedGlossary(
+  statePromise: Promise<
+    ResolvedGlossaryState | UnResolvedGlossaryState
+  > = glossaryState
+): Promise<RichGlossaryState> {
   try {
-    const state = await glossaryState;
-    if (state.state === GlossaryStates.GLOSSARY_UNLINKED) {
-      // Prompt the user to link the glossary.
-      throw new Error(
-        `Glossary is unlinked. Please link the glossary to the course modules. Possible matches: ${state.page_matches.join(
-          ", "
-        )}`
-      );
+    let state = await statePromise;
+    // If the state is not resolved, wait for the user to resolve it.
+    // if (((s): s is UnResolvedGlossaryState=>(s.state !== GlossaryStates.GLOSSARY_LINKED))(state)) {
+    if (state.state !== GlossaryStates.GLOSSARY_LINKED) {
+      const newState = await new Promise<ResolvedGlossaryState>((resolve) => {
+        const pageMatcher = new PageMatcher({
+          target: document.body,
+          props: {
+            glossary: state as UnResolvedGlossaryState,
+          },
+        });
+        pageMatcher.$on("saved", ({ detail }) => {
+          glossaryState = Promise.resolve(detail);
+          resolve(detail);
+        });
+        pageMatcher.$on("cancel", () => {
+          throw new UserExit("Glossary page not linked.");
+        });
+      });
+      state = newState;
     }
-    if (
-      state.state === GlossaryStates.GLOSSARY_HIDDEN_MODULE ||
-      state.state === GlossaryStates.GLOSSARY_HIDDEN_PAGE
-    ) {
-      // Prompt the user to unhide the glossary.
-      throw new Error(`Glossary is hidden. Please unhide the glossary page.`);
-    }
-    if (state.state === GlossaryStates.NO_GLOSSARY) {
-      // Prompt the user to create the glossary.
-      throw new Error("No glossary found. Please create a glossary page.");
-    }
-    // Get page data
-    const pageData = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/page/${state.url}`
-    ).then(async (res) => {
-      if (!res.ok)
-        throw new Error(
-          `Failed to fetch page data: Status ${
-            res.status
-          }. Details: ${await res.text()}`
-        );
-      return (await res.json()) as { body: string; title: string };
-    });
-    return {
-      ...state,
-      title: pageData.title,
-      html: pageData.body,
-    };
+    return await getRichGlossary(state);
   } catch (error) {
     // Allow for intermittent failures
-    if (_retryCounter < 3) {
+    if (!(error instanceof UserExit) && _retryCounter < 3) {
       _retryCounter++;
       return await new Promise((resolve) =>
         setTimeout(() => {

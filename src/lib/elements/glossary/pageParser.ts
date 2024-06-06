@@ -129,6 +129,16 @@ export class Glossary {
     return container.outerHTML;
   }
   /**
+   * hasTerms: Whether the glossary has any terms. This is useful for determining whether to show the glossary.
+   * @returns A boolean indicating whether the glossary has any terms.
+   */
+  get hasTerms() {
+    return (
+      this.allTerms.length > 0 &&
+      this.allTerms.some((t) => t.term.trim() !== "")
+    );
+  }
+  /**
    * Parse a CSV file for terms and definitions.
    * @returns A promise that resolves to a termDefinition[] array. This function also updates the internal state of the instance.
    */

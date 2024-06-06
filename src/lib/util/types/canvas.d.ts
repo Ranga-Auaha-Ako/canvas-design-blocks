@@ -51,6 +51,7 @@ export interface ENV {
   WIKI_PAGE?: {
     page_id: string;
     url?: string;
+    title: string;
     body: string;
   };
 }

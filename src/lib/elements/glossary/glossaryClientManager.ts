@@ -3,8 +3,9 @@ import Term from "./clientside/term.svelte";
 import DefinitionList from "./clientside/definitionList.svelte";
 import { courseEnv } from "$lib/util/courseEnv";
 import Cookie from "js-cookie";
-import { parse as PapaParse } from "papaparse";
 import { persisted } from "svelte-persisted-store";
+import { Glossary, termDefinition } from "./pageParser";
+import { GlossaryStates, getRichGlossary, glossaryState } from "./pageInfo";
 
 const CSRF = Cookie.get("_csrf_token");
 
@@ -43,112 +44,20 @@ export type glossaryState = {
   institutionDefaults: boolean;
 };
 
+/**
+ * Manages the client-side functionality for the glossary.
+ */
 export class GlossaryClientManager {
   public terms: termDefinition[] = [];
   public institutionDefaults: boolean = false;
   public termNodes: HTMLSpanElement[] = [];
-  get allTerms() {
-    return (
-      this.institutionDefaults
-        ? [
-            ...this.institutionTerms,
-            ...this.terms.filter(
-              (t) =>
-                t.term.trim() !== "" &&
-                !this.institutionTerms.some(
-                  (it) => it.term.toLowerCase() === t.term.toLowerCase()
-                )
-            ),
-          ]
-        : this.terms
-    ).filter((t) => t.term.trim() !== "");
-  }
+  public glossary: Glossary | undefined;
 
-  get html() {
-    // Create outer container
-    const container = document.createElement("dl");
-    container.classList.add("CDB--Glossary");
-    // Create inner container to store any settings
-    const settings = document.createElement("div");
-    settings.classList.add("CDB--Glossary--Settings");
-    settings.style.display = "none";
-    settings.textContent = JSON.stringify({
-      institutionDefaults: this.institutionDefaults,
-    });
-    container.appendChild(settings);
-    for (const term of this.terms.filter((t) => t.term.trim() !== "")) {
-      const termOuter = document.createElement("div");
-      termOuter.classList.add("CDB--Glossary--Term");
-      const image = term.image;
-      if (image) {
-        const img = document.createElement("img");
-        img.src = image;
-        img.alt = term.term;
-        img.classList.add("CDB--Glossary--Image");
-        termOuter.appendChild(img);
-      }
-      const termEl = document.createElement("dt");
-      termEl.textContent = term.term;
-      termOuter.appendChild(termEl);
-      const definitionEl = document.createElement("dd");
-      definitionEl.classList.add("CDB--Glossary--Definition");
-      definitionEl.innerHTML = term.definition;
-      termOuter.appendChild(definitionEl);
-      container.appendChild(termOuter);
-    }
-    return container.outerHTML;
-  }
-  parseHTML(html: string): glossaryState {
-    const container = document.createElement("div");
-    container.innerHTML = html;
-    const settings = container.querySelector(".CDB--Glossary--Settings");
-    if (settings) {
-      try {
-        const { institutionDefaults } = JSON.parse(
-          settings.textContent || "{}"
-        );
-        this.institutionDefaults = institutionDefaults;
-      } catch (error) {
-        console.error("Error parsing glossary settings:", error);
-      }
-    }
-    const terms = Array.from(
-      container.querySelectorAll(".CDB--Glossary--Term")
-    );
-    this.terms = terms.map((term) => ({
-      term: term.querySelector("dt")?.textContent?.trim() || "",
-      definition: term.querySelector("dd")?.innerHTML || "",
-      image: term.querySelector("img")?.src,
-    }));
-    return {
-      terms: this.terms,
-      institutionDefaults: this.institutionDefaults,
-    };
-  }
-
-  get json() {
-    const state: glossaryState = {
-      terms: this.terms
-        .filter((t) => t.term.trim() !== "")
-        .map((t) => ({
-          term: t.term,
-          definition: t.definition,
-        })),
-      institutionDefaults: this.institutionDefaults,
-    };
-    return JSON.stringify(state);
-  }
-  get hasTerms() {
-    return (
-      this.allTerms.length > 0 &&
-      this.allTerms.some((t) => t.term.trim() !== "")
-    );
-  }
   getTermRegex() {
-    if (!this.hasTerms) return new RegExp("$^", "i");
+    if (!this.glossary?.hasTerms) return new RegExp("$^", "i");
     return new RegExp(
       "\\b(" +
-        this.allTerms
+        this.glossary.allTerms
           .sort((a, b) => {
             // Sort from longest to shortest
             // This will prevent shorter terms from being matched first
@@ -215,35 +124,14 @@ export class GlossaryClientManager {
     }
     return foundTermNodes;
   }
-  private _hasLoaded = false;
-  async loadData() {
-    if (this._hasLoaded) return;
-    this._hasLoaded = true;
-    // First, get the glossary page (if it exists)
-    const glossaryPage = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`
-    )
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        return null;
-      })
-      .catch(() => null);
-    if (!glossaryPage) return;
-    const body = glossaryPage.body;
-    // Then, get the glossary terms (if they exist)
-    try {
-      // const state: glossaryState = JSON.parse(body);
-      const state = this.parseHTML(body);
-      this.terms = state.terms;
-      this.institutionDefaults = state.institutionDefaults;
-    } catch (error) {
-      return;
-    }
-  }
-
   public onEditorPage = false;
+
+  /**
+   * Renders the client component for the glossary.
+   *
+   * @param force - A boolean indicating whether to force the rendering even if the page is not fully loaded.
+   * @returns A Promise that resolves once the client component is rendered.
+   */
   async renderClientComponent(force: boolean = false) {
     if (import.meta.env.MODE.includes("mobile")) {
       // For now, the mobile app is not suported.
@@ -255,17 +143,17 @@ export class GlossaryClientManager {
       return;
     }
     // If we're on the glossary page, render the viewer or editor
-    if (courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)) {
+    if (
+      courseEnv?.WIKI_PAGE &&
+      courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)
+    ) {
       const contents = courseEnv.WIKI_PAGE.body;
-      let parsed: glossaryState = {
-        terms: [],
-        institutionDefaults: false,
-      };
-      try {
-        parsed = this.parseHTML(contents);
-      } catch (error) {
-        console.error("Error parsing glossary page:", error);
-      }
+      const glossary = Glossary.fromHTML({
+        state: GlossaryStates.GLOSSARY_LINKED,
+        html: contents,
+        url: courseEnv.WIKI_PAGE.url,
+        title: courseEnv.WIKI_PAGE.title,
+      });
       const container = document.getElementById("content");
       if (!container) return;
       document.body.classList.add("cdb-glossary-editor-active");
@@ -277,8 +165,7 @@ export class GlossaryClientManager {
         new GlossaryEditor({
           target: container,
           props: {
-            glossaryData: parsed,
-            manager: this,
+            glossaryData: glossary,
           },
           intro: true,
         });
@@ -286,8 +173,7 @@ export class GlossaryClientManager {
         new GlossaryViewer({
           target: container,
           props: {
-            glossaryData: parsed,
-            manager: this,
+            glossaryData: glossary,
           },
           intro: true,
         });
@@ -300,9 +186,12 @@ export class GlossaryClientManager {
         : "div#wiki_page_show .user_content"
     );
     if (glossaryEls.length === 0) return;
-    await this.loadData();
+    const state = await glossaryState;
+    if (state.state !== GlossaryStates.GLOSSARY_LINKED) return;
+    const richState = await getRichGlossary(state);
+    const glossary = Glossary.fromHTML(richState);
     // If there are no terms, return
-    if (!this.hasTerms) return;
+    if (!glossary.hasTerms) return;
     // Add glossary tags to the page
     glossaryEls.forEach((el) => {
       const iterator = this.termWalker(el);
@@ -317,7 +206,7 @@ export class GlossaryClientManager {
       new DefinitionList({
         target: el,
         props: {
-          terms: this.allTerms,
+          terms: glossary.allTerms,
           termNodes: foundTermNodes,
         },
       });
@@ -328,7 +217,7 @@ export class GlossaryClientManager {
     this.termNodes.forEach((termNode) => {
       const term = termNode.dataset.cdbTerm;
       if (!term) return;
-      const definition = this.allTerms.find(
+      const definition = glossary.allTerms.find(
         (t) => t.term.toLowerCase() === term.toLowerCase()
       )?.definition;
       if (!definition) return;
@@ -341,102 +230,6 @@ export class GlossaryClientManager {
         },
       });
     });
-  }
-
-  async parseCSV(): Promise<termDefinition[]> {
-    // Load a file and update the glossary
-    const file = await new Promise<File>((resolve) => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".csv";
-      input.onchange = () => {
-        if (input.files?.length) {
-          resolve(input.files[0]);
-        }
-      };
-      input.click();
-    });
-    return await new Promise<termDefinition[]>((resolve, reject) => {
-      PapaParse<termDefinition>(file, {
-        header: true,
-        skipEmptyLines: "greedy",
-        transformHeader: (header: string) => {
-          if (header.toLowerCase().includes("term")) return "term";
-          if (header.toLowerCase().includes("definition")) return "definition";
-          return header;
-        },
-        complete: ({ data, errors }) => {
-          if (errors.length) {
-            console.error("Failed to parse CSV file because:", errors);
-            reject(
-              new Error(
-                "Failed to parse CSV file. There may be an issue with the file format. Please ensure the file is a CSV file with a header row containing 'Term' and 'Definition' columns."
-              )
-            );
-          }
-          if (data.length === 0) {
-            reject(
-              new Error(
-                "You have uploaded an empty CSV file. No terms were found, so no changes were made to the glossary."
-              )
-            );
-          }
-          if (data.some(({ term, definition }) => !term && definition))
-            throw new Error(
-              "Failed to parse CSV file. The 'Term' column must be filled for all definitions."
-            );
-          resolve(
-            data
-              .filter(({ term }) => term)
-              .map(
-                ({ term, definition }) =>
-                  ({
-                    term: term || "",
-                    definition: definition || "",
-                  } as termDefinition)
-              )
-          );
-        },
-      });
-    });
-  }
-
-  async save() {
-    // Post to API
-    if (!CSRF)
-      throw new Error(
-        "CSRF token not found. Try downloading the glossary, reloading the page, and importing it into the page to restore your unsaved changes. If clicking 'Save' still doesn't work, contact support."
-      );
-    const res = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}`,
-      {
-        method: "PUT",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Csrf-Token": CSRF,
-        },
-        body: JSON.stringify({
-          wiki_page: {
-            title: PAGE_NAME,
-            body: this.html,
-            published: true,
-            notify_of_update: false,
-          },
-        }),
-      }
-    );
-    if (this.onEditorPage) {
-      // If we're on the editor page, redirect to the new page if the URL has changed
-      try {
-        const { url } = await res.json();
-        if (url !== courseEnv.WIKI_PAGE?.url || (await PAGE_URL) !== url) {
-          const newPath = `/courses/${courseEnv.COURSE_ID}/pages/${url}/edit`;
-          window.onbeforeunload = null;
-          window.location.href = newPath;
-        }
-      } catch (error) {}
-    }
   }
 }
 

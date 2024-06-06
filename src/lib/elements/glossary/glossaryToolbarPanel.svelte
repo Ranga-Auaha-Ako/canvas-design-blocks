@@ -4,17 +4,22 @@
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import { courseEnv, getCoursePermissions } from "$lib/util/courseEnv";
   import { onMount } from "svelte";
-  import glossaryClientManager, {
-    PAGE_CREATED,
-    PAGE_URL,
-  } from "./glossaryClientManager";
   import Modal from "$lib/components/modalDialog/modal.svelte";
   import GlossaryEditor from "./glossaryEditor.svelte";
   import Portal from "$lib/portal/portal.svelte";
+  import {
+    GlossaryStates,
+    RichGlossaryState,
+    getResolvedGlossary,
+    glossaryState,
+  } from "./pageInfo";
+  import { Glossary } from "./pageParser";
 
   let openModal: () => void;
   let closeModal: () => void;
-  let loadEditor = false;
+  let loadEditor: false | RichGlossaryState = false;
+
+  let loading = false;
 
   let CAN_EDIT = false;
   onMount(async () => {
@@ -33,50 +38,47 @@
       bind:close={closeModal}
     >
       {#if loadEditor}
-        {#await glossaryClientManager.loadData() then}
-          <GlossaryEditor
-            glossaryData={{
-              terms: glossaryClientManager.terms,
-              institutionDefaults: glossaryClientManager.institutionDefaults,
-            }}
-            manager={glossaryClientManager}
-            frameless={true}
-          />
-        {/await}
+        {@const glossary = Glossary.fromHTML(loadEditor)}
+        <GlossaryEditor glossaryData={glossary} frameless={true} />
       {/if}
     </Modal>
   </Portal>
   <ElementPanel
     title="Edit Glossary"
     on:add={async () => {
-      loadEditor = true;
+      loading = true;
+      loadEditor = await getResolvedGlossary();
+      loading = false;
       openModal();
-      // window
-      //   .open(
-      //     `/courses/${courseEnv.COURSE_ID}/pages/${await PAGE_URL}/edit`,
-      //     "_blank"
-      //   )
-      //   ?.focus();
-      // // window.location.href = `/courses/${courseEnv.COURSE_ID}/pages/cdb-glossary/edit`;
     }}
   >
     <svelte:fragment slot="name">
-      {#await PAGE_CREATED then isCreated}
-        {#if isCreated}
+      {#await glossaryState then glossaryStateRes}
+        {#if loading}
+          Loading...
+        {:else if glossaryStateRes.state === GlossaryStates.GLOSSARY_LINKED}
           Edit Glossary
-        {:else}
+        {:else if glossaryStateRes.state === GlossaryStates.NO_GLOSSARY}
           Create Glossary
+        {:else}
+          Manage Glossary
         {/if}
       {/await}
     </svelte:fragment>
     <svelte:fragment slot="icon">
-      {#await PAGE_CREATED then isCreated}
-        {#if isCreated}
+      {#await glossaryState then glossaryStateRes}
+        {#if loading}
+          <div class="animate-spin">
+            <IconElement
+              icon={{ id: "Inst.Line.refresh", type: IconType.Custom }}
+            />
+          </div>
+        {:else if glossaryStateRes.state === GlossaryStates.NO_GLOSSARY}
+          <IconElement icon={{ id: "Inst.Line.add", type: IconType.Custom }} />
+        {:else}
           <IconElement
             icon={{ id: "Inst.Line.arrow-right", type: IconType.Custom }}
           />
-        {:else}
-          <IconElement icon={{ id: "Inst.Line.add", type: IconType.Custom }} />
         {/if}
       {/await}
     </svelte:fragment>
