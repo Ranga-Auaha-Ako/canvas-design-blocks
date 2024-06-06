@@ -1,9 +1,6 @@
-import { courseEnv } from "$lib/util/courseEnv";
+import { CSRF, courseEnv } from "$lib/util/courseEnv";
 import { GlossaryStates, RichGlossaryState, getRichGlossary } from "./pageInfo";
-import Cookie from "js-cookie";
 import { parse as PapaParse } from "papaparse";
-
-const CSRF = Cookie.get("_csrf_token");
 
 export type termDefinition = {
   term: string;
@@ -128,12 +125,11 @@ export class Glossary {
     }
     // 3. Link the module to the page if needed
     const moduleInfo = await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/modules/${existingModuleId}`,
+      `/api/v1/courses/${courseEnv.COURSE_ID}/modules/${existingModuleId}?include[]=items`,
       {
         method: "GET",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
-        body: JSON.stringify({ include: ["items"] }),
       }
     );
     const { items, published } = (await moduleInfo.json()) as {

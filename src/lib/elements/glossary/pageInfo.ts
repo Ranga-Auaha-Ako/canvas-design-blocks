@@ -1,6 +1,6 @@
-import { courseEnv } from "$lib/util/courseEnv";
+import { CSRF, courseEnv } from "$lib/util/courseEnv";
 import PageMatcher from "./components/pageMatcher.svelte";
-import type { GlossaryClientManager } from "./glossaryClientManager";
+import { Glossary } from "./pageParser";
 
 // This file determines where the glossary data is served from, and will potentially flag the user to create a glossary or relink the glossary page if required.
 /**
@@ -63,8 +63,74 @@ export async function getGlossaryState(): Promise<GlossaryState> {
   if (!courseEnv.COURSE_ID) {
     throw new Error("Course ID is not available. No glossary to find.");
   }
+  if (!CSRF)
+    throw new Error(
+      "CSRF token not found. Try downloading the glossary, reloading the page, and importing it into the page to restore your unsaved changes. If clicking 'Save' still doesn't work, contact support."
+    );
   // Step 1: Search Modules for Glossary
   // - If Glossary is found, return GLOSSARY_LINKED
+  // ... if we wanted to use the GraphQL API, we could do this:
+  //   const matchedIDs = await fetch("/api/graphql", {
+  //     credentials: "same-origin",
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
+  //     body: JSON.stringify({
+  //       query: `
+  // {
+  //   course(id: "${courseEnv.COURSE_ID}") {
+  //     modulesConnection {
+  //       nodes {
+  //         name
+  //         _id
+  //         moduleItems {
+  //           _id
+  //           content {
+  //             ... on Page {
+  //               id
+  //               _id
+  //               title
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }`,
+  //     }),
+  //   }).then(async (res) => {
+  //     if (!res.ok)
+  //       throw new Error(`Failed to fetch modules: Status ${res.status}.`);
+  //     const json = (await res.json()) as {
+  //       data: {
+  //         course: {
+  //           modulesConnection: {
+  //             nodes: {
+  //               name: string;
+  //               _id: string;
+  //               moduleItems: {
+  //                 _id: string;
+  //                 content: {
+  //                   _id?: string;
+  //                   title?: string;
+  //                 };
+  //               }[];
+  //             }[];
+  //           };
+  //         };
+  //       };
+  //     };
+  //     // Find modules and pages which have the magic unicode characters
+  //     const matchedModule = json.data.course.modulesConnection.nodes.find(
+  //       (module) => module.name.includes(Glossary.magicToken)
+  //     );
+  //     const matchedPage = matchedModule?.moduleItems.find((item) =>
+  //       item.content.title?.includes(Glossary.magicToken)
+  //     );
+  //     return {
+  //       module_id: matchedModule?._id,
+  //       page_id: matchedPage?.content._id,
+  //     };
+  //   });
   const modules: GlossaryState | null = await fetch(
     `/api/v1/courses/${courseEnv.COURSE_ID}/modules?per_page=100&include[]=items`
   )
@@ -110,15 +176,16 @@ export async function getGlossaryState(): Promise<GlossaryState> {
       });
       const exactMatch = sortedModules.find((module) =>
         // These unicode characters are used to ensure that the glossary page is found even if the name is not an exact match.
-        module.name.toLowerCase().includes("\u2009\u2008\u200A")
+        module.name.includes(Glossary.magicToken)
       );
       if (exactMatch) {
         const page = exactMatch.items.find(
           (
             item
           ): item is Extract<(typeof exactMatch.items)[0], { type: "Page" }> =>
-            item.type === "Page"
+            item.type === "Page" && item.title.includes(Glossary.magicToken)
         );
+        debugger;
         if (exactMatch.published === false) {
           return {
             state: GlossaryStates.GLOSSARY_HIDDEN_MODULE as const,
@@ -175,7 +242,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
       const possibleMatches = json.filter(
         (page) =>
           // These unicode characters are used to ensure that the glossary page is found even if the name is not an exact match.
-          page.title.toLowerCase().includes("\u2009\u2008\u200A") ||
+          page.title.includes(Glossary.magicToken) ||
           page.title.toLowerCase().includes("glossary")
       );
       if (possibleMatches.length > 0) {

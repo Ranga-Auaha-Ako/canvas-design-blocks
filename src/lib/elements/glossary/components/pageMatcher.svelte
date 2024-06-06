@@ -74,7 +74,7 @@
     <input
       type="text"
       placeholder="Page Title"
-      bind:value={pageURL}
+      bind:value={pageTitle}
       class="w-full"
     />
   {:else if pageURL && foundPages}
