@@ -1,5 +1,5 @@
 import { courseEnv } from "$lib/util/courseEnv";
-import { RichGlossaryState } from "./pageInfo";
+import { GlossaryStates, RichGlossaryState, getRichGlossary } from "./pageInfo";
 import Cookie from "js-cookie";
 import { parse as PapaParse } from "papaparse";
 
@@ -15,7 +15,9 @@ export type termDefinition = {
  * Glossary handles the parsed state of a glossary page. This includes parsing from HTML, and stringifying to HTML for saving.
  */
 export class Glossary {
-  static defaultTitle = "Course Glossary\u200B\u200C\u200B";
+  static magicToken = "\u200B\u200C\u200B";
+  static defaultTitle = "Course Glossary" + Glossary.magicToken;
+  static defaultModuleTitle = "Glossary" + Glossary.magicToken;
   /**
    * Attempt to guess URL from title
    * @param title Source title
@@ -51,6 +53,137 @@ export class Glossary {
       image: term.querySelector("img")?.src,
     }));
     return new Glossary(state, terms, institutionDefaults);
+  }
+  static async linkExisting(
+    config: {
+      existingPageUrl?: string;
+      existingModuleId?: number;
+      pageTitle?: string;
+      moduleTitle?: string;
+    } = {}
+  ) {
+    let { existingPageUrl, existingModuleId, pageTitle, moduleTitle } = {
+      pageTitle: Glossary.defaultTitle,
+      moduleTitle: Glossary.defaultModuleTitle,
+      ...config,
+    };
+    if (!courseEnv.COURSE_ID)
+      throw new Error(
+        "Course ID not found. Please ensure you are on a course page."
+      );
+    if (!CSRF)
+      throw new Error(
+        "CSRF token not found. Try downloading the glossary, reloading the page, and importing it into the page to restore your unsaved changes. If clicking 'Save' still doesn't work, contact support."
+      );
+    let glossary: Glossary;
+    let state: Awaited<ReturnType<typeof getRichGlossary>>;
+    // 1. We may need to create a page, a module, or both. We'll start by creating a page.
+    if (!existingPageUrl) {
+      // Create and save a blank glossary
+      glossary = new Glossary({
+        title: pageTitle,
+        url: Glossary.titleToUrl(pageTitle),
+      });
+      glossary.save();
+      state = {
+        ...glossary.state,
+        html: glossary.html,
+        state: GlossaryStates.GLOSSARY_LINKED,
+        published: true,
+      };
+    } else {
+      // Check that there are not any issues with the existing page
+      state = await getRichGlossary({
+        url: existingPageUrl,
+        state: GlossaryStates.GLOSSARY_LINKED,
+      });
+      glossary = Glossary.fromHTML(state);
+    }
+    // Fix the title if it's not correct, and publish the page if it's not published
+    if (!state.published || !state.title.includes(Glossary.magicToken)) {
+      if (!state.title.includes(Glossary.magicToken)) {
+        state.title = state.title + Glossary.magicToken;
+      }
+      // Save glossary back to publish it
+      glossary.save();
+    }
+    // 2. Create a module if needed
+    if (!existingModuleId) {
+      // Create the module to link to the page
+      if (!moduleTitle.includes(Glossary.magicToken)) {
+        moduleTitle = moduleTitle + Glossary.magicToken;
+      }
+      const res = await fetch(
+        `/api/v1/courses/${courseEnv.COURSE_ID}/modules`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
+          body: JSON.stringify({ module: { name: moduleTitle } }),
+        }
+      );
+      if (!res.ok)
+        throw new Error(`Failed to update module: ${await res.text()}`);
+      existingModuleId = (await res.json()).id as number;
+    }
+    // 3. Link the module to the page if needed
+    const moduleInfo = await fetch(
+      `/api/v1/courses/${courseEnv.COURSE_ID}/modules/${existingModuleId}`,
+      {
+        method: "GET",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
+        body: JSON.stringify({ include: ["items"] }),
+      }
+    );
+    const { items, published } = (await moduleInfo.json()) as {
+      items: {
+        id: number;
+        title: string;
+        type: string;
+        published?: boolean;
+        page_url?: string;
+      }[];
+      published: boolean;
+    };
+    const foundPage = items.find(
+      (item) => item.type === "Page" && item.page_url === state.url
+    );
+    if (!foundPage) {
+      // Add the page to the module
+      const res = await fetch(
+        `/api/v1/courses/${courseEnv.COURSE_ID}/modules/${existingModuleId}/items`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
+          body: JSON.stringify({
+            module_item: {
+              title: state.title,
+              type: "Page",
+              page_url: state.url,
+            },
+          }),
+        }
+      );
+      if (!res.ok)
+        throw new Error(`Failed to add page to module: ${await res.text()}`);
+    }
+    // 4. Publish the module if needed
+    if (!published) {
+      const res = await fetch(
+        `/api/v1/courses/${courseEnv.COURSE_ID}/modules/${existingModuleId}`,
+        {
+          method: "PUT",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
+          body: JSON.stringify({ module: { published: true } }),
+        }
+      );
+      if (!res.ok)
+        throw new Error(`Failed to publish module: ${await res.text()}`);
+    }
+    return state;
   }
   constructor(
     public state: Omit<RichGlossaryState, "html" | "state"> = {

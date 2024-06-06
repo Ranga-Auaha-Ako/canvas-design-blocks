@@ -3,15 +3,29 @@ import PageMatcher from "./components/pageMatcher.svelte";
 import type { GlossaryClientManager } from "./glossaryClientManager";
 
 // This file determines where the glossary data is served from, and will potentially flag the user to create a glossary or relink the glossary page if required.
+/**
+ * Represents the possible states of a glossary page.
+ */
 export enum GlossaryStates {
-  // The glossary page does not exist.
+  /**
+   * The glossary page does not exist.
+   */
   NO_GLOSSARY,
-  // The glossary page exists, but is not linked to the course modules.
+  /**
+   * The glossary page exists, but is not linked to the course modules.
+   */
   GLOSSARY_UNLINKED,
-  // The glossary page exists and is linked to the course modules, but is hidden to students.
+  /**
+   * The glossary page exists and is linked to the course modules, but *the module* is hidden to students.
+   */
   GLOSSARY_HIDDEN_MODULE,
+  /**
+   * The glossary page exists and is linked to the course modules, but *the page* is hidden to students.
+   */
   GLOSSARY_HIDDEN_PAGE,
-  // The glossary page exists and is linked to the course modules.
+  /**
+   * The glossary page exists and is linked to the course modules.
+   */
   GLOSSARY_LINKED,
 }
 
@@ -24,14 +38,17 @@ export type UnResolvedGlossaryState =
   | {
       state: GlossaryStates.GLOSSARY_HIDDEN_MODULE;
       module_id: number;
+      page_url?: string;
     }
   | {
       state: GlossaryStates.GLOSSARY_HIDDEN_PAGE;
+      module_id?: number;
       page_url: string;
     }
   | {
       state: GlossaryStates.GLOSSARY_UNLINKED;
       page_matches: string[];
+      module_id?: number;
     }
   | {
       state: GlossaryStates.NO_GLOSSARY;
@@ -48,7 +65,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
   }
   // Step 1: Search Modules for Glossary
   // - If Glossary is found, return GLOSSARY_LINKED
-  const modules = await fetch(
+  const modules: GlossaryState | null = await fetch(
     `/api/v1/courses/${courseEnv.COURSE_ID}/modules?per_page=100&include[]=items`
   )
     .then(async (res) => {
@@ -96,28 +113,36 @@ export async function getGlossaryState(): Promise<GlossaryState> {
         module.name.toLowerCase().includes("\u2009\u2008\u200A")
       );
       if (exactMatch) {
-        if (exactMatch.published === false) {
-          return {
-            state: GlossaryStates.GLOSSARY_HIDDEN_MODULE as const,
-            module_id: exactMatch.id,
-          };
-        }
         const page = exactMatch.items.find(
           (
             item
           ): item is Extract<(typeof exactMatch.items)[0], { type: "Page" }> =>
             item.type === "Page"
         );
+        if (exactMatch.published === false) {
+          return {
+            state: GlossaryStates.GLOSSARY_HIDDEN_MODULE as const,
+            module_id: exactMatch.id,
+            page_url: page?.page_url,
+          };
+        }
         if (page) {
           if (page.published === false) {
             return {
               state: GlossaryStates.GLOSSARY_HIDDEN_PAGE as const,
+              module_id: exactMatch.id,
               page_url: page.page_url,
             };
           }
           return {
             state: GlossaryStates.GLOSSARY_LINKED as const,
             url: page.page_url,
+          };
+        } else {
+          return {
+            state: GlossaryStates.GLOSSARY_UNLINKED as const,
+            module_id: exactMatch.id,
+            page_matches: [],
           };
         }
       }
@@ -127,7 +152,8 @@ export async function getGlossaryState(): Promise<GlossaryState> {
       console.error("Failed to fetch modules.");
       return null;
     });
-  if (modules) return modules;
+  if (modules && modules.state !== GlossaryStates.GLOSSARY_UNLINKED)
+    return modules;
   // Step 2: Search Pages for Glossary
   // - If Glossary is found, return GLOSSARY_UNLINKED
   const pages = await fetch(
@@ -156,6 +182,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
         return {
           state: GlossaryStates.GLOSSARY_UNLINKED as const,
           page_matches: possibleMatches.map((page) => page.url),
+          module_id: modules?.module_id,
         };
       }
       return null;
@@ -192,10 +219,10 @@ class UserExit extends Error {
  */
 export async function getRichGlossary(
   state: ResolvedGlossaryState
-): Promise<RichGlossaryState> {
+): Promise<RichGlossaryState & { published: boolean }> {
   // Get page data for resolved glossary
   const pageData = await fetch(
-    `/api/v1/courses/${courseEnv.COURSE_ID}/page/${state.url}`
+    `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${state.url}`
   ).then(async (res) => {
     if (!res.ok)
       throw new Error(
@@ -203,12 +230,17 @@ export async function getRichGlossary(
           res.status
         }. Details: ${await res.text()}`
       );
-    return (await res.json()) as { body: string; title: string };
+    return (await res.json()) as {
+      body: string;
+      title: string;
+      published: boolean;
+    };
   });
   return {
     ...state,
     title: pageData.title,
     html: pageData.body,
+    published: pageData.published,
   };
 }
 
@@ -231,7 +263,7 @@ export async function getResolvedGlossary(
         const pageMatcher = new PageMatcher({
           target: document.body,
           props: {
-            glossary: state as UnResolvedGlossaryState,
+            glossaryState: state as UnResolvedGlossaryState,
           },
         });
         pageMatcher.$on("saved", ({ detail }) => {

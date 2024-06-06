@@ -6,58 +6,92 @@
   import {
     type UnResolvedGlossaryState,
     GlossaryStates,
-    getGlossaryState,
-    RichGlossaryState,
     ResolvedGlossaryState,
   } from "../pageInfo";
   import { Glossary } from "../pageParser";
   import { slide } from "svelte/transition";
-  export let glossary: UnResolvedGlossaryState;
+  export let glossaryState: UnResolvedGlossaryState;
 
   const dispatch = createEventDispatcher<{
     saved: ResolvedGlossaryState;
     close: void;
   }>();
 
+  // Glossary.linkExisting({})
+
+  let moduleID =
+    glossaryState.state !== GlossaryStates.NO_GLOSSARY
+      ? glossaryState.module_id
+      : undefined;
+
+  let pageURL: string | undefined =
+    glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_MODULE ||
+    glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_PAGE
+      ? glossaryState.page_url
+      : glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
+        ? glossaryState.page_matches[0]
+        : undefined;
+  let foundPages =
+    glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
+      ? glossaryState.page_matches
+      : undefined;
+
+  let pageTitle = Glossary.defaultTitle;
+  let moduleTitle = Glossary.defaultModuleTitle;
   let loading = false;
   let error = "";
-  async function createGlossary() {
-    loading = true;
-    // Create glossary
-    const emptyGlossary = new Glossary();
-    await emptyGlossary.save();
-    // Check to see if the glossary was created
-    const newState = await getGlossaryState();
-    if (newState.state === GlossaryStates.GLOSSARY_LINKED) {
-      dispatch("saved", newState);
-      loading = false;
-      return;
-    }
-    loading = false;
-    error = "Failed to create glossary page.";
-  }
 </script>
 
-{#if glossary.state === GlossaryStates.NO_GLOSSARY}
-  <Modal
-    title="Create Glossary Page"
-    show={true}
-    showSave="Create"
-    showClose={true}
-    on:save={() => createGlossary()}
-    on:close
-  >
-    {#if error}
-      <div
-        transition:slide
-        class="bg-yellow-100 text-black rounded border-l-2 border-yellow-500"
-      >
-        <p>{error}</p>
-      </div>
-    {/if}
-    <p>
-      You do not have a glossary page for this course. Would you like to create
-      one?
-    </p>
-  </Modal>
-{/if}
+<Modal
+  title="Create Glossary Page"
+  show={true}
+  showSave="Create"
+  showClose={true}
+  on:save={() =>
+    Glossary.linkExisting({
+      existingModuleId: moduleID,
+      existingPageUrl: pageURL,
+      pageTitle: pageURL ? undefined : pageTitle,
+      moduleTitle: moduleID ? undefined : moduleTitle,
+    })}
+  on:close
+>
+  <pre>
+
+  {JSON.stringify(GlossaryStates)}
+  
+  {JSON.stringify(glossaryState)}
+</pre>
+  {#if error}
+    <div
+      transition:slide
+      class="bg-yellow-100 text-black rounded border-l-2 border-yellow-500"
+    >
+      <p>{error}</p>
+    </div>
+  {/if}
+  {#if !pageURL}
+    <input
+      type="text"
+      placeholder="Page Title"
+      bind:value={pageURL}
+      class="w-full"
+    />
+  {:else if pageURL && foundPages}
+    <select bind:value={pageURL}>
+      {#each foundPages as url}
+        <option value={url}>{url}</option>
+      {/each}
+    </select>
+  {:else}
+    <p>Found page: {pageURL}</p>
+  {/if}
+  {#if !moduleID}
+    <input
+      type="text"
+      placeholder="Page Title"
+      bind:value={moduleTitle}
+      class="w-full"
+    />
+  {/if}
+</Modal>
