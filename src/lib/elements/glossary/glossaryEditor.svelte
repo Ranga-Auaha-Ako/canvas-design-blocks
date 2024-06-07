@@ -8,6 +8,11 @@
   import { nanoid } from "nanoid";
   import ImportMerger from "./components/importMerger.svelte";
   import { Glossary, termDefinition } from "./pageParser";
+  import {
+    GlossaryStates,
+    getGlossaryState,
+    getResolvedGlossary,
+  } from "./pageInfo";
 
   type termDefinitionID = termDefinition & { id: string };
   type glossaryStateID = {
@@ -74,6 +79,10 @@
   });
 
   let newTerms: termDefinition[] | undefined;
+
+  const isGlossaryLinked = getGlossaryState().then(
+    (state) => state.state === GlossaryStates.GLOSSARY_LINKED
+  );
 </script>
 
 {#if newTerms}
@@ -101,7 +110,61 @@
     in:slide|global
   >
     <div>
-      <h1 class="text-3xl block">Glossary Editor</h1>
+      <h1 class="text-3xl block">
+        Glossary Editor
+        {#if !frameless && courseEnv.COURSE_ID}
+          <a
+            href={`/courses/${courseEnv.COURSE_ID}/pages/${glossaryData.state.url}`}
+            class="btn float-right"
+          >
+            <IconElement
+              icon={{ id: "Inst.Line.arrow-left", type: 2 }}
+              colorOverride="#000"
+            />
+            Return to Viewer
+          </a>
+        {/if}
+      </h1>
+
+      {#await isGlossaryLinked then isLinked}
+        {#if !isLinked}
+          <div
+            class="bg-red-100 border-red-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+          >
+            <div class="text-xl">
+              <IconElement
+                icon={{ id: "Inst.Line.warning", type: 2 }}
+                colorOverride="rgb(248,113,113)"
+              />
+            </div>
+            <p class="text-red-700">
+              Glossary is not linked to the course. Please link the glossary to
+              the course before editing.
+            </p>
+            <div class="float-end">
+              <button
+                class="btn cursor-pointer min-h-12 max-w-full"
+                on:click={async () => {
+                  const res =
+                    confirm(
+                      "Are you sure you want to exit the edtor? Check you have saved changes before linking the glossary."
+                    ) && (await getResolvedGlossary());
+                  if (res && courseEnv.COURSE_ID) {
+                    // Redirect
+                    window.location.href = `/courses/${courseEnv.COURSE_ID}/pages/${res.url}`;
+                  }
+                }}
+              >
+                <IconElement
+                  icon={{ id: "Inst.Line.link", type: 2 }}
+                  colorOverride="#000"
+                />
+                Link Glossary
+              </button>
+            </div>
+          </div>
+        {/if}
+      {/await}
       <p>
         Define terms and definitions for
         {#if courseEnv.COURSE_ID}
