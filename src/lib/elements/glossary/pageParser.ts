@@ -353,11 +353,13 @@ export class Glossary {
       }
     );
     const { url, title } = await res.json();
+    const prevURL = this.state.url;
     this.state.url = url;
 
     if (
-      this.state.url !== courseEnv?.WIKI_PAGE?.url &&
-      courseEnv?.WIKI_PAGE?.url
+      courseEnv?.WIKI_PAGE?.url &&
+      prevURL === courseEnv?.WIKI_PAGE?.url &&
+      url !== prevURL
     ) {
       // If we're on the editor page, redirect to the new page if the URL has changed
       try {

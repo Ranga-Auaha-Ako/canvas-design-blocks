@@ -266,21 +266,23 @@ export async function getResolvedGlossary(
     // If the state is not resolved, wait for the user to resolve it.
     // if (((s): s is UnResolvedGlossaryState=>(s.state !== GlossaryStates.GLOSSARY_LINKED))(state)) {
     if (state.state !== GlossaryStates.GLOSSARY_LINKED) {
-      const newState = await new Promise<ResolvedGlossaryState>((resolve) => {
-        const pageMatcher = new PageMatcher({
-          target: document.body,
-          props: {
-            glossaryState: state as UnResolvedGlossaryState,
-          },
-        });
-        pageMatcher.$on("saved", ({ detail }) => {
-          glossaryState = Promise.resolve(detail);
-          resolve(detail);
-        });
-        pageMatcher.$on("cancel", () => {
-          throw new UserExit("Glossary page not linked.");
-        });
-      });
+      const newState = await new Promise<ResolvedGlossaryState>(
+        (resolve, reject) => {
+          const pageMatcher = new PageMatcher({
+            target: document.body,
+            props: {
+              glossaryState: state as UnResolvedGlossaryState,
+            },
+          });
+          pageMatcher.$on("saved", ({ detail }) => {
+            glossaryState = Promise.resolve(detail);
+            resolve(detail);
+          });
+          pageMatcher.$on("close", () => {
+            reject(new UserExit("Glossary page not linked."));
+          });
+        }
+      );
       state = newState;
     }
     return await getRichGlossary(state);

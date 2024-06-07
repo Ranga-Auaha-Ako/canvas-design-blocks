@@ -47,9 +47,11 @@
     title="Edit Glossary"
     on:add={async () => {
       loading = true;
-      loadEditor = await getResolvedGlossary();
+      loadEditor = await getResolvedGlossary().catch((e) => {
+        return false;
+      });
       loading = false;
-      openModal();
+      if (loadEditor) openModal();
     }}
   >
     <svelte:fragment slot="name">

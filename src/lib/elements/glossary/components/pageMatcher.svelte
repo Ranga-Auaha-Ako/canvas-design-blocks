@@ -1,4 +1,13 @@
 <!-- This component helps teaching staff find or create a glossary page for their course -->
+<script context="module" lang="ts">
+  export enum stateStatus {
+    CREATED = "Created",
+    HIDDEN = "Hidden",
+    UNLINKED = "Unlinked",
+    NONE = "Not Found",
+  }
+</script>
+
 <!-- Created by pageManager.ts when the getResolvedGlossary() function is run -->
 <script lang="ts">
   import Modal from "$lib/components/modalDialog/modal.svelte";
@@ -10,6 +19,9 @@
   } from "../pageInfo";
   import { Glossary } from "../pageParser";
   import { slide } from "svelte/transition";
+  import IconElement from "$lib/icons/svelte/iconElement.svelte";
+  import { IconType } from "$lib/icons/svelte/canvas-icons/icons";
+  import StateIndicator from "./subComponent/stateIndicator.svelte";
   export let glossaryState: UnResolvedGlossaryState;
 
   const dispatch = createEventDispatcher<{
@@ -41,32 +53,31 @@
   let loading = false;
   let error = "";
   let close: () => void;
+
+  const pageStates = {
+    Page: pageURL
+      ? glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_PAGE
+        ? stateStatus.HIDDEN
+        : glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
+          ? stateStatus.UNLINKED
+          : stateStatus.CREATED
+      : stateStatus.NONE,
+    Module: moduleID
+      ? glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_MODULE
+        ? stateStatus.HIDDEN
+        : stateStatus.CREATED
+      : stateStatus.NONE,
+  };
 </script>
 
 <Modal
   title="Create Glossary Page"
   show={true}
-  showSave="Create"
-  showClose={true}
   bind:close
-  on:save={async () => {
-    const res = await Glossary.linkExisting({
-      existingModuleId: moduleID,
-      existingPageUrl: pageURL,
-      pageTitle: pageURL ? undefined : pageTitle,
-      moduleTitle: moduleID ? undefined : moduleTitle,
-    });
-    close();
-    dispatch("saved", res);
-  }}
   on:close
+  showSave={false}
+  showCancel={false}
 >
-  <pre>
-
-  {JSON.stringify(GlossaryStates)}
-  
-  {JSON.stringify(glossaryState)}
-</pre>
   {#if error}
     <div
       transition:slide
@@ -75,34 +86,173 @@
       <p>{error}</p>
     </div>
   {/if}
-  {#if !pageURL}
-    <input
-      type="text"
-      placeholder="Page Title"
-      bind:value={pageTitle}
-      class="w-full"
-    />
-  {:else if pageURL && foundPages}
-    <select bind:value={pageURL}>
-      {#each foundPages as url}
-        <option value={url.url}>
-          {url.title}
-          {url.title.includes(Glossary.magicToken)
-            ? "(Design Blocks Glossary Page)"
-            : "(Similar Name)"}
-        </option>
-      {/each}
-      <option value={Glossary.defaultURL}>Create New Page</option>
-    </select>
-  {:else}
-    <p>Found page: {pageURL}</p>
-  {/if}
-  {#if !moduleID}
-    <input
-      type="text"
-      placeholder="Page Title"
-      bind:value={moduleTitle}
-      class="w-full"
-    />
-  {/if}
+
+  <div class="detailsRow">
+    <div class="moduleInfo">
+      <StateIndicator type="Page" state={pageStates.Page}>
+        {#if pageStates.Page === stateStatus.NONE}
+          To get started, create a new page to be your course glossary.
+        {:else if pageStates.Page === stateStatus.UNLINKED}
+          You have {foundPages && foundPages.length > 1
+            ? "some pages"
+            : "a page"}
+          which might be your glossary page. Please select the correct page from
+          the dropdown, or create a new page.
+        {:else if pageStates.Page === stateStatus.CREATED}
+          You have already created a glossary page.
+        {:else if pageStates.Page === stateStatus.HIDDEN}
+          You have created a glossary page, but it is currently hidden. You will
+          need to publish the page to make it visible to students.
+        {/if}
+      </StateIndicator>
+      <div class="input-group">
+        {#if !pageURL}
+          <label for="pageTitle">Enter new Glossary page title</label>
+          <input
+            type="text"
+            placeholder="Page Title"
+            bind:value={pageTitle}
+            class="w-full"
+            id="pageTitle"
+          />
+        {:else if pageURL && foundPages}
+          <label for="pageURL">Select page to link</label>
+          <select bind:value={pageURL}>
+            {#each foundPages as url}
+              <option value={url.url}>
+                {url.title}
+                {url.title.includes(Glossary.magicToken)
+                  ? "(Design Blocks Glossary Page)"
+                  : "(Similar Name)"}
+              </option>
+            {/each}
+            <option value={Glossary.defaultURL}>Create New Page</option>
+          </select>
+        {/if}
+      </div>
+    </div>
+    <div class="pageInfo">
+      <StateIndicator type="Module" state={pageStates.Module}>
+        {#if pageStates.Module !== stateStatus.CREATED}
+          {#if pageStates.Page !== stateStatus.CREATED}
+            You will also
+          {:else}
+            You will
+          {/if}
+          {#if pageStates.Module === stateStatus.NONE}
+            need to create a module to hold your glossary page. This must be
+            visible to students.
+          {:else if pageStates.Module === stateStatus.HIDDEN}
+            need to publish the module to make the glossary visible to students.
+            The Glossary module is currently hidden.
+          {/if}
+        {/if}
+      </StateIndicator>
+      <div class="input-group">
+        {#if !moduleID}
+          <label for="moduleTitle">Enter new Module title</label>
+          <input
+            type="text"
+            placeholder="Page Title"
+            bind:value={moduleTitle}
+            class="w-full"
+            id="moduleTitle"
+          />
+        {/if}
+      </div>
+    </div>
+  </div>
+  <p>
+    This glossary feature will use invisible characters to identify the glossary
+    page. Please take care with editing the module or page titles. If the page
+    or module is disconnected, you will be prompted to reconnect it here.
+  </p>
+
+  <div class="actionMenu">
+    <button
+      class="btn"
+      on:click={() => {
+        close();
+        dispatch("close");
+      }}
+    >
+      <IconElement icon={{ id: "Inst.Line.x", type: IconType.Custom }} />
+      Cancel
+    </button>
+    <button
+      class="btn btn-primary"
+      disabled={loading}
+      on:click={async () => {
+        loading = true;
+        const res = await Glossary.linkExisting({
+          existingModuleId: moduleID,
+          existingPageUrl: pageURL,
+          pageTitle: pageURL ? undefined : pageTitle,
+          moduleTitle: moduleID ? undefined : moduleTitle,
+        }).catch((e) => {
+          error = e.message;
+        });
+        if (res) {
+          close();
+          dispatch("saved", res);
+        }
+        loading = false;
+      }}
+    >
+      {#if loading}
+        <div class="animate-spin inline-block mr-2">
+          <IconElement
+            icon={{ id: "Inst.Line.refresh", type: IconType.Custom }}
+          />
+        </div>
+      {:else}
+        <IconElement icon={{ id: "Inst.Line.check", type: IconType.Custom }}
+        ></IconElement>
+      {/if}
+      {#if pageURL}
+        {#if pageStates.Page === stateStatus.HIDDEN}
+          Publish page
+        {:else}
+          Link Page
+        {/if}
+      {:else}
+        Create Page
+      {/if}
+      {#if moduleID}
+        {#if pageStates.Module === stateStatus.HIDDEN}
+          and {pageStates.Page === stateStatus.HIDDEN ? "" : "Publish"} Module
+        {:else}
+          and {pageStates.Page === stateStatus.HIDDEN ? "Link" : ""} Module
+        {/if}
+      {:else}
+        and Module
+      {/if}
+      {#if loading}
+        ...
+      {/if}
+    </button>
+  </div>
 </Modal>
+
+<style lang="postcss">
+  .detailsRow {
+    @apply grid items-start gap-4 grid-cols-1 md:grid-cols-2 auto-rows-auto;
+    .moduleInfo,
+    .pageInfo {
+      @apply shadow-md p-4 rounded-lg;
+    }
+    .input-group {
+      @apply mx-2;
+      label {
+        @apply block w-full text-base mb-0 mt-3 text-gray-700 italic;
+      }
+      input[type="text"],
+      select {
+        @apply px-3 leading-10 h-12 align-middle w-full block;
+      }
+    }
+  }
+  .actionMenu {
+    @apply flex flex-row-reverse gap-4;
+  }
+</style>

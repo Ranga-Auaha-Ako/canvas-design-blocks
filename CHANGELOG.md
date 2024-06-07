@@ -8,6 +8,16 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.13.1] - 2024-06-07
+
+### Fixed
+
+- Fix glossary detection for students when pages are hidden
+
+### Changed
+
+- Glossary no longer supports Mobile: the mobile app's API functionality is not yet stable enough to ensure a consistent experience for users.
+
 ## [2.13.0] - 2024-05-13
 
 ### Added
