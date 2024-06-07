@@ -66,7 +66,7 @@
 </script>
 
 <Modal
-  title="Create Glossary Page"
+  title="Connect Glossary"
   show={true}
   bind:close
   on:close
