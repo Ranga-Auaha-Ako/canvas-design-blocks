@@ -31,18 +31,14 @@
 
   // Glossary.linkExisting({})
 
-  let moduleID =
-    glossaryState.state !== GlossaryStates.NO_GLOSSARY
-      ? glossaryState.module_id
-      : undefined;
+  let moduleID = glossaryState.module_id;
 
   let pageURL: string | undefined =
-    glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_MODULE ||
-    glossaryState.state === GlossaryStates.GLOSSARY_HIDDEN_PAGE
-      ? glossaryState.page_url
-      : glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
+    glossaryState.state !== GlossaryStates.NO_GLOSSARY
+      ? glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
         ? glossaryState.page_matches[0]?.url
-        : undefined;
+        : glossaryState.page_url
+      : undefined;
   let foundPages =
     glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
       ? glossaryState.page_matches
@@ -98,6 +94,10 @@
             : "a page"}
           which might be your glossary page. Please select the correct page from
           the dropdown, or create a new page.
+          <strong
+            >Note: only Design Blocks created pages will work with the glossary
+            tool. Please do not link manually-created glossaries.</strong
+          >
         {:else if pageStates.Page === stateStatus.CREATED}
           You have already created a glossary page.
         {:else if pageStates.Page === stateStatus.HIDDEN}
@@ -115,6 +115,16 @@
             class="w-full"
             id="pageTitle"
           />
+          {#if foundPages && foundPages.length > 1}
+            <button
+              class="btn btn-sm float-right"
+              on:click={() => {
+                pageURL = foundPages[0].url;
+              }}
+            >
+              Use existing page
+            </button>
+          {/if}
         {:else if pageURL && foundPages}
           <label for="pageURL">Select page to link</label>
           <select bind:value={pageURL}>
@@ -126,7 +136,7 @@
                   : "(Similar Name)"}
               </option>
             {/each}
-            <option value={Glossary.defaultURL}>Create New Page</option>
+            <option value={undefined}>Create New Page</option>
           </select>
         {/if}
       </div>
@@ -224,7 +234,7 @@
         {:else}
           and {pageStates.Page === stateStatus.HIDDEN ? "Link" : ""} Module
         {/if}
-      {:else}
+      {:else if pageStates.Module !== stateStatus.CREATED}
         and Module
       {/if}
       {#if loading}

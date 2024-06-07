@@ -14,10 +14,12 @@
     glossaryState,
   } from "./pageInfo";
   import { Glossary } from "./pageParser";
+  import { resolve } from "path";
 
   let openModal: () => void;
   let closeModal: () => void;
   let loadEditor: false | RichGlossaryState = false;
+  let internalGlossaryState = glossaryState;
 
   let loading = false;
 
@@ -51,11 +53,12 @@
         return false;
       });
       loading = false;
+      if (loadEditor) internalGlossaryState = Promise.resolve(loadEditor);
       if (loadEditor) openModal();
     }}
   >
     <svelte:fragment slot="name">
-      {#await glossaryState then glossaryStateRes}
+      {#await internalGlossaryState then glossaryStateRes}
         {#if loading}
           Loading...
         {:else if glossaryStateRes.state === GlossaryStates.GLOSSARY_LINKED}
@@ -68,7 +71,7 @@
       {/await}
     </svelte:fragment>
     <svelte:fragment slot="icon">
-      {#await glossaryState then glossaryStateRes}
+      {#await internalGlossaryState then glossaryStateRes}
         {#if loading}
           <div class="animate-spin">
             <IconElement

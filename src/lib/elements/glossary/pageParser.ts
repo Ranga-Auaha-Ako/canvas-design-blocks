@@ -78,10 +78,12 @@ export class Glossary {
     if (!existingPageUrl) {
       // Create and save a blank glossary
       glossary = new Glossary({
-        title: pageTitle,
+        title: pageTitle.includes(Glossary.magicToken)
+          ? pageTitle
+          : pageTitle + Glossary.magicToken,
         url: Glossary.titleToUrl(pageTitle),
       });
-      glossary.save();
+      await glossary.save();
       state = {
         ...glossary.state,
         html: glossary.html,
@@ -97,12 +99,15 @@ export class Glossary {
       glossary = Glossary.fromHTML(state);
     }
     // Fix the title if it's not correct, and publish the page if it's not published
-    if (!state.published || !state.title.includes(Glossary.magicToken)) {
-      if (!state.title.includes(Glossary.magicToken)) {
-        state.title = state.title + Glossary.magicToken;
+    if (
+      !state.published ||
+      !glossary.state.title.includes(Glossary.magicToken)
+    ) {
+      if (!glossary.state.title.includes(Glossary.magicToken)) {
+        glossary.state.title = glossary.state.title + Glossary.magicToken;
       }
       // Save glossary back to publish it
-      glossary.save();
+      await glossary.save();
     }
     // 2. Create a module if needed
     if (!existingModuleId) {
@@ -143,7 +148,7 @@ export class Glossary {
       published: boolean;
     };
     const foundPage = items.find(
-      (item) => item.type === "Page" && item.page_url === state.url
+      (item) => item.type === "Page" && item.page_url === glossary.state.url
     );
     if (!foundPage) {
       // Add the page to the module
@@ -155,15 +160,17 @@ export class Glossary {
           headers: { "Content-Type": "application/json", "X-Csrf-Token": CSRF },
           body: JSON.stringify({
             module_item: {
-              title: state.title,
+              title: glossary.state.title,
               type: "Page",
-              page_url: state.url,
+              page_url: glossary.state.url,
             },
           }),
         }
       );
       if (!res.ok)
-        throw new Error(`Failed to add page to module: ${await res.text()}`);
+        throw new Error(
+          `Failed to add page to module. Please try again, or contact support.`
+        );
     }
     // 4. Publish the module if needed
     if (!published) {
@@ -177,7 +184,9 @@ export class Glossary {
         }
       );
       if (!res.ok)
-        throw new Error(`Failed to publish module: ${await res.text()}`);
+        throw new Error(
+          `Failed to publish module. Please try again, or contact support.`
+        );
     }
     return state;
   }

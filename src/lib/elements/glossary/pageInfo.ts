@@ -31,6 +31,7 @@ export enum GlossaryStates {
 
 export type ResolvedGlossaryState = {
   state: GlossaryStates.GLOSSARY_LINKED;
+  module_id?: number;
   url: string;
 };
 
@@ -52,6 +53,7 @@ export type UnResolvedGlossaryState =
     }
   | {
       state: GlossaryStates.NO_GLOSSARY;
+      module_id?: number;
     };
 
 export type GlossaryState = ResolvedGlossaryState | UnResolvedGlossaryState;
@@ -75,9 +77,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
     .then(async (res) => {
       if (!res.ok)
         throw new Error(
-          `Failed to fetch modules: Status ${
-            res.status
-          }. Details: ${await res.text()}`
+          `Failed to fetch modules: Status ${res.status}. Please try again or contact support.`
         );
       const json = (await res.json()) as {
         id: number;
@@ -140,6 +140,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
           }
           return {
             state: GlossaryStates.GLOSSARY_LINKED as const,
+            module_id: exactMatch.id,
             url: page.page_url,
           };
         } else {
@@ -166,9 +167,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
     .then(async (res) => {
       if (!res.ok)
         throw new Error(
-          `Failed to fetch pages: Status ${
-            res.status
-          }. Details: ${await res.text()}`
+          `Failed to fetch pages: Status ${res.status}. Please try again or contact support.`
         );
       const json = (await res.json()) as {
         url: string;
@@ -200,7 +199,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
     });
   if (pages) return pages;
   // Step 3: Return NO_GLOSSARY
-  return { state: GlossaryStates.NO_GLOSSARY };
+  return { state: GlossaryStates.NO_GLOSSARY, module_id: modules?.module_id };
 }
 
 export let glossaryState: Promise<GlossaryState> = getGlossaryState();
@@ -233,9 +232,7 @@ export async function getRichGlossary(
   ).then(async (res) => {
     if (!res.ok)
       throw new Error(
-        `Failed to fetch page data: Status ${
-          res.status
-        }. Details: ${await res.text()}`
+        `Failed to fetch page data: Status ${res.status}. Please try again or contact support.`
       );
     return (await res.json()) as {
       body: string;
