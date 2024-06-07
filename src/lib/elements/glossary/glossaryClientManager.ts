@@ -30,7 +30,7 @@ export class GlossaryClientManager {
   getTermRegex() {
     if (!this.glossary?.hasTerms) return new RegExp("$^", "i");
     return new RegExp(
-      "\\b(" +
+      "(?:\\b|^)(" +
         this.glossary.allTerms
           .sort((a, b) => {
             // Sort from longest to shortest
@@ -39,8 +39,8 @@ export class GlossaryClientManager {
           })
           .map((t) => escapeStringRegexp(t.term.trim()))
           .join("|") +
-        ")\\b",
-      "i"
+        ")(?:\\b|$)",
+      "iu"
     );
   }
   constructor() {
