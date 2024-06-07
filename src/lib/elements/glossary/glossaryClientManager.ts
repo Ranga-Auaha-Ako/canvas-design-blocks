@@ -67,7 +67,6 @@ export class GlossaryClientManager {
           if (node instanceof HTMLElement) {
             if (InteractiveTags.has(node.tagName))
               return NodeFilter.FILTER_REJECT;
-            if (node.dataset.cdbId) return NodeFilter.FILTER_REJECT;
           }
           if (!(node instanceof Text)) return NodeFilter.FILTER_SKIP;
           return node.textContent && regex.test(node.textContent) // Check if text contains string
