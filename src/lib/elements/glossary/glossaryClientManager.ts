@@ -11,32 +11,6 @@ const CSRF = Cookie.get("_csrf_token");
 
 // The name of the glossary page *should* be "cdb-glossary", but it's possible that it's different. Deleting the page will cause any new glossary to be created with names like "cdb-glossary-1", as the name is based on the title of the page. This is a problem because the glossary editor will only look for a page with the exact name "cdb-glossary". To fix this, we need to get the glossary page by its title, and then use the id to fetch the page contents.
 
-const PAGE_NAME = "Design Blocks: Course Glossary";
-const DEFAULT_PAGE_URL = "design-blocks-course-glossary";
-const _page_info = new Promise<{ url: string; created: boolean }>(
-  async (resolve, reject) => {
-    if (!courseEnv.COURSE_ID) return reject("No course ID found");
-    const pages = (await fetch(
-      `/api/v1/courses/${courseEnv.COURSE_ID}/pages?search_term=${PAGE_NAME}`
-    ).then((response) => response.json())) as { title: string; url: string }[];
-    const page = pages.find((page) => page.url.includes(DEFAULT_PAGE_URL));
-    if (page) {
-      resolve({
-        created: true,
-        url: page.url,
-      });
-    } else {
-      // Page doesn't exist
-      resolve({
-        created: false,
-        url: DEFAULT_PAGE_URL,
-      });
-    }
-  }
-);
-export const PAGE_CREATED = _page_info.then((info) => info.created);
-export const PAGE_URL = _page_info.then((info) => info.url);
-
 export const GLOSSARY_ENABLED = persisted("cdb-glossary-enabled", true);
 
 export type glossaryState = {
@@ -142,10 +116,18 @@ export class GlossaryClientManager {
       window.addEventListener("load", () => this.renderClientComponent(true));
       return;
     }
+
+    const state = await glossaryState;
     // If we're on the glossary page, render the viewer or editor
     if (
+      state.state !== GlossaryStates.NO_GLOSSARY &&
       courseEnv?.WIKI_PAGE &&
-      courseEnv?.WIKI_PAGE?.url === (await PAGE_URL)
+      courseEnv?.WIKI_PAGE.url &&
+      (state.state === GlossaryStates.GLOSSARY_UNLINKED
+        ? state.page_matches.some(
+            (page) => page.url === courseEnv.WIKI_PAGE?.url
+          )
+        : courseEnv?.WIKI_PAGE?.url === state.url)
     ) {
       const contents = courseEnv.WIKI_PAGE.body;
       const glossary = Glossary.fromHTML({
@@ -186,7 +168,6 @@ export class GlossaryClientManager {
         : "div#wiki_page_show .user_content"
     );
     if (glossaryEls.length === 0) return;
-    const state = await glossaryState;
     if (state.state !== GlossaryStates.GLOSSARY_LINKED) return;
     const richState = await getRichGlossary(state);
     this.glossary = Glossary.fromHTML(richState);

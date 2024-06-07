@@ -39,12 +39,12 @@ export type UnResolvedGlossaryState =
   | {
       state: GlossaryStates.GLOSSARY_HIDDEN_MODULE;
       module_id: number;
-      page_url?: string;
+      url?: string;
     }
   | {
       state: GlossaryStates.GLOSSARY_HIDDEN_PAGE;
       module_id?: number;
-      page_url: string;
+      url: string;
     }
   | {
       state: GlossaryStates.GLOSSARY_UNLINKED;
@@ -127,7 +127,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
           return {
             state: GlossaryStates.GLOSSARY_HIDDEN_MODULE as const,
             module_id: exactMatch.id,
-            page_url: page?.page_url,
+            url: page?.page_url,
           };
         }
         if (page) {
@@ -135,7 +135,7 @@ export async function getGlossaryState(): Promise<GlossaryState> {
             return {
               state: GlossaryStates.GLOSSARY_HIDDEN_PAGE as const,
               module_id: exactMatch.id,
-              page_url: page.page_url,
+              url: page.page_url,
             };
           }
           return {

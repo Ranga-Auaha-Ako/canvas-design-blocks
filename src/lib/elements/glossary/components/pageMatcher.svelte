@@ -37,13 +37,12 @@
     glossaryState.state !== GlossaryStates.NO_GLOSSARY
       ? glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
         ? glossaryState.page_matches[0]?.url
-        : glossaryState.page_url
+        : glossaryState.url
       : undefined;
   let foundPages =
     glossaryState.state === GlossaryStates.GLOSSARY_UNLINKED
       ? glossaryState.page_matches
       : undefined;
-
   let pageTitle = Glossary.defaultTitle;
   let moduleTitle = Glossary.defaultModuleTitle;
   let loading = false;
@@ -126,7 +125,7 @@
             </button>
           {/if}
         {:else if pageURL && foundPages}
-          <label for="pageURL">Select page to link</label>
+          <label for="pageURL">Select existing glossary or create new:</label>
           <select bind:value={pageURL}>
             {#each foundPages as url}
               <option value={url.url}>
@@ -150,8 +149,8 @@
             You will
           {/if}
           {#if pageStates.Module === stateStatus.NONE}
-            need to create a module to hold your glossary page. This must be
-            visible to students.
+            need to create a module to hold your glossary page.
+            <strong>This will immediately be published to students.</strong>
           {:else if pageStates.Module === stateStatus.HIDDEN}
             need to publish the module to make the glossary visible to students.
             The Glossary module is currently hidden.
