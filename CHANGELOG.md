@@ -8,7 +8,11 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
-## [2.13.1] - 2024-06-07
+## [2.13.1] - 2024-06-10
+
+### Overview
+
+- ✨ New: Glossaries! Create and edit a list of terms and definitions to be highlighted in course content on the web.
 
 ### Fixed
 
