@@ -1,17 +1,17 @@
 <script lang="ts">
   import { ButtonBar, ButtonBarTheme, ValidThemes } from "../buttonBar";
   import { fade, slide } from "svelte/transition";
-  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
+  import ButtonRadio from "$lib/components/buttonRadio.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
-  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker from "$lib/components/colourPicker.svelte";
   import { colord } from "colord";
-  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import LinkInput from "$lib/components/contentSearch/linkEditor/linkInput.svelte";
   import { createEventDispatcher, onDestroy } from "svelte";
-  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import OrderableList from "$lib/components/orderableList.svelte";
   import { Writable } from "svelte/store";
   import { LocalState } from "$lib/elements/imageCard/imageCard";
-  import ItemPages from "$lib/util/components/itemPages/itemPages.svelte";
+  import ItemPages from "$lib/components/itemPages/itemPages.svelte";
   import { text } from "stream/consumers";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
 
@@ -130,6 +130,7 @@
           in:fade={{ duration: 150, delay: 200 }}
         >
           {#if itemIndex >= 0}
+            {@const icon = $buttonBarData.items[itemIndex].icon}
             <div class="card-header">
               <h3 class="card-title truncate">
                 {$buttonBarData.items[itemIndex].label}
@@ -172,12 +173,8 @@
                   iconPicker.open();
                 }}
               >
-                {#if $buttonBarData.items[itemIndex].icon}
-                  <IconElement
-                    icon={$buttonBarData.items[itemIndex].icon}
-                    colorOverride="#000"
-                    }
-                  />
+                {#if icon}
+                  <IconElement {icon} colorOverride="#000" />
                 {/if}
 
                 Select Icon

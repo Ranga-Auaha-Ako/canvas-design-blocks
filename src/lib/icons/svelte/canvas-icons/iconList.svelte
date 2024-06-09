@@ -2,11 +2,11 @@
   import { debounce } from "perfect-debounce";
   import { IconPickerOptions, IconType, category, icon } from "../iconPicker";
   import { createEventDispatcher, onMount } from "svelte";
-  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker from "$lib/components/colourPicker.svelte";
   import { nanoid } from "nanoid";
   import { colord } from "colord";
   import { persisted as localStorageWritable } from "svelte-persisted-store";
-  import ScrollContainer from "$lib/util/components/scrollContainer.svelte";
+  import ScrollContainer from "$lib/components/scrollContainer.svelte";
   import { slide } from "svelte/transition";
   import { findNearestBackgroundColor } from "$lib/util/deriveColour";
 
@@ -36,6 +36,7 @@
         stringify: (value) => (value ? value.toHex() : ""),
         parse: (value) => colord(value),
       },
+      syncTabs: false,
     }
   );
   $: dispatch("colorChange", { color: $iconColor.toHex() });

@@ -18,7 +18,9 @@
   export let state: stateObject | undefined;
   export let managers: Readable<ElementManager[]>;
 
-  export let additionalItems: ComponentType[] = [];
+  export let additionalItems: PromiseLike<ComponentType[]> = Promise.resolve(
+    []
+  );
 
   const last_opened_ver = persisted("cdb_version_opened", "2.8.3");
 
@@ -118,9 +120,11 @@
           </svelte:fragment>
         </ElementPanel>
       {/each}
-      {#each additionalItems as item}
-        <svelte:component this={item} />
-      {/each}
+      {#await additionalItems then items}
+        {#each items as item}
+          <svelte:component this={item} />
+        {/each}
+      {/await}
       <div class="info-panel">
         <a
           href={import.meta.env.CANVAS_BLOCKS_THEME_CONTACT_LINK}

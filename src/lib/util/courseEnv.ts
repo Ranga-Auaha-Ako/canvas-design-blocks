@@ -1,3 +1,5 @@
+import Cookie from "js-cookie";
+
 let courseID = window.ENV ? window.ENV.COURSE_ID : undefined;
 if (!courseID) {
   // Pull from the URL
@@ -8,6 +10,18 @@ if (!courseID) {
     courseID = path[courseIndex + 1];
   }
 }
+
+let accountID =
+  window.ENV && window.ENV.ACCOUNT_ID
+    ? Promise.resolve(window.ENV.ACCOUNT_ID)
+    : Promise.resolve(null);
+if (!accountID && courseID) {
+  // Use API to get account ID
+  accountID = fetch(`/api/v1/courses/${courseID}`)
+    .then((response) => response.json())
+    .then((data) => data.account_id);
+}
+export { accountID as accountIDPromise };
 
 export const courseEnv = {
   ...window.ENV,
@@ -44,3 +58,5 @@ export async function getCoursePermissions(): Promise<
   }
   return permissions;
 }
+
+export const CSRF = Cookie.get("_csrf_token");

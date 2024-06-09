@@ -1,6 +1,5 @@
 <script lang="ts">
   import Sortable from "sortablejs";
-  // import { Sortable } from "$lib/util/loaders/sortable";
   import { createEventDispatcher } from "svelte";
 
   export let labelKey: string;

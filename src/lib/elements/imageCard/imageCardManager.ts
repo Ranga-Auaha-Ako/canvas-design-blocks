@@ -1,7 +1,6 @@
 import { ElementManager } from "../generic/elementManager";
 import type { stateObject } from "src/desktop";
-import "./imageCard.postcss";
-import editorStyles from "./imageCard.postcss?inline";
+import editorStyles from "./element.postcss?inline";
 import { ImageCard } from "./imageCard";
 
 export class ImageCardManager extends ElementManager {

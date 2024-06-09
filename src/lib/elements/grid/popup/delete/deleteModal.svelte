@@ -1,7 +1,7 @@
 <svelte:options accessors />
 
 <script lang="ts">
-  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import Modal from "$lib/components/modalDialog/modal.svelte";
   import { createEventDispatcher } from "svelte";
   import Grid from "../../grid";
 

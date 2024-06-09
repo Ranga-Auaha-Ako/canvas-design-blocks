@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Portal from "$lib/portal/portal.svelte";
   import {
     arrow,
     autoUpdate,
@@ -8,6 +9,7 @@
     shift,
   } from "@floating-ui/dom";
   import { nanoid } from "nanoid";
+  import { GLOSSARY_ENABLED } from "../glossaryClientManager";
   export let term: string;
   export let definition: string;
   const id = nanoid();
@@ -29,6 +31,7 @@
         offset(10),
         shift({
           padding: 10,
+          altBoundary: true,
         }),
         inline(),
         arrow({
@@ -42,11 +45,12 @@
     x = position.x;
     y = position.y;
   };
-  $: cleanup =
-    open && defEl && termEl
-      ? autoUpdate(termEl, defEl, updateFunction)
-      : undefined;
-  $: if (!open) cleanup?.();
+  let cleanup: () => void | undefined;
+  $: if (open && defEl && termEl) {
+    if (cleanup) cleanup();
+    cleanup = autoUpdate(termEl, defEl, updateFunction);
+  }
+  $: if (!open && cleanup) cleanup();
 
   let nextAction: number | undefined;
   let forceOpen = false;
@@ -92,43 +96,61 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<span on:mouseenter={() => showTooltip()} on:mouseleave={() => hideTooltip()}
+<span
+  on:mouseenter={() => $GLOSSARY_ENABLED && showTooltip()}
+  on:mouseleave={() => hideTooltip()}
   ><button
-    aria-labelledby={open ? `${id}-label` : undefined}
-    on:click={() => forceToggle()}
+    class:disabledHighlight={!$GLOSSARY_ENABLED}
+    aria-describedby={open ? `${id}-label` : undefined}
+    on:click={() => $GLOSSARY_ENABLED && forceToggle()}
+    role={$GLOSSARY_ENABLED ? "button" : "presentation"}
+    disabled={!$GLOSSARY_ENABLED}
     bind:this={termEl}>{term}</button
-  ><!-- svelte-ignore a11y-click-events-have-key-events --><span
-    bind:this={defEl}
-    class:open
-    class="dfn"
-    style:transform
-    id={`${id}-label`}
-    on:click|stopPropagation
-    ><span
-      class="dfn-arrow"
-      style:top={arrowY != null ? `${arrowY}px` : undefined}
-      style:left={arrowX != null ? `${arrowX}px` : undefined}
-      bind:this={arrowEl}
-    ></span><span class="dfn-text">{definition}</span></span
+  ><Portal>
+    <!-- svelte-ignore a11y-click-events-have-key-events --><span
+      bind:this={defEl}
+      class:open
+      class="dfn"
+      style:transform
+      id={`${id}-label`}
+      on:click|stopPropagation
+      ><span
+        class="dfn-arrow"
+        style:top={arrowY != null ? `${arrowY}px` : undefined}
+        style:left={arrowX != null ? `${arrowX}px` : undefined}
+        bind:this={arrowEl}
+      ></span><span class="dfn-text">{@html definition}</span></span
+    ></Portal
   ></span
 >
 
 <style lang="postcss">
   button {
-    @apply appearance-none bg-transparent border-0 cursor-help underline decoration-dotted;
+    @apply appearance-none bg-transparent border-0 cursor-help underline decoration-dotted select-text;
+    font-style: inherit;
     font-family: inherit;
-    font-size: 1em;
-    line-height: unset;
+    font-size: inherit;
+    line-height: inherit;
     padding: 0;
     display: inline;
-    font-weight: unset;
-    vertical-align: unset;
+    font-weight: inherit;
+    vertical-align: inherit;
+    &:disabled {
+      @apply text-inherit;
+    }
+
+    &.disabledHighlight {
+      @apply no-underline;
+      cursor: unset;
+    }
   }
   .dfn {
     @apply invisible opacity-0 transition-opacity duration-300;
     @apply absolute z-30 top-0 left-0;
     @apply text-sm bg-black text-white px-2 py-1 shadow rounded-sm;
     transition-property: opacity, visibility;
+    max-width: fit-content;
+    width: min(calc(100% - 3rem), 65ch);
     &.open {
       @apply visible opacity-100 duration-500;
     }

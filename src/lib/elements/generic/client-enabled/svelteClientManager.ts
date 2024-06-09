@@ -9,11 +9,7 @@ import { get, writable } from "svelte/store";
 export class ClientElementManager<stateDataType> {
   private additionalState: Record<string, unknown> = {};
   private clientComponent:
-    | ElementComponent<
-        stateDataType,
-        unknown,
-        SvelteElement<stateDataType, unknown>
-      >
+    | ElementComponent<stateDataType, unknown>
     | undefined = undefined;
   constructor(
     public stateClass: SvelteStateClass<stateDataType>,
@@ -41,6 +37,7 @@ export class ClientElementManager<stateDataType> {
           props: {
             cdbData: get(state),
             localState: writable(this.additionalState),
+            instance: this,
             destroyHandler: () => {
               // N/A
             },

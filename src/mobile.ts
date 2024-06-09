@@ -17,10 +17,16 @@ export async function loadApp() {
       cdb_version: version,
     });
   }
-  // // Load any client-side elements
-  // clientManagers.forEach((manager) => {
-  //   manager.renderClientComponent();
-  // });
+  // Load any client-side elements
+  clientManagers.then((c) =>
+    c.forEach((manager) => {
+      try {
+        manager.renderClientComponent();
+      } catch (error) {
+        console.error("Failed to load tool:", manager, error);
+      }
+    })
+  );
 }
 
 // Load the app

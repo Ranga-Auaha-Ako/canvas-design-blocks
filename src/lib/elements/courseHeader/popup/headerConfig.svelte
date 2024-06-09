@@ -7,17 +7,17 @@
     HeaderLevel,
   } from "../courseHeader";
   import { fade, slide } from "svelte/transition";
-  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
-  import { ModalDialog } from "$lib/util/components/modalDialog/modal";
-  import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
-  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import ButtonRadio from "$lib/components/buttonRadio.svelte";
+  import { ModalDialog } from "$lib/components/modalDialog/modal";
+  import ImageSearch from "$lib/components/contentSearch/imageSearch/imageSearch.svelte";
+  import OrderableList from "$lib/components/orderableList.svelte";
   import { nanoid } from "nanoid";
-  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import LinkInput from "$lib/components/contentSearch/linkEditor/linkInput.svelte";
   import writableDerived from "svelte-writable-derived";
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
   import { onDestroy } from "svelte";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
-  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker from "$lib/components/colourPicker.svelte";
   import { colord } from "colord";
 
   export let props: { courseHeader: CourseHeader };
@@ -246,6 +246,7 @@
   <div class="col">
     <!-- Links -->
     {#if editLinkIndex !== undefined}
+      {@const icon = $headerData.links[editLinkIndex].icon}
       <div class="editLink">
         <div class="editActions">
           <button
@@ -309,15 +310,12 @@
                 buttonIconPicker.open();
               }}
             >
-              {#if !$headerData.links[editLinkIndex].icon}
+              {#if !icon}
                 <i class="cdb--icon" aria-hidden="true">
                   Canvas.button-and-icon-maker
                 </i>
               {:else}
-                <IconElement
-                  icon={$headerData.links[editLinkIndex].icon}
-                  colorOverride="#000"
-                />
+                <IconElement {icon} colorOverride="#000" />
               {/if}
 
               Select Icon

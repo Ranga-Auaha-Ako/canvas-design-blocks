@@ -9,6 +9,8 @@
   export let cdbData: IconData;
   // svelte-ignore unused-export-let
   export let localState: any;
+  // svelte-ignore unused-export-let
+  export let instance: any;
   export let destroyHandler: () => void;
 
   onDestroy(() => {
@@ -16,7 +18,7 @@
   });
 </script>
 
-<span class="DesignBlocks--Icon {cdbData.theme}">
+<span class="DesignBlocks--Icon {cdbData.theme} {cdbData.size}">
   {#if cdbData.icon}
     <IconElement icon={cdbData.icon} colorOverride={cdbData.color?.toHex()} />
   {:else}

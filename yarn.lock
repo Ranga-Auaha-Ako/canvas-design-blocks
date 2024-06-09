@@ -1203,6 +1203,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5":
+  version: 5.3.14
+  resolution: "@types/papaparse@npm:5.3.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: feb4d215903b67442feaa9836a6a5771e78dc6a9da24781e399c6f891622fa82245cd783ab2613c5be43e4a2d6a94da52325538e4485af258166864576ecd0d8
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -1805,6 +1814,7 @@ __metadata:
     "@types/js-cookie": "npm:^3"
     "@types/jsdom": "npm:^21.1.6"
     "@types/node": "npm:^20.11.10"
+    "@types/papaparse": "npm:^5"
     "@types/sortablejs": "npm:^1.15.7"
     "@types/svg2ttf": "npm:^5.0.3"
     "@types/svgicons2svgfont": "npm:^10.0.5"
@@ -1830,7 +1840,9 @@ __metadata:
     lightningcss: "npm:^1.22.1"
     magic-string: "npm:^0.30.5"
     nanoid: "npm:5.0.4"
+    p-lazy: "npm:^4.0.0"
     p-limit: "npm:^5.0.0"
+    papaparse: "npm:^5.4.1"
     perfect-debounce: "npm:^1.0.0"
     postcss: "npm:8.4.33"
     postcss-editor-styles: "npm:^0.3.0"
@@ -4385,6 +4397,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-lazy@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "p-lazy@npm:4.0.0"
+  checksum: 534b16971836bc8f5a1f5576436916aae0dd23cd53a48ebc2a486eb06c2001a05f9c4a2aed8b2d8c6e59cf4669c18bd793ff15ddee295d9679e67d3bf28f64eb
+  languageName: node
+  linkType: hard
+
 "p-limit@npm:^5.0.0":
   version: 5.0.0
   resolution: "p-limit@npm:5.0.0"
@@ -4434,6 +4453,13 @@ __metadata:
   version: 1.0.11
   resolution: "pako@npm:1.0.11"
   checksum: 86dd99d8b34c3930345b8bbeb5e1cd8a05f608eeb40967b293f72fe469d0e9c88b783a8777e4cc7dc7c91ce54c5e93d88ff4b4f060e6ff18408fd21030d9ffbe
+  languageName: node
+  linkType: hard
+
+"papaparse@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "papaparse@npm:5.4.1"
+  checksum: 201f37c4813453fed5bfb4c01816696b099d2db9ff1e8fb610acc4771fdde91d2a22b6094721edb0fedb21ca3c46f04263f68be4beb3e35b8c72278f0cedc7b7
   languageName: node
   linkType: hard
 

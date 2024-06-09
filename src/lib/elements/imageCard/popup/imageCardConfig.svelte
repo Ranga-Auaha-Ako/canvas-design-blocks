@@ -9,17 +9,17 @@
     LocalState,
   } from "../imageCard";
   import { createEventDispatcher, onDestroy } from "svelte";
-  import ImageSearch from "$lib/util/components/contentSearch/imageSearch/imageSearch.svelte";
-  import { ModalDialog } from "$lib/util/components/modalDialog/modal";
+  import ImageSearch from "$lib/components/contentSearch/imageSearch/imageSearch.svelte";
+  import { ModalDialog } from "$lib/components/modalDialog/modal";
   import { fade } from "svelte/transition";
-  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
+  import ButtonRadio from "$lib/components/buttonRadio.svelte";
   import { Writable } from "svelte/store";
-  import OrderableList from "$lib/util/components/orderableList.svelte";
+  import OrderableList from "$lib/components/orderableList.svelte";
   import { nanoid } from "nanoid";
   import IconPicker from "$lib/icons/svelte/iconPicker.svelte";
-  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import LinkInput from "$lib/components/contentSearch/linkEditor/linkInput.svelte";
   import { persisted } from "svelte-persisted-store";
-  import ColourPicker from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker from "$lib/components/colourPicker.svelte";
   import { colord } from "colord";
 
   const dispatch = createEventDispatcher();
@@ -303,7 +303,8 @@
       @apply w-full border border-gray-300 rounded p-2;
     }
     .cardPanel {
-      @apply flex flex-wrap gap-4 w-screen max-w-3xl;
+      @apply flex flex-wrap gap-4 max-w-3xl;
+      width: 95vw;
       .ImageCard--rowSettings {
         h2 {
           @apply text-lg leading-none m-0;

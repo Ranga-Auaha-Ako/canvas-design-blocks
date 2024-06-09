@@ -2,8 +2,7 @@ import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { ProfileGrid } from "./profileGrid";
-import "./profileStyles.postcss";
-import editorStyles from "./profileStyles.postcss?inline";
+import editorStyles from "./element.postcss?inline";
 //@ts-ignore
 
 export class ProfilesManager extends ElementManager {

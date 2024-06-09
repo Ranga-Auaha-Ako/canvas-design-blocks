@@ -2,9 +2,7 @@
   import Row from "$lib/elements/grid/row";
   import type { Writable } from "svelte/store";
   import { colord, type Colord } from "colord";
-  import ColourPicker, {
-    getColour,
-  } from "$lib/util/components/colourPicker.svelte";
+  import ColourPicker, { getColour } from "$lib/components/colourPicker.svelte";
   import { slide } from "svelte/transition";
   import MceElement from "$lib/elements/generic/mceElement";
   import type { Placement } from "@floating-ui/dom";

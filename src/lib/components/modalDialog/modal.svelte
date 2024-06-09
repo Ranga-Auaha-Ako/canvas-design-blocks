@@ -15,9 +15,10 @@
     dialog.close();
   });
   export let show: boolean = false;
-  export let showSave: boolean = true;
-  export let showCancel: boolean = true;
+  export let showSave: boolean | string = true;
+  export let showCancel: boolean | string = true;
   export let showClose: boolean = false;
+  export let size: "small" | "large" = "small";
 
   $: if (dialog) show ? dialog.showModal() : dialog.close();
   export let title: string = "";
@@ -28,6 +29,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div class="cgb-component">
   <dialog
+    class:size-large={size === "large"}
     bind:this={dialog}
     on:click|stopPropagation={(e) => {
       if (e.target === dialog) {
@@ -75,7 +77,8 @@
               on:click={() => {
                 dispatch("save");
               }}
-              class="Button Button--success save">Save</button
+              class="Button Button--success save"
+              >{showSave === true ? "Save" : showSave}</button
             >
           {/if}
           {#if showCancel}
@@ -84,7 +87,8 @@
                 dispatch("close");
                 dialog.close();
               }}
-              class="Button cancel">Cancel</button
+              class="Button cancel"
+              >{showCancel === true ? "Cancel" : showCancel}</button
             >
           {/if}
         </slot>
@@ -102,6 +106,9 @@
     }
     &::backdrop {
       @apply bg-black bg-opacity-50;
+    }
+    &.size-large {
+      @apply max-w-screen-lg;
     }
   }
   .actions {

@@ -31,8 +31,8 @@
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { clickOutside } from "svelte-use-click-outside";
   import Portal from "$lib/portal/portal.svelte";
-  import preventBubble from "../preventBubble";
-  import theme from "../theme";
+  import preventBubble from "$lib/util/preventBubble";
+  import theme from "$lib/util/theme";
   import { stringify } from "querystring";
   import { nanoid } from "nanoid";
 

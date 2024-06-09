@@ -12,7 +12,7 @@ import { IconState, getIconState } from "$lib/icons/svelte/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { sanitizeUrl } from "@braintree/sanitize-url";
-import { Link, ModuleSearch } from "$lib/util/components/contentSearch/search";
+import { Link, ModuleSearch } from "$lib/components/contentSearch/search";
 import { courseEnv } from "$lib/util/courseEnv";
 
 export enum ButtonBarTheme {

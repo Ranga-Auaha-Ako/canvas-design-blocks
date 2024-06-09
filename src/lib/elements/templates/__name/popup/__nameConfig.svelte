@@ -1,8 +1,8 @@
 <script lang="ts">
   import { type __Name, ValidThemes, __NameTheme } from "../__name";
   import { fade, slide } from "svelte/transition";
-  import ButtonRadio from "$lib/util/components/buttonRadio.svelte";
-  import LinkInput from "$lib/util/components/contentSearch/linkEditor/linkInput.svelte";
+  import ButtonRadio from "$lib/components/buttonRadio.svelte";
+  import LinkInput from "$lib/components/contentSearch/linkEditor/linkInput.svelte";
 
   export let props: { __name: __Name };
   $: __name = props.__name;

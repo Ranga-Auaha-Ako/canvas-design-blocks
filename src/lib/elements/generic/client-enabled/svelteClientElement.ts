@@ -11,24 +11,21 @@ import {
 import { type Writable, writable } from "svelte/store";
 import { MceElementStatics } from "../mceElement";
 
-export interface ClientElementStatics {
-	
-}
+export interface ClientElementStatics {}
 
 export abstract class SvelteClientElement<
-  stateDataType,
-  localState = Record<string, string> | undefined
-> extends SvelteElement<stateDataType, localState> implements ClientElementStatics {
+    stateDataType,
+    localState = Record<string, string> | undefined
+  >
+  extends SvelteElement<stateDataType, localState>
+  implements ClientElementStatics
+{
   constructor(
     public editor: Editor = window.tinymce.activeEditor,
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<
-      ElementComponent<
-        stateDataType,
-        localState,
-        SvelteElement<stateDataType, localState>
-      >
+      ElementComponent<stateDataType, localState>
     >,
     public stateClass: SvelteStateClass<stateDataType>,
     public readonly id = nanoid(),
@@ -49,9 +46,9 @@ export abstract class SvelteClientElement<
       defaultState,
       localState
     );
-		// Check to see if element exists in the DOM
-		document.querySelectorAll(manager.selector).forEach((el) => {
-			if
-		});
+    // Check to see if element exists in the DOM
+    document.querySelectorAll(manager.selector).forEach((el) => {
+      //TODO: implement this
+    });
   }
 }

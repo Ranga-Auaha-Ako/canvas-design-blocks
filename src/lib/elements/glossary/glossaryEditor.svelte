@@ -1,18 +1,18 @@
 <script lang="ts">
-  import {
-    GlossaryClientManager,
-    PAGE_CREATED,
-    PAGE_URL,
-    glossaryState,
-    termDefinition,
-  } from "./glossaryClientManager";
+  import { unparse } from "papaparse";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
-  import { IconType, instClassToId } from "$lib/icons/svelte/iconPicker";
   import { courseEnv } from "$lib/util/courseEnv";
   import { fade, slide } from "svelte/transition";
-  import Modal from "$lib/util/components/modalDialog/modal.svelte";
+  import Modal from "$lib/components/modalDialog/modal.svelte";
   import { tick } from "svelte";
   import { nanoid } from "nanoid";
+  import ImportMerger from "./components/importMerger.svelte";
+  import { Glossary, termDefinition } from "./pageParser";
+  import {
+    GlossaryStates,
+    getGlossaryState,
+    getResolvedGlossary,
+  } from "./pageInfo";
 
   type termDefinitionID = termDefinition & { id: string };
   type glossaryStateID = {
@@ -20,23 +20,22 @@
     institutionDefaults: boolean;
   };
 
-  export let glossaryData: glossaryState;
-  export let manager: GlossaryClientManager;
+  export let glossaryData: Glossary;
   export let frameless: boolean = false;
   let parsedData: glossaryStateID = {
     ...glossaryData,
     terms: glossaryData.terms.map((t) => ({ ...t, id: nanoid() })),
   };
   $: if (
-    parsedData.terms[parsedData.terms.length - 1].definition !== "" ||
-    parsedData.terms[parsedData.terms.length - 1].term !== ""
+    parsedData.terms[parsedData.terms.length - 1]?.definition !== "" ||
+    parsedData.terms[parsedData.terms.length - 1]?.term !== ""
   ) {
     parsedData.terms = [
       ...parsedData.terms,
       { term: "", definition: "", id: nanoid() },
     ];
   }
-  const instDefaults = manager.institutionTerms;
+  const instDefaults = glossaryData.institutionTerms;
   let newTerm: termDefinitionID = { term: "", definition: "", id: nanoid() };
   let saving = false;
   let saveNotice = false;
@@ -78,37 +77,114 @@
       },
     });
   });
+
+  let newTerms: termDefinition[] | undefined;
+
+  const isGlossaryLinked = getGlossaryState().then(
+    (state) => state.state === GlossaryStates.GLOSSARY_LINKED
+  );
 </script>
 
+{#if newTerms}
+  <ImportMerger
+    originalTerms={parsedData.terms}
+    {newTerms}
+    on:merged={({ detail }) => {
+      parsedData.terms = detail.map((term) => ({
+        term: term.term,
+        definition: term.definition,
+        id: nanoid(),
+      }));
+      needsSave = true;
+      newTerms = undefined;
+    }}
+    on:close={() => {
+      newTerms = undefined;
+    }}
+  ></ImportMerger>
+{/if}
 <div class="cgb-component">
-  <div class:editor-frame={!frameless} class="transition" in:slide|global>
+  <div
+    class:editor-frame={!frameless}
+    class="glossaryEditor transition"
+    in:slide|global
+  >
     <div>
-      <h1 class="text-3xl block">Glossary Editor</h1>
+      <h1 class="text-3xl block">
+        Glossary Editor
+        {#if !frameless && courseEnv.COURSE_ID}
+          <a
+            href={`/courses/${courseEnv.COURSE_ID}/pages/${glossaryData.state.url}`}
+            class="btn float-right"
+          >
+            <IconElement
+              icon={{ id: "Inst.Line.arrow-left", type: 2 }}
+              colorOverride="#000"
+            />
+            Return to Viewer
+          </a>
+        {/if}
+      </h1>
+
+      {#await isGlossaryLinked then isLinked}
+        {#if !isLinked}
+          <div
+            class="bg-red-100 border-red-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+          >
+            <div class="text-xl">
+              <IconElement
+                icon={{ id: "Inst.Line.warning", type: 2 }}
+                colorOverride="rgb(248,113,113)"
+              />
+            </div>
+            <p class="text-red-700">
+              Glossary is not linked to the course. Please link the glossary to
+              the course before editing.
+            </p>
+            <div class="float-end">
+              <button
+                class="btn cursor-pointer min-h-12 max-w-full"
+                on:click={async () => {
+                  const res =
+                    confirm(
+                      "Are you sure you want to exit the edtor? Check you have saved changes before linking the glossary."
+                    ) && (await getResolvedGlossary());
+                  if (res && courseEnv.COURSE_ID) {
+                    // Redirect
+                    window.location.href = `/courses/${courseEnv.COURSE_ID}/pages/${res.url}`;
+                  }
+                }}
+              >
+                <IconElement
+                  icon={{ id: "Inst.Line.link", type: 2 }}
+                  colorOverride="#000"
+                />
+                Link Glossary
+              </button>
+            </div>
+          </div>
+        {/if}
+      {/await}
       <p>
         Define terms and definitions for
-        {#await PAGE_URL then url}
-          {#await PAGE_CREATED then isCreated}
-            {#if (isCreated || hasCreated) && courseEnv.COURSE_ID}
-              <a href={`/courses/${courseEnv.COURSE_ID}/pages/${url}`}
-                >your course glossary</a
-              >.
-            {:else}
-              course glossary.
-            {/if}
-          {/await}
-        {/await}These will appear wherever the term is used in the course
-        content - in pages and discussions. Students can click on the term to
-        see the definition.
-      </p>
-      <p>
-        You can also enable institution-provided terms. These terms are provided
-        by your institution, and can be added to your course glossary. You can
-        enable or disable these terms at any time.
+        {#if courseEnv.COURSE_ID}
+          <a
+            target="_blank"
+            href={`/courses/${courseEnv.COURSE_ID}/pages/${glossaryData.state.url}`}
+            >your course glossary</a
+          >.
+        {:else}
+          course glossary.
+        {/if}
+        These will appear wherever the term is used in the course content - in pages
+        and discussions. Students can click on the term to see the definition.
       </p>
       {#if instDefaults.length > 0}
         <p>
-          You have {instDefaults.length} institution-provided terms available. You
-          can enable or disable these terms at any time.
+          You can also enable institution-provided terms. These terms are
+          provided by your institution, and can be added to your course
+          glossary. You can enable or disable these terms at any time. You have {instDefaults.length}
+          terms available.
           <label class="block">
             <input
               type="checkbox"
@@ -175,7 +251,14 @@
               }
             }}
           >
-            <span class="rowNumber">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <span
+              class="rowNumber"
+              on:click|stopPropagation={(e) => {
+                // Refocus if user clicks here
+                e.currentTarget.parentElement?.querySelector("input")?.focus();
+              }}
+            >
               {#if i === parsedData.terms.length - 1}
                 +
               {:else}
@@ -196,9 +279,10 @@
                 }
               }}
             />
-            <div
-              contenteditable="true"
-              class:disabled={saving}
+            <input
+              disabled={saving}
+              type="text"
+              bind:value={term.definition}
               on:input={() => (needsSave = true)}
               on:keydown={(e) => {
                 if (e.key === "Backspace" && term.definition === "") {
@@ -212,8 +296,7 @@
                   }
                 }
               }}
-              bind:innerHTML={term.definition}
-            ></div>
+            />
             <div class="glossary-table--item-actions">
               {#if i === parsedData.terms.length - 1}
                 <button
@@ -259,11 +342,18 @@
       <a
         class="button btn-secondary"
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          "Term,Definition\n" +
-            parsedData.terms
-              .filter((term) => term.term.trim() !== "")
-              .map((term) => `${term.term},${term.definition}`)
-              .join("\n")
+          unparse(
+            [
+              ["Term", "Definition"],
+              ...parsedData.terms.map(({ term, definition }) => [
+                term,
+                definition,
+              ]),
+            ],
+            {
+              skipEmptyLines: "greedy",
+            }
+          )
         )}`}
         download="glossary-course-{courseEnv.COURSE_ID}.csv"
       >
@@ -277,19 +367,11 @@
         class="button btn-secondary"
         disabled={saving}
         on:click={async () => {
-          let newTerms;
           try {
-            newTerms = await manager.loadFile();
+            newTerms = await glossaryData.parseCSV();
           } catch (err) {
+            //@ts-ignore
             errorNotice = err.message;
-          }
-          if (newTerms) {
-            parsedData.terms = manager.terms.map((term) => ({
-              term: term.term,
-              definition: term.definition,
-              id: nanoid(),
-            }));
-            needsSave = true;
           }
         }}
       >
@@ -305,12 +387,13 @@
           disabled={saving}
           on:click={async () => {
             saving = true;
-            manager.terms = parsedData.terms;
-            manager.institutionDefaults = parsedData.institutionDefaults;
+            glossaryData.terms = parsedData.terms;
+            glossaryData.institutionDefaults = parsedData.institutionDefaults;
             try {
-              await manager.save();
+              await glossaryData.save();
             } catch (err) {
               console.error(err);
+              //@ts-ignore
               errorNotice = err.message;
               saving = false;
               return;
@@ -324,23 +407,13 @@
             hasCreated = true;
           }}
         >
-          {#await PAGE_CREATED then isCreated}
-            {#if isCreated || hasCreated}
-              <IconElement
-                icon={{ id: "Inst.Line.check-dark", type: 2 }}
-                colorOverride="#fff"
-              />
-              Save
-            {:else}
-              <IconElement
-                icon={{ id: "Inst.Line.plus", type: 2 }}
-                colorOverride="#fff"
-              />
-              Create
-            {/if}
-          {/await}
+          <IconElement
+            icon={{ id: "Inst.Line.check-dark", type: 2 }}
+            colorOverride="#fff"
+          />
+          Save
         </button>
-        {#await PAGE_URL then url}
+        <!-- {#await PAGE_URL then url}
           <a
             class="button btn-secondary"
             href={`/courses/${courseEnv.COURSE_ID}/pages/${url}`}
@@ -351,7 +424,7 @@
             />
             View Page
           </a>
-        {/await}
+        {/await} -->
       </div>
     </div>
     {#if saveNotice}
@@ -407,6 +480,9 @@
 </div>
 
 <style lang="postcss">
+  .glossaryEditor {
+    @apply -mt-8;
+  }
   .editor-frame {
     @apply rounded-lg bg-white border-primary border-2 p-4;
     @apply max-w-screen-md;

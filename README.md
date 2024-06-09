@@ -299,7 +299,7 @@ New elements have the following high-level components:
 
 3. A **Svelte Component**, which is used to render the element in the TinyMCE editor. This is only required if you are using the `SvelteElement` class.
 
-4. A **Styles** file, which is used to style the element in the TinyMCE editor and on the page.
+4. A **Styles** file, which is used to style the element in the TinyMCE editor and on the page. This should be named "element.postcss", and will be automatically imported.
 
 5. A **Popup Component**, which is used to render the element's settings popup. This is only required if you have additional settings which should be displayed in a popup.
 

@@ -148,6 +148,7 @@ export default defineConfig(({ mode, command }) => {
         ),
       ],
       css: {
+        transformer: "lightningcss",
         lightningcss: {
           targets: "last 2 versions or >= 0.25%, not dead",
         },

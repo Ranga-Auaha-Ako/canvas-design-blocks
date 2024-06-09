@@ -59,9 +59,12 @@ class MockSearch<L = Link> {
   public query: Writable<string> = writable("");
   constructor(data: L[] | PromiseLike<L[]> = []) {
     this.data = readable(Promise.resolve(data));
-    this.total = derived(this.data, ($data, set) => {
-      $data.then((d) => set(d.length));
-    });
+    this.total = derived<typeof this.data, Promise<number>>(
+      this.data,
+      ($data, set) => {
+        $data.then((d) => set(Promise.resolve(d.length)));
+      }
+    );
   }
 }
 
@@ -370,7 +373,7 @@ export class ModuleSearch<F extends boolean> extends ContentSearch<
 export class NavigationSearch extends ContentSearch<Link> {
   public perPage = writable(NaN);
   urlBase = `/api/v1/courses/${COURSE_ID}/tabs`;
-  constructor() {
+  constructor(_query: any) {
     super(undefined, undefined, NaN);
   }
   async getLinks(data: Record<string, any>[]) {

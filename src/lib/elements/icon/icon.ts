@@ -12,6 +12,7 @@ import { getIconState } from "$lib/icons/svelte/iconPicker";
 import theme from "$lib/util/theme";
 import { colord, type Colord } from "colord";
 import { IconState as IconDataState } from "$lib/icons/svelte/iconPicker";
+import { persisted } from "svelte-persisted-store";
 
 export enum IconTheme {
   Default = "Icon--default",
@@ -19,8 +20,19 @@ export enum IconTheme {
 export const ValidThemes = Object.values(IconTheme);
 export const DefaultTheme = IconTheme.Default;
 
+export enum iconSize {
+  Auto = "iconSize--auto",
+  Small = "iconSize--small",
+  Med = "iconSize--medium",
+  Large = "iconSize--large",
+  "Extra Large" = "iconSize--xlarge",
+}
+export const ValidSizes = Object.values(iconSize);
+export const DefaultSize = iconSize.Auto;
+
 export interface IconData {
   theme: IconTheme;
+  size: iconSize;
   icon?: IconDataState;
   color?: Colord;
 }
@@ -32,6 +44,7 @@ export interface CanvasIconData extends IconData {
 class IconState implements SvelteState<IconData> {
   static defaultState: IconData = {
     theme: DefaultTheme,
+    size: DefaultSize,
     color: colord(theme.primary),
     icon: undefined,
   };
@@ -45,6 +58,7 @@ class IconState implements SvelteState<IconData> {
   constructor(unsafeState: Partial<IconData> | undefined, node?: HTMLElement) {
     let state: IconData = {
       theme: DefaultTheme,
+      size: DefaultSize,
       color: colord(theme.primary),
       icon: undefined,
     };
@@ -52,8 +66,13 @@ class IconState implements SvelteState<IconData> {
       let theme = ValidThemes.includes(unsafeState.theme as IconTheme)
         ? unsafeState.theme
         : DefaultTheme;
+      let size =
+        unsafeState.size && ValidSizes.includes(unsafeState.size)
+          ? unsafeState.size
+          : DefaultSize;
       state = {
         theme: theme || DefaultTheme,
+        size: size || DefaultSize,
         color: IconState.defaultState.color,
         icon: undefined,
       };

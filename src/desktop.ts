@@ -18,6 +18,12 @@ import "./app.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import { courseEnv } from "$lib/util/courseEnv";
 
+// Sandpit mode
+if (import.meta.env.MODE === "sandpit") {
+  console.log("Sandpit mode enabled");
+  import("./sandpit/sandpit");
+}
+
 export interface stateObject {
   showInterface: Writable<boolean>;
   configComponent: Writable<{
@@ -83,12 +89,14 @@ export async function loadApp(
     });
   }
   // Load any client-side elements
-  clientManagers.forEach((manager) => {
-    manager.renderClientComponent();
-  });
+  clientManagers.then((c) =>
+    c.forEach((manager) => {
+      manager.renderClientComponent();
+    })
+  );
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
-    console.error(e);
+    // No editor, so don't load the app
     return null;
   });
 
@@ -118,7 +126,7 @@ export async function loadApp(
   const toolbar = await loadToolbar(Toolbar, {
     state,
     managers: state.loadedBlocks,
-    // additionalItems: toolbarPanels,
+    additionalItems: toolbarPanels,
   });
   // Inject tailwind base styles into editor
   const pageStylesEl = editor.getDoc().createElement("style");
@@ -165,6 +173,26 @@ let attempts = 0;
 let hasLoaded = false;
 export const getEditor = () =>
   new Promise<Editor>((resolve, reject) => {
+    // First check to see if we are on a page which can have an editor
+    const url = window.location.pathname;
+    const valid_locations = [
+      /^\/courses\/\d+\/pages\/.+\/edit$/,
+      /^\/courses\/\d+\/pages\/?$/,
+      /^\/courses\/\d+\/discussion_topics\/new$/,
+      /^\/courses\/\d+\/discussion_topics\/.+\/edit$/,
+      /^\/courses\/\d+\/assignments\/new/,
+      /^\/courses\/\d+\/assignments\/\d+\/edit$/,
+      /^\/courses\/\d+\/quizzes\/\d+\/edit\/?$/,
+    ];
+    if (
+      !(
+        window.location.hostname === "localhost" ||
+        import.meta.env.MODE === "sandpit" ||
+        valid_locations.some((loc) => loc.test(url))
+      )
+    ) {
+      reject("Not a valid location for editor");
+    }
     if (!window.tinymce || window.tinymce?.activeEditor?.getBody() === null) {
       setTimeout(() => {
         // Try again after five seconds, waiting up to 30 seconds.
