@@ -22,6 +22,7 @@
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { IconType } from "$lib/icons/svelte/canvas-icons/icons";
   import StateIndicator from "./subComponent/stateIndicator.svelte";
+  import { debounce } from "perfect-debounce";
   export let glossaryState: UnResolvedGlossaryState;
 
   const dispatch = createEventDispatcher<{
@@ -63,6 +64,18 @@
         : stateStatus.CREATED
       : stateStatus.NONE,
   };
+
+  let validGlossary: boolean | "loading" = true;
+  const updateValidity = debounce(async (pageURL: string | undefined) => {
+    validGlossary = "loading";
+    if (!pageURL) {
+      validGlossary = true;
+      return;
+    }
+    const res = await Glossary.checkExisting(pageURL);
+    validGlossary = res;
+  });
+  $: updateValidity(pageURL);
 </script>
 
 <Modal
@@ -81,7 +94,24 @@
       <p>{error}</p>
     </div>
   {/if}
-
+  {#if !validGlossary}
+    <div
+      transition:slide
+      class="bg-red-100 border-red-400 border rounded px-4 py-2 mt-4 flex gap-4 items-center"
+    >
+      <div class="text-xl">
+        <IconElement
+          icon={{ id: "Inst.Line.warning", type: 2 }}
+          colorOverride="rgb(248,113,113)"
+        />
+      </div>
+      <p class="text-red-700">
+        <strong>Heads up!</strong>
+        The page you have selected is not a valid Design Blocks glossary page. Please
+        select a valid glossary page or create a new one.
+      </p>
+    </div>
+  {/if}
   <div class="detailsRow">
     <div class="moduleInfo">
       <StateIndicator type="Page" state={pageStates.Page}>
@@ -114,7 +144,7 @@
             class="w-full"
             id="pageTitle"
           />
-          {#if foundPages && foundPages.length > 1}
+          {#if foundPages && foundPages.length >= 1}
             <button
               class="btn btn-sm float-right"
               on:click={() => {

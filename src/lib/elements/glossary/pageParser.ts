@@ -51,6 +51,43 @@ export class Glossary {
     }));
     return new Glossary(state, terms, institutionDefaults);
   }
+  /**
+   * Checks if a page has an existing glossary.
+   *
+   * @param url - The URL of the page to check.
+   * @returns A boolean indicating whether the page has an existing glossary.
+   */
+  static async checkExisting(url: string) {
+    // Get info
+    const info = await getRichGlossary({
+      url,
+      state: GlossaryStates.GLOSSARY_LINKED,
+    });
+    if (!info.published) return false;
+    // Check if page has glossary data at all
+    const container = document.createElement("div");
+    container.innerHTML = info.html;
+    let institutionDefaults = false;
+    const settings = container.querySelector("div.CDB--Glossary--Settings");
+    if (!settings?.textContent) return false;
+    if (settings) {
+      try {
+        JSON.parse(settings.textContent);
+      } catch (error) {
+        console.error("Error parsing glossary settings:", error);
+        return false;
+      }
+    }
+    // Final flight check - create test instance
+    try {
+      const glossary = Glossary.fromHTML(info);
+    } catch (error) {
+      console.error("Error creating glossary instance:", error);
+      return false;
+    }
+    // If we made it this far, we're good
+    return true;
+  }
   static async linkExisting(
     config: {
       existingPageUrl?: string;

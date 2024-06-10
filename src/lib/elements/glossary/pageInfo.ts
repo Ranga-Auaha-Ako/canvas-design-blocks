@@ -181,10 +181,16 @@ export async function getGlossaryState(): Promise<GlossaryState> {
           page.title.includes(Glossary.magicToken) ||
           page.title.toLowerCase().includes("glossary")
       );
-      if (possibleMatches.length > 0) {
+      let validMatches: typeof possibleMatches = [];
+      for (const page of possibleMatches) {
+        const exists = await Glossary.checkExisting(page.url);
+        if (exists) validMatches.push(page);
+      }
+
+      if (validMatches.length > 0) {
         return {
           state: GlossaryStates.GLOSSARY_UNLINKED as const,
-          page_matches: possibleMatches.map(({ url, title }) => ({
+          page_matches: validMatches.map(({ url, title }) => ({
             url,
             title,
           })),
