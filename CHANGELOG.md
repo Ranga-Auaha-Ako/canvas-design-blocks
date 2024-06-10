@@ -8,6 +8,17 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.13.2] - 2024-06-10
+
+### Fixed
+
+- Fix icons "wrapping" in some cases and becomming hidden
+- Prevent glossary tool reccomending linking with pages that are not created by the Design Blocks tool
+
+### Changed
+
+- Simplify glossary creation process
+
 ## [2.13.1] - 2024-06-10
 
 ### Overview
