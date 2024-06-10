@@ -115,11 +115,11 @@
   {#if glossaryState.state === GlossaryStates.NO_GLOSSARY}
     <div>
       <p class="my-0">
-        To get started, create a new page to be your course glossary. This page
-        will be used to store all of your course's glossary terms, and will be
-        immediately visible to students. The glossary will be created as a
-        module in the course, which will be placed at the end of the modules
-        list.
+        To get started, enter a name for your course glossary page and the
+        module it will be placed in. This page will be used to store all of your
+        course's glossary terms, and will be immediately visible to students.
+        The glossary will be automatically created as a module in the course,
+        which will be placed at the end of the modules list.
       </p>
       <div class="input-group">
         <label for="pageTitle">Enter new Glossary page title</label>
