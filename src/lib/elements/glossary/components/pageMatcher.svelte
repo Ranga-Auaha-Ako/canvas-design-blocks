@@ -112,95 +112,127 @@
       </p>
     </div>
   {/if}
-  <div class="detailsRow">
-    <div class="moduleInfo">
-      <StateIndicator type="Page" state={pageStates.Page}>
-        {#if pageStates.Page === stateStatus.NONE}
-          To get started, create a new page to be your course glossary.
-        {:else if pageStates.Page === stateStatus.UNLINKED}
-          You have {foundPages && foundPages.length > 1
-            ? "some pages"
-            : "a page"}
-          which might be your glossary page. Please select the correct page from
-          the dropdown, or create a new page.
-          <strong
-            >Note: only Design Blocks created pages will work with the glossary
-            tool. Please do not link manually-created glossaries.</strong
-          >
-        {:else if pageStates.Page === stateStatus.CREATED}
-          You have already created a glossary page.
-        {:else if pageStates.Page === stateStatus.HIDDEN}
-          You have created a glossary page, but it is currently hidden. You will
-          need to publish the page to make it visible to students.
-        {/if}
-      </StateIndicator>
+  {#if glossaryState.state === GlossaryStates.NO_GLOSSARY}
+    <div>
+      <p class="my-0">
+        To get started, create a new page to be your course glossary. This page
+        will be used to store all of your course's glossary terms, and will be
+        immediately visible to students. The glossary will be created as a
+        module in the course, which will be placed at the end of the modules
+        list.
+      </p>
       <div class="input-group">
-        {#if !pageURL}
-          <label for="pageTitle">Enter new Glossary page title</label>
-          <input
-            type="text"
-            placeholder="Page Title"
-            bind:value={pageTitle}
-            class="w-full"
-            id="pageTitle"
-          />
-          {#if foundPages && foundPages.length >= 1}
-            <button
-              class="btn btn-sm float-right"
-              on:click={() => {
-                pageURL = foundPages[0].url;
-              }}
+        <label for="pageTitle">Enter new Glossary page title</label>
+        <input
+          type="text"
+          placeholder="Page Title"
+          bind:value={pageTitle}
+          class="w-full"
+          id="pageTitle"
+          required
+        />
+        <label for="moduleTitle">Enter new Module title</label>
+        <input
+          type="text"
+          placeholder="Page Title"
+          bind:value={moduleTitle}
+          class="w-full"
+          id="moduleTitle"
+          required
+        />
+      </div>
+    </div>
+  {:else}
+    <div class="detailsRow">
+      <div class="moduleInfo">
+        <StateIndicator type="Page" state={pageStates.Page}>
+          {#if pageStates.Page === stateStatus.NONE}
+            To get started, create a new page to be your course glossary.
+          {:else if pageStates.Page === stateStatus.UNLINKED}
+            You have {foundPages && foundPages.length > 1
+              ? "some pages"
+              : "a page"}
+            which might be your glossary page. Please select the correct page from
+            the dropdown, or create a new page.
+            <strong
+              >Note: only Design Blocks created pages will work with the
+              glossary tool. Please do not link manually-created glossaries.</strong
             >
-              Use existing page
-            </button>
+          {:else if pageStates.Page === stateStatus.CREATED}
+            You have already created a glossary page.
+          {:else if pageStates.Page === stateStatus.HIDDEN}
+            You have created a glossary page, but it is currently hidden. You
+            will need to publish the page to make it visible to students.
           {/if}
-        {:else if pageURL && foundPages}
-          <label for="pageURL">Select existing glossary or create new:</label>
-          <select bind:value={pageURL}>
-            {#each foundPages as url}
-              <option value={url.url}>
-                {url.title}
-                {url.title.includes(Glossary.magicToken)
-                  ? "(Design Blocks Glossary Page)"
-                  : "(Similar Name)"}
-              </option>
-            {/each}
-            <option value={undefined}>Create New Page</option>
-          </select>
-        {/if}
+        </StateIndicator>
+        <div class="input-group">
+          {#if !pageURL}
+            <label for="pageTitle">Enter new Glossary page title</label>
+            <input
+              type="text"
+              placeholder="Page Title"
+              bind:value={pageTitle}
+              class="w-full"
+              id="pageTitle"
+            />
+            {#if foundPages && foundPages.length >= 1}
+              <button
+                class="btn btn-sm float-right"
+                on:click={() => {
+                  pageURL = foundPages[0].url;
+                }}
+              >
+                Use existing page
+              </button>
+            {/if}
+          {:else if pageURL && foundPages}
+            <label for="pageURL">Select existing glossary or create new:</label>
+            <select bind:value={pageURL}>
+              {#each foundPages as url}
+                <option value={url.url}>
+                  {url.title}
+                  {url.title.includes(Glossary.magicToken)
+                    ? "(Design Blocks Glossary Page)"
+                    : "(Similar Name)"}
+                </option>
+              {/each}
+              <option value={undefined}>Create New Page</option>
+            </select>
+          {/if}
+        </div>
+      </div>
+      <div class="pageInfo">
+        <StateIndicator type="Module" state={pageStates.Module}>
+          {#if pageStates.Module !== stateStatus.CREATED}
+            {#if pageStates.Page !== stateStatus.CREATED}
+              You will also
+            {:else}
+              You will
+            {/if}
+            {#if pageStates.Module === stateStatus.NONE}
+              need to create a module to hold your glossary page.
+              <strong>This will immediately be published to students.</strong>
+            {:else if pageStates.Module === stateStatus.HIDDEN}
+              need to publish the module to make the glossary visible to
+              students. The Glossary module is currently hidden.
+            {/if}
+          {/if}
+        </StateIndicator>
+        <div class="input-group">
+          {#if !moduleID}
+            <label for="moduleTitle">Enter new Module title</label>
+            <input
+              type="text"
+              placeholder="Page Title"
+              bind:value={moduleTitle}
+              class="w-full"
+              id="moduleTitle"
+            />
+          {/if}
+        </div>
       </div>
     </div>
-    <div class="pageInfo">
-      <StateIndicator type="Module" state={pageStates.Module}>
-        {#if pageStates.Module !== stateStatus.CREATED}
-          {#if pageStates.Page !== stateStatus.CREATED}
-            You will also
-          {:else}
-            You will
-          {/if}
-          {#if pageStates.Module === stateStatus.NONE}
-            need to create a module to hold your glossary page.
-            <strong>This will immediately be published to students.</strong>
-          {:else if pageStates.Module === stateStatus.HIDDEN}
-            need to publish the module to make the glossary visible to students.
-            The Glossary module is currently hidden.
-          {/if}
-        {/if}
-      </StateIndicator>
-      <div class="input-group">
-        {#if !moduleID}
-          <label for="moduleTitle">Enter new Module title</label>
-          <input
-            type="text"
-            placeholder="Page Title"
-            bind:value={moduleTitle}
-            class="w-full"
-            id="moduleTitle"
-          />
-        {/if}
-      </div>
-    </div>
-  </div>
+  {/if}
   <p>
     This glossary feature will use invisible characters to identify the glossary
     page. Please take care with editing the module or page titles. If the page
@@ -280,15 +312,15 @@
     .pageInfo {
       @apply shadow-md p-4 rounded-lg;
     }
-    .input-group {
-      @apply mx-2;
-      label {
-        @apply block w-full text-base mb-0 mt-3 text-gray-700 italic;
-      }
-      input[type="text"],
-      select {
-        @apply px-3 leading-10 h-12 align-middle w-full block;
-      }
+  }
+  .input-group {
+    @apply mx-2;
+    label {
+      @apply block w-full text-base mb-0 mt-3 text-gray-700 italic;
+    }
+    input[type="text"],
+    select {
+      @apply px-3 leading-10 h-12 align-middle w-full block;
     }
   }
   .actionMenu {
