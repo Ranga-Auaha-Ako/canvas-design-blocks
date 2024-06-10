@@ -131,6 +131,7 @@
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+    color: unset;
     padding: 0;
     display: inline;
     font-weight: inherit;
