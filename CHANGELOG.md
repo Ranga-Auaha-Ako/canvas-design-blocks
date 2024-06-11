@@ -8,6 +8,12 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.13.3] - 2024-06-11
+
+### Fixed
+
+- Term definitions now inherit colour styling from parent element
+
 ## [2.13.2] - 2024-06-10
 
 ### Fixed
