@@ -25,8 +25,17 @@
 
   let CAN_EDIT = false;
   onMount(async () => {
-    const permissions = await getCoursePermissions();
-    CAN_EDIT = permissions.manage_wiki_create && permissions.manage_wiki_update;
+    if (__IS_SANDPIT__) {
+      CAN_EDIT = true;
+      return;
+    }
+    try {
+      const permissions = await getCoursePermissions();
+      CAN_EDIT =
+        permissions.manage_wiki_create && permissions.manage_wiki_update;
+    } catch (e) {
+      CAN_EDIT = false;
+    }
   });
 </script>
 

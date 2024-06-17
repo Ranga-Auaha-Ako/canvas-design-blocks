@@ -68,6 +68,7 @@ const appConfig = (launchFile, { mode, command }) => {
       ),
       __LATEST_CHANGE__: JSON.stringify(changeVer?.parsed.Overview),
       __LATEST_CHANGE_VERSION__: JSON.stringify(changeVer.version),
+      __IS_SANDPIT__: false,
     },
     base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
     envPrefix: "CANVAS_BLOCKS_",
@@ -167,6 +168,7 @@ export default defineConfig(({ mode, command }) => {
         ),
         __LATEST_CHANGE__: JSON.stringify(changeVer?.parsed.Overview),
         __LATEST_CHANGE_VERSION__: JSON.stringify(changeVer.version),
+        __IS_SANDPIT__: true,
       },
     };
   }
@@ -192,6 +194,7 @@ export default defineConfig(({ mode, command }) => {
         __APP_VERSION__:
           JSON.stringify(process.env.npm_package_version) || "unknown",
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+        __IS_SANDPIT__: false,
       },
     };
   }
