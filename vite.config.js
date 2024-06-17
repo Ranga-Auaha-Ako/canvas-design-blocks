@@ -9,8 +9,6 @@ import parseChangelog from "changelog-parser";
 import { compare } from "compare-versions";
 import browserslistToEsbuild from "browserslist-to-esbuild";
 
-console.log(browserslistToEsbuild("last 2 versions or >= 0.25%, not dead"));
-
 const changelog = await parseChangelog("./CHANGELOG.md");
 const changeVer = changelog.versions.find(
   (v) =>
@@ -136,7 +134,7 @@ export default defineConfig(({ mode, command }) => {
     return {
       base: command === "serve" ? "/" : process.env.CANVAS_BLOCKS_THEME_HOST,
       build: {
-        target: "es2018",
+        target: browserslistToEsbuild("last 2 versions or >= 0.25%, not dead"),
         manifest: true,
         cssMinify: "lightningcss",
         emptyOutDir: !(process.env.CLEAR_DIST === "false"),
@@ -154,17 +152,6 @@ export default defineConfig(({ mode, command }) => {
           })
         ),
       ],
-      css: {
-        transformer: "lightningcss",
-        lightningcss: {
-          targets: {
-            chrome: 122,
-            firefox: 123,
-            safari: 16,
-            edge: 121,
-          },
-        },
-      },
       resolve: {
         alias: {
           $lib: path.resolve("./src/lib"),
