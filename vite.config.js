@@ -7,6 +7,8 @@ import getIconsPlugin from "./src/lib/icons/vite/vite-plugin-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
 import parseChangelog from "changelog-parser";
 import { compare } from "compare-versions";
+import { browserslistToTargets } from "lightningcss";
+import browserslist from "browserslist";
 
 const changelog = await parseChangelog("./CHANGELOG.md");
 const changeVer = changelog.versions.find(
@@ -47,7 +49,9 @@ const appConfig = (launchFile, { mode, command }) => {
     },
     css: {
       lightningcss: {
-        targets: "last 2 versions or >= 0.25%, not dead",
+        targets: browserslistToTargets(
+          browserslist("last 2 versions or >= 0.25%, not dead")
+        ),
       },
     },
     resolve: {
@@ -150,7 +154,12 @@ export default defineConfig(({ mode, command }) => {
       css: {
         transformer: "lightningcss",
         lightningcss: {
-          targets: "last 2 versions or >= 0.25%, not dead",
+          targets: {
+            chrome: 122,
+            firefox: 123,
+            safari: 16,
+            edge: 121,
+          },
         },
       },
       resolve: {
