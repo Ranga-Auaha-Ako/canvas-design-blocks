@@ -374,6 +374,8 @@ export class Glossary {
     });
   }
   async save() {
+    if (__IS_SANDPIT__)
+      throw new Error("Cannot save glossary in sandpit mode.");
     // Post to API
     if (!CSRF)
       throw new Error(

@@ -2,6 +2,7 @@
 /// <reference types="vite/client" />
 
 declare const __APP_VERSION__: string;
+declare const __IS_SANDPIT__: boolean;
 declare const __APP_NAME__: string | undefined;
 declare const __LATEST_CHANGE__: string;
 declare const __LATEST_CHANGE_VERSION__: string | null;

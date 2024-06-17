@@ -175,6 +175,7 @@
         imageCard: `<div class="ImageCards" data-cdb-id="mmkOYvyeVMX6vc2G6STUP" data-cdb-version="1.0.0" data-cdb-content="Simple"><span class="cdbData" style="display: none;">{"size":"imageCardSize--small","theme":"imageCardTheme--icon","cards":[{"label":"Insert Label Here","id":"poQ7nvUXmI1lvz4lVq9oK","icon":{"id":"Inst.Line.bold","color":"#0b874b","type":2}},{"label":"Insert Label Here","id":"i8aPkxjBG_SUE18bEPx7n","icon":{"id":"Inst.Line.certified","color":"#0b874b","type":2}}]}</span> <div class="ImageCards--row imageCardTheme--icon imageCardSize--small"><a class="ImageCard" href="https://google.com/" data-cdb-id="poQ7nvUXmI1lvz4lVq9oK"><span class="ImageCardIcon"><span class="cdb--icon" style="color: #0b874b" aria-hidden="true">Canvas.bold</span><!--<IconElement>--></span> <span class="ImageCardLabel"><span class="ImageCardLabelLine">Insert Label Here</span> </span> </a><a class="ImageCard" href="/src/lib/util/components/contentSearch/mock-assets/mock-00004.jpg" data-cdb-id="i8aPkxjBG_SUE18bEPx7n"><span class="ImageCardIcon"><span class="cdb--icon" style="color: #0b874b" aria-hidden="true">Canvas.certified</span><!--<IconElement>--></span> <span class="ImageCardLabel"><span class="ImageCardLabelLine">Insert Label Here</span> </span> </a></div> <!--<ImageCardInner>--></div>`,
         // --- PROFILES ---
         profiles: `<div class="Profiles" data-cdb-id="ac_UJY2hkY0xpYHQvX960" data-cdb-version="1.0.0" data-cdb-content="Simple"><span class="cdbData" style="display: none;">[{"firstName":"New Person 1","lastName":"","firstNameLastName":"New Person 1","id":"0GhhKDtZYSLW_f4ZF6Z9J","canvasId":"-1","showOverview":true,"showBioTitle":true,"emailAddress":{"address":"email@example.com"}}]</span> <div class="profileItem"> <div class="card" style="background-color: #00457c;"><img class="profile-photo" role="button" src="http://localhost:5173/src/lib/elements/profiles/blank-user.png" alt="Photo of New Person 1" /> <div class="details"> <h4 class="name">New Person 1</h4> <div class="email"> <p>email@example.com</p> </div> </div> </div> <div class="bio"> <h4>Bio</h4> <div class="bioContent"> <p>No bio available...</p> </div> </div> </div> <!--<ProfileInner>--></div>`,
+        glossary: `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et erat varius, lobortis orci sed, feugiat dui. Maecenas euismod urna vel diam pellentesque, vitae tempus velit gravida. Donec volutpat ac ante id mollis. Nunc nec orci pulvinar, feugiat eros ac, congue urna. Nullam euismod felis libero, tristique efficitur ipsum mollis quis. Nam at vulputate nisi, a interdum nunc. Vivamus at mauris egestas nisi vehicula fermentum. Cras a lacus tincidunt, auctor orci eu, pretium orci.</p>`,
       };
 
       if (blocks[block]) {
@@ -183,6 +184,19 @@
         Object.entries(blocks).forEach(([key, value]) => {
           document.getElementById("tinyCanvas").value += value;
         });
+      }
+
+      // If glossary is selected, also add text to page
+      if (block === "glossary" || !block) {
+        // div#wiki_page_show .user_content
+        document.getElementById("content").insertAdjacentHTML(
+          "afterend",
+          `<div style="max-width: 800px; margin:auto;" id="wiki_page_show">
+            <h2>Example Glossary Text</h2>
+            <i>View example tooltips for the glossary below:</i>
+            <div class="user_content">${blocks["glossary"]}</div>
+          </div>`
+        );
       }
 
       // Add links to header

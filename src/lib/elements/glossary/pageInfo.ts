@@ -62,6 +62,12 @@ export type GlossaryState = ResolvedGlossaryState | UnResolvedGlossaryState;
  * @returns A promise that resolves to the glossary state. See the `GlossaryState` type for more information.
  */
 export async function getGlossaryState(): Promise<GlossaryState> {
+  if (__IS_SANDPIT__) {
+    return {
+      state: GlossaryStates.GLOSSARY_LINKED,
+      url: "?block=glossary-editor",
+    };
+  }
   if (!courseEnv.COURSE_ID) {
     throw new Error("Course ID is not available. No glossary to find.");
   }
@@ -208,7 +214,12 @@ export async function getGlossaryState(): Promise<GlossaryState> {
   return { state: GlossaryStates.NO_GLOSSARY, module_id: modules?.module_id };
 }
 
-export let glossaryState: Promise<GlossaryState> = getGlossaryState();
+export let glossaryState: Promise<GlossaryState> = getGlossaryState().catch(
+  (error) => {
+    console.error(error);
+    return { state: GlossaryStates.NO_GLOSSARY };
+  }
+);
 /**
  * RichGlossaryState is a resolved glossary with the contents of the page
  */
@@ -232,6 +243,25 @@ class UserExit extends Error {
 export async function getRichGlossary(
   state: ResolvedGlossaryState
 ): Promise<RichGlossaryState & { published: boolean }> {
+  if (__IS_SANDPIT__) {
+    const fakeGlossary = new Glossary(
+      { ...state, title: "Glossary" },
+      [
+        {
+          term: "Lorem",
+          definition: "This is an example definition",
+        },
+      ],
+      true
+    );
+    return {
+      state: GlossaryStates.GLOSSARY_LINKED,
+      url: "?block=glossary",
+      html: fakeGlossary.html,
+      title: "Example Glossary",
+      published: true,
+    };
+  }
   // Get page data for resolved glossary
   const pageData = await fetch(
     `/api/v1/courses/${courseEnv.COURSE_ID}/pages/${state.url}`
