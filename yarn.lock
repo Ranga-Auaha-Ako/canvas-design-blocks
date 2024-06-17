@@ -1704,6 +1704,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browserslist-to-esbuild@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "browserslist-to-esbuild@npm:2.1.1"
+  dependencies:
+    meow: "npm:^13.0.0"
+  peerDependencies:
+    browserslist: "*"
+  bin:
+    browserslist-to-esbuild: cli/index.js
+  checksum: 4d1968efd72850949d5dfa355f4663c695a8fd7b259b19cc81ecd0ed33dd37bbd327475c644de3f2beb53e737c6e511c6e84ed3e97a2ff49f117505a7707c72d
+  languageName: node
+  linkType: hard
+
 "browserslist@npm:^4.22.2":
   version: 4.22.3
   resolution: "browserslist@npm:4.22.3"
@@ -1846,6 +1859,7 @@ __metadata:
     autoprefixer: "npm:10.4.17"
     bestzip: "npm:^2.2.1"
     browserslist: "npm:^4.23.1"
+    browserslist-to-esbuild: "npm:^2.1.1"
     changelog-parser: "npm:^3.0.1"
     cli-progress: "npm:^3.12.0"
     colord: "npm:^2.9.3"
@@ -3989,6 +4003,13 @@ __metadata:
   version: 2.0.30
   resolution: "mdn-data@npm:2.0.30"
   checksum: a2c472ea16cee3911ae742593715aa4c634eb3d4b9f1e6ada0902aa90df13dcbb7285d19435f3ff213ebaa3b2e0c0265c1eb0e3fb278fda7f8919f046a410cd9
+  languageName: node
+  linkType: hard
+
+"meow@npm:^13.0.0":
+  version: 13.2.0
+  resolution: "meow@npm:13.2.0"
+  checksum: d5b339ae314715bcd0b619dd2f8a266891928e21526b4800d49b4fba1cc3fff7e2c1ff5edd3344149fac841bc2306157f858e8c4d5eaee4d52ce52ad925664ce
   languageName: node
   linkType: hard
 

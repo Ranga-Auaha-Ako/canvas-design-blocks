@@ -7,8 +7,9 @@ import getIconsPlugin from "./src/lib/icons/vite/vite-plugin-icons.js";
 import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
 import parseChangelog from "changelog-parser";
 import { compare } from "compare-versions";
-import { browserslistToTargets } from "lightningcss";
-import browserslist from "browserslist";
+import browserslistToEsbuild from "browserslist-to-esbuild";
+
+console.log(browserslistToEsbuild("last 2 versions or >= 0.25%, not dead"));
 
 const changelog = await parseChangelog("./CHANGELOG.md");
 const changeVer = changelog.versions.find(
@@ -47,13 +48,13 @@ const appConfig = (launchFile, { mode, command }) => {
         port: 5175,
       },
     },
-    css: {
-      lightningcss: {
-        targets: browserslistToTargets(
-          browserslist("last 2 versions or >= 0.25%, not dead")
-        ),
-      },
-    },
+    // css: {
+    // lightningcss: {
+    //   targets: browserslistToTargets(
+    //     browserslist("last 2 versions or >= 0.25%, not dead")
+    //   ),
+    // },
+    // },
     resolve: {
       alias: {
         $lib: path.resolve("./src/lib"),
@@ -93,7 +94,9 @@ const appConfig = (launchFile, { mode, command }) => {
         : []
     ),
     build: {
-      target: "es2018",
+      // target: browserslist("last 2 versions or >= 0.25%, not dead"),
+      // target: "es2018",
+      target: browserslistToEsbuild("last 2 versions or >= 0.25%, not dead"),
       manifest: true,
       cssMinify: "lightningcss",
       cssCodeSplit: false,
