@@ -393,7 +393,10 @@ export function searchContent<T extends InternalLinks>(
   query: string | undefined = undefined,
   filter = FitlerTypes.All
 ) {
-  if (import.meta.env.DEV && window.location.hostname === "localhost") {
+  if (
+    (import.meta.env.DEV && window.location.hostname === "localhost") ||
+    __IS_SANDPIT__
+  ) {
     return mockData;
   }
   if (!COURSE_ID) return new MockSearch<Image>();
