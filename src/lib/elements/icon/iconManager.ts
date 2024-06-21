@@ -10,7 +10,7 @@ export class IconManager extends ElementManager {
   public elementClass: ElementManager["elementClass"] = Icon;
   selector = ".CDB--Icon[data-cdb-version]";
   elementName = "Icon";
-  elementDescription = `Icons are a great way to add visual interest to your content, and can be used to represent concepts, actions, or objects. Icons can be used on their own, or in combination with text, images, and other elements.`;
+  elementDescription = `Icons are a great way to add visual interest to your content, and can be used to represent concepts, actions, or objects. Icons should always be used in combination with text.`;
   elementVideo = iconAnim;
   icon = "Canvas.button-and-icon-maker";
 
