@@ -15,7 +15,7 @@
   let arrowEl: HTMLElement;
 
   export let description: string;
-  export let video: string;
+  export let video: string | undefined = undefined;
 
   let x = 0;
   let y = 0;
@@ -68,7 +68,7 @@
       window.activeCDBElementTooltip?.();
       nextAction = undefined;
       open = true;
-    }, 150);
+    }, 800);
   };
 
   $: if (open)
@@ -87,17 +87,21 @@
       style:left={arrowX != null ? `${arrowX}px` : undefined}
       bind:this={arrowEl}
     ></div>
-    <div class="contents">
-      <video src={video} autoplay muted></video>
-      <div class="body">
-        <p>
-          {@html description}
-        </p>
+    {#if open}
+      <div class="contents">
+        {#if video}
+          <video src={video} autoplay muted></video>
+        {/if}
+        <div class="body">
+          <p>
+            {@html description}
+          </p>
+        </div>
+        <div class="footer">
+          <p>Click to add to page</p>
+        </div>
       </div>
-      <div class="footer">
-        <p>Click to add to page</p>
-      </div>
-    </div>
+    {/if}
   </div></Portal
 >
 
@@ -142,6 +146,11 @@
       p {
         @apply m-0 text-center italic text-base text-gray-400;
       }
+    }
+  }
+  @media (prefers-reduced-motion) {
+    video {
+      @apply hidden;
     }
   }
 </style>

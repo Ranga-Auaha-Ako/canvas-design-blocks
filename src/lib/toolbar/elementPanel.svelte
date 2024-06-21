@@ -5,11 +5,14 @@
   import { slide } from "svelte/transition";
   import ElementTooltip from "./elementTooltip.svelte";
   export let name: string = "Element";
-  export let title = `Add ${name}`;
+  // export let title = `Add ${name}`;
   export let description: string;
-  export let video: string;
+  export let video: string | undefined = undefined;
 
   let buttonRef: HTMLButtonElement | null = null;
+
+  let showTooltip: (() => void) | undefined;
+  let hideTooltip: (() => void) | undefined;
 
   const dispatch = createEventDispatcher();
 </script>
@@ -18,8 +21,19 @@
   <button
     bind:this={buttonRef}
     on:click={() => dispatch("add")}
+    on:mouseover={() => {
+      if (showTooltip) showTooltip();
+    }}
+    on:focus={() => {
+      if (showTooltip) showTooltip();
+    }}
+    on:mouseout={() => {
+      if (hideTooltip) hideTooltip();
+    }}
+    on:blur={() => {
+      if (hideTooltip) hideTooltip();
+    }}
     class="pane"
-    {title}
     draggable="true"
     on:dragstart={(e) => {
       if (!e.dataTransfer) return;
@@ -47,7 +61,12 @@
     </div>
   </button>
   {#if buttonRef}
-    <ElementTooltip target={buttonRef} open={true} {description} {video}
+    <ElementTooltip
+      target={buttonRef}
+      {description}
+      {video}
+      bind:showTooltip
+      bind:hideTooltip
     ></ElementTooltip>
   {/if}
 </div>
