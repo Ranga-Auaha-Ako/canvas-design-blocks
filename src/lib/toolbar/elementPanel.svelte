@@ -1,15 +1,22 @@
 <script lang="ts">
+  import PopoverWrapper from "$lib/elements/generic/popover/popoverWrapper.svelte";
   import { nanoid } from "nanoid";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { type ComponentType, createEventDispatcher, onMount } from "svelte";
   import { slide } from "svelte/transition";
+  import ElementTooltip from "./elementTooltip.svelte";
   export let name: string = "Element";
   export let title = `Add ${name}`;
+  export let description: string;
+  export let video: string;
+
+  let buttonRef: HTMLButtonElement | null = null;
 
   const dispatch = createEventDispatcher();
 </script>
 
 <div class="cgb-component">
   <button
+    bind:this={buttonRef}
     on:click={() => dispatch("add")}
     class="pane"
     {title}
@@ -39,6 +46,10 @@
       </slot>
     </div>
   </button>
+  {#if buttonRef}
+    <ElementTooltip target={buttonRef} open={true} {description} {video}
+    ></ElementTooltip>
+  {/if}
 </div>
 
 <style lang="postcss">

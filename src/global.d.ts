@@ -12,5 +12,6 @@ declare global {
     _UNLOAD_DESIGNBLOCKS?: () => boolean;
     // Canvas Design Blocks
     activeCDBGlossaryTooltip?: () => void;
+    activeCDBElementTooltip?: () => void;
   }
 }

@@ -8,6 +8,10 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+### Changed
+
+- Enabled Glossary example in the sandpit
+
 ## [2.13.3] - 2024-06-11
 
 ### Fixed

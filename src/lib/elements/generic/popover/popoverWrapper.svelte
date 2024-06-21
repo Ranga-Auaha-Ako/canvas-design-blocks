@@ -14,9 +14,8 @@
   import type { Placement } from "@floating-ui/dom";
   import { onDestroy } from "svelte";
   import type { SvelteComponent } from "svelte";
-  import { writable, type Readable, type Writable } from "svelte/store";
+  import { type Readable, type Writable } from "svelte/store";
   import type { McePopover } from "./popover";
-  import { fade } from "svelte/transition";
 
   export let component: typeof SvelteComponent<any> | undefined = undefined;
   export let host: McePopover | undefined = undefined;
