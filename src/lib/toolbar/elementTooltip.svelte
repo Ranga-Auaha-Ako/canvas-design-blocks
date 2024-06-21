@@ -68,7 +68,7 @@
       window.activeCDBElementTooltip?.();
       nextAction = undefined;
       open = true;
-    }, 800);
+    }, 500);
   };
 
   $: if (open)
