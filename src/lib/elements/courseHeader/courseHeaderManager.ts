@@ -2,7 +2,7 @@ import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import { CourseHeader } from "./courseHeader";
 import editorStyles from "./element.postcss?inline";
-import elementVideo from "$assets/block-anims/Header.webm";
+import elementVideo from "$assets/block-anims/Header 2.webm";
 export class CourseHeaderManager extends ElementManager {
   selector = ".CourseHeader[data-cdb-version]";
   public elementClass: ElementManager["elementClass"] = CourseHeader;
