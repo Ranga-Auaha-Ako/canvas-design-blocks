@@ -95,7 +95,7 @@
           There are too many buttons to display in a row on mobile devices. The
           current item in the progress bar will show text, but all other buttons
           will be reduced to just an icon.
-        {:else if $buttonBarData.theme === ButtonBarTheme.Simple}
+        {:else if $buttonBarData.theme === ButtonBarTheme.ButtonGroup}
           There are a lot of choices! The row will collapse into a vertical list
           of buttons instead, which may take up a lot of space.
         {/if}
@@ -228,8 +228,8 @@
               </div>
               <ButtonRadio
                 title="Row Theme"
-                choices={Object.values(ButtonBarTheme)}
-                labels={Object.keys(ButtonBarTheme)}
+                choices={[ButtonBarTheme.ButtonGroup, ButtonBarTheme.Progress]}
+                labels={["Button Group", "Progress"]}
                 bind:value={$buttonBarData.theme}
               />
               {#if $buttonBarData.theme === ButtonBarTheme.Progress}

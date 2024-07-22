@@ -39,10 +39,12 @@
     <div
       class="buttonBar buttonBar--{cdbData.theme}"
       class:buttonBar--overflowing={visibleItems.length > 5}
-      style:background-color={cdbData.theme === ButtonBarTheme.Simple
+      style:background-color={cdbData.theme === ButtonBarTheme.ButtonGroup
         ? cdbData.color?.toHex()
         : undefined}
-      style:color={cdbData.theme === ButtonBarTheme.Simple ? "#fff" : undefined}
+      style:color={cdbData.theme === ButtonBarTheme.ButtonGroup
+        ? "#fff"
+        : undefined}
     >
       {#each itemLocations as loc, index}
         {@const item = visibleItems[index]}

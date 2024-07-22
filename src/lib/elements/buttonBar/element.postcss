@@ -14,14 +14,18 @@
         content: "";
       }
       .buttonBar--step {
-        @apply basis-0;
+        @apply basis-0 transition-colors;
         &:after {
-          @apply absolute inset-0 bg-white bg-opacity-0 rounded transition-colors;
-          content: "";
+          /* @apply absolute inset-0 bg-white bg-opacity-0 rounded transition-colors;
+          content: ""; */
+          @apply hidden;
         }
         &:hover:after,
         &:focus:after {
           @apply bg-opacity-10;
+        }
+        &:hover {
+          @apply bg-transparent !important;
         }
       }
     }
