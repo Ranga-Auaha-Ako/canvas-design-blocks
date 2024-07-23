@@ -88,4 +88,16 @@
       @apply block m-0 text-sm text-left;
     }
   }
+
+  :global(body.cdb--dark) {
+    .pane {
+      @apply bg-black text-white border-gray-600;
+      &:hover {
+        @apply bg-gray-800;
+      }
+      &:active {
+        @apply bg-gray-900;
+      }
+    }
+  }
 </style>

@@ -1,6 +1,9 @@
 import glossaryClientManager from "$lib/elements/glossary/glossaryClientManager";
 import { accountIDPromise, courseEnv } from "$lib/util/courseEnv";
 
+// Handle dark mode
+import "$lib/util/darkMode";
+
 import.meta.glob("$lib/elements/*/element.postcss", {
   eager: true,
 });

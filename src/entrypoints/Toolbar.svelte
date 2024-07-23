@@ -218,4 +218,13 @@
       }
     }
   }
+
+  :global(body.cdb--dark) {
+    .toolbar-menu {
+      @apply bg-black text-white border-gray-600;
+      a span {
+        @apply text-blue-200;
+      }
+    }
+  }
 </style>

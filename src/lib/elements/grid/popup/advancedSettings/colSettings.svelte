@@ -165,7 +165,7 @@
     }
   }
   .card {
-    @apply p-4 mt-2 shadow-md rounded-lg border-secondary border-2 bg-white w-screen;
+    @apply p-4 mt-2 shadow-md rounded-lg border-secondary border-2 !bg-white w-screen;
     @apply flex flex-col gap-2;
     @apply absolute;
     max-width: var(--editor-width);
