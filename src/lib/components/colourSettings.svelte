@@ -41,8 +41,14 @@
   };
 
   // Set text colour to static if background colour is set
+  // Set text colour to none if background colour is removed and text colour is black
   $: if ($preferences.background && !$preferences.textColor) {
     $preferences.textColor = getApproxInferredColor();
+  } else if (
+    !$preferences.background &&
+    $preferences.textColor?.isEqual(colord("#000"))
+  ) {
+    $preferences.textColor = undefined;
   }
 </script>
 
