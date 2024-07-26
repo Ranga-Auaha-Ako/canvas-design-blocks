@@ -48,7 +48,10 @@ function getBetterCanvasState() {
 
 function getMobileDarkMode() {
   const background = window.getComputedStyle(document.body).backgroundColor;
-  colord(background).isDark() ? isDarkMode.set(true) : isDarkMode.set(false);
+  const colour = colord(background);
+  colour.alpha() > 0.5 && colour.isDark()
+    ? isDarkMode.set(true)
+    : isDarkMode.set(false);
 }
 
 function getDarkModeState() {
