@@ -47,11 +47,15 @@ function getBetterCanvasState() {
 }
 
 function getMobileDarkMode() {
-  const background = window.getComputedStyle(document.body).backgroundColor;
-  const colour = colord(background);
-  colour.alpha() < 0.5 || colour.isDark()
-    ? isDarkMode.set(true)
-    : isDarkMode.set(false);
+  const background = window.getComputedStyle(
+    document.documentElement
+  ).backgroundColor;
+  const colour = colord(background).alpha(1);
+  if (colour.isDark()) {
+    isDarkMode.set(true);
+  } else {
+    isDarkMode.set(false);
+  }
 }
 
 function getDarkModeState() {
