@@ -8,9 +8,27 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.14] - 2024-07-30
+
+### Overview
+
+- ✨ New: Each block in the toolbar now has a tooltip! Dark mode on the mobile app now works better, and you can choose to preview or download linked files.
+
+### Added
+
+- Tooltips for each block in the toolbar to help users understand what each block does
+- Dark Mode & Better Canvas support! Design Blocks now supports dark mode, and has improved support for the Mobile app dark mode.
+- Link selection allows downloading or previewing the linked file rather than just defaulting to download.
+
 ### Changed
 
+- Button Bar block no longer a "progress" bar by default
 - Enabled Glossary example in the sandpit
+
+### Fixed
+
+- Issue where changing the background colour of a grid to a colour and back to unset would cause the text colour to get stuck on a fixed colour. This looked fine on desktop, but on mobile dark mode the dark text with transparent (dark) background was unreadable.
+- Fix issue with header sizing on mobile when there was an image selected
 
 ## [2.13.3] - 2024-06-11
 
