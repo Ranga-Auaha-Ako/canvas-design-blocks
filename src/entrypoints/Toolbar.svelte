@@ -1,12 +1,10 @@
 <script lang="ts">
   import { ComponentType, createEventDispatcher, onMount } from "svelte";
-  import GridManager from "$lib/elements/grid/gridManager";
   import preventBubble from "$lib/util/preventBubble";
   import IconWhite from "$assets/brand/Icon_White.svg?inline";
   import { fade, slide } from "svelte/transition";
   const dispatch = createEventDispatcher();
   import { changes, changeversion, version } from "$lib/util/constants";
-  import Grid from "$lib/elements/grid/grid";
   import ElementPanel from "$lib/toolbar/elementPanel.svelte";
   import type { stateObject } from "src/desktop";
   import ElementManager from "$lib/elements/generic/elementManager";
@@ -111,6 +109,8 @@
             add(manager);
           }}
           name={manager.elementName}
+          description={manager.elementDescription}
+          video={manager.elementVideo}
         >
           <svelte:fragment slot="name">
             {#if manager.icon}
@@ -215,6 +215,15 @@
       @apply text-xs bg-secondary text-white rounded-sm px-2 py-1;
       & i:before {
         @apply text-xs leading-none;
+      }
+    }
+  }
+
+  :global(body.cdb--dark) {
+    .toolbar-menu {
+      @apply bg-black text-white border-gray-600;
+      a span {
+        @apply text-blue-200;
       }
     }
   }

@@ -34,6 +34,7 @@ export interface Link {
 export interface File extends Link {
   size: number;
   display_name: string;
+  preview: string;
 }
 export interface Image extends File {
   image: string;
@@ -190,6 +191,7 @@ export class FileSearch<F extends FitlerTypes> extends ContentSearch<
         url: f.url,
         type: InternalLinks.File,
         published: f.published,
+        preview: getPreviewUrl(f),
       } as File;
       if (this.filter === FitlerTypes.Images) {
         file.image = getImageUrl(f);
@@ -393,7 +395,10 @@ export function searchContent<T extends InternalLinks>(
   query: string | undefined = undefined,
   filter = FitlerTypes.All
 ) {
-  if (import.meta.env.DEV && window.location.hostname === "localhost") {
+  if (
+    (import.meta.env.DEV && window.location.hostname === "localhost") ||
+    __IS_SANDPIT__
+  ) {
     return mockData;
   }
   if (!COURSE_ID) return new MockSearch<Image>();
@@ -425,6 +430,16 @@ export const getImageUrl = (file: any) => {
   }
   return new URL(
     `/courses/${COURSE_ID}/files/${file.id}/preview`,
+    document.URL
+  ).toString();
+};
+
+export const getPreviewUrl = (file: any) => {
+  if (import.meta.env.DEV && window.location.hostname === "localhost") {
+    return `https://canvas.auckland.ac.nz/courses/77467/files/${file.id}/preview`;
+  }
+  return new URL(
+    `/courses/${COURSE_ID}/files?preview=${file.id}`,
     document.URL
   ).toString();
 };

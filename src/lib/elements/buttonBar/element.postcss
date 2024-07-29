@@ -14,14 +14,18 @@
         content: "";
       }
       .buttonBar--step {
-        @apply basis-0;
+        @apply basis-0 transition-colors;
         &:after {
-          @apply absolute inset-0 bg-white bg-opacity-0 rounded transition-colors;
-          content: "";
+          /* @apply absolute inset-0 bg-white bg-opacity-0 rounded transition-colors;
+          content: ""; */
+          @apply hidden;
         }
         &:hover:after,
         &:focus:after {
           @apply bg-opacity-10;
+        }
+        &:hover {
+          @apply bg-transparent !important;
         }
       }
     }
@@ -100,5 +104,8 @@
   }
   .no-published {
     @apply text-center text-gray-400 text-base p-4 border-gray-200 border-2 rounded-md border-dashed cursor-pointer;
+  }
+  .external_link_icon {
+    display: none !important;
   }
 }

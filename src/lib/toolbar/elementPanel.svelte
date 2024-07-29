@@ -1,18 +1,39 @@
 <script lang="ts">
+  import PopoverWrapper from "$lib/elements/generic/popover/popoverWrapper.svelte";
   import { nanoid } from "nanoid";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { type ComponentType, createEventDispatcher, onMount } from "svelte";
   import { slide } from "svelte/transition";
+  import ElementTooltip from "./elementTooltip.svelte";
   export let name: string = "Element";
-  export let title = `Add ${name}`;
+  // export let title = `Add ${name}`;
+  export let description: string;
+  export let video: string | undefined = undefined;
+
+  let buttonRef: HTMLButtonElement | null = null;
+
+  let showTooltip: (() => void) | undefined;
+  let hideTooltip: (() => void) | undefined;
 
   const dispatch = createEventDispatcher();
 </script>
 
 <div class="cgb-component">
   <button
+    bind:this={buttonRef}
     on:click={() => dispatch("add")}
+    on:mouseover={() => {
+      if (showTooltip) showTooltip();
+    }}
+    on:focus={() => {
+      if (showTooltip) showTooltip();
+    }}
+    on:mouseout={() => {
+      if (hideTooltip) hideTooltip();
+    }}
+    on:blur={() => {
+      if (hideTooltip) hideTooltip();
+    }}
     class="pane"
-    {title}
     draggable="true"
     on:dragstart={(e) => {
       if (!e.dataTransfer) return;
@@ -39,6 +60,15 @@
       </slot>
     </div>
   </button>
+  {#if buttonRef}
+    <ElementTooltip
+      target={buttonRef}
+      {description}
+      {video}
+      bind:showTooltip
+      bind:hideTooltip
+    ></ElementTooltip>
+  {/if}
 </div>
 
 <style lang="postcss">
@@ -56,6 +86,18 @@
     }
     & h3 {
       @apply block m-0 text-sm text-left;
+    }
+  }
+
+  :global(body.cdb--dark) {
+    .pane {
+      @apply bg-black text-white border-gray-600;
+      &:hover {
+        @apply bg-gray-800;
+      }
+      &:active {
+        @apply bg-gray-900;
+      }
     }
   }
 </style>

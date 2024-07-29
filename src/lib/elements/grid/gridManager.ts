@@ -15,9 +15,13 @@ import { stateObject } from "src/desktop";
 import ElementManager from "../generic/elementManager";
 import editorStyles from "./gridEditor.postcss?inline";
 
+import elementVideo from "$assets/block-anims/Grid.webm";
+
 export class GridManager extends ElementManager {
   public elementName: string = "Grid";
   public elementClass: ElementManager["elementClass"] = Grid;
+  elementDescription = `Use a grid to organize content into rows and columns. Grids are a flexible way to create complex layouts, and can contain any combination of elements, including text, images, videos, and more.`;
+  elementVideo = elementVideo;
   public selector = ".canvas-grid-editor";
   icon = "Internal.canvas-design-blocks";
 

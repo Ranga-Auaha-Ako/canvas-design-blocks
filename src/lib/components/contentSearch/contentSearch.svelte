@@ -15,6 +15,7 @@
   import ScrollContainer from "../scrollContainer.svelte";
   import { persisted } from "svelte-persisted-store";
   import { PaginationNav } from "svelte-paginate";
+  import ButtonRadio from "../buttonRadio.svelte";
 
   let internalLinkTypesList = Object.values(InternalLinks);
 
@@ -33,6 +34,8 @@
     }
   );
   export let filter: FitlerTypes | undefined = undefined;
+
+  const isFilePreview = persisted("cdb_contentsearch_use_file_preview", false);
 
   let query = "";
   let debounce: number | undefined;
@@ -104,6 +107,16 @@
               {type}
             </span>
           </button>
+          <div class="file-choice">
+            {#if type === InternalLinks.File && type === $linkType}
+              <ButtonRadio
+                title="On Click:"
+                choices={[false, true]}
+                labels={["Download", "Preview"]}
+                bind:value={$isFilePreview}
+              ></ButtonRadio>
+            {/if}
+          </div>
           <div class="paginate-right">
             {#if type === $linkType}
               {#await $resultTotal then total}
@@ -151,7 +164,14 @@
                     <button
                       class:unpublished={"published" in file && !file.published}
                       on:click={() => {
-                        dispatch("select", file);
+                        if (type === InternalLinks.File && $isFilePreview) {
+                          dispatch("select", {
+                            ...file,
+                            url: file.preview,
+                          });
+                        } else {
+                          dispatch("select", file);
+                        }
                       }}
                     >
                       <i class="icon-Line icon-{getIcon(file)}" />
@@ -218,6 +238,12 @@
     }
     &.active {
       /* @apply border-gray-300 border border-b-0 rounded-t; */
+    }
+    .file-choice {
+      @apply flex gap-2 text-sm items-center;
+      :global(.label-text) {
+        @apply text-gray-400;
+      }
     }
     .paginate-right {
       @apply inline-block align-bottom float-end;

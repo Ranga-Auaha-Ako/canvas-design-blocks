@@ -227,6 +227,30 @@
   }
 }
 
+body.cdb--dark .CourseHeader[data-cdb-version] {
+  .headerInner.HeaderTheme-modern:not(.hasColor) {
+    @apply bg-gray-900 text-white;
+    .iconComponent,
+    .iconOverlay {
+      .cdb--icon {
+        @apply !text-white;
+      }
+    }
+    .headerLinks.headerLinkTray {
+      @apply bg-gray-800 bg-opacity-30 text-white;
+      .headerLink {
+        @apply text-white;
+        &:after {
+          @apply bg-white opacity-40;
+        }
+      }
+    }
+    .imageOverlay--blur {
+      background: #0000004d !important;
+    }
+  }
+}
+
 @container (max-width: 540px) {
   .CourseHeader[data-cdb-version] {
     @apply CourseHeaderMobileLayout;

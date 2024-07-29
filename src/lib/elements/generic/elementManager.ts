@@ -4,6 +4,7 @@ import { stateObject } from "src/desktop";
 import MceElement, {
   MceElementStatics,
 } from "$lib/elements/generic/mceElement";
+import type { ComponentType } from "svelte";
 
 export abstract class ElementManager implements Writable<MceElement[]> {
   public _elements: Writable<MceElement[]> = writable([]);
@@ -14,7 +15,9 @@ export abstract class ElementManager implements Writable<MceElement[]> {
   abstract elementClass: Omit<typeof MceElement, "new"> & MceElementStatics;
   // Details about the element
   abstract elementName: string;
+  abstract elementDescription: string;
   abstract icon?: string;
+  abstract elementVideo?: string;
 
   public set = this._elements.set;
   public update = this._elements.update;

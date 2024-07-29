@@ -7,6 +7,7 @@
   import Modal from "$lib/components/modalDialog/modal.svelte";
   import GlossaryEditor from "./glossaryEditor.svelte";
   import Portal from "$lib/portal/portal.svelte";
+  import glossaryVideo from "$assets/block-anims/Glossary.webm";
   import {
     GlossaryStates,
     RichGlossaryState,
@@ -56,6 +57,8 @@
   </Portal>
   <ElementPanel
     title="Edit Glossary"
+    video={glossaryVideo}
+    description="Define terms and definitions for your course with a central glossary. On desktop, terms will be highlighted and a glossary will appear at the bottom of the page."
     on:add={async () => {
       loading = true;
       loadEditor = await getResolvedGlossary().catch((e) => {

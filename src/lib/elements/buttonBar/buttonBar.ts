@@ -17,10 +17,10 @@ import { courseEnv } from "$lib/util/courseEnv";
 
 export enum ButtonBarTheme {
   Progress = "progress",
-  Simple = "simple",
+  ButtonGroup = "simple",
 }
 export const ValidThemes = Object.values(ButtonBarTheme);
-export const DefaultTheme = ButtonBarTheme.Progress;
+export const DefaultTheme = ButtonBarTheme.ButtonGroup;
 
 export enum ProgressState {
   Before = "moduleProgress--before",
@@ -82,7 +82,25 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
     theme: DefaultTheme,
     color: colord(theme.primary),
     position: 0,
-    items: [],
+    items: [
+      {
+        moduleID: nanoid(),
+        label: "Button 1",
+        url: "#",
+        icon: { id: "Inst.Line.module", type: 2 },
+      },
+      {
+        moduleID: nanoid(),
+        label: "Button 2",
+        url: "#",
+        icon: { id: "Inst.Line.module", type: 2 },
+      },
+      {
+        label: "Button 3",
+        url: "#",
+        icon: { id: "Inst.Line.module", type: 2 },
+      },
+    ],
   };
   state: Writable<ButtonBarData> = writable();
   public set = this.state.set;
@@ -131,6 +149,9 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
         });
       }
     }
+    if (!state.items.length) {
+      state.items = ButtonBarState.defaultState.items;
+    }
     this.state.set(state);
   }
   get stateString() {
@@ -173,7 +194,7 @@ export class ButtonBar extends SvelteElement<ButtonBarData> {
   ) {
     const node = this.createInsertNode(atCursor, editor);
     const inst = new this(state, editor, manager, node);
-    this.syncModules(inst.SvelteState);
+    // this.syncModules(inst.SvelteState);
     return inst;
   }
 

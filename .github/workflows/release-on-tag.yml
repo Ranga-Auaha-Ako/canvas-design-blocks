@@ -5,6 +5,7 @@ on:
     tags: ["v*.*.*"]
     branches:
       - main
+      - beta
 env:
   CANVAS_BLOCKS_THEME_HOST: https://ranga-auaha-ako.github.io/canvas-design-blocks/
   CLEAR_DIST: false
