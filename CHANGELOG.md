@@ -12,7 +12,7 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ### Overview
 
-- ✨ New: Each block in the toolbar now has a tooltip! Dark mode in the mobile app now works better, and you can choose to preview or download linked files.
+- ✨ Hover over blocks below for a new tooltip! Dark mode in the mobile app now works better, and you can choose to preview or download linked files.
 
 ### Added
 
