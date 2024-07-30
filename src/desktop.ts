@@ -17,6 +17,7 @@ import "virtual:blocks-icons.css";
 import "./app.postcss";
 import tailwindStyles from "$lib/util/tailwind.base.postcss?inline";
 import { courseEnv } from "$lib/util/courseEnv";
+import glossaryClientManager from "$lib/elements/glossary/glossaryClientManager";
 
 // Sandpit mode
 if (import.meta.env.MODE === "sandpit") {
@@ -89,11 +90,13 @@ export async function loadApp(
     });
   }
   // Load any client-side elements
-  clientManagers.then((c) =>
-    c.forEach((manager) => {
-      manager.renderClientComponent();
-    })
-  );
+  [
+    ...(await clientManagers),
+    // Load desktop-only managers
+    glossaryClientManager,
+  ].forEach((manager) => {
+    manager.renderClientComponent();
+  });
   // Get TinyMCE Editor
   const editor = await getEditor().catch((e) => {
     // No editor, so don't load the app
