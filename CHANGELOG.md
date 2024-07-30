@@ -29,6 +29,7 @@ Please write a brief description at the top of each version in "Overview". This 
 
 - Issue where changing the background colour of a grid to a colour and back to unset would cause the text colour to get stuck on a fixed colour. This looked fine on desktop, but on mobile dark mode the dark text with transparent (dark) background was unreadable.
 - Fix issue with header sizing on mobile when there was an image selected
+- Removed glossary from mobile code entirely
 
 ## [2.13.3] - 2024-06-11
 
