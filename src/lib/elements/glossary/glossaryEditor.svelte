@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { unparse } from "papaparse";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
   import { courseEnv } from "$lib/util/courseEnv";
   import { fade, slide } from "svelte/transition";
@@ -339,30 +338,41 @@
     </div>
 
     <div class="glossary-actions">
-      <a
-        class="button btn-secondary"
-        href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-          unparse(
-            [
-              ["Term", "Definition"],
-              ...parsedData.terms.map(({ term, definition }) => [
-                term,
-                definition,
-              ]),
-            ],
-            {
-              skipEmptyLines: "greedy",
-            }
-          )
-        )}`}
-        download="glossary-course-{courseEnv.COURSE_ID}.csv"
-      >
-        <IconElement
-          icon={{ id: "Inst.Line.download", type: 2 }}
-          colorOverride="#000"
-        />
-        Download CSV
-      </a>
+      {#await import("papaparse")}
+        <button class="button btn-secondary" disabled>
+          <IconElement
+            icon={{ id: "Inst.Line.download", type: 2 }}
+            colorOverride="#000"
+          />
+          Preparing Download...
+        </button>
+      {:then papaparse}
+        {@const { unparse } = papaparse}
+        <a
+          class="button btn-secondary"
+          href={`data:text/csv;charset=utf-8,${encodeURIComponent(
+            unparse(
+              [
+                ["Term", "Definition"],
+                ...parsedData.terms.map(({ term, definition }) => [
+                  term,
+                  definition,
+                ]),
+              ],
+              {
+                skipEmptyLines: "greedy",
+              }
+            )
+          )}`}
+          download="glossary-course-{courseEnv.COURSE_ID}.csv"
+        >
+          <IconElement
+            icon={{ id: "Inst.Line.download", type: 2 }}
+            colorOverride="#000"
+          />
+          Download CSV
+        </a>
+      {/await}
       <button
         class="button btn-secondary"
         disabled={saving}

@@ -1,6 +1,5 @@
 import { CSRF, courseEnv } from "$lib/util/courseEnv";
 import { GlossaryStates, RichGlossaryState, getRichGlossary } from "./pageInfo";
-import { parse as PapaParse } from "papaparse";
 
 export type termDefinition = {
   term: string;
@@ -329,7 +328,8 @@ export class Glossary {
       };
       input.click();
     });
-    return await new Promise<termDefinition[]>((resolve, reject) => {
+    return await new Promise<termDefinition[]>(async (resolve, reject) => {
+      const PapaParse = (await import("papaparse")).parse;
       PapaParse<termDefinition>(file, {
         header: true,
         skipEmptyLines: "greedy",
