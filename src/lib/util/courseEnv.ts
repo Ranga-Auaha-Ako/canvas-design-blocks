@@ -15,11 +15,12 @@ let accountID =
   window.ENV && window.ENV.ACCOUNT_ID
     ? Promise.resolve(window.ENV.ACCOUNT_ID)
     : Promise.resolve(null);
-if (!accountID && courseID) {
+if (!(window.ENV && window.ENV.ACCOUNT_ID) && courseID) {
   // Use API to get account ID
   accountID = fetch(`/api/v1/courses/${courseID}`)
     .then((response) => response.json())
-    .then((data) => data.account_id);
+    .then((data) => data.account_id)
+    .catch(() => null);
 }
 export { accountID as accountIDPromise };
 

@@ -11,9 +11,8 @@ import.meta.glob("$lib/elements/*/element.postcss", {
 // Determine whether to load client-side blocks
 export const shouldLoadClientSide = accountIDPromise.then(
   (accountID) =>
-    !import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN ||
-    import.meta.env.MODE.includes("mobile") ||
-    (!!accountID &&
+    !!accountID &&
+    (!import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN ||
       (
         JSON.parse(import.meta.env.CANVAS_BLOCKS_CLIENTSIDE_OPTIN) as string[]
       ).includes(accountID))
@@ -22,4 +21,10 @@ export const shouldLoadClientSide = accountIDPromise.then(
 // These are the client-side managers that are loaded always
 export const clientManagers = shouldLoadClientSide.then<
   { renderClientComponent: () => unknown }[]
->((shouldLoad) => (shouldLoad ? [glossaryClientManager] : []));
+>((shouldLoad) =>
+  shouldLoad
+    ? [
+        // glossaryClientManager
+      ]
+    : []
+);
