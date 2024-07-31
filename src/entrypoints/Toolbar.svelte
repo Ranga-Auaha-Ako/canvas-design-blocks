@@ -226,5 +226,11 @@
         @apply text-blue-200;
       }
     }
+    .new-popup {
+      @apply bg-gradient-to-b from-slate-900 to-blue-950 text-white border-gray-600;
+      button {
+        @apply text-blue-200 bg-blue-900;
+      }
+    }
   }
 </style>

@@ -8,6 +8,12 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.14.2] - 2024-07-31
+
+### Fixed
+
+- A few minor tweaks to improve betterCanvas support
+
 ## [2.14.1] - 2024-07-30
 
 ### Fixed
