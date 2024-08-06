@@ -1871,6 +1871,7 @@ __metadata:
     filesize: "npm:^10.1.0"
     hash-sum: "npm:^2.0.0"
     html-void-elements: "npm:3.0.0"
+    is-mobile: "npm:^4.0.0"
     js-cookie: "npm:^3.0.5"
     jsdom: "npm:^23.2.0"
     lightningcss: "npm:^1.22.1"
@@ -3496,6 +3497,13 @@ __metadata:
   version: 1.0.1
   resolution: "is-lambda@npm:1.0.1"
   checksum: 85fee098ae62ba6f1e24cf22678805473c7afd0fb3978a3aa260e354cb7bcb3a5806cf0a98403188465efedec41ab4348e8e4e79305d409601323855b3839d4d
+  languageName: node
+  linkType: hard
+
+"is-mobile@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "is-mobile@npm:4.0.0"
+  checksum: 7d1f1c9ead3f140728318df7b1d6f2f19f28d96bf09c3a9016fe473ccccd32c4d03a01aeec68b612d48f1c0f776e7f1f18a1d83a7e95fb8199b4eb8536db01bc
   languageName: node
   linkType: hard
 

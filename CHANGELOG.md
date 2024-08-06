@@ -8,6 +8,12 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.14.3] - 2024-07-31
+
+### Changed
+
+- Add course syllabus to whitelist for editor
+
 ## [2.14.2] - 2024-07-31
 
 ### Fixed
