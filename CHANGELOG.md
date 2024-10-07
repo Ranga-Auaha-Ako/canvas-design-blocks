@@ -8,6 +8,17 @@ Please write a brief description at the top of each version in "Overview". This 
 
 ## [Unreleased]
 
+## [2.14.3] - 2024-10-07
+
+### Fixed
+
+- Updated `.env.example` and the following sections of `README` in response to [Discussion #80](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/discussions/80):
+
+  -  `Prerequisites`: Added Python version requirements;
+  - `Configuration and Building`:  added explaination and examples of CANVAS_BLOCKS_THEME_CONTACT_NAME, CANVAS_BLOCKS_THEME_CONTACT_LINK in the `.env` file. 
+  -  `Testing the theme`: Fixed the url for `The Canvas Design Blocks CSS` and `The Canvas Design Blocks JS` scripts. These were auto-built from .github > workflows > release-on-tag.yml, running a local build to generate the `dist` subdir shows that the actual file name (i.e. url path).
+  -  `Creating new elements`: Updated the line "All element managers should extend the ElementManager class ..." into "All element managers should extend the ElementManager class, and be loaded in EditorLoader.ts to be imported to and instantiated in desktop.ts." for precision.
+
 ## [2.14.2] - 2024-07-31
 
 ### Fixed
