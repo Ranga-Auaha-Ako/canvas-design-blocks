@@ -89,8 +89,8 @@ If you want to skip the details and just try Design Blocks out in a test Canvas 
 > Do NOT use this method for production, as the files are hosted on GitHub Pages and may not be available in the future. If they become unavailable, the theme will stop working and Canvas may take _up to a minute_ to load any pages. Additionally, the theme is not customisable using this method. From a security perspective, it is not recommended to use this method in a production environment as it will enable a third party (this GitHub Pages) to inject arbitrary code into your Canvas instance.
 
 1. In Canvas, go to **Admin > Themes > Add Theme** (or edit an existing one). In the left-hand editor panel, choose the "Upload" tab at the top.
-2. Download the current styles (or create a new `theme.css` file) and paste the contents of the [Canvas Design Blocks CSS](https://ranga-auaha-ako.github.io/canvas-design-blocks/theme.css) file into the TOP your CSS file. **Note: You need to include the CSS at the top of any other CSS you have in your theme, as it uses an @import statement to pull in the Canvas theme styles.**
-3. Download/create a `theme.js`file, and paste the contents of the [Canvas Design Blocks JS](https://ranga-auaha-ako.github.io/canvas-design-blocks/theme.js) file into the BOTTOM of your JS file. If you don't have a custom JS file, you can simple download and use the Design Blocks JS file as-is.
+2. Download the current styles (or create a new `theme.css` file) and paste the contents of the [Canvas Design Blocks CSS ("canvas-blocks.css")](https://ranga-auaha-ako.github.io/canvas-design-blocks/canvas-blocks.css) file into the TOP your CSS file. **Note: You need to include the CSS at the top of any other CSS you have in your theme, as it uses an @import statement to pull in the Canvas theme styles.**
+3. Download/create a `theme.js`file, and paste the contents of the [Canvas Design Blocks JS ("canvas-blocks.min.js")](https://ranga-auaha-ako.github.io/canvas-design-blocks/canvas-blocks.min.js) file into the BOTTOM of your JS file. If you don't have a custom JS file, you can simple download and use the Design Blocks JS file as-is.
 4. Save and apply the theme. You're done!
 
 ### Building the Theme
@@ -110,8 +110,8 @@ You will also need to have the following installed:
 
 - [Git](https://git-scm.com/) (for cloning the repository)
 - [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/getting-started/install) (for building the theme)
-- [Python](https://www.python.org/) installed on your machine (for the custom icons)
-- [PicoSVG](https://github.com/googlefonts/picosvg) - you can install this using `pip install picosvg`
+- [Python 3.8 or greater](https://www.python.org/) installed on your machine (for the custom icons)
+- [PicoSVG](https://github.com/googlefonts/picosvg) - you can install this using `pip3 install picosvg` ([picosvg requires Python >=3.8](https://pypi.org/project/picosvg/))
 
 #### Configuration and Building
 
@@ -149,7 +149,7 @@ git clone https://github.com/Ranga-Auaha-Ako/canvas-design-blocks
 }
 ```
 
-3. Create a `.env` file in the root of the project with the following contents, replacing the values with your own:
+3. Create a `.env` file (or modify the `.env.example` file and rename into `.env`) in the root of the project with the following contents, replacing the values with your own:
 
 ```Shell
 CANVAS_BLOCKS_BASE_DOMAINS=YOUR_CANVAS_DOMAIN
@@ -159,11 +159,19 @@ CANVAS_BLOCKS_THEME=`PASTE_JSON_HERE`
 CANVAS_BLOCKS_THEME_HOST=YOUR_FILE_HOST
 ```
 
-Note: `CANVAS_BLOCKS_THEME` should be the JSON you created in step 2.
+* Note:
+  * `CANVAS_BLOCKS_THEME` should be the JSON you created in step 2.
 
-`YOUR_CANVAS_DOMAIN` should be the domain of your Canvas instance, e.g. `canvas.instructure.com`.
+  * `YOUR_CANVAS_DOMAIN` should be the domain of your Canvas instance, e.g. `canvas.instructure.com`.
 
-`YOUR_FILE_HOST` should be the domain where you will host the theme files, e.g. `https://xxx.cloudfront.net/`. It should be a domain that supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
+  * `YOUR_FILE_HOST` should be the domain where you will host the theme files, e.g. `https://xxx.cloudfront.net/`. It should be a domain that supports HTTPS and can be accessed by users on your Canvas instance. These files will potentially download on every page load, so set responsible caching headers and use a CDN if required.
+
+  * `CANVAS_BLOCKS_THEME_CONTACT_LINK` should be the url that is embedded in the `Feedback` section at the bottom of the Design Block Toolbar ([see script here](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/blob/main/src/entrypoints/Toolbar.svelte)). E.g.: `https://example.com`, or `mailto:name@example.com`.
+
+  * `CANVAS_BLOCKS_THEME_CONTACT_NAME` is optional and can be added to the `Feedback` section at the bottom of the Design Block Toolbar ([see script here](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/blob/main/src/entrypoints/Toolbar.svelte)). E.g.:`IT Service`.
+
+  * In [Development](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/tree/main?tab=readme-ov-file#development) mode, after making changes in the `.env` file, please rerun `yarn dev` to see the changes in the local demo page. 
+
 
 4. (Optional) Create a `custom` folder in `/src/lib/icons/assets/` and create a folder for each category of custom icons you want to include. You can use any SVG icons you like. To allow Design Blocks to use the icons, you will need to creat a `meta.json` file in the category folder. You can view an example at `/src/lib/icon/assets/instructure/meta.json`. Once created, you can edit the file using our [Beta custom icons editor](https://icon-editor.c.raa.amazon.auckland.ac.nz/).
 
@@ -290,7 +298,7 @@ New elements have the following high-level components:
 
 1. An **Element Manager**, which is responsible for overseeing all instances of the element on the page, and handling the discovery and creation of new instances of the element.
 
-   - All element managers should extend the [`ElementManager`](src/lib/elements/generic/elementManager.ts) class, and be loaded in `desktop.ts`
+   - All element managers should extend the [`ElementManager`](src/lib/elements/generic/elementManager.ts) class, and be loaded in [EditorLoader.ts](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/blob/main/src/lib/util/loaders/editorLoader.ts) to be imported to and instantiated in  [desktop.ts](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/blob/main/src/desktop.ts).
 
 2. An **Element**, which represents a specific instance of the element on the page. This is responsible for rendering the element in the TinyMCE editor, and handling any changes made to the element. There are two ways to do this.
 
