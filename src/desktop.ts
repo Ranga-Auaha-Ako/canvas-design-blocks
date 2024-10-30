@@ -185,6 +185,7 @@ export const getEditor = () =>
       /^\/courses\/\d+\/discussion_topics\/.+\/edit$/,
       /^\/courses\/\d+\/assignments\/new/,
       /^\/courses\/\d+\/assignments\/\d+\/edit$/,
+      /^\/courses\/\d+\/assignments\/syllabus$/,
       /^\/courses\/\d+\/quizzes\/\d+\/edit\/?$/,
     ];
     if (

@@ -27,6 +27,12 @@ Please write a brief description at the top of each version in "Overview". This 
   -  `Testing the theme`: Fixed the url for `The Canvas Design Blocks CSS` and `The Canvas Design Blocks JS` scripts. These were auto-built from .github > workflows > release-on-tag.yml, running a local build to generate the `dist` subdir shows that the actual file name (i.e. url path).
   -  `Creating new elements`: Updated the line "All element managers should extend the ElementManager class ..." into "All element managers should extend the ElementManager class, and be loaded in EditorLoader.ts to be imported to and instantiated in desktop.ts." for precision.
 
+## [2.14.3] - 2024-07-31
+
+### Changed
+
+- Add course syllabus to whitelist for editor
+
 ## [2.14.2] - 2024-07-31
 
 ### Fixed
