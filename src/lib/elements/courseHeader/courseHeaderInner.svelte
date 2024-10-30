@@ -86,13 +86,35 @@
     <img class="headerImage" src={cdbData.image} alt="" role="presentation" />
     <div class="imageOverlay">&nbsp;</div>
   {/if}
+
   <div class="overlay">
-    <!-- svelte-ignore a11y-missing-content -->
     {#if !cdbData.level || cdbData.level === HeaderLevel.h2}
       <h2
         class="headerTitle"
         contenteditable="true"
-        bind:innerText={cdbData.title}
+        bind:innerHTML={cdbData.title}
+        style:color={cdbData.color ? cdbData.color.toHex() : undefined}
+        style:background-color={cdbData.backgroundColor ? cdbData.backgroundColor.toHex() : undefined}
+        on:keydown|capture={(e) => {
+          e.stopPropagation();
+        }}
+        on:paste|stopPropagation|preventDefault={(e) => {
+          // Strip formatting and get plain text only
+          const text = e.clipboardData?.getData("text/plain");
+          if (text) {
+            const win = instance.window;
+            const doc = win.document;
+            const sel = win.getSelection();
+            if (sel?.rangeCount) {
+              const range = sel.getRangeAt(0);
+              range.deleteContents();
+              const textNode = doc.createTextNode(text);
+              range.insertNode(textNode);
+            }
+            sel?.collapseToEnd();
+          }
+          dispatch("update", cdbData);
+        }}
         on:input={() => {
           dispatch("update", cdbData);
         }}
@@ -101,7 +123,28 @@
       <h3
         class="headerTitle"
         contenteditable="true"
-        bind:innerText={cdbData.title}
+        bind:innerHTML={cdbData.title}
+        style:color={cdbData.color ? cdbData.color.toHex() : undefined}
+        style:background-color={cdbData.backgroundColor ? cdbData.backgroundColor.toHex() : undefined}
+        on:keydown|capture={(e) => {
+          e.stopPropagation();
+        }}
+        on:paste|stopPropagation|preventDefault={(e) => {
+          const text = e.clipboardData?.getData("text/plain");
+          if (text) {
+            const win = instance.window;
+            const doc = win.document;
+            const sel = win.getSelection();
+            if (sel?.rangeCount) {
+              const range = sel.getRangeAt(0);
+              range.deleteContents();
+              const textNode = doc.createTextNode(text);
+              range.insertNode(textNode);
+            }
+            sel?.collapseToEnd();
+          }
+          dispatch("update", cdbData);
+        }}
         on:input={() => {
           dispatch("update", cdbData);
         }}
@@ -110,12 +153,34 @@
       <h4
         class="headerTitle"
         contenteditable="true"
-        bind:innerText={cdbData.title}
+        bind:innerHTML={cdbData.title}
+        style:color={cdbData.color ? cdbData.color.toHex() : undefined}
+        style:background-color={cdbData.backgroundColor ? cdbData.backgroundColor.toHex() : undefined}
+        on:keydown|capture={(e) => {
+          e.stopPropagation();
+        }}
+        on:paste|stopPropagation|preventDefault={(e) => {
+          const text = e.clipboardData?.getData("text/plain");
+          if (text) {
+            const win = instance.window;
+            const doc = win.document;
+            const sel = win.getSelection();
+            if (sel?.rangeCount) {
+              const range = sel.getRangeAt(0);
+              range.deleteContents();
+              const textNode = doc.createTextNode(text);
+              range.insertNode(textNode);
+            }
+            sel?.collapseToEnd();
+          }
+          dispatch("update", cdbData);
+        }}
         on:input={() => {
           dispatch("update", cdbData);
         }}
       />
     {/if}
+
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="headerOverview"
@@ -190,6 +255,7 @@
       </div>
     {/if}
   </div>
+
   {#if cdbData.theme === HeaderTheme.Modern && cdbData.links.length > 0}
     <div
       class="headerLinks headerLinkTray"
