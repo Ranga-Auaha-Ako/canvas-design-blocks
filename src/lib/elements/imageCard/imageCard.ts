@@ -57,6 +57,8 @@ export interface CardData {
   imageSettings?: {
     size: "fill" | "contain" | "cover" | "scale-down";
   };
+  openInNewTab?: boolean;
+  altText: string;
 }
 
 export const validFits = ["fill", "contain", "cover", "scale-down"];
@@ -74,6 +76,7 @@ export interface LocalState {
 }
 
 class CardRowState implements SvelteState<RowData> {
+
   static defaultState: RowData = {
     cards: [
       {
@@ -84,6 +87,8 @@ class CardRowState implements SvelteState<RowData> {
         imageSettings: {
           size: "cover",
         },
+        openInNewTab: false,
+        altText: "",
       },
     ],
     labelOverlaid: true,
@@ -91,6 +96,7 @@ class CardRowState implements SvelteState<RowData> {
     size: get(DefaultSize),
     usesIcon: false,
   };
+
   state: Writable<RowData> = writable();
   public set = this.state.set;
   public update = this.state.update;
@@ -132,6 +138,8 @@ class CardRowState implements SvelteState<RowData> {
               ? card?.imageSettings?.size!
               : "cover",
           },
+          openInNewTab: card.openInNewTab ?? false,
+          altText: card.altText ?? "",
         };
       });
     }
@@ -142,6 +150,11 @@ class CardRowState implements SvelteState<RowData> {
           link: "#",
           image: "",
           id: nanoid(),
+          openInNewTab: false,
+          altText: "",
+          imageSettings: {
+            size: "cover",
+          },
         },
       ];
     }

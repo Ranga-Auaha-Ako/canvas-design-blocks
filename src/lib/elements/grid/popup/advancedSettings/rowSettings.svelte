@@ -79,16 +79,18 @@
           break;
       }
       if (oldStyle) {
-        // Padding
-        if (typeof reflecting.padding === "number")
-          oldStyle.padding = `${reflecting.padding}px`;
-        else if (Array.isArray(reflecting.padding))
+        // Padding. If not manually set, remove this style property (else will fallback to default >0 padding)
+        if (typeof reflecting.padding === "number") {
+          oldStyle.padding = reflecting.padding === 0 ? '' : `${reflecting.padding}px`;
+        } else if (Array.isArray(reflecting.padding)) {
           oldStyle.padding = reflecting.padding.map((p) => `${p}px`).join(" ");
-        // Margin
-        if (typeof reflecting.margin === "number")
-          oldStyle.margin = `${reflecting.margin}px`;
-        else if (Array.isArray(reflecting.margin))
+        }
+        // Margin. If not manually set, remove this style property (else will fallback to default >0 margin)
+        if (typeof reflecting.margin === "number") {
+          oldStyle.margin = reflecting.margin === 0 ? '' : `${reflecting.margin}px`;
+        } else if (Array.isArray(reflecting.margin)) {
           oldStyle.margin = reflecting.margin.map((m) => `${m}px`).join(" ");
+        }
         // Background
         oldStyle.background = reflecting.background?.toHex() || "";
         // Text Colour

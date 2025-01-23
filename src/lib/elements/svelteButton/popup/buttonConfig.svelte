@@ -139,12 +139,25 @@
           </p>
         </div>
       {/if}
-      <button
-        class="Button"
-        on:click={() => {
-          iconPicker.open();
-        }}>Select Icon</button
-      >
+      <div class="icon-picker-row">
+        <button
+                    class="btn btn-secondary px-4"
+                    class:grow={!$buttonData.icon}
+                    class:min-w-40={$buttonData.icon}
+                on:click={() => {iconPicker.open();}}
+        >
+          Select Icon
+        </button>
+        {#if $buttonData.icon}
+          <button
+            class="btn btn-secondary aspect-square mt-0 grow-0"
+            title="Remove icon"
+            on:click={() => {$buttonData.icon = undefined;}}
+          >
+            <i class="cdb--icon" aria-hidden="true">Canvas.x</i>
+          </button>
+        {/if}
+      </div>
       <!-- Select box for opening in new tab -->
       <label for="newTab" class="checkbox">
         <input type="checkbox" id="newTab" bind:checked={$isNewTab} />
@@ -202,5 +215,8 @@
     p {
       @apply m-0;
     }
+  }
+  .icon-picker-row {
+    @apply flex flex-row gap-2;
   }
 </style>

@@ -34,6 +34,8 @@
       href={card.link}
       class="ImageCard"
       data-cdb-id={card.id}
+      target={card.openInNewTab ? "_blank" : undefined}
+      rel={card.openInNewTab ? "noopener noreferrer" : undefined}
       style:color={cdbData.theme === ImageCardTheme.Dark &&
       cdbData.usesIcon &&
       card.icon
@@ -83,8 +85,8 @@
         <img
           class="ImageCardImage"
           src={card.image}
-          alt=""
-          role="presentation"
+          alt={card.altText || card.label}
+          role={card.altText ? undefined : "presentation"}
         />
       {/if}
       <span class="ImageCardLabel">

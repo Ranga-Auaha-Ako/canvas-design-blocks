@@ -78,30 +78,35 @@ async function getModuleItems(): Promise<{
 }
 
 class ButtonBarState implements SvelteState<ButtonBarData> {
-  static defaultState: ButtonBarData = {
-    theme: DefaultTheme,
-    color: colord(theme.primary),
-    position: 0,
-    items: [
-      {
-        moduleID: nanoid(),
-        label: "Button 1",
-        url: "#",
-        icon: { id: "Inst.Line.module", type: 2 },
-      },
-      {
-        moduleID: nanoid(),
-        label: "Button 2",
-        url: "#",
-        icon: { id: "Inst.Line.module", type: 2 },
-      },
-      {
-        label: "Button 3",
-        url: "#",
-        icon: { id: "Inst.Line.module", type: 2 },
-      },
-    ],
+
+  static getDefaultState(): ButtonBarData {
+    return {
+      theme: DefaultTheme,
+      color: colord(theme.primary),
+      position: 0,
+      items: [
+        {
+          moduleID: nanoid(),
+          label: "Button 1",
+          url: "#",
+          icon: { id: "Inst.Line.module", type: 2 },
+        },
+        {
+          moduleID: nanoid(),
+          label: "Button 2",
+          url: "#",
+          icon: { id: "Inst.Line.module", type: 2 },
+        },
+        {
+          moduleID: nanoid(),
+          label: "Button 3",
+          url: "#",
+          icon: { id: "Inst.Line.module", type: 2 },
+        },
+      ],
+    };
   };
+
   state: Writable<ButtonBarData> = writable();
   public set = this.state.set;
   public update = this.state.update;
@@ -112,7 +117,7 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
     node?: HTMLElement
   ) {
     let state: ButtonBarData = {
-      ...ButtonBarState.defaultState,
+      ...ButtonBarState.getDefaultState(),
       items: [],
     };
     if (unsafeState) {
@@ -150,7 +155,7 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
       }
     }
     if (!state.items.length) {
-      state.items = ButtonBarState.defaultState.items;
+        state.items = ButtonBarState.getDefaultState().items;
     }
     this.state.set(state);
   }
@@ -194,7 +199,6 @@ export class ButtonBar extends SvelteElement<ButtonBarData> {
   ) {
     const node = this.createInsertNode(atCursor, editor);
     const inst = new this(state, editor, manager, node);
-    // this.syncModules(inst.SvelteState);
     return inst;
   }
 

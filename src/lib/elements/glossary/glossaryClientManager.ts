@@ -28,75 +28,127 @@ export class GlossaryClientManager {
   public glossary: Glossary | undefined;
 
   getTermRegex() {
-    if (!this.glossary?.hasTerms) return new RegExp("$^", "i");
+    if (!this.glossary?.hasTerms) return new RegExp("$^", "ig");
+
+    // Compile terms once, sorted by length
+    const terms = this.glossary.allTerms
+        .sort((a, b) => b.term.length - a.term.length)
+        .map(t => t.term.trim())
+        .filter(Boolean); // Remove empty terms
+
     return new RegExp(
-      "(?:\\b|^)(" +
-        this.glossary.allTerms
-          .sort((a, b) => {
-            // Sort from longest to shortest
-            // This will prevent shorter terms from being matched first
-            return b.term.length - a.term.length;
-          })
-          .map((t) => escapeStringRegexp(t.term.trim()))
-          .join("|") +
-        ")(?:\\b|$)",
-      "iu"
+        "(?<![\\p{L}\\p{N}\\p{M}])" +  // Positive lookbehind for non-word char, not using \\b as it is unicode-unaware
+        "(" +
+        terms
+            .map(term => term.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&'))
+            .join("|") +
+        ")" +
+        "(?![\\p{L}\\p{N}\\p{M}])",    // Positive lookahead for non-word char (not letters/numbers/marks)
+        "igud"  // Flags: 'i'-case insensitive; 'g'- global matching, match all occurrences; 'u'- treats pattern as Unicode; 'd'- return start/end indices of matches alongside matched text
     );
   }
+
   constructor() {
     // super(GlossaryState, Glossary, ".CDB--Glossary[data-cdb-version]");
   }
+
   private termWalker(root: HTMLElement) {
     const regex = this.getTermRegex();
+
+    // Tags that should not have their text content processed
     const InteractiveTags = new Set([
-      "A",
-      "BUTTON",
-      "TEXTAREA",
-      "INPUT",
-      "IFRAME",
-      "DETAILS",
-      "DIALOG",
-      "SELECT",
+      "A", "BUTTON", "TEXTAREA", "INPUT", "IFRAME",
+      "DETAILS", "DIALOG", "SELECT", "SCRIPT", "STYLE",
+      "CODE", "PRE"
     ]);
+
+    // Classes that should be excluded from processing
+    const ExcludedClasses = new Set([
+      "CDB--Icon",
+      "DesignBlocks--Icon",
+      "cdb--icon",
+      "safeBackground",
+      "iconPlaceholder"
+    ]);
+
     return document.createTreeWalker(
-      root, // The root node of the searched DOM sub-tree.
-      NodeFilter.SHOW_ALL, // Look for text nodes only.
+      root,
+      NodeFilter.SHOW_TEXT,  // Only show text nodes
       {
         acceptNode(node) {
-          // The filter method of interface NodeFilter
-          if (node instanceof HTMLElement) {
-            if (InteractiveTags.has(node.tagName))
-              return NodeFilter.FILTER_REJECT;
+          // Skip empty text nodes
+          const text = node.textContent?.normalize("NFC")?.trim();
+          if (!text) {
+            return NodeFilter.FILTER_REJECT;
           }
-          if (!(node instanceof Text)) return NodeFilter.FILTER_SKIP;
-          return node.textContent && regex.test(node.textContent) // Check if text contains string
-            ? NodeFilter.FILTER_ACCEPT // Found: accept node
-            : NodeFilter.FILTER_REJECT; // Not found: reject and continue
-        },
+
+          // Walk up the DOM tree to check for excluded elements
+          let currentElement = node.parentElement;
+          while (currentElement) {
+            // Skip if any parent has excluded class
+            if ([...ExcludedClasses].some(cls =>
+              currentElement?.classList.contains(cls))) {
+              return NodeFilter.FILTER_REJECT;
+            }
+
+            // Skip if any parent is an interactive element
+            if (InteractiveTags.has(currentElement.tagName)) {
+              return NodeFilter.FILTER_REJECT;
+            }
+
+            // Check next parent
+            currentElement = currentElement.parentElement;
+          }
+
+          // Reset regex lastIndex
+          regex.lastIndex = 0;
+
+          // Only accept nodes that contain glossary terms
+          return regex.test(text)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT;
+        }
       }
     );
   }
+
   private addGlossaryTags(node: Text) {
-    const regex = this.getTermRegex();
-    let text = node.textContent;
-    let currentMatch;
-    let currentNode = node;
-    let foundTermNodes = [];
-    while (text && (currentMatch = regex.exec(text)) !== null) {
-      // Split the text node into three parts: before, matched, and after
-      const match = currentNode.splitText(currentMatch.index);
-      currentNode = match.splitText(currentMatch[0].length);
-      const span = document.createElement("span");
-      span.classList.add("CDB--Glossary");
-      span.dataset.cdbTerm = currentMatch[0];
-      span.textContent = currentMatch[0];
-      match.replaceWith(span);
-      this.termNodes.push(span);
-      foundTermNodes.push(span);
-      text = currentNode.textContent;
-    }
-    return foundTermNodes;
+      const regex = this.getTermRegex();
+      let text = node.textContent?.normalize("NFC") || "";
+      let currentNode = node;
+      let foundTermNodes = [];
+
+      // Reset regex state
+      regex.lastIndex = 0;
+
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+          // Create a new text node for the content before the match
+          const before = currentNode.splitText(match.index);
+
+          // Create a new text node for the content after the match
+          currentNode = before.splitText(match[0].length);
+
+          // Create the span for the matched term
+          const span = document.createElement("span");
+          span.classList.add("CDB--Glossary");
+          span.dataset.cdbTerm = match[1];  // Use the captured group
+          span.textContent = match[1];
+
+          // Replace the matched text with the span
+          before.replaceWith(span);
+
+          foundTermNodes.push(span);
+          this.termNodes.push(span);
+
+          // Update text and position for next iteration
+          text = currentNode.textContent || "";
+          regex.lastIndex = 0;  // Reset regex state
+      }
+
+      return foundTermNodes;
   }
+
   public onEditorPage = false;
 
   /**

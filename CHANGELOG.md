@@ -6,6 +6,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Please write a brief description at the top of each version in "Overview". This should be a short summary of the changes in the release, and is displayed in the app when a new version is available. If there are no changes worth notifying users (such as a patch after a major release), you can not include this section to prevent the app from notifying users (instead showing the last version's overview).
 
+## [2.14.5] - 2025-01-23
+
+### Added
+1. <b>Image Card</b>: Added "open in new tab" option to Image Card URL setting; added an "Alt text" input box below the URL setting are.
+   - [Source]: src > lib > elements > imageCard: `popup > imageCardConfig.svelte`, `imageCard.ts`, `imageCardInner.svelte`, `imageCardLegacy.ts`.
+   <br><br>
+
+2. <b>Button Bar</b>:  Added a "remove icon" option in Button Bar.
+   - [Source]: src > lib > elements > buttonBar > popup > `buttonBarConfig.svelte`.
+<br><br>
+
+3. <b>Button</b>:  Added a "remove icon" option in Button.
+   - [Source]: src > lib > elements > svelteButton > popup > `buttonConfig.svelte`.
+<br><br>
+
+
+### Fixed
+
+1. <b>Glossary</b>: Fixed the issue of non-English words in the course glossary list were not always rendered with mouseover glossary display.  Design Block Glossary should now pick up all the words in the glossary list regardless of casing and character set (e.g. accented/macrons). 
+   - [Cause]: Javascript Regex is Unicode-unaware, so the old code extracted "words" using `\b` (word boundary) that was determined based on transitions between `\w` (word characters) and `\W` (non-word characters), while `\w` only covers ASCII set. Thus this failed to capture non-English words.    
+   - [Source]: src > lib > elements > glossary > `glossaryClientManager.ts`.
+   - [Fixes]: Regex pattern, source & target text normalisation, and regex matching indexing logic update via `getTermRegex`, `termWalker`, `addGlossaryTags`. 
+<br><br>
+  
+2. <b>Icon</b>: Fixed the issue of some icons not rendering (e.g. "Koru" (the fern) from the Aotearoa icon series).
+   - [Cause]: The old Glossary module talked through all text nodes, including those within icon elements, and inserted glossary span tags that breaks up the icon markup structure.
+   - [Source]: src > lib > elements > glossary > `glossaryClientManager.ts`.
+   - [Fixes]: Excluded nodes whose parents are in the ExcludedClasses list in `termWalker`. 
+<br><br>
+
+3. <b>Grid</b>: Fixed non-zero padding/margin when popover slider padding/margin is set to 0.  
+   - [Cause]: In `preferences = writableDerived(...)`, as long as the slider is touched even when returning 0, the code explicitly set the style to 0px. This causes the default margin in `gridEditor.postcss` to take effect:
+    `cssCopy.mce-content-body [data-cdb-id] {
+      &.canvas-grid-editor {
+        @apply p-3 m-3; 
+      }
+    }` (This applies margin: 0.75rem (12px))
+   - [Source]: src > lib > elements > grid > popup > advancedSettings > `rowSettings.svelte`.
+   - [Fixes]: Updated `oldStyle.padding` and `oldStyle.margin` assignment logic to remove style if the value is 0. 
+<br><br>
+
+4. <b>Course Header</b>: Fixed the issue of pasted header Title text being overwritten in edit mode when the popover panel was triggered before saving the Canvas page. Now one can paste Title text and format it using Canvas page editor before saving the page, and triggering the popover will not overwrite the text.
+
+   - [Cause]: 1) Previous code's `HeaderState` constructor does not capture in-edit, unsaved text changes; 2) Paste handler dispatched the update event before the state (cdbData.title) got updated with the pasted content; 3) There is no event-listener on style change; 4) previous `CoursHeader` constructor does not preserve the latest DOM state after triggering popover.
+   - [Source]: src > lib > elements > courseHeader > `courseHeader.ts`, `courseHeaderInner.svelte`.
+   - [Fixes]: 
+     - In `courseHeader.ts`, updated class `HeaderState` constructor to prioritize existing DOM content first, followed by passed-in states (unsafeState?.title); updated `CourseHeader` constructor to preserve current DOM state before triggering popover. 
+     - In `courseHeaderInner.svelte`, added `setupMutationObserver` to listen to style change (made via Canvas page editor); updated `<h2 ...>` to use the MutationOvserver, and modified `on:paste` to preserve both source text and formatting, and to update `cdbData.title` as soon as text is pasted in Title.
+<br><br>
+
+5. <b>Button Bar</b>: Bug fixes: 1) Button 3 was previously not editable. 2) Creating >1 Button Bars in page edit mode would result in the subsequent Button Bars all having the custom buttons added in the first one.  Now all new Button Bars will be created with the default state.   
+
+   - [Cause]: 1) The old code did not assign Button 3 any moduleID for proper indexing. 2) The old code used a static variable for default ButtonBar state which can be changed by instances. 
+   - [Source]: src > lib > elements > buttonBar > `buttonBar.ts`, `popup > buttonBarConfig.svelte`.
+   - [Fixes]: 
+     - `buttonBar.ts`: replaced `static defaultState` with `static getDefaultState()`, added moduleID to Button 3.
+     - `buttonBarConfig.svelte`, updated `cardIndex` definition to handle buttons without moduleID.
+     <br><br>
+
 
 ## [2.14.4] - 2024-10-29
 
@@ -14,7 +73,6 @@ Please write a brief description at the top of each version in "Overview". This 
 - Updated two scripts in src > lib > elements > courseHeader:
   - `courseHeader.ts`:  Updated the courseHeader constructor and `static defaultState: HeaderData ` to check and preserve existing Title text and style.
   - `courseHeaderInner.svelte`: Updated the headerTitle code to reflect the preservation of existing title text and style.  Added mouse right-click to handle pasting text.
-
 
 ## [2.14.3] - 2024-10-07
 

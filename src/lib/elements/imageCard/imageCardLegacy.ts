@@ -80,6 +80,8 @@ export class ImageCardLegacy {
           link: card.getAttribute("href") || "#",
           image: imageUrl || "",
           id: card.dataset.cdbId || nanoid(),
+          openInNewTab: card.getAttribute("target") === "_blank",
+          altText: card.querySelector<HTMLImageElement>(".ImageCardImage")?.getAttribute("alt") || "",
         };
         state.cards.push(cardState);
       });

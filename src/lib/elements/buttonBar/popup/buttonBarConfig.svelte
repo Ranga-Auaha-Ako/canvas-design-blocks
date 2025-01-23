@@ -24,9 +24,19 @@
   $: buttonBar = props.buttonBar;
   $: buttonBarData = buttonBar.SvelteState;
   $: cardIndex =
-    selectedId !== undefined
-      ? ButtonBar.getItemIndex($buttonBarData, selectedId)
-      : undefined;
+  selectedId !== undefined && $buttonBarData?.items?.length > 0
+    ? ButtonBar.getItemIndex($buttonBarData, selectedId)
+    : undefined;
+
+  // Initialize moduleID for items that don't have one
+  $: if ($buttonBarData?.items) {
+    $buttonBarData.items = $buttonBarData.items.map(item => {
+      if (!item.moduleID) {
+        return { ...item, moduleID: nanoid() };
+      }
+      return item;
+    });
+  }
 
   let configEl: HTMLElement;
 
@@ -179,6 +189,17 @@
 
                 Select Icon
               </button>
+              {#if icon}
+                <button
+                        class="btn btn-secondary aspect-square mt-0 grow-0"
+                        title="Remove icon"
+                        on:click={() => {
+                      $buttonBarData.items[itemIndex].icon = undefined;
+                    }}
+                >
+                  <i class="cdb--icon" aria-hidden="true">Canvas.x</i>
+                </button>
+              {/if}
               <div class="text-right">
                 <button
                   class="btn btn-danger btn-small"
