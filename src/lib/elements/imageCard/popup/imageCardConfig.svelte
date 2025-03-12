@@ -74,6 +74,7 @@
       picker.close();
     });
   };
+
   const addCard = () => {
     $rowData.cards.push({
       label: "Insert Label Here",
@@ -81,7 +82,6 @@
       image: "",
       id: nanoid(),
       openInNewTab: false,
-      altText: "",
     });
     if ($localState)
       $localState.selectedCard = $rowData.cards[$rowData.cards.length - 1].id;
@@ -96,6 +96,7 @@
       },
     },
   });
+
   iconPicker.$on("selectIcon", ({ detail }) => {
     if (cardIndex === undefined) return;
     iconPicker.close();
@@ -172,39 +173,27 @@
                 rows="3"
                 maxlength="100"
               />
-              <!-- URL checkbox -->
               <div class="form-group">
                 <div class="flex justify-between items-center mb-1">
                   <p class="block text-sm my-0">Card Link (URL):</p>
                   <label class="flex items-center gap-2">
                     <input
-                            type="checkbox"
-                            class="form-checkbox"
-                            bind:checked={$rowData.cards[cardIndex].openInNewTab}
+                      type="checkbox"
+                      class="form-checkbox"
+                      bind:checked={$rowData.cards[cardIndex].openInNewTab}
                     />
                     <span class="text-sm">Open in new tab</span>
                   </label>
                 </div>
                 <LinkInput
-                        fullWidth={true}
-                        link={$rowData.cards[cardIndex].link}
-                        on:save={({ detail }) => {
-                          if (cardIndex === undefined) return;
-                          $rowData.cards[cardIndex].link = detail.link;
-                        }}
+                  fullWidth={true}
+                  link={$rowData.cards[cardIndex].link}
+                  on:save={({ detail }) => {
+                    if (cardIndex === undefined) return;
+                    $rowData.cards[cardIndex].link = detail.link;
+                  }}
                 />
-                <div class="mt-2">
-                  <label for={`${imageCard.id}-alt-text`} class="block text-sm mb-1">Alt Text (a brief text description of images for accessibility):</label>
-                  <input
-                          type="text"
-                          id={`${imageCard.id}-alt-text`}
-                          class="w-full border border-gray-300 rounded p-2"
-                          placeholder="Describe the image for screen readers"
-                          bind:value={$rowData.cards[cardIndex].altText}
-                  />
-                </div>
               </div>
-              <!-- end URL checkbox -->
               {#if $rowData.usesIcon}
                 <div class="mt-2">
                   <button

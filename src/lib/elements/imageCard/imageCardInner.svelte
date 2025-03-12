@@ -85,8 +85,8 @@
         <img
           class="ImageCardImage"
           src={card.image}
-          alt={card.altText || card.label}
-          role={card.altText ? undefined : "presentation"}
+          alt=""
+          role="presentation"
         />
       {/if}
       <span class="ImageCardLabel">

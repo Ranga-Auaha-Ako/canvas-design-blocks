@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Please write a brief description at the top of each version in "Overview". This should be a short summary of the changes in the release, and is displayed in the app when a new version is available. If there are no changes worth notifying users (such as a patch after a major release), you can not include this section to prevent the app from notifying users (instead showing the last version's overview).
 
+## [2.14.6] - 2025-03-11
+
+### Reverted one 2.14.5 change:
+1. <b>Image Card</b>: Removed the "Alt text" input box to reduce chances of conflict with Canvas image upload "Decorative" flag and causing error with UDOIT checks. All Image Card image alt text is defaulted back to "".
+   - [Source]: src > lib > elements > imageCard: `popup > imageCardConfig.svelte`, `imageCard.ts`, `imageCardInner.svelte`, `imageCardLegacy.ts`.
+   <br>
+
+
 ## [2.14.5] - 2025-01-23
 
 ### Added

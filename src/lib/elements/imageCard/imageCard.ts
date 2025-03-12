@@ -58,7 +58,6 @@ export interface CardData {
     size: "fill" | "contain" | "cover" | "scale-down";
   };
   openInNewTab?: boolean;
-  altText: string;
 }
 
 export const validFits = ["fill", "contain", "cover", "scale-down"];
@@ -76,7 +75,7 @@ export interface LocalState {
 }
 
 class CardRowState implements SvelteState<RowData> {
-
+  // Update the defaultState in CardRowState class
   static defaultState: RowData = {
     cards: [
       {
@@ -88,7 +87,6 @@ class CardRowState implements SvelteState<RowData> {
           size: "cover",
         },
         openInNewTab: false,
-        altText: "",
       },
     ],
     labelOverlaid: true,
@@ -139,7 +137,6 @@ class CardRowState implements SvelteState<RowData> {
               : "cover",
           },
           openInNewTab: card.openInNewTab ?? false,
-          altText: card.altText ?? "",
         };
       });
     }
@@ -151,7 +148,6 @@ class CardRowState implements SvelteState<RowData> {
           image: "",
           id: nanoid(),
           openInNewTab: false,
-          altText: "",
           imageSettings: {
             size: "cover",
           },
@@ -222,7 +218,7 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
       undefined,
       localState
     );
-    // this.customEvents = new Map([["selectCard", this.c]]);
+
     this.isSelected.subscribe((selected) => {
       localState.update((state) => ({
         ...state,
