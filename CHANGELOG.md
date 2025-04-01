@@ -6,6 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Please write a brief description at the top of each version in "Overview". This should be a short summary of the changes in the release, and is displayed in the app when a new version is available. If there are no changes worth notifying users (such as a patch after a major release), you can not include this section to prevent the app from notifying users (instead showing the last version's overview).
 
+
+
+## [2.14.7] - 2025-03-31
+
+### 1. Security patch
+
+Upgraded `tar-ts` to V3.0.8 due to previous version (V3.0.5) [vulnerability](https://github.com/advisories/GHSA-pq67-2wwv-3xjx). 
+
+This is done via adding the following to `package.json` and then run `yarn install`.
+`package.json` and `yarn.lock` are both now updated. 
+```
+  "resolutions": {
+    "tar-fs": "^3.0.8",
+    "@puppeteer/browsers/tar-fs": "^3.0.8",
+    "find-chrome-bin/tar-fs": "^3.0.8",
+    "puppeteer-core/tar-fs": "^3.0.8",
+    "@puppeteer/browsers": "2.8.0"
+  }
+```
+
+### 2. Fixed
+
+1. <b>courseHeader</b>: &ensp; Fixed `coruseHeader` tetx color inheriting header background color issue.
+   - [Source]: src > lib > elements > courseHeader: `popup > headerConfig.svelte`, `courseHeader.ts`, `courseHeaderInner.svelte`.
+   <br>
+   
+2. <b>Image Card</b>: &ensp; Fixed the issue of image card label text colour turning dark when being placed inside a Design Block Grid with background colour.
+   - [Source]: `src > lib > elements > imageCard > element.postcss`.
+<br>
+
+
 ## [2.14.6] - 2025-03-11
 
 ### Reverted one 2.14.5 change:

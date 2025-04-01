@@ -8,6 +8,15 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 1em;
+    &.imageCardTheme--overlay {
+      .ImageCard {
+        color: #ffffff !important; /* Override any inherited color */
+
+        .ImageCardLabel {
+          color: #ffffff !important; /* Ensure label text is always white */
+        }
+      }
+    }
     &.imageCardTheme--subtitle,
     &.imageCardTheme--icon {
       .ImageCard {

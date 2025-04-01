@@ -1,6 +1,6 @@
 {
   "name": "canvas-design-blocks",
-  "version": "2.14.6",
+  "version": "2.14.7",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "size-limit": [
@@ -127,5 +127,12 @@
   "packageManager": "yarn@4.0.2",
   "dependencies": {
     "papaparse": "^5.4.1"
+  },
+  "resolutions": {
+    "tar-fs": "^3.0.8",
+    "@puppeteer/browsers/tar-fs": "^3.0.8",
+    "find-chrome-bin/tar-fs": "^3.0.8",
+    "puppeteer-core/tar-fs": "^3.0.8",
+    "@puppeteer/browsers": "2.8.0"
   }
 }
