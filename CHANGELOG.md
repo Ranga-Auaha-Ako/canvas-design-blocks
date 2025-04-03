@@ -28,17 +28,10 @@ This is done via adding the following to `package.json` and then run `yarn insta
 
 ### 2. Fixed
 
-1. <b>courseHeader</b>:
-   - Renamed `HeaderData` attribute `color` into `textdata`, and added `backgroundcolor` for clear separation (to avoid DOM binding stage styling confusion). Added `backgroundColor` handling for different themes.
-
-      - [source]: `src > lib > elements > courseHeader`: `courseHeader.ts`, `courseHeaderInner.svelte`, `popup > headerConfig.svelte`.  
-      <br>
-
-2. <b>Image Card</b>:
+1. <b>Image Card</b>:
    - Fixed the issue of image card label text colour turning dark when being placed inside a Design Block Grid with background colour.
       - [Source]: `src > lib > elements > imageCard > element.postcss`.
 <br>
-
 
 ## [2.14.6] - 2025-03-11
 

@@ -43,8 +43,8 @@ export interface HeaderData {
     icon?: IconState;
   }[];
   theme: HeaderTheme;
-  textColor?: Colord;
-  backgroundColor?: Colord;
+  color?: Colord;          // text color
+  backgroundColor?: Colord; // add this for background color
   level?: HeaderLevel;
   icon?: IconState;
 }
@@ -67,7 +67,7 @@ class HeaderState implements SvelteState<HeaderData> {
         id: nanoid(),
       },
     ],
-    textColor: undefined,
+    color: undefined,
     backgroundColor: undefined,
     theme: DefaultTheme,
     level: DefaultLevel,
@@ -75,117 +75,55 @@ class HeaderState implements SvelteState<HeaderData> {
 
   state: Writable<HeaderData> = writable();
   public set = this.state.set;
-
-  public update = (updater: (state: HeaderData) => HeaderData) => {
-    this.state.update((state) => {
-      const newState = updater(state);
-
-      // If theme changed, handle styling appropriately
-      if (state.theme !== newState.theme) {
-        // Clear colors when changing from Modern to other themes
-        if (state.theme === HeaderTheme.Modern && newState.theme !== HeaderTheme.Modern) {
-          newState.backgroundColor = undefined;
-          newState.textColor = undefined;
-
-          // Strip styling from title HTML if it contains spans or styling
-          if (newState.title.includes('<span') || newState.title.includes('style=')) {
-            // Create a temporary DOM element to strip styling
-            const tempEl = document.createElement('div');
-            tempEl.innerHTML = newState.title;
-
-            // Extract text content only
-            newState.title = tempEl.textContent || newState.title;
-          }
-        }
-      }
-
-      return newState;
-    });
-  };
-
+  public update = this.state.update;
   public subscribe = this.state.subscribe;
 
+  // initializing the state of a course header component
+  // by taking an optional unsafeState object (which contains partial header data)
+  // and a DOM node (which might be an existing HTML element) as inputs.
   constructor(
-    unsafeState: Partial<HeaderData> | undefined,
-    node?: HTMLElement
+      unsafeState: Partial<HeaderData> | undefined,
+      node?: HTMLElement
   ) {
     let theme = ValidThemes.includes(unsafeState?.theme as HeaderTheme)
-      ? unsafeState?.theme
-      : DefaultTheme;
+        ? unsafeState?.theme
+        : DefaultTheme;
     let level = ValidLevels.includes(unsafeState?.level as HeaderLevel)
-      ? unsafeState?.level
-      : DefaultLevel;
+        ? unsafeState?.level
+        : DefaultLevel;
 
     const headerImage = node?.querySelector<HTMLImageElement>("img.headerImage");
     const linkURLs = node?.querySelectorAll<HTMLAnchorElement>(".headerLinks > a");
 
     // Get existing title element and its content/styles
     const existingTitleElement = node?.querySelector<HTMLElement>('.headerTitle');
-    const computedStyle = existingTitleElement ? window.getComputedStyle(existingTitleElement) : null;
 
     // Prioritize existing DOM content first to preserve unsaved styling
     const titleContent = existingTitleElement?.innerHTML || // get current DOM state with styling
-      unsafeState?.title || // fallback to passed-in state
-      HeaderState.defaultState.title; // last resort default
+                        unsafeState?.title || // fallback to passed-in state
+                        HeaderState.defaultState.title; // last resort default
 
     let state: HeaderData = {
-      title: titleContent,
+      title: titleContent,   // changed to a more informative name
       overview: "",
       image: headerImage?.src || HeaderState.defaultState.image,
       links:
-        unsafeState?.links?.map((l, index) => {
-          const url = linkURLs?.[index]?.href || "";
-          let icon = getIconState(l.icon);
-          return {
-            title: l.title || "",
-            url,
-            id: l.id || nanoid(),
-            icon: icon || undefined,
-            target: l.target || undefined,
-          };
-        }) || HeaderState.defaultState.links,
+          unsafeState?.links?.map((l, index) => {
+            const url = linkURLs?.[index]?.href || "";
+            let icon = getIconState(l.icon);
+            return {
+              title: l.title || "",
+              url,
+              id: l.id || nanoid(),
+              icon: icon || undefined,
+              target: l.target || undefined,
+            };
+          }) || HeaderState.defaultState.links,
       theme: theme || DefaultTheme,
-      textColor: undefined,
+      color: undefined,
       backgroundColor: undefined,
       level: level || DefaultLevel,
     };
-
-    // Handle Modern theme color inheritance
-    if (theme === HeaderTheme.Modern) {
-      // For Modern theme, parse colors from different sources
-      const headerInner = node?.closest('.headerInner');
-      if (headerInner) {
-        const innerStyle = window.getComputedStyle(headerInner);
-
-        // Get background from headerInner
-        if (innerStyle.backgroundColor && innerStyle.backgroundColor !== 'rgba(0, 0, 0, 0)') {
-          state.backgroundColor = colord(innerStyle.backgroundColor);
-        }
-
-        // In Modern theme, text should use contrast color
-        if (state.backgroundColor?.isDark()) {
-          state.textColor = colord('#ffffff');
-        } else if (state.backgroundColor) {
-          state.textColor = colord('#000000');
-        }
-      }
-    } else {
-      // For other themes, get colors from existing elements
-      if (computedStyle) {
-        // Preserve text color
-        if (computedStyle.color && computedStyle.color !== 'rgb(0, 0, 0)') {
-          state.textColor = colord(computedStyle.color);
-        }
-      }
-    }
-
-    // Handle colors from unsafeState if they exist (overrides defaults)
-    if (unsafeState?.textColor) {
-      state.textColor = colord(unsafeState.textColor);
-    }
-    if (unsafeState?.backgroundColor) {
-      state.backgroundColor = colord(unsafeState.backgroundColor);
-    }
 
     // Preserve existing styles if they exist
     if (existingTitleElement) {
@@ -194,7 +132,7 @@ class HeaderState implements SvelteState<HeaderData> {
 
       // Preserve text color
       if (computedStyle.color && computedStyle.color !== 'rgb(0, 0, 0)') {
-        state.textColor = colord(computedStyle.color);
+        state.color = colord(computedStyle.color);
       }
 
       // Preserve background color
@@ -203,9 +141,17 @@ class HeaderState implements SvelteState<HeaderData> {
       }
     }
 
+    // Handle colors from unsafeState if they exist
+    if (unsafeState?.color) {
+      state.color = colord(unsafeState.color);
+    }
+    if (unsafeState?.backgroundColor) {
+      state.backgroundColor = colord(unsafeState.backgroundColor);
+    }
+
     state.overview =
-      node?.querySelector(".headerOverview")?.innerHTML ||
-      HeaderState.defaultState.overview;
+        node?.querySelector(".headerOverview")?.innerHTML ||
+        HeaderState.defaultState.overview;
     let icon = getIconState(unsafeState?.icon);
     if (icon) state.icon = icon;
     this.state.set(state);
@@ -213,11 +159,10 @@ class HeaderState implements SvelteState<HeaderData> {
 
   get stateString() {
     const state = get(this.state);
-    const { overview: _o, textColor, backgroundColor, links, ...headerData } = state;
+    const { overview: _o, color, links, ...headerData } = state;
     return JSON.stringify({
       ...headerData,
-      textColor: textColor?.toHex() || undefined,
-      backgroundColor: backgroundColor?.toHex() || undefined,
+      color: color?.toHex() || undefined,
       links: links.map(({ url: _, ...item }) => ({
         ...item,
       })),
