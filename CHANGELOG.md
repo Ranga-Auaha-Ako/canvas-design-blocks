@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Please write a brief description at the top of each version in "Overview". This should be a short summary of the changes in the release, and is displayed in the app when a new version is available. If there are no changes worth notifying users (such as a patch after a major release), you can not include this section to prevent the app from notifying users (instead showing the last version's overview).
 
 
+## [2.14.8] - 2025-05-19
+
+### Patches to reduce UDOIT (phpally) false-positives on Header colour contrasts:
+1. <b>courseHeader</b>:  
+
+     - Renamed `HeaderData` attribute `color` into `textdata`, and added `backgroundcolor` for clear separation (to avoid DOM binding stage styling confusion). Added `backgroundColor` handling for different themes.
+
+       - [source]: `src > lib > elements > courseHeader`: `courseHeader.ts`, `courseHeaderInner.svelte`, `popup > headerConfig.svelte`.  
+        
+       <br>
+
+    - Added `phpally-ignore` to `headerInner` class attributes if in Modern theme and has background color; and to all `<h2>` to `<h4>` tags across themes. 
+      - [source]: `src > lib > elements > courseHeader > courseHeaderInner.svelte`.
+
 
 ## [2.14.7] - 2025-03-31
 

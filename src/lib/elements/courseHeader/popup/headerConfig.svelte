@@ -31,6 +31,15 @@
   let newLinkTextLabel: HTMLInputElement;
   let newLinkTextUrl: HTMLInputElement;
 
+  let previousTheme = $headerData ? $headerData.theme : HeaderTheme.Modern;
+
+  // Keep the existing reactive statement to track changes
+  $: {
+    if ($headerData && $headerData.theme !== previousTheme) {
+      previousTheme = $headerData.theme;
+    }
+  }
+
   const openPicker = () => {
     const picker = new ModalDialog(
       ImageSearch,
@@ -95,10 +104,10 @@
   );
 
   $: isReadable =
-    !$headerData.color ||
-    ($headerData.color?.isDark()
-      ? $headerData.color.isReadable("#fff", { level: "AAA" })
-      : $headerData.color?.isReadable("#000", { level: "AAA" }));
+  !$headerData.backgroundColor ||
+  ($headerData.backgroundColor?.isDark()
+    ? $headerData.backgroundColor.isReadable("#fff", { level: "AAA" })
+    : $headerData.backgroundColor?.isReadable("#000", { level: "AAA" }));
 
   const headerIconPicker = new IconPicker({
     target: document.body,
@@ -155,12 +164,25 @@
   </button>
   <div class="col">
     <div>
-      <ButtonRadio
-        title="Header Theme"
-        choices={ValidThemes}
-        labels={Object.keys(HeaderTheme)}
-        bind:value={$headerData.theme}
-      />
+    <ButtonRadio
+      title="Header Theme"
+      choices={ValidThemes}
+      labels={Object.keys(HeaderTheme)}
+      bind:value={$headerData.theme}
+      on:change={() => {
+        // Only clear background color when changing FROM Modern to another theme
+        if ($headerData.theme !== HeaderTheme.Modern &&
+            previousTheme === HeaderTheme.Modern &&
+            $headerData.backgroundColor) {
+          $headerData.backgroundColor = undefined;
+        }
+        // When changing TO Modern theme, preserve text color if possible
+        else if ($headerData.theme === HeaderTheme.Modern &&
+                 previousTheme !== HeaderTheme.Modern) {
+          // Keep any existing styles
+        }
+      }}
+    />
     </div>
     <div>
       <ButtonRadio
@@ -221,9 +243,9 @@
       <ColourPicker
         label="Background Colour"
         id={nanoid() + "-setting-background"}
-        bind:colour={$headerData.color}
+        bind:colour={$headerData.backgroundColor}
         contrastColour={"Light/Dark"}
-        style="wide"
+        style={"wide"}
         showNone={true}
         asModal={isModal}
       />
@@ -231,7 +253,7 @@
         <div class="colour-alert" transition:slide|global>
           <p class="alert-details">
             <span class="font-bold">Warning:</span> The text in this button may
-            be hard to read for some students. {#if $headerData.color?.isLight()}
+            be hard to read for some students. {#if $headerData.backgroundColor?.isLight()}
               Consider using a darker colour to improve contrast against the
               light text.
             {:else}
