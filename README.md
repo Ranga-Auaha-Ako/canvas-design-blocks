@@ -63,7 +63,7 @@
 ### Custom Icons
 
 - Use a library of Canvas and institutional icons to help with quick scanning of page content and to highlight important information
-  ![Custom Icons](docs/assets/icons.png)
+  ![Custom Icons](docs/assets/icon.png)
 
 ### Deep integration into Canvas RCE
 

@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Please write a brief description at the top of each version in "Overview". This should be a short summary of the changes in the release, and is displayed in the app when a new version is available. If there are no changes worth notifying users (such as a patch after a major release), you can not include this section to prevent the app from notifying users (instead showing the last version's overview).
 
 
+## [2.14.9] - 2025-07-09
+
+### Dependency update; minor bug fixes:
+1. <b>Updated the following dependencies in `package.json`  to address CVE risks</b>:  
+   - in `devDependencies`: 
+     * `svelte`: &ensp;&ensp; "^4.2.9" &rarr; "4.2.19"
+     * `tinymce`: &ensp; "5.10" &rarr; "5.10.8"
+     * `vite`:  &emsp; &emsp; &ensp; &ensp;  "^5.0.12" &rarr; "^5.0.13  
+     
+     <br>
+     
+   - added in `resolutions`:
+        * "tar-fs": "^3.0.9",
+        * "@puppeteer/browsers/tar-fs": "^3.0.9",
+        * "find-chrome-bin/tar-fs": "^3.0.9",
+        * "puppeteer-core/tar-fs": "^3.0.9",
+        * "braces": "3.0.3",
+        * "tar": "6.2.1",
+        * "postcss": "8.4.31",
+        * "ip": "2.0.1",
+        * "ws": "8.17.1",
+        * "rollup": "4.22.4",
+        * "esbuild": "0.25.0"
+<br>
+
+2. <b>grid</b>: 
+   * Forced columns within grid rows to stack vertically when screen width exceeds 768px.  This change is done by forcing the `sm` and `xs` column width to be 12 (100%) in the col constructor  `this.cols = cols.map((col) ` in the `RowLayout` class.  
+   * The `rowTemplates` is not changed and the `sm`, `xs` width will be overwritten by the col constructor constants.  This approach prioritises easy overall change while preserving the alternative template that stacks with different screen size situations. 
+     - [source]: `src > lib > elements > grid > rowLayouts.ts`
+<br>
+     
+
+3. <b>icon</b>: 
+   * Added `headingObserver` in the `Icon` class to monitor if it has a heading (h1-h6) parent element, and if yes injects the `data-ignore-a11y-check` attribute to that heading parent element. <br>This is to handle accessibility false positives from Canvas LMS `tinymce-a11y-checker` on heading text with icon, as the checker counts icon ligature text toward heading length limits under its rule `paragraphs-for-headings`. 
+     - [source]: `src > lib > elements > icon > icon.ts`
+<br>
+
+
+4. <b>imageCards</b>:
+   1) Prevented unintended dragging of imageCard rows after mouse click in Firefox (that has a different draggable threshold) by implementing dynamic popover positioning using floating-ui `flip` middleware with dynamic offset function. The dragging behavior was caused by users accidentally interacting with draggable OrderableList items when the popover appeared over their click location.  
+      - [sources]: `src > lib > elements > imageCard > imageCard.ts` 
+
+       <br>
+
+   2) Replaced imageCard popover bottom arrow (static CSS pseudo-element in `imageCardConfig.svelte`) with floating-ui's built-in arrow middleware (enabled in `imageCard.ts`) for automatic slipping arrow along with popover flips (see the fix above). 
+        - [sources]: `src > lib > elements > imageCard >`
+          - `imageCard.ts`
+          - `imageCardConfig.svelte`
+       
+   <br>
+     
+   2) Prevented Canvas native accessibility checker's `Adjacent links with the same URL should be a single link` warning by replacing identical image card initial href from `#` into `#card-${index+1}`.  
+      - [sources]: `src > lib > elements > imageCard > imageCardInner.svelte`
+
+    <br>
+
+5. <b>buttonBar</b>: 
+   * Prevented Canvas native accessibility checker's `Adjacent links with the same URL should be a single link` warning by replacing identical image card initial href from `#` into `#{index+1}`.  
+      - [sources]: `src > lib > elements > buttonBar >`
+        - `buttonBar.ts`
+        - `popup > buttonBarConfig.svelte`
+<br>
+
+
 ## [2.14.8] - 2025-05-19
 
 ### Patches to reduce UDOIT (phpally) false-positives on Header colour contrasts:

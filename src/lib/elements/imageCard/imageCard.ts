@@ -247,7 +247,15 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
         imageCard: this,
         localState,
       },
-      "top"
+      "top",
+      // dynamic popover position to avoid overlapping with imagecard (triggers draggable behaviour in Firefox)
+      {
+        flip: true,
+        offset: ({placement}) => {return placement.startsWith('top') ? 10 : 20;}  //create similar visual distance between popover arrow and imagecard border
+      },
+      {
+        showArrow: true  // options object to ensure arrows also flip automatically
+      }
     );
     this.isSelected.subscribe((selected) => {
       if (selected) {

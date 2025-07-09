@@ -62,7 +62,7 @@
     $buttonBarData.items.push({
       moduleID: nanoid(),
       label: "New Item",
-      url: "#",
+      url: `#${$buttonBarData.items.length + 1}`,  // to avoid identical URL that triggers Canvas accessibility checker warning
       icon: undefined,
     });
     selectedId = $buttonBarData.items[$buttonBarData.items.length - 1].moduleID;
@@ -191,9 +191,9 @@
               </button>
               {#if icon}
                 <button
-                        class="btn btn-secondary aspect-square mt-0 grow-0"
-                        title="Remove icon"
-                        on:click={() => {
+                    class="btn btn-secondary aspect-square mt-0 grow-0"
+                    title="Remove icon"
+                    on:click={() => {
                       $buttonBarData.items[itemIndex].icon = undefined;
                     }}
                 >

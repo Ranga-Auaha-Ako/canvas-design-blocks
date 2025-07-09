@@ -17,9 +17,17 @@ export class RowLayout {
 
   constructor(cols: ColumnLayout[]) {
     this.cols = cols.map((col) => {
-      const xs = col.xs;
-      const sm = col.sm || xs;
-      const md = col.md || sm;
+      //== (uncomment the next 3 lines to fully rely on rowTemplates)==
+      // const xs = col.xs;
+      // const sm = col.sm || xs;
+      // const md = col.md || sm;
+
+      //== (Overwrites rowTemplates on xs, sm, md)==
+      // Force xs, sm to always be 12 (100% width, i.e. col stacking in small screen) ===========
+      const xs = 12;
+      const sm = 12;
+      const md = col.md || col.sm || col.xs || 12;
+      //==============================================
       const lg = col.lg || md;
       return { xs, sm, md, lg };
     });

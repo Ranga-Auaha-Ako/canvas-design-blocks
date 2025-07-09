@@ -31,7 +31,7 @@
   {#each cdbData.cards as card, index}
     {@const labelLines = card.label.split("\n")}
     <a
-      href={card.link}
+      href={card.link !== "#" ? card.link : `#card-${index+1}`}
       class="ImageCard"
       data-cdb-id={card.id}
       target={card.openInNewTab ? "_blank" : undefined}
