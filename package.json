@@ -1,6 +1,6 @@
 {
   "name": "canvas-design-blocks",
-  "version": "2.14.8",
+  "version": "2.14.9",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "size-limit": [
@@ -105,7 +105,7 @@
     "sass": "1.70.0",
     "size-limit": "^11.0.2",
     "sortablejs": "^1.15.2",
-    "svelte": "^4.2.9",
+    "svelte": "^4.2.19",
     "svelte-paginate": "^0.1.0",
     "svelte-persisted-store": "^0.9.0",
     "svelte-portal": "^2.2.1",
@@ -116,12 +116,12 @@
     "svgicons2svgfont": "^12.0.0",
     "tailwindcss": "3.4.1",
     "tempy": "^3.1.0",
-    "tinymce": "5.10",
+    "tinymce": "5.10.8",
     "to-px": "^1.1.0",
     "tsx": "^4.7.0",
     "ttf2woff": "^3.0.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12",
+    "vite": "^5.0.13",
     "wawoff2": "^2.0.1"
   },
   "packageManager": "yarn@4.0.2",
@@ -129,10 +129,17 @@
     "papaparse": "^5.4.1"
   },
   "resolutions": {
-    "tar-fs": "^3.0.8",
-    "@puppeteer/browsers/tar-fs": "^3.0.8",
-    "find-chrome-bin/tar-fs": "^3.0.8",
-    "puppeteer-core/tar-fs": "^3.0.8",
-    "@puppeteer/browsers": "2.8.0"
+    "tar-fs": "^3.0.9",
+    "@puppeteer/browsers/tar-fs": "^3.0.9",
+    "find-chrome-bin/tar-fs": "^3.0.9",
+    "puppeteer-core/tar-fs": "^3.0.9",
+    "@puppeteer/browsers": "2.8.0",
+    "braces": "3.0.3",
+    "tar": "6.2.1",
+    "postcss": "8.4.31",
+    "ip": "2.0.1",
+    "ws": "8.17.1",
+    "rollup": "4.22.4",
+    "esbuild": "0.25.0"
   }
 }

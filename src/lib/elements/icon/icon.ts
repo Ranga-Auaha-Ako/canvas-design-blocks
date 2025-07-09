@@ -100,6 +100,8 @@ export class Icon extends SvelteElement<IconData> {
   defaultClasses = new Set(["CDB--Icon"]);
   public popover: McePopover;
 
+  private headingObserver?: MutationObserver;
+
   public static import(
     state: stateObject,
     node: HTMLElement,
@@ -171,5 +173,19 @@ export class Icon extends SvelteElement<IconData> {
       }
     });
     this.setupObserver();
+    // Watch for parent heading changes, once text becomes heading,
+    // inject data attribute to force Canvas LMS' tinymce-a11y-checker to ignore it
+    // because ligature icon text will be counted towards heading content and trigger heading length error
+    this.headingObserver = new MutationObserver(() => {
+      const headingParent = this.node.closest('h1, h2, h3, h4, h5, h6');
+      if (headingParent && !headingParent.hasAttribute('data-ignore-a11y-check')) {
+        headingParent.setAttribute('data-ignore-a11y-check', '');
+      }
+    });
+
+    this.headingObserver.observe(this.node.parentElement || document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 }

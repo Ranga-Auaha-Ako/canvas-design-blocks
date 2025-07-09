@@ -88,19 +88,19 @@ class ButtonBarState implements SvelteState<ButtonBarData> {
         {
           moduleID: nanoid(),
           label: "Button 1",
-          url: "#",
+          url: "#1",
           icon: { id: "Inst.Line.module", type: 2 },
         },
         {
           moduleID: nanoid(),
           label: "Button 2",
-          url: "#",
+          url: "#2",
           icon: { id: "Inst.Line.module", type: 2 },
         },
         {
           moduleID: nanoid(),
           label: "Button 3",
-          url: "#",
+          url: "#3",
           icon: { id: "Inst.Line.module", type: 2 },
         },
       ],

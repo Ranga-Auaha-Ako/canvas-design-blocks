@@ -292,11 +292,12 @@
 <style lang="postcss">
   .cgb-component {
     @apply bg-white border border-gray-300 rounded p-2 pt-5 shadow mb-2;
-    &:after {
-      @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;
-      @apply border-b border-r bg-white -z-10;
-      content: " ";
-    }
+    /* (Optional:) remove CSS arrow, use middlewear (from generic/popover) instead*/
+    /*&:after {*/
+    /*  @apply block absolute rounded mx-auto inset-x-0 w-4 h-4 rotate-45 bottom-0;*/
+    /*  @apply border-b border-r bg-white -z-10;*/
+    /*  content: " ";*/
+    /*}*/
     & > .close {
       @apply absolute top-0 right-0 p-1 z-20;
       @apply opacity-100;
