@@ -98,8 +98,10 @@
       }
       if (reflecting.background && reflecting.background.alpha() > 0) {
         oldClassList.add("has-background");
+        oldClassList.add("data-phpally-ignore");
       } else {
         oldClassList.remove("has-background");
+        oldClassList.remove("data-phpally-ignore");
       }
       return [oldStyle, oldClassList] as [CSSStyleDeclaration, DOMTokenList];
     }

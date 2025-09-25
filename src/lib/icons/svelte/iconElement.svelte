@@ -27,7 +27,7 @@
 
 {#if data}
   <span
-    class="cdb--icon"
+    class="cdb--icon phpally-ignore"
     aria-hidden="true"
     style:color={color?.toHex() || undefined}
     data-mce-style={color ? `color: ${color?.toHex()}` : undefined}

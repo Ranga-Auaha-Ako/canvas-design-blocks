@@ -1997,7 +1997,7 @@ __metadata:
     jsdom: "npm:^23.2.0"
     lightningcss: "npm:^1.22.1"
     magic-string: "npm:^0.30.5"
-    nanoid: "npm:5.0.4"
+    nanoid: "npm:^5.1.5"
     p-lazy: "npm:^4.0.0"
     p-limit: "npm:^5.0.0"
     papaparse: "npm:^5.4.1"
@@ -2026,7 +2026,7 @@ __metadata:
     svgicons2svgfont: "npm:^12.0.0"
     tailwindcss: "npm:3.4.1"
     tempy: "npm:^3.1.0"
-    tinymce: "npm:5.10.8"
+    tinymce: "npm:~5.10.9"
     to-px: "npm:^1.1.0"
     tsx: "npm:^4.7.0"
     ttf2woff: "npm:^3.0.0"
@@ -3043,16 +3043,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0":
-  version: 4.0.3
-  resolution: "form-data@npm:4.0.3"
+"form-data@npm:~4.0.4":
+  version: 4.0.4
+  resolution: "form-data@npm:4.0.4"
   dependencies:
     asynckit: "npm:^0.4.0"
     combined-stream: "npm:^1.0.8"
     es-set-tostringtag: "npm:^2.1.0"
     hasown: "npm:^2.0.2"
     mime-types: "npm:^2.1.12"
-  checksum: f0cf45873d600110b5fadf5804478377694f73a1ed97aaa370a74c90cebd7fe6e845a081171668a5476477d0d55a73a4e03d6682968fa8661eac2a81d651fcdb
+  checksum: 373525a9a034b9d57073e55eab79e501a714ffac02e7a9b01be1c820780652b16e4101819785e1e18f8d98f0aee866cc654d660a435c378e16a72f2e7cac9695
   languageName: node
   linkType: hard
 
@@ -4283,15 +4283,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:5.0.4":
-  version: 5.0.4
-  resolution: "nanoid@npm:5.0.4"
-  bin:
-    nanoid: bin/nanoid.js
-  checksum: 28c22d3ff96ea9e6abc059813b8483890c1f52de0f185d8347b0ea205c5966530205c374f1f77492bb53dc5d649de5d36d6eade16645055eb9220dc62080c1b1
-  languageName: node
-  linkType: hard
-
 "nanoid@npm:5.0.7":
   version: 5.0.7
   resolution: "nanoid@npm:5.0.7"
@@ -4307,6 +4298,15 @@ __metadata:
   bin:
     nanoid: bin/nanoid.cjs
   checksum: 4b1bb29f6cfebf3be3bc4ad1f1296fb0a10a3043a79f34fbffe75d1621b4318319211cd420549459018ea3592f0d2f159247a6f874911d6d26eaaadda2478120
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^5.1.5":
+  version: 5.1.6
+  resolution: "nanoid@npm:5.1.6"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 27b5b055ad8332cf4f0f9f6e2a494aa7e5ded89df4cab8c8490d4eabefe72c4423971d2745d22002868b1d50576a5e42b7b05214733b19f576382323282dd26e
   languageName: node
   linkType: hard
 
@@ -5951,10 +5951,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:5.10.8":
-  version: 5.10.8
-  resolution: "tinymce@npm:5.10.8"
-  checksum: 93f4352fb7d483c2500738e975b50ba3f3934442df4b0c9c37f3f40aea46a12f502e0c242c85055e43954f947013d9406e681df83bd88af00be3a348c6ee4932
+"tinymce@npm:~5.10.9":
+  version: 5.10.9
+  resolution: "tinymce@npm:5.10.9"
+  checksum: 8b0d8602259d54ab89ffbf7bc4ea08f1bb35fa1f523748358d22550fed1abbffda3a2168af7c7a562a6bb8828c1c9dedb41e8ed1cd63b21a00f31ef39e708443
   languageName: node
   linkType: hard
 
