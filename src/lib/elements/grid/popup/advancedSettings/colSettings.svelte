@@ -67,8 +67,10 @@
       }
       if (reflecting.background && reflecting.background.alpha() > 0) {
         oldInnerClassList.add("has-background");
+        oldInnerClassList.add("data-phpally-ignore");
       } else {
         oldInnerClassList.remove("has-background");
+        oldInnerClassList.remove("data-phpally-ignore");
       }
       return [oldStyle, oldClassList, oldInnerStyle, oldInnerClassList] as [
         typeof oldStyle,

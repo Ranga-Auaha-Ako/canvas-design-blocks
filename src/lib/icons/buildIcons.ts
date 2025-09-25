@@ -1,6 +1,8 @@
 import { IconSet } from "./vite/icons";
 import path from "path";
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // This is useful in docker situations where we want to have a cached copy of the iconset between builds
 

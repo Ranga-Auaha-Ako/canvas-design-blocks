@@ -3,10 +3,18 @@ import { PluginOption, ResolvedConfig } from "vite";
 import { IconSet } from "./icons";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from 'url';
 
 export const iconset = new IconSet();
-iconset.importRichFolder("@instructure/ui-icons/svg/Line", {
-  fromNodeModules: true,
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Build the absolute path to avoid Windows path duplication issues
+const iconPath = path.resolve(process.cwd(), "node_modules", "@instructure", "ui-icons", "svg", "Line");
+
+iconset.importRichFolder(iconPath, {
+  fromNodeModules: false, // Set to false since we're providing the absolute path
   metaPath: path.resolve(__dirname, "../assets/instructure/meta.json"),
 });
 iconset.importRichFolder("../assets/custom");
@@ -14,6 +22,7 @@ iconset.importFolder("../assets/internal", {
   categoryName: "Internal",
   visible: false,
 });
+
 export default function vitePluginIcons(): PluginOption {
   const getIconBuffer = async () => {
     if (!buffer) {

@@ -8,12 +8,27 @@ import vitePluginCanvasStyles from "./lib/vite-plugin-canvas-styles.js";
 import parseChangelog from "changelog-parser";
 import { compare } from "compare-versions";
 import browserslistToEsbuild from "browserslist-to-esbuild";
+import fs from 'fs';
 
-const changelog = await parseChangelog("./CHANGELOG.md");
-const changeVer = changelog.versions.find(
+// Read and normalise the changelog
+const changelogPath = path.resolve(process.cwd(), "CHANGELOG.md");
+const rawChangelogContent = fs.readFileSync(changelogPath, 'utf8');
+
+// Fix Windows line endings - convert \r\n to \n
+const normalizedContent = rawChangelogContent.replace(/\r\n/g, '\n');
+
+// Parse the normalised content
+const changelog = await parseChangelog({
+  text: normalizedContent,  // Pass text instead of file path
+  removeMarkdown: true     // Optional: keep markdown formatting
+});
+
+let packageVersion = process.env.npm_package_version;
+
+let changeVer = changelog.versions.find(
   (v) =>
     v.version &&
-    compare(v.version, process.env.npm_package_version, "<=") &&
+    compare(v.version, packageVersion, "<=") &&
     v.parsed.Overview
 );
 
