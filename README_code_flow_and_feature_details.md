@@ -84,6 +84,36 @@ When Canvas RCE's TinyMCE instance is successfully detected on valid editing pag
 
 # Components & Features
 
+## Overall Component Colour Behaviour
+<details>
+<summary>Click to view details:</summary>
+
+All Canvas Design Blocks components (except Glossary) have a colour picker, defined in `src/lib/components/colourPicker.svelte`.
+
+Since v2.15.0:
+* The colour pickers in all components will show fixed colour options from the primary, secondary, and other palette colours defined in the `.env` file.
+* Meanwhile, the default component text/icon colour (except for Icon and ImageCard Light Icon mode) will be automatically set to black or white based on the selected component colour to ensure accessibility.
+* There is an option to automatically filter and/or augment the colour picker’s palette options based on the component’s text colour. These options default to `false` and can be set for each component where the colour picker is instantiated via the optional props, e.g.:
+
+    ```sveltehtml
+    <ColourPicker
+        label="Button Bar Colour"
+        id={nanoid() + "-setting-background"}
+        bind:colour={$buttonBarData.color}
+        contrastColour={colord("#ffffff")}
+        style="wide"
+        showNone={false}
+        asModal={isModal}
+        
+        showAccessible={true}    <!-- Will show '!' on palette options with low contrast against the text colour -->
+        filterByContrast={true}  <!-- Will only display palette options with sufficient contrast to the text colour -->
+        useSmartColour={true}    <!-- Will augment the colour to be lighter/darker based on the text colour -->
+    />
+    ```
+
+</details>
+
+-------------------------------------------------------------
 
 ## Button Bar
 
@@ -92,13 +122,15 @@ When Canvas RCE's TinyMCE instance is successfully detected on valid editing pag
 
 The `Button Bar` component creates navigational button rows to help users quickly access important links or track progress through sequential content. 
 
-- It offers two distinct themes: `Button Group` for general flexible navigation, and `Progress` as a sequential step indicator for showing advancement through a series. 
+- It offers two distinct themes: 1) `Button Group` for general flexible navigation that will auto-stack on mobile screen, and 2) `Progress` as a single-row sequential step indicator for showing advancement through a series. 
 
 
 - Both themes provide full button customisation including labels, URLs, icons, and colours.
 
 
 - Users can add/edit buttons manually or sync from Canvas modules, customise styling with colour picker and contrast validation, reorder buttons via drag-and-drop, and set progress position automatically or manually.
+
+- The `Button Group` mode will auto-stack on mobile screens and retain full button label text and icon display, whereas `Progress` mode prioritises keeping the button bar in one row and truncates text for non-current pages on smaller screens.
 
 ### 1) Button Group
 Creates a horizontal row of navigation buttons for quick access to important links.
@@ -138,6 +170,9 @@ Displays sequential progress through a series of content, showing current positi
 - Requires sequential ordering for meaningful progress indication
 - Auto-detection only works if current page exists within Canvas module structure
 - Position must be manually adjusted if content structure changes.
+- Progress anchor needs to be manually changed for each occurrence of the progress bar acorss the linked pages.
+- On mobile screens or in narrow containers, the `Progress` mode button bar will trade off by truncating button text to remain on a single row.
+
 
 </details>
 
@@ -163,19 +198,18 @@ Customises the visual appearance and sizing of individual buttons.
 
 **Available Options**:
 - **Size Selection**: Choose from Mini, Small, Default, or Large button sizes
-- **Colour Customisation**: Set button background colour and text colour (Dark/Light options) with automatic contrast validation
+- **Colour Customisation**: Set the button background colour with automatic text colour (black / white) adjustment to ensure accessible contrast.
 - **Layout Control**: Enable full-width display when button is placed within a Canvas a Design Blocks Grid cell in a multi-column Grid row
 - **Icon Integration**: Select icons from Design Blocks library or remove existing icons
 
 **Expected Behaviour**: 
 - Buttons display with hover effects and visual feedback
-- Contrast warnings appear when text may be difficult to read (contrast ratio <7:1)
 - The `Full Width` option only available when button is inside a  Canvas a Design Blocks Grid cell in a multi-column Grid row
 - Icon and text are automatically aligned and sized appropriately
 
 **Limitations**: 
 - Restricted to predefined icon library
-- Text colour limited to dark/light options only
+- Text colour limited to automatically-set black and white only
 - The `Full Width` functionality is only available to multi-column Grid rows
 
 ### 2) Content & Navigation
@@ -217,6 +251,9 @@ Unlike HTML tables designed for data display, the Canvas Design Blocks Grid prov
 - Users can add/delete rows and columns, copy/paste row content, and extensively customise styling including card effects, padding, margins, and colours.
 
 - The component uses a responsive grid system that automatically stacks columns on smaller screens for optimal mobile viewing.
+
+- All content pasted into a Grid will have its formatting stripped to plain text, and its text colour will be automatically set to black / white based on the Grid row / column background colour to ensure accessible contrast.
+
 
 
 Grids contain **rows** (horizontal bands), and each row contains **columns** (vertical sections). Both rows and columns have separate styling options that work together.
@@ -260,7 +297,7 @@ Grids contain **rows** (horizontal bands), and each row contains **columns** (ve
 - Limited to predefined layout templates, cannot create custom column widths outside provided options
 - Mobile stacking behaviour cannot be disabled
 - Styling interactions between rows and columns require understanding of CSS layering principles
-- Colour options limited to single background/text colour per row or column
+- Colour options limited to single background colour per row or column
 - Spacing limited to 20px maximum values
 - Card corner customisation limited to three size presets.
 
@@ -282,6 +319,9 @@ Headers are designed for major content introductions (such as course welcomes or
 - Users can customise content including editable titles and descriptions, add background images, configure navigation links with icons, and adjust semantic heading levels.
 
 - The Modern theme provides advanced layout options with icon integration, background colours, and sophisticated multi-column design, whilst other themes focus on content overlay approaches.
+
+- All content pasted into a Header title or overview section will have its formatting stripped to plain text, and its text colour will be automatically set to black / white based on the Header background colour to ensure accessible contrast.
+
 
 ### 1) Theme Selection & Visual Styling
 Choose from four distinct header themes, each offering different visual approaches and customisation options.
@@ -447,8 +487,9 @@ Control visual presentation and ensure optimal display across different screen s
 
 **Available Options**:
 - **Theme Selection**:
-  - **Dark Theme**: White text overlaid on images/icons with semi-transparent backgrounds for high contrast
-  - **Light Theme**: Black text with white backgrounds in subtitle-style layout for clean presentation
+  - **Dark Theme**: Auto-set black / white text overlaid on images/icons with semi-transparent backgrounds for high contrast.  In `Dark + Icon` mode, the card background colour is filled with the chosen colour, whereas the icon colour is automatically set to black or white to ensure sufficient contrast.
+
+  - **Light Theme**: Black text with white backgrounds in subtitle-style layout for clean presentation. In `Light + Icon` mode, the icon colour picker will show a warning on low-contrast palette options.
 - **Label Positioning**: Choose "Overlay" (text over images) or "Below" (text beneath images) - only available for image-based cards
 - **Responsive Behaviour**: Automatic grid adaptation based on container size using CSS container queries and media queries
 - **Icon Customisation**: When using icon mode, select colours and adjust icon appearance for each card individually

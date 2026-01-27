@@ -56,12 +56,14 @@ For Deploying to a Canvas LMS Environment, you will also need the following:
   * `CANVAS_BLOCKS_THEME_CONTACT_LINK`: &nbsp; should be the url that is embedded in the `Feedback` section at the bottom of the Design Block Toolbar ([see script here](https://github.com/Ranga-Auaha-Ako/canvas-design-blocks/blob/main/src/entrypoints/Toolbar.svelte)). E.g.: `https://example.com`, or `mailto:name@example.com`.
 
   * `CANVAS_BLOCKS_DISABLE_FONTCACHE`: &nbsp; used in `src/lib/icons/vite/icons.ts` for building icons. Set to `true` for a clean production build.
+  
+  * `CANVAS_BLOCKS_MAX_WIDTH`: &nbsp; Design Blocks component max width in px. If not set, maxWidth=100%. Used in `tailwind.config.cjs` and `src/lib/util/constants.ts`. 
 
   * `CANVAS_BLOCKS_THEME`: &nbsp; should be the JSON content you created in the next step.
 
 
 
-3. In the `.env` file, add the JSON for your version of the theme. The JSON should follow this structure (️⚠️ Note: remove the comments before using):
+3. In the `.env` file, add the JSON for your version of the theme and palette for the component colour pickers. The JSON should follow this structure (️⚠️ Note: remove the comments before using):
 
     ```JSON
     CANVAS_BLOCKS_THEME=`{
@@ -70,24 +72,27 @@ For Deploying to a Canvas LMS Environment, you will also need the following:
         // Secondary colour for the theme
         "secondary": "#AB0520",
         // Define colours for each faculty (optional)
-        "faculty": {
-          "arts": "#AB0520",
-        },
-        // Define accessible light & dark colours for use in the theme
         "palette": {
-          "dark": {
-                    "barney": "#BF32A4",
-                    "info": "#0374B5",
-                    "success": "#0B874B",
-                    "danger": "#E0061F",
-                    "warning": "#FC5E13"
-          },
-          "light": {
-                    "white": "#FFFFFF"
-                }
+          "barney": "#BF32A4",
+          "info": "#0374B5",
+          "success": "#0B874B",
+          "danger": "#E0061F",
+          "warning": "#FC5E13",
+          "black": "#000000"
+          "amber": "#fde68a",
+          "green": "#bbf7d0",
+          "cyan": "#a5f3fc",
+          "violet": "#ddd6fe",
+          "pink": "#fbcfe8",
+          "rose": "#fecdd3",
+          "white": "#FFFFFF"
         }
     }`
     ```
+
+    > ❗NOTE:   
+   > Since V2.15.0, the "palette" field no longer need the "light" and "dark" subfields, as component text/icon colours are auto-set to black/white based on the selected component background colour (except for ImageCard Icon + Light mode) for better accessibility and simpler user experience.
+
 
 4. Run `yarn install` to install dependencies. 
 
