@@ -1,6 +1,7 @@
 import Cookie from "js-cookie";
 
 let courseID = window.ENV ? window.ENV.COURSE_ID : undefined;
+let courseURL = window.ENV? window.ENV.current_context?.url : undefined;
 if (!courseID) {
   // Pull from the URL
   const url = new URL(window.location.href);
@@ -27,6 +28,7 @@ export { accountID as accountIDPromise };
 export const courseEnv = {
   ...window.ENV,
   COURSE_ID: courseID,
+  COURSE_URL: courseURL
 };
 
 export enum CoursePermission {

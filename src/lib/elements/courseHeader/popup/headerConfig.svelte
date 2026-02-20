@@ -112,7 +112,7 @@
   const headerIconPicker = new IconPicker({
     target: document.body,
     props: {
-      options: { editColor: true },
+      options: { editColor: false },
     },
   });
   headerIconPicker.$on("selectIcon", ({ detail }) => {

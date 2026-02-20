@@ -197,7 +197,7 @@ export class ImageCard extends SvelteElement<RowData, LocalState> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: ImageCardManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

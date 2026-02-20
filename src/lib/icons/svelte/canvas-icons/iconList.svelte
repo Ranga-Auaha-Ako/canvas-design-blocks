@@ -27,6 +27,7 @@
   export let asModal: boolean = false;
   export let targetNode: HTMLElement | undefined = undefined;
   export let contrastColor: string | undefined = undefined;
+  export let showWarning: boolean = true;
   let filterQuery = "";
   let iconColor = localStorageWritable(
     "cdb-preferences-iconColor",
@@ -108,7 +109,7 @@
     </div>
   {/if}
 </div>
-{#if !isReadable}
+{#if !isReadable && showWarning}
   <div class="colour-alert" transition:slide|global>
     <p class="alert-details">
       <span class="font-bold">Warning:</span> Text and icons smaller than 18pt (or
@@ -125,9 +126,11 @@
   <div
     class="categories"
     style:color={options.editColor ? $iconColor.toHex() : "black"}
-    style:--icon-background={nearestColour.alpha() === 0
-      ? "#fff"
-      : nearestColour.toHex()}
+    style:--icon-background={
+      options.editColor && !isReadable
+        ? ($iconColor.isLight() ? "#121212" : "#ffffff")
+        : (nearestColour.alpha() === 0 ? "#fff" : nearestColour.toHex())
+    }
   >
     {#each results as category}
       <div class="category">
@@ -162,53 +165,65 @@
 </ScrollContainer>
 
 <style lang="postcss">
-  .searchFilter {
-    @apply flex gap-1 mb-2;
-    input[type="search"] {
-      @apply w-full p-3 border border-solid border-gray-200;
-      &:focus {
-        @apply outline-none border-primary;
-      }
-    }
-    .colourPicker {
-      @apply shrink-0 flex items-center pl-3;
-    }
-  }
+    .searchFilter {
+        @apply flex gap-1 mb-2;
 
-  .colour-alert {
-    @apply mb-2 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
-    p {
-      @apply m-0;
+        input[type="search"] {
+            @apply w-full p-3 border border-solid border-gray-200;
+
+            &:focus {
+                @apply outline-none border-primary;
+            }
+        }
+
+        .colourPicker {
+            @apply shrink-0 flex items-center pl-3;
+        }
     }
-  }
-  .categories {
-    @apply grid grid-flow-row gap-2;
-    .category {
-      @apply flex flex-col gap-2;
-      h3 {
-        @apply text-lg font-bold w-full text-black mt-0;
-      }
+
+    .colour-alert {
+        @apply mb-2 border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-xs;
+
+        p {
+            @apply m-0;
+        }
     }
-  }
-  .iconList {
-    @apply grid gap-1;
-    grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
-    .icon {
-      @apply rounded border-gray-100 border border-solid bg-white text-center p-2 cursor-pointer;
-      @apply transition duration-200 ease-in-out relative z-0 aspect-square overflow-hidden;
-      background-color: var(--icon-background);
-      &:hover {
-        @apply scale-125 z-10 shadow border-transparent;
-      }
-      &:focus {
-        @apply ring-2;
-      }
-      span {
-        @apply block mx-auto;
-        font-size: 1.75rem;
-        line-height: 1;
-        width: 1.75rem;
-      }
+
+    .categories {
+        @apply grid grid-flow-row gap-2;
+
+        .category {
+            @apply flex flex-col gap-2;
+
+            h3 {
+                @apply text-lg font-bold w-full text-black mt-0;
+            }
+        }
     }
-  }
+
+    .iconList {
+        @apply grid gap-1;
+        grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
+
+        .icon {
+            @apply rounded border-gray-100 border border-solid bg-white text-center p-2 cursor-pointer;
+            @apply transition duration-200 ease-in-out relative z-0 aspect-square overflow-hidden;
+            background-color: var(--icon-background);
+
+            &:hover {
+                @apply scale-125 z-10 shadow border-transparent;
+            }
+
+            &:focus {
+                @apply ring-2;
+            }
+
+            span {
+                @apply block mx-auto;
+                font-size: 1.75rem;
+                line-height: 1;
+                width: 1.75rem;
+            }
+        }
+    }
 </style>

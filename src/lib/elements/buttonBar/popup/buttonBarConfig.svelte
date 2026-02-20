@@ -70,10 +70,9 @@
   }
 
   $: visibleItems = $buttonBarData.items.filter((item) => item.hide !== true);
+  $: contrastColor = $buttonBarData.color?.isDark() ? colord("#ffffff") : colord("#000000");
+  $: contrastLevel = $buttonBarData.color ? $buttonBarData.color.contrast(contrastColor) : true;
 
-  $: contrastLevel = $buttonBarData.color
-    ? $buttonBarData.color.contrast(colord("#ffffff"))
-    : true;
   let isLoading: boolean = false;
   $: isReadable =
     contrastLevel === true ||
@@ -97,10 +96,20 @@
   >
     <i class="icon-end" />
   </button>
-  {#if visibleItems.length > 5}
+  {#if $buttonBarData.theme === ButtonBarTheme.Progress}
     <div class="info-alert" transition:slide|global>
       <p class="alert-details">
         <span class="font-bold">Heads up!</span>
+        In <i>Progress</i> mode, the button bar always stays on one row.
+        Button text will be truncated to icons for non-current pages on smaller screens.
+        <span class="font-bold">Please consider edit the buttons to use very short labels</span>
+      </p>
+    </div>
+  {/if}
+  {#if visibleItems.length > 5}
+    <div class="colour-alert" transition:slide|global>
+      <p class="alert-details">
+        <span class="font-bold">Warning!</span>
         {#if $buttonBarData.theme === ButtonBarTheme.Progress}
           There are too many buttons to display in a row on mobile devices. The
           current item in the progress bar will show text, but all other buttons
@@ -116,8 +125,8 @@
     <div class="colour-alert" transition:slide|global>
       <p class="alert-details">
         <span class="font-bold">Warning:</span> The text in this row of buttons may
-        be hard to read for some students. Consider using a darker colour to improve
-        contrast against the white text.
+        be hard to read for some students. Consider using
+        a {$buttonBarData.color?.isLight() ? 'darker' : 'lighter'} colour to improve contrast.
       </p>
     </div>
   {/if}
@@ -264,12 +273,11 @@
                   bind:value={$buttonBarData.position}
                 />
               {/if}
-
               <ColourPicker
                 label="Button Bar Colour"
                 id={nanoid() + "-setting-background"}
                 bind:colour={$buttonBarData.color}
-                contrastColour={colord("#ffffff")}
+                contrastColour={contrastColor}
                 style="wide"
                 showNone={false}
                 asModal={isModal}
@@ -339,7 +347,7 @@
 
   .info-alert,
   .colour-alert {
-    @apply border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-xs transition;
+    @apply border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-sm transition;
     p {
       @apply m-0;
     }

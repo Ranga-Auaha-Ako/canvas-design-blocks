@@ -1,6 +1,8 @@
 #tinymce .CourseHeader {
 }
 .CourseHeader[data-cdb-version] {
+  max-width: theme('maxWidth.content');
+
   .headerLinks {
     @apply flex flex-wrap justify-start gap-4;
     a:not(.headerLink) {
@@ -190,6 +192,9 @@
     grid-template-columns: auto auto 0;
     .overlay {
       @apply mr-16 py-6 bg-transparent;
+      .headerTitle {
+        @apply mr-2;
+      }
     }
     .iconOverlay {
       @apply hidden;

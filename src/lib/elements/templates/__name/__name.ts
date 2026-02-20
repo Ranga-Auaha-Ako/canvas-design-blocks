@@ -100,7 +100,7 @@ export class __Name extends SvelteElement<__NameData> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: __NameManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

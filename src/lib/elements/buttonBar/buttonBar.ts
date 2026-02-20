@@ -204,7 +204,7 @@ export class ButtonBar extends SvelteElement<ButtonBarData> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: ButtonBarManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

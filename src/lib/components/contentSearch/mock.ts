@@ -22,5 +22,6 @@ export default Object.entries(mockImages).map<File>(([name, image], i) => {
     image: `${image}`,
     thumbnail_url: `${matchedThumb ? matchedThumb[1] : image}`,
     size: 100,
+    preview: "",
   } as File;
 });

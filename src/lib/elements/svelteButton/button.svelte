@@ -12,6 +12,8 @@
   export let instance: any;
   export let destroyHandler: () => void;
 
+  $: contrastColor = cdbData.color?.isDark() ? "#fff" : "#000";
+
   onDestroy(() => {
     destroyHandler();
   });
@@ -21,14 +23,14 @@
   class="DesignBlocks--Btn {cdbData.size}"
   class:Button--full={cdbData.fullWidth}
   style:background-color={cdbData.color?.toHex()}
-  style:color|important={cdbData.textColor?.toHex() || "#fff"}
+  style:color|important={contrastColor}
   href={cdbData.url}
   target={cdbData.target !== "_self" ? cdbData.target : undefined}
 >
   {#if cdbData.icon}
     <IconElement
       icon={cdbData.icon}
-      colorOverride={cdbData.textColor?.toHex() || "#fff"}
+      colorOverride={contrastColor}
     />
   {/if}
   <span class="text">{cdbData.label}</span>

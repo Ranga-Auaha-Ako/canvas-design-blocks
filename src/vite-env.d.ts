@@ -10,11 +10,8 @@ declare const __THEME__:
   | {
       primary?: string;
       secondary?: string;
-      faculty?: Record<string, string>;
-      palette?: {
-        dark: Record<string, string>;
-        light: Record<string, string>;
-      };
+      // faculty?: Record<string, string>;
+      palette?: Record<string, string>;
     }
   | undefined;
 

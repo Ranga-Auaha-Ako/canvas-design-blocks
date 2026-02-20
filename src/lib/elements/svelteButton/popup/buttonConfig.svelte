@@ -58,11 +58,12 @@
   onDestroy(() => {
     iconPicker.$destroy();
   });
-  $: contrastLevel = $buttonData.color?.contrast(
-    $buttonData.textColor || colord("#ffffff")
-  );
+  $: contrastColor = $buttonData.color?.isDark() ? colord("#ffffff") : colord("#000000");
+  $: contrastLevel = $buttonData.color ? $buttonData.color.contrast(contrastColor) : true;
   $: isReadable =
-    contrastLevel === undefined || (contrastLevel && contrastLevel >= 7);
+    contrastLevel === true ||
+    contrastLevel === undefined ||
+    (contrastLevel && contrastLevel >= 7);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -108,30 +109,21 @@
       />
     </div>
     <div class="col">
-      <div>
-        <ButtonRadio
-          title="Text Colour"
-          choices={[colord("#000"), colord("#fff")]}
-          labels={["Dark", "Light"]}
-          bind:value={$buttonData.textColor}
-          comparator={(a, b) => a.toHex() === b.toHex()}
-        />
-      </div>
       <ColourPicker
         label="Button Colour"
         id={nanoid() + "-setting-background"}
         bind:colour={$buttonData.color}
-        contrastColour={$buttonData?.textColor || colord("#ffffff")}
+        contrastColour={contrastColor}
         showNone={false}
         asModal={isModal}
       />
+
       {#if !isReadable}
         <div class="colour-alert" transition:slide|global>
           <p class="alert-details">
             <span class="font-bold">Warning:</span> The text in this button may
             be hard to read for some students. {#if $buttonData.textColor?.isLight()}
-              Consider using a darker colour to improve contrast against the
-              light text.
+            Consider using a {$buttonData.color?.isLight() ? 'darker' : 'lighter'} colour to improve contrast.
             {:else}
               Consider using a lighter colour to improve contrast against the
               dark text.
@@ -139,15 +131,16 @@
           </p>
         </div>
       {/if}
-      <div class="icon-picker-row">
+      <div class="icon-picker-row mt-9 mb-6">
         <button
-                    class="btn btn-secondary px-4"
-                    class:grow={!$buttonData.icon}
-                    class:min-w-40={$buttonData.icon}
-                on:click={() => {iconPicker.open();}}
+          class="btn btn-secondary px-4"
+          class:grow={!$buttonData.icon}
+          class:min-w-40={$buttonData.icon}
+          on:click={() => {iconPicker.open();}}
         >
           Select Icon
         </button>
+
         {#if $buttonData.icon}
           <button
             class="btn btn-secondary aspect-square mt-0 grow-0"

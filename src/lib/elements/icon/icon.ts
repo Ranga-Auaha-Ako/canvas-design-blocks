@@ -135,7 +135,7 @@ export class Icon extends SvelteElement<IconData> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: IconManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

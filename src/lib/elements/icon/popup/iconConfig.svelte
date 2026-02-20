@@ -24,7 +24,7 @@
   const iconPicker = new IconPicker({
     target: document.body,
     props: {
-      options: { editColor: false },
+      options: { editColor: false, showWarning: true },
     },
   });
   iconPicker.$on("selectIcon", ({ detail }) => {
