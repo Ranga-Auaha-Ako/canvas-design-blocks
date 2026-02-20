@@ -7,6 +7,224 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Please write a brief description at the top of each version in "Overview". This should be a short summary of the changes in the release, and is displayed in the app when a new version is available. If there are no changes worth notifying users (such as a patch after a major release), you can not include this section to prevent the app from notifying users (instead showing the last version's overview).
 
 
+## [2.15.0] - 2026-02-20
+
+### Overview
+
+- 🌈 1. Colour pickers now auto-set text and icon colours to black or white based on the selected background for improved contrast and accessibility. 🌟 2. Header and grid now paste clipboard content as plain text.
+
+
+### Changed
+
+1. Header, Grid now paste clipboard content as plain text for the ease of editing
+   - Sources: 
+     - `src/lib/elements/courseHeader/courseHeaderInner.svelte`
+     - `src/lib/elements/grid/grid.ts`
+
+
+2. ButtonBar - enhanced Progress mode warning message visibility and content on long module title and how the component is designed to behave.
+    - Source: `src/lib/elements/buttonBar/popup/buttonBarConfig.svelte` 
+
+
+3. Colour picker palette improvement:
+
+   1) Improved palette simplicity by defaulting to use fixed palette options (not using `smart colour` and `filter by contrast`) to accompany the auto-set contrast-aware icon/text colour (see `Added` #2).
+
+   2) Make `smart colour` and `filter by contrast` configurable options for `ColourPicker` with default set to `false`. Consequently, all components see the same fixed colour palettes unless being configured otherwise in component `ColourPicker` instance).
+
+   - Sources:
+     1) `.env.example`, updated palette structure to remove 'dark', 'light' sub-groups.
+     2) `src/vite-env.d.ts`, updated `__THEME__` by adding `palette` variable.
+     3) `src/lib/components/colourPicker.svelte`, flipped `filterByContrast` and `useSmartColour`.
+
+
+4. Updated README to reflect the changes. 
+    - Source: 
+      - `README_code_flow_and_feature_details.md`
+      - `README_Installation_guide.md`
+
+
+
+### Added
+
+1. Added an optional `max-width` paramter to CDB components via `.env` file (default 100% if not set) to suite wider use cases.
+   - Sources:
+   1) `.env.example`, added `CANVAS_BLOCKS_MAX_WIDTH=#px` option. If comment out, will use 100% width by default.
+   2) `tailwind.config.cjs`
+   3) `src/lib/util/constants.ts`
+   4) `src/app.postcss`
+   5) `src/lib/elements/buttonBar/element.postcss`
+   6) `src/lib/elements/courseHeader/element.postcss`
+   7) `src/lib/elements/grid/element.postcss`
+   8) `src/lib/elements/imageCard/element.postcss`
+   9) `src/lib/elements/profiles/element.postcss`
+   10) `src/lib/elements/grid/popup/layoutEditor/gridLayouts.svelte`
+   11) `src/lib/elements/grid/popup/advancedSettings/colSettings.svelte`
+
+
+2. Auto-setting component text/icon colour (black/white) based on colour-picker background choice to ensure sufficient contrast for accessibility (except `ImageCard (icon + light mode)`). This is to simplify user decision process and improve accessibility outcome.   
+
+- Subsequent changes:
+    1) Removed `Button` popover editor's `Text Colour (Dark/Light)` option, text colour is auto-set to black/white based on selected button colour.
+
+   2) Enhanced `imageCard` colour picker label and accessibility warning message. 
+
+- Sources:  
+
+  1) `Button`:
+
+     * `src/lib/elements/svelteButton/popup/buttonConfig.svelte`, removed `Text Colour (Dark/Light)` option in popover editor; updated `contrastColour` based on auto-text-colour logic.
+
+     * `src/lib/elements/svelteButton/button.svelte`,  replaced hard-coded white label and icon colour with dynamically computed black/white `contrastColour` based on button colour.    
+
+  2) `ButtonBar`:
+
+     * `src/lib/elements/buttonBar/popup/buttonBarConfig.svelte`, `contrastColour` is auto-set to black/white based on selected button colour; enhanced accessibility warning to use dynamic colour suggestion value.
+    
+     * `src/lib/elements/buttonBar/buttonBar.svelte`, replaced hard-coded white label and icon colour with dynamically computed black/white `contrastColour` based on button colour.
+
+  3) `Header`:  
+     * `src/lib/elements/courseHeader/popup/headerConfig.svelte`, disabled icon colour edit choice that was already overwritten in the previous version.  
+     
+  4) `ImageCard`:
+
+     * `src/lib/elements/imageCard/popup/imageCardConfig.svelte`, in `icon` mode, dynamically change colour picker label between "Background Colour" (Dark mode) and "Icon Colour" (Light mode);  In Light mode, show in-palette accessibility flag if icon colour is low-contrast (<4.5 contrast level) against the selected background colour.  
+     
+     * `src/lib/elements/imageCard/imageCardInner.svelte`, in Dark mode, if use Icon, icon colour will be automatically set to black/white based on the selected background colour to ensure contrast.  
+
+  5) `Icon`: 
+
+     * `src/lib/icons/svelte/iconPicker.ts`, added the `showWarning` option in `IconPickerOptions`:
+
+     * `src/lib/icons/svelte/canvas-icons/iconList.svelte`, added `showWarning` as another condition for displaying the accessibility warning message.
+
+     * `src/lib/icons/svelte/iconPicker.svelte`, added the `showWarning` argument in the master icon picker's `iconList`, with the default value set to `false` (not show warning unless explicitly configured to).
+
+     * `src/lib/elements/icon/popup/iconConfig.svelte`, updated iconPicker config to show accessibility warning (while suppressing warning for other components by default). 
+
+  6) `Grid`
+
+     * `src/lib/components/colourSettings.svelte`, added `showTextColour` option with default to `true`. If true, will only show Background Colour colour picker in Grid. (This script is only used by Grid `colSettings.svelte` and `rowSettings.svelte`.
+
+     * `src/lib/elements/grid/popup/advancedSettings/rowSettings.svelte`:
+      * Set `showTextColour` option for `colourSettings` to `false`; 
+      * Add code to auto-set text colour regardless of previous Text Colour value
+      * Updated right panel container to maintain fixed height (in case `showTextColour` is true) while allowing item auto-spacing.
+
+    *  `src/lib/elements/grid/popup/advancedSettings/colSettings.svelte`:
+       * Set `showTextColour` option for `colourSettings` to `false`.
+       * Add code to auto-set text colour regardless of previous Text Colour value.
+
+    
+
+### Fixed
+
+1. `contentSearch` component Canvas New Quizzes URL fetching returns null:
+   - Cause: New Quizzes API does not return an `html_url` attribute, resulting in null URL search result
+   - Solution: Restructured New Quizzes HTML URL pattern, added `courseURL` from `window.ENV.current_context.url`
+   - Sources: 
+     - `src/lib/util/types/canvas.d.ts`
+     - `src/lib/util/courseEnv.ts`
+     - `src/lib/components/contentSearch/search.ts`
+     
+
+2. Fixed various syntax errors
+   - `lib/module.d.ts`, added `declare module 'svelte-use-click-outside';` to supress IDE error
+   - `src/lib/components/contentSearch/mock.ts`, added ` preview: "",` to match File type
+   - `src/lib/elements/buttonBar/buttonBarManager.ts`, removed import of non-existing code
+   - `src/lib/elements/grid/gridEditor.postcss`, fixed syntax error: `class=^="col-"` -> `class^="col-"`
+   - Replaced `window.tinymce.activeEditor` with `window.tinymce.activeEditor!` in the following scripts:
+      * `svelteElement.ts`
+      * `buttonBar.ts`
+      * `courseHeader.ts`
+      * `svelteClientElements.ts`
+      * `mceElement.ts`
+      * `mceTextElement.ts`
+      * `grid.ts`
+      * `icon.ts`
+      * `imageCard.ts`
+      * `profileGrid.ts`
+      * `button.ts`
+      * `__name.ts`
+
+
+3. Fixed Header title text top-right corner overlaps with image in flex mode (mobile, with background colour and image).
+   - Source: `src/lib/elements/courseHeader/element.postcss`
+   - Solution: Updated the mobile layout Modern theme's `overlay` class to add headerTitle right margin (`mr`) to avoid overflow into diagonal imageOverlay area.
+
+
+4. Fixed icon pickers showing white icon on white background.
+ - Source: `src/lib/icons/svelte/canvas-icons/iconList.svelte`
+ - Solution: Updated the `style:--icon-background=...` part, so that the icon picker background colour changes to `#121212` (charcoal black) when all conditions are met:
+   1) icon colour is editable (`options.editColor`), 
+   2) icon colour is low contrast (`!isReadable`), and
+   3) iconColour is light (`iconColor.isLight()`). 
+
+    
+5. Fixed Grid row width and grid card shadow invisibility on default margin issues.
+   - Source:`src/lib/elements/grid/element.postcss`
+   - Solutions: Explicitly specified `grid-row` margin to avoid grid row class name-clash with Canvas LMS class `grid-row`, which has -12px horizontal margins. (This caused grid row with default margin being wider than other Design Blocks components, and card border shadow with default margin to be invisible.)
+
+
+6. Fixed the toolbar launch button top right-corner `has-update` dot, to stop it from expanding the button width and causing Canvas toolbar showing horizontal scrolling bar.
+   - Source: `src/entrypoints/Toolbar.svelte` 
+   - Solution: Updated the max-width calculation for the `update-ping` dot.
+
+    
+
+
+### Security
+
+1. Patched the following CVEs:
+
+* `tar`: 
+  - CVE-2026-23745
+
+* `tinymce`:
+  - CVE-2024-29881 Moderate severity
+  - CVE-2024-29203 Moderate severity
+  - CVE-2024-38356 Moderate severity
+  - CVE-2024-38357 Moderate severity
+
+* `vite`:
+  - CVE-2025-58751 Low severity
+  - CVE-2025-58752 Low severity
+  - CVE-2025-62522 Moderate severity
+
+* `tar-fs`:
+  - CVE-2025-59343 High severity
+
+* `glob`:
+   - CVE-2025-64756 High severity
+
+* `lodash`:
+   - CVE-2025-13465 Moderate severity
+
+Files changed:
+
+* `package.json`:
+
+    ```typescript
+    "devDependencies": {
+        ...
+        "vite": "^5.0.13",      ==> "^5.4.21",
+         "tinymce": "~5.10.9",  ==> "^7.2.0",
+        ...
+    }
+    
+    "resolutions": {
+        ...
+        "tar": "6.2.1",      ==>  "~7.5.3",
+        "tar-fs": "^3.0.9",      ==>  "^3.1.1"
+        "glob":		     ==>  "~10.5.0", (added)
+        "lodash":                ==>  "^4.17.23" (added)
+    }
+    ```
+
+
+
+
+
 ## [2.14.10] - 2025-09-25
 
 - Security patching, README redesign, CHANGELOG tidy-up.
