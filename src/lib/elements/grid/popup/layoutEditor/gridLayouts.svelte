@@ -16,6 +16,7 @@
     offset,
     shift,
   } from "@floating-ui/dom";
+  import { max_content_width } from '$lib/util/constants';
 
   export let row: Row | false = false;
   export let showAdvanced = !!row;
@@ -57,15 +58,16 @@
 </script>
 
 <div class="cgb-component">
-  <div
-    class="layoutList"
-    class:expanded={row && $settingsOpen}
-    in:slide
-    out:fade|global
-    bind:this={popoverEl}
-    style:transform
-    style:--full-width={editorWidth}
-  >
+<div
+  class="layoutList"
+  class:expanded={row && $settingsOpen}
+  in:slide
+  out:fade|global
+  bind:this={popoverEl}
+  style:transform
+  style:--full-width={editorWidth}
+  style:--max-content-width={max_content_width === '100%' ? 'none' : max_content_width}
+>
     <div class="details">
       <div class="layoutOptions">
         <div class="layoutGrid">
@@ -123,7 +125,7 @@
     @apply h-52 transition duration-300;
     @apply bg-secondary rounded-md shadow-lg border-solid border-secondary;
     @apply grid;
-    max-width: theme('maxWidth.content');
+    max-width: var(--max-content-width, none);
     transition-property: color, background-color, border-color, opacity,
       box-shadow, filter, backdrop-filter, width, height;
     --col-width: 18rem;
@@ -201,7 +203,8 @@
       @apply bg-primary border-primary;
       --full-width: calc(var(--col-width) * 2 + var(--border-width));
       height: min(260px, calc(100vh - 3.5rem));
-      width: min(var(--full-width), theme('maxWidth.content'));
+      width: var(--full-width);
+      max-width: var(--max-content-width, none);
       & .layoutOptions {
         width: 10rem;
         & .layoutGrid {
