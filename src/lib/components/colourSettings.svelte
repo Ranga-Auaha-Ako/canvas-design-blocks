@@ -13,6 +13,7 @@
     textColor: Colord | undefined;
   }>;
   export let popupDirection: Placement = "bottom-start";
+  export let showTextColor: boolean = true;
 
   $: contrastLevel = (
     inferredTextCol && $preferences.background
@@ -52,40 +53,49 @@
   }
 </script>
 
-<div class="cgb-component">
-  <div
-    class="colour-alert-box"
-    class:alert-active={contrastLevel !== false && !isReadable}
-    transition:slide|global
-  >
-    <ColourPicker
-      label="Background Colour"
-      id={element.id + "-setting-background"}
-      bind:colour={$preferences.background}
-      bind:contrastColour={inferredTextCol}
-      {popupDirection}
-    />
-    <ColourPicker
-      label="Text Colour"
-      id={element.id + "-setting-text-colour"}
-      bind:colour={$preferences.textColor}
-      bind:contrastColour={$preferences.background}
-      {popupDirection}
-      showAccessible={false}
-      isText={true}
-    />
-    <!-- Warning if contrast is dangerously low -->
-    {#if contrastLevel && contrastLevel < 7}
-      <div class="colour-alert" transition:slide|global>
-        <p class="alert-details">
-          <span class="font-bold">Warning:</span> Text and icons smaller than 18pt
-          (or bold 14pt) should display a minimum contrast ratio of 4.5:1. Consider
-          using a darker colour if you are using this icon in a smaller size.
-        </p>
-      </div>
-    {/if}
+{#if showTextColor}
+  <div class="cgb-component">
+    <div
+      class="colour-alert-box"
+      class:alert-active={contrastLevel !== false && !isReadable}
+      transition:slide|global
+    >
+      <ColourPicker
+        label="Background Colour"
+        id={element.id + "-setting-background"}
+        bind:colour={$preferences.background}
+        bind:contrastColour={inferredTextCol}
+        {popupDirection}
+      />
+      <ColourPicker
+        label="Text Colour"
+        id={element.id + "-setting-text-colour"}
+        bind:colour={$preferences.textColor}
+        bind:contrastColour={$preferences.background}
+        {popupDirection}
+        showAccessible={false}
+        isText={true}
+      />
+      <!-- Warning if contrast is dangerously low -->
+      {#if contrastLevel && contrastLevel < 7}
+        <div class="colour-alert" transition:slide|global>
+          <p class="alert-details">
+            <span class="font-bold">Warning:</span> Text and icons smaller than 18pt
+            (or bold 14pt) should display a minimum contrast ratio of 4.5:1. Consider
+            using a darker colour if you are using this icon in a smaller size.
+          </p>
+        </div>
+      {/if}
+    </div>
   </div>
-</div>
+  {:else}
+  <ColourPicker
+    label="Background Colour"
+    id={element.id + "-setting-background"}
+    bind:colour={$preferences.background}
+    {popupDirection}
+  />
+{/if}
 
 <style lang="postcss">
   .colour-alert-box {

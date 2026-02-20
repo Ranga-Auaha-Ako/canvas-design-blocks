@@ -70,17 +70,15 @@
   }
 
   $: visibleItems = $buttonBarData.items.filter((item) => item.hide !== true);
+  $: contrastColor = $buttonBarData.color?.isDark() ? colord("#ffffff") : colord("#000000");
+  $: contrastLevel = $buttonBarData.color ? $buttonBarData.color.contrast(contrastColor) : true;
 
-  $: contrastLevel = $buttonBarData.color
-    ? $buttonBarData.color.contrast(colord("#ffffff"))
-    : true;
   let isLoading: boolean = false;
   $: isReadable =
     contrastLevel === true ||
     contrastLevel === undefined ||
     (contrastLevel && contrastLevel >= 7);
 </script>
-
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
@@ -96,9 +94,8 @@
       buttonBar.deselectAll();
     }}
   >
-    <i class="icon-end"/>
+    <i class="icon-end" />
   </button>
-  <!-- progressBar user message -->
   {#if $buttonBarData.theme === ButtonBarTheme.Progress}
     <div class="info-alert" transition:slide|global>
       <p class="alert-details">
@@ -128,8 +125,8 @@
     <div class="colour-alert" transition:slide|global>
       <p class="alert-details">
         <span class="font-bold">Warning:</span> The text in this row of buttons may
-        be hard to read for some students. Consider using a darker colour to improve
-        contrast against the white text.
+        be hard to read for some students. Consider using
+        a {$buttonBarData.color?.isLight() ? 'darker' : 'lighter'} colour to improve contrast.
       </p>
     </div>
   {/if}
@@ -164,7 +161,7 @@
                 }}
               >
                 Done
-                <i class="icon icon-check"/>
+                <i class="icon icon-check" />
               </button>
             </div>
             <div class="card-body">
@@ -196,22 +193,22 @@
                 }}
               >
                 {#if icon}
-                  <IconElement {icon} colorOverride="#000"/>
+                  <IconElement {icon} colorOverride="#000" />
                 {/if}
+
                 Select Icon
               </button>
               {#if icon}
                 <button
-                  class="btn btn-secondary aspect-square mt-0 grow-0"
-                  title="Remove icon"
-                  on:click={() => {
+                    class="btn btn-secondary aspect-square mt-0 grow-0"
+                    title="Remove icon"
+                    on:click={() => {
                       $buttonBarData.items[itemIndex].icon = undefined;
                     }}
                 >
                   <i class="cdb--icon" aria-hidden="true">Canvas.x</i>
                 </button>
               {/if}
-
               <div class="text-right">
                 <button
                   class="btn btn-danger btn-small"
@@ -221,7 +218,7 @@
                     );
                   }}
                 >
-                  <i class="icon icon-trash"/>
+                  <i class="icon icon-trash" />
                   Delete
                 </button>
               </div>
@@ -255,9 +252,8 @@
                     addItem();
                   }}
                 >
-                  <i class="icon icon-add"/>
-                  Add new item
-                </button
+                  <i class="icon icon-add" />
+                  Add new item</button
                 >
               </div>
               <ButtonRadio
@@ -277,12 +273,11 @@
                   bind:value={$buttonBarData.position}
                 />
               {/if}
-
               <ColourPicker
                 label="Button Bar Colour"
                 id={nanoid() + "-setting-background"}
                 bind:colour={$buttonBarData.color}
-                contrastColour={colord("#ffffff")}
+                contrastColour={contrastColor}
                 style="wide"
                 showNone={false}
                 asModal={isModal}
@@ -296,82 +291,68 @@
 </div>
 
 <style lang="postcss">
-    .cgb-component {
-        @apply bg-white border border-gray-300 rounded pt-6 p-2 shadow mb-2;
-        @apply grid grid-cols-1 max-w-lg w-screen gap-2;
-
-        & > .close {
-            @apply absolute top-0 right-0 p-1 z-20;
-            @apply opacity-100;
-            line-height: 0;
-
-            i {
-                @apply text-gray-600;
-                line-height: 0;
-            }
-        }
+  .cgb-component {
+    @apply bg-white border border-gray-300 rounded pt-6 p-2 shadow mb-2;
+    @apply grid grid-cols-1 max-w-lg w-screen gap-2;
+    & > .close {
+      @apply absolute top-0 right-0 p-1 z-20;
+      @apply opacity-100;
+      line-height: 0;
+      i {
+        @apply text-gray-600;
+        line-height: 0;
+      }
     }
-
-    input[type="text"] {
-        @apply border border-gray-300 rounded px-2 py-3 w-full mb-0;
-
-        &:focus {
-            @apply outline-none border-blue-500;
-        }
+  }
+  input[type="text"] {
+    @apply border border-gray-300 rounded px-2 py-3 w-full mb-0;
+    &:focus {
+      @apply outline-none border-blue-500;
     }
-
-    .card-slot {
-        /* To make the fade transition overlay on itself */
-        /* @apply relative grid grow;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
-        grid-template-areas: "card"; */
-        @apply grid;
+  }
+  .card-slot {
+    /* To make the fade transition overlay on itself */
+    /* @apply relative grid grow;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "card"; */
+    @apply grid;
+  }
+  .card {
+    @apply flex flex-col items-start gap-2 border border-gray-300 rounded shadow-sm grow;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    .card-header {
+      @apply bg-gray-100 rounded-t border-b w-full px-2 py-1 grid gap-2 justify-between items-center;
+      grid-template-columns: 1fr auto;
+      h3 {
+        @apply text-base m-0;
+      }
     }
-
-    .card {
-        @apply flex flex-col items-start gap-2 border border-gray-300 rounded shadow-sm grow;
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 1;
-        grid-row-end: 2;
-
-        .card-header {
-            @apply bg-gray-100 rounded-t border-b w-full px-2 py-1 grid gap-2 justify-between items-center;
-            grid-template-columns: 1fr auto;
-
-            h3 {
-                @apply text-base m-0;
-            }
-        }
-
-        .card-body {
-            @apply p-2 w-full;
-
-            h3 {
-                @apply text-lg m-0;
-            }
-
-            p {
-                @apply text-sm m-0 mt-2;
-            }
-
-            .progress-selector {
-                @apply accent-primary;
-            }
-        }
+    .card-body {
+      @apply p-2 w-full;
+      h3 {
+        @apply text-lg m-0;
+      }
+      p {
+        @apply text-sm m-0 mt-2;
+      }
+      .progress-selector {
+        @apply accent-primary;
+      }
     }
+  }
 
-    .info-alert,
-    .colour-alert {
-        @apply border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-sm transition;
-
-        p {
-            @apply m-0;
-        }
+  .info-alert,
+  .colour-alert {
+    @apply border-l-4 border-blue-300 bg-blue-100 text-blue-900 p-2 rounded text-sm transition;
+    p {
+      @apply m-0;
     }
-
-    .colour-alert {
-        @apply border-orange-300 bg-orange-100 text-orange-900;
-    }
+  }
+  .colour-alert {
+    @apply border-orange-300 bg-orange-100 text-orange-900;
+  }
 </style>

@@ -32,6 +32,8 @@
     (item, index) => index / visibleItems.length
   );
   const showSm = 1;
+
+  $: contrastColor = cdbData.color?.isDark() ? "#fff" : "#000";
 </script>
 
 <div class="DesignBlocks--ButtonBar">
@@ -43,7 +45,7 @@
         ? cdbData.color?.toHex()
         : undefined}
       style:color={cdbData.theme === ButtonBarTheme.ButtonGroup
-        ? "#fff"
+        ? contrastColor
         : undefined}
     >
       {#each itemLocations as loc, index}
@@ -63,7 +65,7 @@
             : undefined}
           style:color={index <= visiblePosition ||
           cdbData.theme !== ButtonBarTheme.Progress
-            ? "#fff"
+            ? contrastColor
             : "#000"}
           title={item.label}
         >
@@ -71,7 +73,7 @@
             class="buttonBar--label"
             style:color={index <= visiblePosition ||
             cdbData.theme !== ButtonBarTheme.Progress
-              ? "#fff"
+              ? contrastColor
               : undefined}
           >
             <span class="Module--info">
@@ -81,7 +83,7 @@
                     icon={item.icon}
                     colorOverride={index <= visiblePosition ||
                     cdbData.theme !== ButtonBarTheme.Progress
-                      ? "#fff"
+                      ? contrastColor
                       : "#000"}
                   />
                 {:else}
@@ -92,7 +94,7 @@
                     }}
                     colorOverride={index <= visiblePosition ||
                     cdbData.theme !== ButtonBarTheme.Progress
-                      ? "#fff"
+                      ? contrastColor
                       : "#000"}
                   />
                 {/if}

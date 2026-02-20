@@ -124,4 +124,5 @@ export interface IconPickerOptions {
   card?: boolean;
   editColor?: boolean;
   maxHeight?: string;
+  showWarning?: boolean;
 }

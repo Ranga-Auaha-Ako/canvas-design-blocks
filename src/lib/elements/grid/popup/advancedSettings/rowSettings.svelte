@@ -91,10 +91,25 @@
         } else if (Array.isArray(reflecting.margin)) {
           oldStyle.margin = reflecting.margin.map((m) => `${m}px`).join(" ");
         }
+
         // Background
         oldStyle.background = reflecting.background?.toHex() || "";
+
         // Text Colour
-        oldStyle.color = reflecting.textColor?.toHex() || "";
+        // // Option 1: only auto-set text colour on new grid
+        // if (reflecting.background && reflecting.background.alpha() > 0) {
+        //   oldStyle.color = reflecting.textColor?.toHex() || (reflecting.background.isDark() ? "#fff" : "#000");
+        // } else {
+        //   oldStyle.color = "";
+        // }
+
+        // Option 2: auto-set text colour no matter what
+        if (reflecting.background && reflecting.background.alpha() > 0) {
+          oldStyle.color = reflecting.background.isDark() ? "#fff" : "#000";
+        } else {
+          oldStyle.color = "";
+        }
+
       }
       if (reflecting.background && reflecting.background.alpha() > 0) {
         oldClassList.add("has-background");
@@ -103,6 +118,7 @@
         oldClassList.remove("has-background");
         oldClassList.remove("data-phpally-ignore");
       }
+
       return [oldStyle, oldClassList] as [CSSStyleDeclaration, DOMTokenList];
     }
   );
@@ -116,7 +132,7 @@
   };
 </script>
 
-<div class="cgb-component">
+<div class="cgb-component h-[90%]">
   <div class="advancedSettings" use:preventBubble>
     <h5>Row Settings</h5>
     <ButtonRadio
@@ -269,13 +285,13 @@
         </label>
       {/if}
     </div>
-    <ColourSettings element={row} {preferences} />
+    <ColourSettings element={row} {preferences} showTextColor={false} />
   </div>
 </div>
 
 <style lang="postcss">
   .advancedSettings {
-    /* @apply columns-2; */
+    @apply flex flex-col justify-between h-full;
   }
   h5 {
     @apply w-full font-bold;

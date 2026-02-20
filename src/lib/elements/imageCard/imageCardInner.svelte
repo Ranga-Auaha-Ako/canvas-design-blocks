@@ -8,6 +8,7 @@
   } from "./imageCard";
   import { createEventDispatcher, onDestroy } from "svelte";
   import IconElement from "$lib/icons/svelte/iconElement.svelte";
+  import { colord } from "colord";
 
   const dispatch = createEventDispatcher();
 
@@ -21,6 +22,11 @@
     destroyHandler();
   });
   $: isSelected = $localState.isSelected;
+
+  $: getContrastColor = (bgColor: string | undefined) => {
+    if (!bgColor) return "#fff";
+    return colord(bgColor).isDark() ? "#fff" : "#000";
+  };
 </script>
 
 <div
@@ -39,7 +45,7 @@
       style:color={cdbData.theme === ImageCardTheme.Dark &&
       cdbData.usesIcon &&
       card.icon
-        ? "#fff"
+        ? getContrastColor(card.icon.color)
         : undefined}
       style:background-color={cdbData.theme === ImageCardTheme.Dark &&
       cdbData.usesIcon &&
@@ -76,7 +82,7 @@
             <IconElement
               icon={card.icon}
               colorOverride={cdbData.theme === ImageCardTheme.Dark
-                ? "#fff"
+                ? getContrastColor(card.icon?.color)
                 : undefined}
             />
           {/if}

@@ -34,6 +34,7 @@
         {options}
         on:selectIcon
         asModal={true}
+        showWarning={options.showWarning ?? false}
       />
     {/await}
   </div>

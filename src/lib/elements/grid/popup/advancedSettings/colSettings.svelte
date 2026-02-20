@@ -63,8 +63,21 @@
         oldInnerStyle.margin = `${reflecting.margin}px`;
         // Background
         oldInnerStyle.background = reflecting.background?.toHex() || "";
+
         // Text Colour
-        oldInnerStyle.color = reflecting.textColor?.toHex() || "";
+        // // Option 1: only auto-set text colour on new grid
+        // if (reflecting.background && reflecting.background.alpha() > 0) {
+        //   oldInnerStyle.color = reflecting.textColor?.toHex() || (reflecting.background.isDark() ? "#fff" : "#000");
+        // } else {
+        //   oldInnerStyle.color = "";
+        // }
+
+        // Option 2: auto-set text colour no matter what
+        if (reflecting.background && reflecting.background.alpha() > 0) {
+          oldInnerStyle.color = reflecting.background.isDark() ? "#fff" : "#000";
+        } else {
+          oldInnerStyle.color = "";
+        }
       }
       if (reflecting.background && reflecting.background.alpha() > 0) {
         oldInnerClassList.add("has-background");
@@ -156,7 +169,7 @@
         max="20"
         bind:value={$preferences.margin}
       />
-      <ColourSettings element={column} {preferences} popupDirection="top" />
+      <ColourSettings element={column} {preferences} popupDirection="top" showTextColor={false} />
     </label>
   </div>
 </div>

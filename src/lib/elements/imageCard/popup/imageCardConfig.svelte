@@ -205,11 +205,12 @@
                 </div>
                 <!-- Colour picker for icon -->
                 {#if $rowData.cards[cardIndex].icon}
+                  {@const iconColor = $rowData.cards[cardIndex].icon?.color}
+                  {@const iconColord = iconColor ? colord(iconColor) : undefined}
+                  {@const isAccessible = !iconColord || iconColord.contrast(colord("#fff")) >= 4.5}
                   <div class="mt-2">
                     <ColourPicker
-                      colour={colord(
-                        $rowData.cards[cardIndex].icon?.color ?? ""
-                      )}
+                      colour={colord(iconColor ?? "")}
                       on:select={({ detail: colour }) => {
                         const icon = $rowData.cards[cardIndex].icon;
                         if (cardIndex === undefined || !icon || !colour) return;
@@ -217,9 +218,16 @@
                         $rowData.cards[cardIndex] = $rowData.cards[cardIndex];
                       }}
                       contrastColour={colord("#fff")}
-                      label="Icon Colour"
+                      label={$rowData.theme === ImageCardTheme.Dark ? "Background Colour" : "Icon Colour"}
                       showNone={false}
+                      filterByContrast={false}
+                      showAccessible={$rowData.theme === ImageCardTheme.Light}
                     />
+                    {#if $rowData.theme === ImageCardTheme.Light && !isAccessible}
+                      <p class="border-l-4 border-orange-300 bg-orange-100 text-orange-900 p-2 rounded transition text-sm mt-1">
+                        <span class="font-bold">Accessibility error:</span> &nbsp; This icon colour has low contrast on a white background. Please choose a darker colour.
+                      </p>
+                    {/if}
                   </div>
                 {/if}
               {:else}
