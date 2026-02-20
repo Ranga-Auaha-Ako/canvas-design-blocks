@@ -7,6 +7,7 @@
   import ColourPicker, { getColour } from "$lib/components/colourPicker.svelte";
   import Column from "$lib/elements/grid/column";
   import ColourSettings from "$lib/components/colourSettings.svelte";
+  import { max_content_width } from '$lib/util/constants';
 
   export let column: Column;
 
@@ -88,9 +89,12 @@
   let popupEl: HTMLDivElement;
 
   $: if (editorContainer && windowWidth) {
-    editorWidth = `${editorContainer.offsetWidth}px`;
-    offsetLeft = `${
-      (popupEl.offsetParent?.getBoundingClientRect().x || 0) * -1 +
+  const maxWidth = max_content_width === '100%'
+    ? editorContainer.offsetWidth
+    : parseFloat(max_content_width);
+  editorWidth = `${Math.min(editorContainer.offsetWidth, maxWidth)}px`;
+  offsetLeft = `${
+    (popupEl.offsetParent?.getBoundingClientRect().x || 0) * -1 +
       editorContainer.getBoundingClientRect().x
     }px`;
   }

@@ -123,6 +123,7 @@
     @apply h-52 transition duration-300;
     @apply bg-secondary rounded-md shadow-lg border-solid border-secondary;
     @apply grid;
+    max-width: theme('maxWidth.content');
     transition-property: color, background-color, border-color, opacity,
       box-shadow, filter, backdrop-filter, width, height;
     --col-width: 18rem;
@@ -200,7 +201,7 @@
       @apply bg-primary border-primary;
       --full-width: calc(var(--col-width) * 2 + var(--border-width));
       height: min(260px, calc(100vh - 3.5rem));
-      width: var(--full-width);
+      width: min(var(--full-width), theme('maxWidth.content'));
       & .layoutOptions {
         width: 10rem;
         & .layoutGrid {
@@ -210,7 +211,7 @@
       & .settings {
         @apply p-2 visible opacity-100;
         margin-left: var(--border-width);
-        width: calc(var(--full-width) - 10rem - var(--border-width));
+        width: calc(100% - 10rem - var(--border-width)); /* Use 100% instead of --full-width */
       }
     }
   }
