@@ -125,9 +125,11 @@
   <div
     class="categories"
     style:color={options.editColor ? $iconColor.toHex() : "black"}
-    style:--icon-background={nearestColour.alpha() === 0
-      ? "#fff"
-      : nearestColour.toHex()}
+    style:--icon-background={
+      options.editColor && !isReadable
+        ? ($iconColor.isLight() ? "#121212" : "#ffffff")
+        : (nearestColour.alpha() === 0 ? "#fff" : nearestColour.toHex())
+    }
   >
     {#each results as category}
       <div class="category">
