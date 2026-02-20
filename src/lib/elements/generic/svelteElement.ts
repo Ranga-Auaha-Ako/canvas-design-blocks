@@ -45,7 +45,7 @@ export abstract class SvelteElement<
   public inline: boolean = false;
 
   constructor(
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<

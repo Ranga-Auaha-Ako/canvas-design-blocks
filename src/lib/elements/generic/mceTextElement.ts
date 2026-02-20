@@ -102,7 +102,7 @@ export default abstract class MceTextElement extends MceElement {
   }
   constructor(
     public node: HTMLElement,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public readonly id = nanoid()
   ) {
     // We need to observe for changes to text, so we need to modify the observer config

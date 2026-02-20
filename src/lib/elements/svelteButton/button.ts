@@ -175,7 +175,7 @@ export class Button extends SvelteElement<ButtonData> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: ButtonManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

@@ -21,7 +21,7 @@ export abstract class SvelteClientElement<
   implements ClientElementStatics
 {
   constructor(
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: ElementManager,
     public node: HTMLElement,
     public svelteComponent: ComponentType<

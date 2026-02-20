@@ -165,7 +165,7 @@ export default abstract class MceElement extends SelectableElement {
    */
   constructor(
     public node: HTMLElement,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public watchNodes: observerMap = new Map([[node, { name: "" }]]),
     children: MceElement[] = [],
     public readonly id = nanoid(),

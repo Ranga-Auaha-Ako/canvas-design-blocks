@@ -3,7 +3,6 @@ import ElementManager from "../generic/elementManager";
 import MceElement, { MceElementStatics } from "../generic/mceElement";
 import { ButtonBar } from "./buttonBar";
 import editorStyles from "./element.postcss?inline";
-import ButtonBarTooltip from "./buttonBarTooltip.svelte";
 import buttonAnim from "$assets/block-anims/Button Bar.webm";
 
 export class ButtonBarManager extends ElementManager {

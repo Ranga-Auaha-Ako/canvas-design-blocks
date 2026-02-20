@@ -152,7 +152,7 @@ export class ProfileGrid extends SvelteElement<ProfileData[]> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: ProfilesManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

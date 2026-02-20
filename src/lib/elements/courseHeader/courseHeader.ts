@@ -275,7 +275,7 @@ export class CourseHeader extends SvelteElement<HeaderData> {
 
   constructor(
     public state: stateObject,
-    public editor: Editor = window.tinymce.activeEditor,
+    public editor: Editor = window.tinymce.activeEditor!,
     public manager: CourseHeaderManager,
     public node: HTMLElement,
     public readonly id = nanoid(),

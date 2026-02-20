@@ -24,3 +24,5 @@ declare module "virtual:blocks-icons-editor-styles" {
 }
 
 declare module "async-disk-cache";
+
+declare module 'svelte-use-click-outside';
