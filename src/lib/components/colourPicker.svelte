@@ -39,7 +39,7 @@
   export let id: string = nanoid();
   export let colour: Colord | undefined = undefined;
   export let contrastColour: Colord | undefined | "Light/Dark" = undefined;
-  export let showAccessible: boolean = true;
+  export let showAccessible: boolean = false;
   export let isText: boolean = false;
   export let label: string;
   export let popupDirection: Placement = "bottom-start";
@@ -47,6 +47,8 @@
   export let showNone = true;
   export let asModal = false;
   export let style: "default" | "wide" | "minimal" = "default";
+  export let filterByContrast: boolean = false;
+  export let useSmartColour: boolean = false;
 
   const dispatch = createEventDispatcher<{ select: Colord | undefined }>();
 
@@ -59,7 +61,7 @@
           : colord("#ffffff")
         : conColour;
     // Only adjust colour if contrast is not readable (AA not AAA)
-    if (foundConColour && showAccessible && !foundConColour.isReadable(c)) {
+    if (foundConColour && !foundConColour.isReadable(c)) {
       if (foundConColour.isLight()) {
         return c.darken(0.1);
       } else {
@@ -72,35 +74,36 @@
   $: options = (() => {
     let colours: { code?: Colord; name: string }[] = [
       {
-        code: smartColour(theme.primary, contrastColour),
+        code: useSmartColour ? smartColour(theme.primary, contrastColour) : colord(theme.primary),
         name: "Primary",
       },
       {
-        code: smartColour(theme.secondary, contrastColour),
+        code: useSmartColour ? smartColour(theme.secondary, contrastColour) : colord(theme.secondary),
         name: "Secondary",
       },
     ];
-    const addCol = (r: Record<string, string>, smart = true) => {
-      const newCols = Object.entries(r).filter(([name, c]) => {
-        const col = smart ? smartColour(c, contrastColour) : colord(c);
-        return !colours.some((c) => c.code?.toHex() === col.toHex());
-      });
-      colours.push(
-        ...newCols.map(([name, c]) => ({
-          code: smart ? smartColour(c, contrastColour) : colord(c),
-          name,
-        }))
-      );
-    };
+
     if (theme.palette) {
+      let allColors = Object.entries(theme.palette).map(([name, hex]) => ({
+        code: useSmartColour ? smartColour(hex, contrastColour) : colord(hex),
+        name,
+      }));
+      colours.push(...allColors);
+    }
+
+    // if filterByContrast, filter palette AFTER all colors are assembled
+    if (filterByContrast && contrastColour) {
       if (contrastColour === "Light/Dark") {
-        addCol(theme.palette.light, false);
-        addCol(theme.palette.dark, false);
+        colours = colours.filter(c => c.code && (
+          c.code.isDark()
+            ? c.code.contrast(colord("#ffffff")) >= 4.5
+            : c.code.contrast(colord("#000000")) >= 4.5
+        ));
       } else {
-        if (contrastColour?.isDark()) addCol(theme.palette.light, false);
-        else addCol(theme.palette.dark);
+        colours = colours.filter(c => c.code && c.code.contrast(contrastColour) >= 4.5);
       }
     }
+
     if (showNone) {
       colours.push({ code: undefined, name: "None" });
     }
@@ -226,7 +229,6 @@
             {#each options as option}
               {#if !(option.code === undefined && contrastColour !== undefined && isText)}
                 {@const inaccessible = isInaccessible(option.code)}
-
                 <button
                   class="colour colour-option"
                   class:unset={option.code === undefined}
@@ -320,7 +322,8 @@
     @apply shadow-lg bg-white rounded;
     @apply grid gap-1;
     grid-template-columns: repeat(4, var(--size));
-    grid-template-rows: repeat(auto-fill, var(--size)), auto;
+    /*grid-template-columns: repeat(3, var(--size));*/
+    grid-template-rows: auto;
     & .colour-option {
       @apply shadow-sm z-0 transition;
       &.selected {
@@ -355,6 +358,7 @@
 
   .colour-custom {
     @apply col-span-4 mt-1 pt-2 border-t-2 border-gray-300;
+    /*@apply col-span-3 mt-1 pt-2 border-t-2 border-gray-300;*/
     & .editor {
       @apply flex gap-1;
       height: var(--size);
