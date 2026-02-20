@@ -171,7 +171,7 @@
     }
     &.has-update {
       @apply text-xs transition;
-      max-width: calc(100% - 0.2rem);
+      max-width: calc(100% - 0.25rem);
     }
     & img {
       @apply h-full p-0.5;
